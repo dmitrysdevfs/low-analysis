@@ -51,3 +51,16 @@ export const addElements = async (elements) => {
   return await Element.insertMany(elements);
 };
 
+/**
+ * Removes a law and all its associated elements.
+ */
+export const removeLawData = async (code) => {
+  const law = await Law.findOne({ code });
+  if (law) {
+    await Element.deleteMany({ lawId: law._id });
+    await Law.deleteOne({ _id: law._id });
+    return true;
+  }
+  return false;
+};
+

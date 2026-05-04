@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import connectDB from '../src/config/db.js';
 import { parseLawHtml } from '../src/services/parserService.js';
-import { createLaw, addElements } from '../src/services/lawService.js';
+import { createLaw, addElements, removeLawData } from '../src/services/lawService.js';
 
 dotenv.config();
 
@@ -29,6 +29,18 @@ const ingestLaw = async (filePath) => {
   }
 
   console.log(`📜 Parsed: "${title}" (${code}) — ${elements.length} elements`);
+
+  // Detect duplicates in elements
+  const codes = elements.map(e => e.code);
+  const duplicates = codes.filter((c, index) => codes.indexOf(c) !== index);
+  if (duplicates.length > 0) {
+    console.warn(`⚠️ Warning: Duplicate codes found: ${JSON.stringify([...new Set(duplicates)])}`);
+    // Optional: filter out duplicates or investigate why they happen
+  }
+
+  // Cleanup existing data for this law code
+  console.log(`🧹 Cleaning up existing data for code: ${code}`);
+  await removeLawData(code);
 
   // Persist Law document
   const law = await createLaw({

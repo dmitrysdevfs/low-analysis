@@ -12,8 +12,9 @@ const RAW_DIR = path.join(__dirname, '..', 'data', 'raw');
  * @example node scripts/fetchLaw.js 254к/96-ВР
  */
 const fetchLaw = async (code) => {
-  const encodedCode = encodeURIComponent(code);
-  const url = `https://zakon.rada.gov.ua/laws/show/${encodedCode}`;
+  // encodeURI preserves '/' (path separator), while encodeURIComponent would break it.
+  // Example: "254к/96-ВР" → "254%D0%BA/96-%D0%92%D0%A0" ✅
+  const url = `https://zakon.rada.gov.ua/laws/show/${encodeURI(code)}`;
 
   console.log(`⏳ Fetching: ${url}`);
 
