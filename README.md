@@ -17,8 +17,8 @@
 
 | Метод | Ендпоінт | Опис |
 |-------|----------|------|
-| `GET` | `/` | Health check |
-| `GET` | `/api/laws` | Список розпарсених законів |
+| `GET` | [`/`](https://low-analysis.onrender.com/) | Health check |
+| `GET` | [`/api/laws`](https://low-analysis.onrender.com/api/laws) | Список розпарсених законів |
 | `GET` | `/api/laws/:id/tree` | Ієрархічне дерево закону (всі 481 елемент) |
 | `GET` | `/api/laws/:id/articles/:num` | Конкретна стаття з частинами |
 | `GET` | `/api/subjects` | Суб'єкти регулювання |
@@ -30,10 +30,10 @@
 curl https://low-analysis.onrender.com/api/laws
 
 # Дерево Конституції (481 елемент: 14 розділів, 166 статей, 301 абзац)
-curl https://low-analysis.onrender.com/api/laws/<id>/tree
+curl https://low-analysis.onrender.com/api/laws/69f84aa7395f1789bc7b2b89/tree
 
 # Стаття 1 Конституції
-curl https://low-analysis.onrender.com/api/laws/<id>/articles/1
+curl https://low-analysis.onrender.com/api/laws/69f84aa7395f1789bc7b2b89/articles/1
 ```
 
 ### Приклад відповіді `/api/laws`
@@ -41,12 +41,12 @@ curl https://low-analysis.onrender.com/api/laws/<id>/articles/1
 ```json
 [
   {
-    "_id": "...",
+    "_id": "69f84aa7395f1789bc7b2b89",
     "title": "КОНСТИТУЦІЯ УКРАЇНИ",
     "code": "254к/96-вр",
     "totalSections": 14,
     "totalArticles": 166,
-    "source": "https://zakon.rada.gov.ua/laws/show/254к/96-вр.frame"
+    "createdAt": "2026-05-04T07:28:39.674Z"
   }
 ]
 ```
