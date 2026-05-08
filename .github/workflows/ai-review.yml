@@ -17,7 +17,8 @@ jobs:
         run: npm install
       - name: Run lint
         run: npm run lint
-      # Кроки 'test' та 'build' тимчасово вимкнені, оскільки вони відсутні в package.json або є порожніми
+      - name: Run tests
+        run: npm test
 
   review:
     needs: quality-check
@@ -31,3 +32,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           google_api_key: ${{ secrets.AI_REVIEWER_GOOGLE_API_KEY }}
+          llm_provider: google
+          mistral_api_key: "dummy_key_to_bypass_validation"
+          language: uk

@@ -34,7 +34,10 @@ export const getArticle = async (lawId, articleNumber) => {
 
   if (!article) return null;
 
-  const children = await Element.find({ lawId, parentId: article._id })
+  const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const codePrefix = new RegExp('^' + escapeRegex(article.code) + '\\.');
+
+  const children = await Element.find({ lawId, code: codePrefix })
     .select('-__v')
     .sort({ order: 1 });
 
