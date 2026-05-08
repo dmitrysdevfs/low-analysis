@@ -160,7 +160,9 @@ export const parseLawHtml = (html) => {
       const numberMatch = leafNodeStr.match(/\d+/);
       const partNumber = numberMatch ? numberMatch[0] : '';
 
-      order++;
+        type: leafNodeStr.startsWith('pu') ? 'point' :
+              leafNodeStr.startsWith('pp') ? 'sub_point' :
+              leafNodeStr.startsWith('ch') ? 'part' : 'paragraph',
       elements.push({
         type: 'paragraph',
         code: partCode,
