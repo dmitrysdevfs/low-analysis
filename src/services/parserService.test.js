@@ -58,7 +58,7 @@ test('parseLawHtml should correctly parse sections, articles, and nested element
   
   // Nested paragraph (point) check
   const paragraph = result.elements[2];
-  assert.strictEqual(paragraph.type, 'paragraph');
+  assert.strictEqual(paragraph.type, 'point');
   assert.strictEqual(paragraph.number, '1');
   assert.strictEqual(paragraph.text, 'Текст пункту 1.');
   assert.strictEqual(paragraph.parentCode, '999-99.rz1.st1');
