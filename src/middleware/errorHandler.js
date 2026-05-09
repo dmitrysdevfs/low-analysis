@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 // eslint-disable-next-line no-unused-vars
+=======
+/* eslint-disable */
+
+>>>>>>> origin/frontend
 export const errorHandler = (err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode);
