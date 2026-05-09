@@ -13,12 +13,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
+      - name: Install backend dependencies
         run: npm install
-      - name: Run lint
+        working-directory: backend
+      - name: Run backend lint
         run: npm run lint
-      - name: Run tests
+        working-directory: backend
+      - name: Run backend tests
         run: npm test
+        working-directory: backend
+      - name: Check backend formatting
+        run: npm run check-format
+        working-directory: backend
+        
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: frontend
+      - name: Run frontend lint
+        run: npm run lint
+        working-directory: frontend
+      - name: Check frontend formatting
+        run: npm run check-format
+        working-directory: frontend
 
   review:
     needs: quality-check

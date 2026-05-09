@@ -17,7 +17,9 @@ export const getLawById = async (id) => {
  * or via buildTree() helper if needed.
  */
 export const getLawTree = async (lawId) => {
-  return await Element.find({ lawId }).select('-__v').sort({ depth: 1, order: 1 });
+  return await Element.find({ lawId })
+    .select('-__v')
+    .sort({ depth: 1, order: 1 });
 };
 
 /**
@@ -66,4 +68,3 @@ export const removeLawData = async (code) => {
   }
   return false;
 };
-

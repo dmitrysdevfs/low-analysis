@@ -1,19 +1,20 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import Header from '@/layout/Header/Header';
-import Footer from '@/layout/Footer/Footer';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Header from "@/layout/Header/Header";
+import Footer from "@/layout/Footer/Footer";
 
 const inter = Inter({
-  subsets: ['cyrillic', 'latin'],
-  variable: '--font-inter',
+  subsets: ["cyrillic", "latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: 'Структурування законодавства',
-  description: 'Платформа для структурування, пошуку та аналізу законодавства України',
+  title: "Структурування законодавства",
+  description:
+    "Платформа для структурування, пошуку та аналізу законодавства України",
   icons: {
-    icon: 'favicon/favicon.ico',
+    icon: "favicon/favicon.ico",
   },
 };
 

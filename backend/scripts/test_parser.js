@@ -25,18 +25,21 @@ console.log('--- STRUCTURE ---');
 const articleNode = $('#article');
 if (articleNode.length) {
   console.log('Found #article');
-  console.log('First 500 chars inside #article:', articleNode.text().replace(/\s+/g, ' ').substring(0, 500));
+  console.log(
+    'First 500 chars inside #article:',
+    articleNode.text().replace(/\s+/g, ' ').substring(0, 500),
+  );
 } else {
   console.log('NO #article found. Looking for .rvps2 or other paragraphs...');
 }
 
 const first10p = [];
-$('p').slice(0, 10).each((_, el) => {
-  first10p.push({
-    class: $(el).attr('class'),
-    text: $(el).text().substring(0, 50).trim()
+$('p')
+  .slice(0, 10)
+  .each((_, el) => {
+    first10p.push({
+      class: $(el).attr('class'),
+      text: $(el).text().substring(0, 50).trim(),
+    });
   });
-});
 console.log('First 10 p tags:', first10p);
-
-

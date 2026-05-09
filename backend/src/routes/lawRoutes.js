@@ -12,4 +12,3 @@ router.get('/:id/tree', getLawTree);
 router.get('/:id/articles/:num', getArticle);
 
 export default router;
-
