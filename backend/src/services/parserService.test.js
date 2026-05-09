@@ -15,7 +15,7 @@ test('parseLawHtml should extract law title and code', () => {
     </html>
   `;
   const result = parseLawHtml(html);
-  
+
   assert.strictEqual(result.title, 'Закон про Тестування');
   assert.strictEqual(result.code, '123-45');
   assert.deepStrictEqual(result.elements, []);
@@ -36,17 +36,17 @@ test('parseLawHtml should correctly parse sections, articles, and nested element
       </body>
     </html>
   `;
-  
+
   const result = parseLawHtml(html);
-  
+
   assert.strictEqual(result.elements.length, 3);
-  
+
   // Section check
   const section = result.elements[0];
   assert.strictEqual(section.type, 'section');
   assert.strictEqual(section.number, '1');
   assert.strictEqual(section.code, '999-99.rz1');
-  
+
   // Article check
   const article = result.elements[1];
   assert.strictEqual(article.type, 'article');
@@ -55,7 +55,7 @@ test('parseLawHtml should correctly parse sections, articles, and nested element
   assert.strictEqual(article.text, 'Текст першої статті.');
   assert.strictEqual(article.parentCode, '999-99.rz1');
   assert.strictEqual(article.code, '999-99.rz1.st1');
-  
+
   // Nested paragraph (point) check
   const paragraph = result.elements[2];
   assert.strictEqual(paragraph.type, 'point');

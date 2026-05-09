@@ -22,7 +22,7 @@ const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
  * @param {string} html - Raw HTML content of the .frame page
  * @returns {{ title: string, code: string, elements: Array }} parsed data
  */
-export const parseLawHtml = html => {
+export const parseLawHtml = (html) => {
   const $ = cheerio.load(html);
 
   // ── 1. Extract law title ──────────────────────────────────────────────────
@@ -32,9 +32,10 @@ export const parseLawHtml = html => {
     title = titleAnchor.parent().text().trim();
   }
   if (!title) {
-    title = $(`.${TITLE_SPAN}`).first().text().trim()
-      || $('p.rvps1 span').first().text().trim()
-      || '';
+    title =
+      $(`.${TITLE_SPAN}`).first().text().trim() ||
+      $('p.rvps1 span').first().text().trim() ||
+      '';
   }
 
   // ── 2. Extract law code from the selected <option> in the edition selector ─
@@ -72,7 +73,9 @@ export const parseLawHtml = html => {
     // ── Section (Розділ) ──────────────────────────────────────────────────
     if (pClass === SECTION_CLASS && dataTree.startsWith('rz')) {
       const sectionSpan = $p.find(`.${SECTION_SPAN}`);
-      const rawText = sectionSpan.length ? sectionSpan.text().trim() : $p.text().trim();
+      const rawText = sectionSpan.length
+        ? sectionSpan.text().trim()
+        : $p.text().trim();
 
       // Extract section number from data-tree ("rz3" → "3")
       const number = dataTree.replace('rz', '');
@@ -115,7 +118,9 @@ export const parseLawHtml = html => {
       const sectionCode = currentSectionId ? currentSectionId.code : null;
       const articleCode = sectionCode
         ? `${sectionCode}.st${number}`
-        : (code ? `${code}.st${number}` : `st${number}`);
+        : code
+          ? `${code}.st${number}`
+          : `st${number}`;
 
       order++;
       const elem = {
@@ -146,22 +151,30 @@ export const parseLawHtml = html => {
       if (currentArticleId) {
         baseCode = currentArticleId.code;
       } else {
-        const sectionBase = currentSectionId ? currentSectionId.code : (code ? code : '');
+        const sectionBase = currentSectionId
+          ? currentSectionId.code
+          : code
+            ? code
+            : '';
         baseCode = sectionBase ? `${sectionBase}.${articleStr}` : articleStr;
       }
-      
+
       const partCode = [baseCode, ...childParts].join('.');
       const parentCode = [baseCode, ...childParts.slice(0, -1)].join('.');
       const depth = 1 + childParts.length;
-      
+
       const leafNodeStr = childParts[childParts.length - 1]; // e.g. 'ch_1', 'pu1', 'ppa_1'
       const numberMatch = leafNodeStr.match(/\d+/);
       const partNumber = numberMatch ? numberMatch[0] : '';
 
       elements.push({
-        type: leafNodeStr.startsWith('pu') ? 'point' :
-              leafNodeStr.startsWith('pp') ? 'sub_point' :
-              leafNodeStr.startsWith('ch') ? 'part' : 'paragraph',
+        type: leafNodeStr.startsWith('pu')
+          ? 'point'
+          : leafNodeStr.startsWith('pp')
+            ? 'sub_point'
+            : leafNodeStr.startsWith('ch')
+              ? 'part'
+              : 'paragraph',
         code: partCode,
         number: partNumber,
         title: null,

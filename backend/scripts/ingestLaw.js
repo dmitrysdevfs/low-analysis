@@ -5,7 +5,11 @@ import dotenv from 'dotenv';
 import connectDB from '../src/config/db.js';
 import mongoose from 'mongoose';
 import { parseLawHtml } from '../src/services/parserService.js';
-import { createLaw, addElements, removeLawData } from '../src/services/lawService.js';
+import {
+  createLaw,
+  addElements,
+  removeLawData,
+} from '../src/services/lawService.js';
 
 dotenv.config();
 
@@ -26,16 +30,20 @@ const ingestLaw = async (filePath) => {
   const { title, code, elements } = parseLawHtml(html);
 
   if (!title || !code) {
-    throw new Error('Parser returned no title or code. Check parserService.js.');
+    throw new Error(
+      'Parser returned no title or code. Check parserService.js.',
+    );
   }
 
   console.log(`📜 Parsed: "${title}" (${code}) — ${elements.length} elements`);
 
   // Detect duplicates in elements
-  const codes = elements.map(e => e.code);
+  const codes = elements.map((e) => e.code);
   const duplicates = codes.filter((c, index) => codes.indexOf(c) !== index);
   if (duplicates.length > 0) {
-    console.warn(`⚠️ Warning: Duplicate codes found: ${JSON.stringify([...new Set(duplicates)])}`);
+    console.warn(
+      `⚠️ Warning: Duplicate codes found: ${JSON.stringify([...new Set(duplicates)])}`,
+    );
     // Optional: filter out duplicates or investigate why they happen
   }
 
@@ -53,12 +61,12 @@ const ingestLaw = async (filePath) => {
   let savedElements = [];
   if (elements.length > 0) {
     // 1. Pre-generate ObjectIds to build a lookup table
-    elements.forEach(el => {
+    elements.forEach((el) => {
       el._id = new mongoose.Types.ObjectId();
     });
 
     const codeToIdMap = {};
-    elements.forEach(el => {
+    elements.forEach((el) => {
       // Maps the original intended code to the LATEST seen _id
       codeToIdMap[el.code] = el._id;
     });
@@ -75,11 +83,11 @@ const ingestLaw = async (filePath) => {
       }
       usedCodes.add(uniqueCode);
 
-      return { 
-        ...el, 
+      return {
+        ...el,
         code: uniqueCode,
         lawId: law._id,
-        parentId: el.parentCode ? (codeToIdMap[el.parentCode] || null) : null
+        parentId: el.parentCode ? codeToIdMap[el.parentCode] || null : null,
       };
     });
 
@@ -94,7 +102,9 @@ const ingestLaw = async (filePath) => {
   await law.save();
 
   console.log(`✅ Ingested: lawId=${law._id}`);
-  console.log(`   Sections: ${sectionCount}, Articles: ${articleCount}, Elements total: ${savedElements.length}`);
+  console.log(
+    `   Sections: ${sectionCount}, Articles: ${articleCount}, Elements total: ${savedElements.length}`,
+  );
 
   process.exit(0);
 };
@@ -110,4 +120,3 @@ ingestLaw(filePath).catch((err) => {
   console.error(`❌ Error: ${err.message}`);
   process.exit(1);
 });
-
