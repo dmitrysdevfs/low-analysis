@@ -92,10 +92,11 @@ export default function LawTreePage() {
                 <TreeNode
                   key={section.code}
                   node={section}
-                  children={children}
                   activeCode={activeNode?.code ?? null}
                   onSelect={setActiveNode}
-                />
+                >
+                  {children}
+                </TreeNode>
               ))
             : null}
         </motion.aside>
