@@ -1,7 +1,6 @@
-<!-- BEGIN:nextjs-agent-rules -->
+This frontend runs on a newer Next.js version and may include breaking changes.
 
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-
-<!-- END:nextjs-agent-rules -->
+When implementing or debugging Next-specific behavior:
+- Prefer the local Next.js docs and references under `node_modules/next/dist/docs/`
+- Follow patterns already used in this repo before assuming older App Router behavior still applies
+- Be cautious with outdated examples from older blog posts or tutorials

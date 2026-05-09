@@ -158,3 +158,64 @@ data-tree="ch_1:st2"    -> Частина 1 статті 2
 - [ ] AI-визначення суб'єктів регулювання (OpenAI / Ollama)
 - [ ] Граф зв'язків між нормами різних законів
 - [ ] "Радіант" - 3D-візуалізація законодавчої бази
+
+---
+
+## Monorepo — налаштування та зміни
+
+### Структура
+
+Проєкт реорганізовано як npm workspaces монорепо:
+
+```text
+low-analysis/
+├── backend/           # Node.js + Express 5 + MongoDB API
+├── frontend/          # Next.js 16 + React 19 + TailwindCSS v4
+├── package.json       # Монорепо root (workspaces + concurrently)
+└── README.md
+```
+
+### Запуск локально (обидва сервери одночасно)
+
+```bash
+# з кореня low-analysis/
+npm install        # встановити всі залежності (backend + frontend)
+npm run dev        # backend :3000 + frontend :3001 паралельно
+```
+
+Або окремо:
+
+```bash
+npm run dev:backend    # http://localhost:3000
+npm run dev:frontend   # http://localhost:3001
+```
+
+### Змінні середовища
+
+**backend/.env** (створити з `.env.example`):
+
+```env
+MONGODB_URI=mongodb://localhost:27017/low-analysis
+PORT=3000
+NODE_ENV=development
+CORS_ALLOWED_ORIGINS=http://localhost:3001,http://127.0.0.1:3001
+```
+
+**frontend/.env.local** (вже налаштовано):
+
+```env
+API_PROXY_TARGET_URL=https://low-analysis.onrender.com
+```
+
+> Фронтенд проксює `/api/*` на production backend (`low-analysis.onrender.com`).  
+> Для локального бекенду змінити на `API_PROXY_TARGET_URL=http://localhost:3000`.
+
+### Зміни (2026-05-09)
+
+- **Монорепо**: проєкт об'єднано в npm workspaces структуру з root `package.json` та `concurrently` для одночасного запуску
+- **Mock-дані видалено**: `src/lib/mock.ts` видалено, `api.ts` очищено від mock-гілок — фронт завжди звертається до реального API
+- **frontend/.env.local**: фронт вказує на production backend `https://low-analysis.onrender.com`
+- **backend/.env**: шаблон з `CORS_ALLOWED_ORIGINS` для localhost:3001
+- **frontend/vitest.config.ts**: доданий конфіг для тестів (jsdom, path alias `@/*`)
+- **Видалено**: `AGENTS.md`, `CLAUDE.md` з `frontend/` — службові файли прибрані з репо
+- **Порти**: backend `:3000`, frontend `:3001` (зафіксовано в `package.json`)
