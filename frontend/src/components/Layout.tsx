@@ -9,7 +9,9 @@ export function Layout({
   fullHeight?: boolean;
 }) {
   return (
-    <div className={`${styles.layout} ${fullHeight ? styles.layoutFullHeight : ""}`}>
+    <div
+      className={`${styles.layout} ${fullHeight ? styles.layoutFullHeight : ""}`}
+    >
       {children}
     </div>
   );

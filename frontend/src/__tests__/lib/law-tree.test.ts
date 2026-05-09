@@ -74,20 +74,36 @@ describe("law tree helpers", () => {
   };
 
   it("groups flat elements into ordered sections with nested articles", () => {
-    const sections = buildLawSections([point, articleTwo, section, part, articleOne]);
+    const sections = buildLawSections([
+      point,
+      articleTwo,
+      section,
+      part,
+      articleOne,
+    ]);
 
     expect(sections).toHaveLength(1);
     expect(sections[0].children.map((node) => node.number)).toEqual(["1", "2"]);
-    expect(sections[0].children[0].children[0].children[0].text).toBe(point.text);
+    expect(sections[0].children[0].children[0].children[0].text).toBe(
+      point.text,
+    );
     expect(countNestedNodes(sections[0].children[0])).toBe(2);
   });
 
   it("limits the amount of visible articles without breaking section order", () => {
-    const sections = buildLawSections([point, articleTwo, section, part, articleOne]);
+    const sections = buildLawSections([
+      point,
+      articleTwo,
+      section,
+      part,
+      articleOne,
+    ]);
     const limitedSections = limitLawSections(sections, 1);
 
     expect(countArticlesInSections(limitedSections)).toBe(1);
-    expect(limitedSections[0].children.map((node) => node.number)).toEqual(["1"]);
+    expect(limitedSections[0].children.map((node) => node.number)).toEqual([
+      "1",
+    ]);
     expect(limitedSections[0].children[0].children[0].text).toBe(part.text);
   });
 

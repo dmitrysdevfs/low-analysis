@@ -37,9 +37,11 @@ describe("Laws page", () => {
     expect(screen.getByText(/1 документ/i)).toBeInTheDocument();
     expect(screen.getAllByText(LAW_FIXTURE.title).length).toBeGreaterThan(0);
     expect(
-      screen.getAllByRole("link").some(
-        (link) => link.getAttribute("href") === `/laws/${LAW_FIXTURE._id}`,
-      ),
+      screen
+        .getAllByRole("link")
+        .some(
+          (link) => link.getAttribute("href") === `/laws/${LAW_FIXTURE._id}`,
+        ),
     ).toBe(true);
 
     const searchInput = screen.getByPlaceholderText("Пошук за назвою закону…");

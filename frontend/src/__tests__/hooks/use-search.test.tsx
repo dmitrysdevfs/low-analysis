@@ -1,11 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useSearch } from "@/hooks/useSearch";
 import { getLaws } from "@/lib/api";
-import {
-  LAW_FIXTURE,
-  LAW_FIXTURE_2,
-  LAW_FIXTURE_3,
-} from "@/test/fixtures";
+import { LAW_FIXTURE, LAW_FIXTURE_2, LAW_FIXTURE_3 } from "@/test/fixtures";
 
 vi.mock("@/lib/api", () => ({
   getLaws: vi.fn(),

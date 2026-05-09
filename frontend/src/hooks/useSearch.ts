@@ -90,9 +90,7 @@ export function useSearch() {
               law.code.toLowerCase().includes(num),
             );
           } else {
-            filtered = filtered.filter(
-              (law) => law.code.toLowerCase() === num,
-            );
+            filtered = filtered.filter((law) => law.code.toLowerCase() === num);
           }
         }
 

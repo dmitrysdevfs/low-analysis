@@ -119,7 +119,9 @@ describe("frontend data hooks", () => {
 
     await waitFor(() => expect(full.result.current.loading).toBe(false));
 
-    expect(full.result.current.article).toEqual(ARTICLE_RESPONSE_FIXTURE.article);
+    expect(full.result.current.article).toEqual(
+      ARTICLE_RESPONSE_FIXTURE.article,
+    );
     expect(full.result.current.children).toEqual(
       ARTICLE_RESPONSE_FIXTURE.children,
     );

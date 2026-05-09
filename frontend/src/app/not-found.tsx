@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useCallback } from "react";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ROUTES } from "@/constants/routes";
 import styles from "./not-found.module.scss";
 
@@ -66,7 +61,12 @@ function GridBackground() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <pattern id="grid404" width="48" height="48" patternUnits="userSpaceOnUse">
+          <pattern
+            id="grid404"
+            width="48"
+            height="48"
+            patternUnits="userSpaceOnUse"
+          >
             <path
               d="M 48 0 L 0 0 0 48"
               fill="none"
@@ -138,13 +138,9 @@ export default function NotFound() {
             style={{ rotateX, rotateY }}
           >
             <div className={styles.numberWrapper}>
-              <div className={`display ${styles.numberMain}`}>
-                404
-              </div>
+              <div className={`display ${styles.numberMain}`}>404</div>
 
-              <div className={`display ${styles.numberShadow}`}>
-                404
-              </div>
+              <div className={`display ${styles.numberShadow}`}>404</div>
             </div>
           </motion.div>
         </motion.div>
@@ -158,9 +154,7 @@ export default function NotFound() {
             Стаття · Не знайдена
           </span>
 
-          <h1 className={`display ${styles.heading}`}>
-            Сторінку не знайдено
-          </h1>
+          <h1 className={`display ${styles.heading}`}>Сторінку не знайдено</h1>
 
           <p className={styles.description}>
             Схоже, цей розділ законодавства не існує або був переміщений до

@@ -1,7 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { motion } from "framer-motion";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { LawStructureList } from "@/components/LawStructureList";
@@ -24,7 +29,9 @@ function parseLimitValue(rawValue: string | null) {
   }
 
   const parsed = Number(rawValue);
-  return ARTICLE_LIMIT_OPTIONS.includes(parsed as (typeof ARTICLE_LIMIT_OPTIONS)[number])
+  return ARTICLE_LIMIT_OPTIONS.includes(
+    parsed as (typeof ARTICLE_LIMIT_OPTIONS)[number],
+  )
     ? parsed
     : DEFAULT_ARTICLE_LIMIT;
 }
@@ -53,9 +60,16 @@ export default function LawTreePage() {
   );
 
   const sections = useMemo(() => buildLawSections(tree), [tree]);
-  const articleCount = useMemo(() => countArticlesInSections(sections), [sections]);
+  const articleCount = useMemo(
+    () => countArticlesInSections(sections),
+    [sections],
+  );
   const visibleSections = useMemo(
-    () => limitLawSections(sections, selectedLimit === "all" ? null : selectedLimit),
+    () =>
+      limitLawSections(
+        sections,
+        selectedLimit === "all" ? null : selectedLimit,
+      ),
     [sections, selectedLimit],
   );
   const visibleArticleCount = useMemo(
@@ -82,7 +96,9 @@ export default function LawTreePage() {
     }
 
     const nextQuery = nextSearchParams.toString();
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+      scroll: false,
+    });
   };
 
   return (
@@ -118,7 +134,9 @@ export default function LawTreePage() {
               вкладену структуру частин, пунктів і абзаців.
             </p>
             <div className="law-structure-summary">
-              {law ? <span className="directory-chip mono">{law.code}</span> : null}
+              {law ? (
+                <span className="directory-chip mono">{law.code}</span>
+              ) : null}
               <span className="mono law-structure-inline-note">
                 {sections.length} розділів · {articleCount} статей
               </span>
@@ -138,7 +156,9 @@ export default function LawTreePage() {
 
                 <div className={styles.controlsActions}>
                   <label className={styles.limitField}>
-                    <span className={`mono ${styles.limitLabel}`}>Показувати</span>
+                    <span className={`mono ${styles.limitLabel}`}>
+                      Показувати
+                    </span>
                     <select
                       aria-label="Показувати статей"
                       className={`form-control form-select ${styles.limitSelect}`}
@@ -160,7 +180,9 @@ export default function LawTreePage() {
                     <button
                       type="button"
                       className={`btn btn-ghost ${styles.loadMoreButton}`}
-                      onClick={() => updateLimit(getNextLimitValue(selectedLimit))}
+                      onClick={() =>
+                        updateLimit(getNextLimitValue(selectedLimit))
+                      }
                     >
                       {getNextLimitValue(selectedLimit) === "all"
                         ? "Показати всі"
@@ -210,7 +232,9 @@ export default function LawTreePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <div className={`mono ${styles.errorLabel}`}>Помилка завантаження</div>
+              <div className={`mono ${styles.errorLabel}`}>
+                Помилка завантаження
+              </div>
               <div className={styles.errorText}>{error}</div>
             </motion.div>
           ) : null}

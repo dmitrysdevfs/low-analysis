@@ -26,7 +26,10 @@ export default function ArticlePage() {
   const lawId = params?.id;
   const articleNumber = params?.num;
   const { laws } = useLaws();
-  const { article, children, loading, error } = useArticle(lawId, articleNumber);
+  const { article, children, loading, error } = useArticle(
+    lawId,
+    articleNumber,
+  );
   const law = laws.find((item) => item._id === lawId);
 
   const lawTitle = law?.title ?? "Закон";
@@ -55,7 +58,6 @@ export default function ArticlePage() {
       <main className={styles.page}>
         <div className={styles.container}>
           <AnimatePresence mode="wait">
-
             {/* Loading skeleton */}
             {loading ? (
               <motion.div
@@ -76,7 +78,10 @@ export default function ArticlePage() {
                       delay: index * 0.12,
                     }}
                     className={styles.skeletonItem}
-                    style={{ height: index === 0 ? 32 : index === 1 ? 20 : 14, width: `${width}%` }}
+                    style={{
+                      height: index === 0 ? 32 : index === 1 ? 20 : 14,
+                      width: `${width}%`,
+                    }}
                   />
                 ))}
               </motion.div>
@@ -106,7 +111,9 @@ export default function ArticlePage() {
                 className={styles.emptyState}
               >
                 <span className={styles.emptyIcon}>§</span>
-                <span className={`mono ${styles.emptyText}`}>Статтю не знайдено</span>
+                <span className={`mono ${styles.emptyText}`}>
+                  Статтю не знайдено
+                </span>
               </motion.div>
             ) : null}
 
@@ -129,14 +136,18 @@ export default function ArticlePage() {
                   <span className={`mono ${styles.lawCardLabel}`}>Закон</span>
                   <span className={styles.lawCardTitle}>{lawTitle}</span>
                   {lawCode && (
-                    <span className={`mono ${styles.lawCardCode}`}>{lawCode}</span>
+                    <span className={`mono ${styles.lawCardCode}`}>
+                      {lawCode}
+                    </span>
                   )}
                 </motion.div>
 
                 {/* Article block */}
                 <div className={styles.articleBlock}>
                   <div className={styles.articleMeta}>
-                    <span className={`mono ${styles.articleCode}`}>{article.code}</span>
+                    <span className={`mono ${styles.articleCode}`}>
+                      {article.code}
+                    </span>
                     <span className={`mono ${styles.articleType}`}>
                       {getNodeTypeLabel(article.type)}
                     </span>
@@ -174,7 +185,11 @@ export default function ArticlePage() {
                     >
                       <div className={`mono ${styles.childrenHeading}`}>
                         Вміст статті · {children.length}{" "}
-                        {children.length === 1 ? "елемент" : children.length < 5 ? "елементи" : "елементів"}
+                        {children.length === 1
+                          ? "елемент"
+                          : children.length < 5
+                            ? "елементи"
+                            : "елементів"}
                       </div>
                       <div className={styles.childrenList}>
                         {children.map((child, index) => (
@@ -182,22 +197,33 @@ export default function ArticlePage() {
                             key={child.code}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.1 + index * 0.05, duration: 0.28 }}
+                            transition={{
+                              delay: 0.1 + index * 0.05,
+                              duration: 0.28,
+                            }}
                             className={styles.childItem}
                           >
                             <span className={`mono ${styles.childBadge}`}>
-                              {child.number ?? (index + 1)}
+                              {child.number ?? index + 1}
                             </span>
                             <div className={styles.childContent}>
                               {child.title && child.text ? (
                                 <>
-                                  <div className={styles.childTitle}>{child.title}</div>
-                                  <div className={styles.childText}>{child.text}</div>
+                                  <div className={styles.childTitle}>
+                                    {child.title}
+                                  </div>
+                                  <div className={styles.childText}>
+                                    {child.text}
+                                  </div>
                                 </>
                               ) : child.title ? (
-                                <div className={styles.childTitle}>{child.title}</div>
+                                <div className={styles.childTitle}>
+                                  {child.title}
+                                </div>
                               ) : (
-                                <div className={styles.childTextOnly}>{child.text}</div>
+                                <div className={styles.childTextOnly}>
+                                  {child.text}
+                                </div>
                               )}
                             </div>
                           </motion.div>
@@ -221,7 +247,9 @@ export default function ArticlePage() {
                       className={styles.lawLink}
                     >
                       <div className={styles.lawLinkLeft}>
-                        <span className={`mono ${styles.lawLinkLabel}`}>Повний закон</span>
+                        <span className={`mono ${styles.lawLinkLabel}`}>
+                          Повний закон
+                        </span>
                         <span className={styles.lawLinkTitle}>{lawTitle}</span>
                       </div>
                       <span className={styles.lawLinkArrow}>↗</span>
@@ -230,7 +258,6 @@ export default function ArticlePage() {
                 )}
               </motion.div>
             ) : null}
-
           </AnimatePresence>
         </div>
       </main>

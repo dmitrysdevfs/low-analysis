@@ -99,7 +99,9 @@ export function buildTreeBranches(elements: TreeNode[]) {
   const roots: TreeBranch[] = [];
 
   for (const branch of branches) {
-    const parent = branch.parentId ? branchesById.get(branch.parentId) : undefined;
+    const parent = branch.parentId
+      ? branchesById.get(branch.parentId)
+      : undefined;
 
     if (parent) {
       parent.children.push(branch);
@@ -152,7 +154,10 @@ export function countSectionArticles(section: TreeBranch) {
 }
 
 export function countArticlesInSections(sections: TreeBranch[]) {
-  return sections.reduce((total, section) => total + countSectionArticles(section), 0);
+  return sections.reduce(
+    (total, section) => total + countSectionArticles(section),
+    0,
+  );
 }
 
 export function limitLawSections(sections: TreeBranch[], limit: number | null) {
@@ -225,7 +230,9 @@ export function getArticleRouteNumber(node: TreeNode) {
     return number;
   }
 
-  const match = `${node.title ?? ""} ${node.text ?? ""}`.match(/\d+(?:[-–]\d+)?/u);
+  const match = `${node.title ?? ""} ${node.text ?? ""}`.match(
+    /\d+(?:[-–]\d+)?/u,
+  );
   return match?.[0] ?? null;
 }
 

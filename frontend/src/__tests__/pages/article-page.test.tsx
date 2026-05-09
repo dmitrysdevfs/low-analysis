@@ -37,7 +37,9 @@ describe("Article page", () => {
 
     expect(screen.getAllByText(LAW_FIXTURE.title).length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("heading", { name: ARTICLE_RESPONSE_FIXTURE.article.title! }),
+      screen.getByRole("heading", {
+        name: ARTICLE_RESPONSE_FIXTURE.article.title!,
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText(/Вміст статті/i)).toBeInTheDocument();
     expect(

@@ -10,7 +10,7 @@ import styles from "./page.module.scss";
 
 function useWindowWidth() {
   const [w, setW] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1200
+    typeof window !== "undefined" ? window.innerWidth : 1200,
   );
   useEffect(() => {
     const h = () => setW(window.innerWidth);
@@ -177,9 +177,7 @@ function HerbFlipCard({
                 <span className={`mono ${styles.flipBackArticleBadge}`}>
                   ст.{right.art}
                 </span>
-                <span className={styles.flipBackRightText}>
-                  {right.text}
-                </span>
+                <span className={styles.flipBackRightText}>{right.text}</span>
               </motion.div>
             ))}
           </div>
@@ -202,12 +200,8 @@ function StatItem({
 
   return (
     <div className={styles.statItem}>
-      <div className={`mono ${styles.statValue}`}>
-        {count.toLocaleString()}
-      </div>
-      <div className={`mono ${styles.statLabel}`}>
-        {label}
-      </div>
+      <div className={`mono ${styles.statValue}`}>{count.toLocaleString()}</div>
+      <div className={`mono ${styles.statLabel}`}>{label}</div>
     </div>
   );
 }
@@ -298,20 +292,14 @@ export default function HomePage() {
               Перетворення текстів законів на структуру
             </motion.p>
 
-            <motion.p
-              variants={childFade}
-              className={styles.heroDesc}
-            >
+            <motion.p variants={childFade} className={styles.heroDesc}>
               Закони України існують як неструктуровані текстові полотна. Low
               Analysis розбиває кожен закон на атомарні одиниці — розділ →
               стаття → абзац — де кожен елемент має унікальний ієрархічний код і
               зв&apos;язок із батьківським елементом.
             </motion.p>
 
-            <motion.div
-              variants={childFade}
-              className={styles.heroBtns}
-            >
+            <motion.div variants={childFade} className={styles.heroBtns}>
               <Link
                 href={ROUTES.laws}
                 className={`btn btn-outline ${styles.btnWithIcon}`}
@@ -328,10 +316,7 @@ export default function HomePage() {
                   →
                 </motion.span>
               </Link>
-              <Link
-                href={ROUTES.subjects}
-                className="btn btn-azure"
-              >
+              <Link href={ROUTES.subjects} className="btn btn-azure">
                 Суб&apos;єкти
               </Link>
               <Link
@@ -412,9 +397,7 @@ export default function HomePage() {
           transition={{ duration: 0.4 }}
           className={styles.stepsSectionHeader}
         >
-          <div className={`mono ${styles.stepsSectionLabel}`}>
-            Як це працює
-          </div>
+          <div className={`mono ${styles.stepsSectionLabel}`}>Як це працює</div>
           <h2 className={`display ${styles.stepsSectionH2}`}>
             Від HTML до структури
           </h2>
@@ -430,18 +413,12 @@ export default function HomePage() {
               whileHover={{ y: -4, borderColor: "rgba(200,168,67,0.4)" }}
               className={styles.stepCard}
             >
-              <div className={`mono ${styles.stepCardNum}`}>
-                {step.num}
-              </div>
-              <div className={`mono ${styles.stepCardIcon}`}>
-                {step.icon}
-              </div>
+              <div className={`mono ${styles.stepCardNum}`}>{step.num}</div>
+              <div className={`mono ${styles.stepCardIcon}`}>{step.icon}</div>
               <h3 className={`display ${styles.stepCardTitle}`}>
                 {step.title}
               </h3>
-              <p className={styles.stepCardDesc}>
-                {step.desc}
-              </p>
+              <p className={styles.stepCardDesc}>{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -455,9 +432,7 @@ export default function HomePage() {
             transition={{ duration: 0.4 }}
             className={styles.roadmapHeader}
           >
-            <div className={`mono ${styles.roadmapLabel}`}>
-              Дорожня карта
-            </div>
+            <div className={`mono ${styles.roadmapLabel}`}>Дорожня карта</div>
             <h2 className={`display ${styles.roadmapH2}`}>
               Що зроблено і що далі
             </h2>

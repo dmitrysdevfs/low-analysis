@@ -3,10 +3,7 @@ import SubjectDetailPage from "@/app/subjects/[id]/page";
 import SubjectsPage from "@/app/subjects/page";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
 import { useSubjects } from "@/hooks/useSubjects";
-import {
-  ARTICLE_NODE,
-  SUBJECT_FIXTURE,
-} from "@/test/fixtures";
+import { ARTICLE_NODE, SUBJECT_FIXTURE } from "@/test/fixtures";
 import { setMockParams } from "@/test/mocks/next-navigation";
 
 vi.mock("@/hooks/useSubjects", () => ({
@@ -31,9 +28,10 @@ describe("Subjects pages", () => {
     expect(screen.getByText("Суб'єкти")).toBeInTheDocument();
     expect(screen.getByText("регулювання")).toBeInTheDocument();
     expect(screen.getByText(/1.*суб'єкт/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /Підприємець/i }),
-    ).toHaveAttribute("href", `/subjects/${SUBJECT_FIXTURE._id}`);
+    expect(screen.getByRole("link", { name: /Підприємець/i })).toHaveAttribute(
+      "href",
+      `/subjects/${SUBJECT_FIXTURE._id}`,
+    );
     expect(screen.getByText("ФОП")).toBeInTheDocument();
   });
 
@@ -69,6 +67,8 @@ describe("Subjects pages", () => {
 
     render(<SubjectDetailPage />);
 
-    expect(screen.getByText(/Pipeline AI-аналізу в розробці/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Pipeline AI-аналізу в розробці/i),
+    ).toBeInTheDocument();
   });
 });

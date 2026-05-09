@@ -11,9 +11,9 @@ export function ScrollRestore() {
   useEffect(() => {
     const key = KEY(pathname);
 
-    const nav = performance.getEntriesByType(
-      "navigation",
-    )[0] as PerformanceNavigationTiming | undefined;
+    const nav = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
 
     const isReload = nav?.type === "reload";
 
@@ -22,7 +22,10 @@ export function ScrollRestore() {
       if (saved) {
         const y = parseInt(saved, 10);
         requestAnimationFrame(() => {
-          setTimeout(() => window.scrollTo({ top: y, behavior: "instant" }), 80);
+          setTimeout(
+            () => window.scrollTo({ top: y, behavior: "instant" }),
+            80,
+          );
         });
       }
     } else {

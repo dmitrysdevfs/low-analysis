@@ -78,10 +78,7 @@ export default function SubjectDetailPage() {
                   </div>
                   <div className={styles.aliasesFlex}>
                     {subject.aliases.map((alias) => (
-                      <span
-                        key={alias}
-                        className={`mono ${styles.aliasBadge}`}
-                      >
+                      <span key={alias} className={`mono ${styles.aliasBadge}`}>
                         {alias}
                       </span>
                     ))}

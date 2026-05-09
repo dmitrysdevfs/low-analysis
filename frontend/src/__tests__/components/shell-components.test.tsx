@@ -10,10 +10,7 @@ describe("shell components", () => {
   it("renders breadcrumb items with links and a current item", () => {
     render(
       <Breadcrumb
-        items={[
-          { label: "Закони", href: "/laws" },
-          { label: "Стаття 1" },
-        ]}
+        items={[{ label: "Закони", href: "/laws" }, { label: "Стаття 1" }]}
       />,
     );
 
@@ -53,9 +50,11 @@ describe("shell components", () => {
     expect(screen.getByText("статей")).toBeInTheDocument();
     expect(screen.getByText("абзаців")).toBeInTheDocument();
     expect(
-      screen.getAllByRole("link").some(
-        (link) => link.getAttribute("href") === `/laws/${LAW_FIXTURE._id}`,
-      ),
+      screen
+        .getAllByRole("link")
+        .some(
+          (link) => link.getAttribute("href") === `/laws/${LAW_FIXTURE._id}`,
+        ),
     ).toBe(true);
   });
 
@@ -63,9 +62,8 @@ describe("shell components", () => {
     render(<Footer />);
 
     expect(screen.getByText(/Low Analysis/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Документація API/i })).toHaveAttribute(
-      "href",
-      "/api-docs",
-    );
+    expect(
+      screen.getByRole("link", { name: /Документація API/i }),
+    ).toHaveAttribute("href", "/api-docs");
   });
 });

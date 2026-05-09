@@ -143,7 +143,9 @@
   padding: 5px 10px;
   font-family: var(--font-mono);
   flex-shrink: 0;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
   white-space: nowrap;
 
   &:hover {

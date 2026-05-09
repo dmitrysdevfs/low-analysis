@@ -135,12 +135,8 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
         {/* ── FRONT ── */}
         <div onClick={handleFlip} className={styles.cardFront}>
           <div className={styles.frontHeader}>
-            <h2 className={`display ${styles.frontTitle}`}>
-              {law.title}
-            </h2>
-            <span className={`mono ${styles.lawCodeBadge}`}>
-              {law.code}
-            </span>
+            <h2 className={`display ${styles.frontTitle}`}>{law.title}</h2>
+            <span className={`mono ${styles.lawCodeBadge}`}>{law.code}</span>
           </div>
 
           <div className={styles.frontStats}>
@@ -162,9 +158,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
           {/* Back header */}
           <div className={styles.backHeader}>
             <div className={styles.backTitleWrap}>
-              <span className={`display ${styles.backTitle}`}>
-                {law.title}
-              </span>
+              <span className={`display ${styles.backTitle}`}>{law.title}</span>
               <span className={`mono ${styles.backSubtitle}`}>
                 Статті закону · {law.totalArticles} всього
               </span>
@@ -185,7 +179,10 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
               className={styles.searchInput}
             />
             {query && (
-              <button onClick={() => setQuery("")} className={styles.searchClear}>
+              <button
+                onClick={() => setQuery("")}
+                className={styles.searchClear}
+              >
                 ✕
               </button>
             )}
@@ -268,7 +265,10 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
           {/* Footer */}
           <div className={styles.cardFooter}>
             <Link href={ROUTES.law(law._id)} className={styles.allArticlesLink}>
-              <motion.div whileHover={{ x: 4 }} className={styles.allArticlesBtn}>
+              <motion.div
+                whileHover={{ x: 4 }}
+                className={styles.allArticlesBtn}
+              >
                 Всі статті закону ({law.totalArticles}) →
               </motion.div>
             </Link>

@@ -48,11 +48,7 @@ export const motion = new Proxy(
   },
 ) as Record<string, React.ComponentType<Record<string, unknown>>>;
 
-export function AnimatePresence({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function AnimatePresence({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 

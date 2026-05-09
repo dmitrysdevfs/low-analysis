@@ -8,17 +8,16 @@ function hasPathname(value: unknown): value is { pathname?: string | null } {
   return typeof value === "object" && value !== null && "pathname" in value;
 }
 
-type MockLinkProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
+type MockLinkProps = Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  "href"
+> & {
   href: unknown;
   children: React.ReactNode;
 };
 
 vi.mock("next/link", () => ({
-  default: ({
-    href,
-    children,
-    ...props
-  }: MockLinkProps) => {
+  default: ({ href, children, ...props }: MockLinkProps) => {
     const normalizedHref =
       typeof href === "string"
         ? href

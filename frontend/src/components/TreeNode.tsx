@@ -29,9 +29,7 @@ export function TreeNode({ node, children = [], activeCode, onSelect }: Props) {
           >
             ▶
           </motion.span>
-          <span className={`display ${styles.sectionTitle}`}>
-            {node.title}
-          </span>
+          <span className={`display ${styles.sectionTitle}`}>{node.title}</span>
         </button>
 
         <AnimatePresence initial={false}>
@@ -78,7 +76,9 @@ function LeafNode({
       className={`${styles.leafBtn} ${isActive ? styles.leafBtnActive : ""}`}
     >
       <span className={`mono ${styles.leafCode}`}>{node.code}</span>
-      <span className={`${styles.leafText} ${isActive ? styles.leafTextActive : ""}`}>
+      <span
+        className={`${styles.leafText} ${isActive ? styles.leafTextActive : ""}`}
+      >
         {node.title ?? node.text ?? node.code}
       </span>
     </button>

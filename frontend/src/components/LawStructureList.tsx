@@ -162,7 +162,9 @@ function NestedNode({ node }: { node: TreeBranch }) {
   return (
     <div className="law-structure-node">
       <div className="law-structure-node-label">{getNodeLabel(node)}</div>
-      {content ? <div className="law-structure-node-text">{content}</div> : null}
+      {content ? (
+        <div className="law-structure-node-text">{content}</div>
+      ) : null}
       {node.children.length > 0 ? (
         <div className="law-structure-node-children">
           <NestedNodeList nodes={node.children} />

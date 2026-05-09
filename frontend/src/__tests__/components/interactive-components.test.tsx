@@ -28,7 +28,9 @@ describe("interactive frontend components", () => {
       "href",
       "/",
     );
-    expect(screen.getByRole("link", { name: "Суб'єкти" })).toHaveClass("active");
+    expect(screen.getByRole("link", { name: "Суб'єкти" })).toHaveClass(
+      "active",
+    );
   });
 
   it("renders skeleton card shell", () => {
@@ -41,11 +43,7 @@ describe("interactive frontend components", () => {
     const onSelect = vi.fn();
 
     render(
-      <TreeNode
-        node={SECTION_NODE}
-        activeCode={null}
-        onSelect={onSelect}
-      >
+      <TreeNode node={SECTION_NODE} activeCode={null} onSelect={onSelect}>
         {[ARTICLE_NODE]}
       </TreeNode>,
     );
@@ -174,10 +172,14 @@ describe("interactive frontend components", () => {
     );
 
     expect(
-      screen.getByRole("link", { name: /Загальні засади конституційного ладу/i }),
+      screen.getByRole("link", {
+        name: /Загальні засади конституційного ладу/i,
+      }),
     ).toHaveAttribute("href", `/laws/${LAW_FIXTURE._id}/articles/1`);
 
-    await user.click(screen.getByRole("button", { name: /Показати структуру/i }));
+    await user.click(
+      screen.getByRole("button", { name: /Показати структуру/i }),
+    );
 
     expect(screen.getByText(PART_NODE.text!)).toBeInTheDocument();
   });

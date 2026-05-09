@@ -76,12 +76,16 @@ describe("Law tree page", () => {
       }),
     ).toHaveAttribute("href", `/laws/${LAW_FIXTURE._id}/articles/1`);
 
-    await user.click(screen.getByRole("button", { name: /Показати структуру/i }));
+    await user.click(
+      screen.getByRole("button", { name: /Показати структуру/i }),
+    );
 
     expect(screen.getByText(PART_NODE.text!)).toBeInTheDocument();
     expect(screen.getByText("Розділ I")).toBeInTheDocument();
     expect(
-      screen.queryByText("Сиротський абзац не повинен з'являтися в загальному списку закону."),
+      screen.queryByText(
+        "Сиротський абзац не повинен з'являтися в загальному списку закону.",
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -94,7 +98,12 @@ describe("Law tree page", () => {
     vi.mocked(useLawTree).mockReturnValue({
       fetchedId: LAW_FIXTURE._id,
       law: LAW_FIXTURE,
-      tree: [SECTION_NODE, ...Array.from({ length: 24 }, (_, index) => createArticleNode(index + 1))],
+      tree: [
+        SECTION_NODE,
+        ...Array.from({ length: 24 }, (_, index) =>
+          createArticleNode(index + 1),
+        ),
+      ],
       error: null,
       loading: false,
     });
@@ -102,9 +111,9 @@ describe("Law tree page", () => {
     render(<LawTreePage />);
 
     expect(screen.getByText("Показано 10 із 24 статей")).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Показувати статей" })).toHaveValue(
-      "10",
-    );
+    expect(
+      screen.getByRole("combobox", { name: "Показувати статей" }),
+    ).toHaveValue("10");
     expect(
       screen.getByRole("link", { name: "Назва статті 10" }),
     ).toBeInTheDocument();

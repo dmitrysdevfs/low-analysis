@@ -30,7 +30,11 @@ vi.mock("@/components/SearchResults", () => ({
   }: {
     results: Array<{ _id: string }>;
     query: string;
-  }) => <div>SearchResults:{results.length}:{query}</div>,
+  }) => (
+    <div>
+      SearchResults:{results.length}:{query}
+    </div>
+  ),
 }));
 
 describe("Search page", () => {
@@ -57,7 +61,9 @@ describe("Search page", () => {
 
     render(<SearchPage />);
 
-    expect(screen.getByText("SearchForm:false:function:function")).toBeInTheDocument();
+    expect(
+      screen.getByText("SearchForm:false:function:function"),
+    ).toBeInTheDocument();
     expect(screen.getByText("SearchResults:1:конституція")).toBeInTheDocument();
   });
 });
