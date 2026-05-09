@@ -1,0 +1,27 @@
+.footer {
+  border-top: 1px solid #1c3260;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(8, 15, 32, 0.96);
+}
+
+.text {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #7a98c0;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #c8a843;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

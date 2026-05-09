@@ -8,6 +8,11 @@ export interface Law {
   createdAt: string;
 }
 
+export interface LawTreeResponse {
+  law: Law;
+  elements: TreeNode[];
+}
+
 export type TreeNodeType =
   | "section"
   | "article"

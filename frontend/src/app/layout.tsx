@@ -3,6 +3,8 @@ import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/layout/Header/Header";
 import Footer from "@/layout/Footer/Footer";
+import { BackendWarmup } from "@/components/BackendWarmup";
+import { ScrollRestore } from "@/components/ScrollRestore";
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
@@ -43,6 +45,8 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <div className="site-shell">
+          <BackendWarmup />
+          <ScrollRestore />
           <Header />
           <div className="site-content">{children}</div>
           <Footer />

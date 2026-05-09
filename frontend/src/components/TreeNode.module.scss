@@ -1,0 +1,62 @@
+.sectionBtn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #1c3260;
+  cursor: pointer;
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.sectionArrow {
+  font-size: 0.62rem;
+  color: #c8a843;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  color: #c8a843;
+}
+
+.sectionChildren {
+  overflow: hidden;
+}
+
+.leafBtn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 10px 14px 10px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(74, 128, 212, 0.06);
+  }
+}
+
+.leafBtnActive {
+  background: rgba(74, 128, 212, 0.14);
+  border-left-color: #4a80d4;
+}
+
+.leafCode {
+  font-size: 0.62rem;
+  color: #4a80d4;
+}
+
+.leafText {
+  font-size: 0.82rem;
+  color: #a8bedd;
+}
+
+.leafTextActive {
+  color: #ffffff;
+}

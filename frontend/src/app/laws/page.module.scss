@@ -1,0 +1,141 @@
+.wrapper {
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+}
+
+.blobGold {
+  position: absolute;
+  top: -160px;
+  left: -160px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(200, 168, 67, 0.06) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.blobBlue {
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(26, 62, 138, 0.25) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.sectionInner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.heroMotion {
+  margin-bottom: 36px;
+}
+
+.heading {
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  margin: 0 0 14px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.headingAccent {
+  color: #c8a843;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #7a98c0;
+  margin: 0;
+  max-width: 460px;
+  line-height: 1.65;
+}
+
+.searchWrapper {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #4a80d4;
+  pointer-events: none;
+}
+
+.searchInput {
+  padding-left: 38px;
+}
+
+.clearButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #7a98c0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 4px;
+}
+
+.countLine {
+  font-size: 0.68rem;
+  color: #7a98c0;
+  margin-bottom: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.errorBox {
+  background: rgba(239, 68, 68, 0.07);
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  border-radius: 6px;
+  padding: 16px 20px;
+  color: #fca5a5;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 0;
+  color: #7a98c0;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.emptyIcon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  color: #1c3260;
+}
+
+.lawsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

@@ -1,0 +1,32 @@
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.crumb {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.separator {
+  font-size: 0.7rem;
+  color: #1c3260;
+}
+
+.link {
+  font-size: 0.72rem;
+  color: #7a98c0;
+  text-decoration: none;
+
+  &:hover {
+    color: #c8a843;
+  }
+}
+
+.current {
+  font-size: 0.72rem;
+  color: #d6e0f0;
+}

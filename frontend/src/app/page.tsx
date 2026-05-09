@@ -6,6 +6,19 @@ import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
+import styles from "./page.module.scss";
+
+function useWindowWidth() {
+  const [w, setW] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200,
+  );
+  useEffect(() => {
+    const h = () => setW(window.innerWidth);
+    window.addEventListener("resize", h);
+    return () => window.removeEventListener("resize", h);
+  }, []);
+  return w;
+}
 
 function useCountUp(target: number, duration = 1400, active = false) {
   const [value, setValue] = useState(0);
@@ -100,7 +113,13 @@ const rights = [
   { art: "55", text: "Права і свободи людини і громадянина захищаються судом" },
 ];
 
-function HerbFlipCard() {
+function HerbFlipCard({
+  width = 300,
+  height = 360,
+}: {
+  width?: number;
+  height?: number;
+}) {
   const [flipped, setFlipped] = useState(false);
 
   return (
@@ -108,98 +127,42 @@ function HerbFlipCard() {
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
       onClick={() => setFlipped((value) => !value)}
-      style={{
-        perspective: 1000,
-        cursor: "pointer",
-        width: 300,
-        height: 360,
-        flexShrink: 0,
-      }}
+      className={styles.flipCardOuter}
+      style={{ width, height }}
     >
       <motion.div
         animate={{ rotateY: flipped ? 180 : 0 }}
         transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "relative",
-          transformStyle: "preserve-3d",
-        }}
+        className={styles.flipCardInner}
       >
-        <div
-          className="panel"
-          style={{
-            position: "absolute",
-            inset: 0,
-            backfaceVisibility: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 20,
-          }}
-        >
+        <div className={`panel ${styles.flipFront}`}>
           <motion.div
             animate={{ scale: flipped ? 0.95 : 1 }}
             transition={{ duration: 0.3 }}
           >
             <TryzubSvg size={110} />
           </motion.div>
-          <div style={{ textAlign: "center" }}>
-            <div
-              className="display"
-              style={{ fontSize: "1.05rem", color: "#FFFFFF" }}
-            >
+          <div className={styles.flipFrontTextCenter}>
+            <div className={`display ${styles.flipFrontTitle}`}>
               Герб України
             </div>
-            <div
-              className="mono"
-              style={{ fontSize: "0.6rem", color: "#4A80D4", marginTop: 6 }}
-            >
+            <div className={`mono ${styles.flipFrontMono}`}>
               Тризуб · Символ держави
             </div>
           </div>
-          <div
-            className="mono"
-            style={{ fontSize: "0.55rem", color: "#1C3260", marginTop: 8 }}
-          >
+          <div className={`mono ${styles.flipFrontHint}`}>
             Наведи або натисни
           </div>
         </div>
 
-        <div
-          className="panel"
-          style={{
-            position: "absolute",
-            inset: 0,
-            transform: "rotateY(180deg)",
-            backfaceVisibility: "hidden",
-            padding: "24px 20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: 0,
-          }}
-        >
-          <div
-            className="mono"
-            style={{ fontSize: "0.6rem", color: "#C8A843", marginBottom: 16 }}
-          >
+        <div className={`panel ${styles.flipBack}`}>
+          <div className={`mono ${styles.flipBackLabel}`}>
             Конституція України · Розділ II
           </div>
-          <div
-            className="display"
-            style={{ fontSize: "1rem", color: "#FFFFFF", marginBottom: 16 }}
-          >
+          <div className={`display ${styles.flipBackTitle}`}>
             Права і свободи людини
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-              flex: 1,
-            }}
-          >
+          <div className={styles.flipBackRights}>
             {rights.map((right, index) => (
               <motion.div
                 key={right.art}
@@ -209,32 +172,12 @@ function HerbFlipCard() {
                   delay: flipped ? index * 0.07 : 0,
                   duration: 0.3,
                 }}
-                style={{ display: "flex", gap: 10, alignItems: "flex-start" }}
+                className={styles.flipBackRightRow}
               >
-                <span
-                  className="mono"
-                  style={{
-                    fontSize: "0.6rem",
-                    color: "#C8A843",
-                    background: "rgba(200,168,67,0.1)",
-                    border: "1px solid rgba(200,168,67,0.2)",
-                    borderRadius: 3,
-                    padding: "1px 5px",
-                    flexShrink: 0,
-                    marginTop: 2,
-                  }}
-                >
+                <span className={`mono ${styles.flipBackArticleBadge}`}>
                   ст.{right.art}
                 </span>
-                <span
-                  style={{
-                    color: "#A8BEDD",
-                    fontSize: "0.72rem",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {right.text}
-                </span>
+                <span className={styles.flipBackRightText}>{right.text}</span>
               </motion.div>
             ))}
           </div>
@@ -256,30 +199,9 @@ function StatItem({
   const count = useCountUp(value, 1200, active);
 
   return (
-    <div style={{ textAlign: "center", padding: "0 32px" }}>
-      <div
-        className="mono"
-        style={{
-          fontSize: "2rem",
-          fontWeight: 700,
-          color: "#C8A843",
-          lineHeight: 1,
-        }}
-      >
-        {count.toLocaleString()}
-      </div>
-      <div
-        className="mono"
-        style={{
-          fontSize: "0.72rem",
-          color: "#7A98C0",
-          marginTop: 6,
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
-        }}
-      >
-        {label}
-      </div>
+    <div className={styles.statItem}>
+      <div className={`mono ${styles.statValue}`}>{count.toLocaleString()}</div>
+      <div className={`mono ${styles.statLabel}`}>{label}</div>
     </div>
   );
 }
@@ -300,7 +222,7 @@ const steps = [
   {
     num: "03",
     title: "Аналіз",
-    desc: "REST API відкриває доступ до дерева будь-якого закону. Майбутнє — граф зв’язків між нормами.",
+    desc: "REST API відкриває доступ до дерева будь-якого закону. Майбутнє — граф зв'язків між нормами.",
     icon: "◈",
   },
 ];
@@ -316,6 +238,7 @@ const roadmap = [
 ];
 
 export default function HomePage() {
+  const w = useWindowWidth();
   const { laws, loading } = useLaws();
   const statsRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLDivElement>(null);
@@ -338,122 +261,48 @@ export default function HomePage() {
 
   return (
     <Layout>
-      <section
-        style={{
-          position: "relative",
-          overflow: "hidden",
-          padding: "72px 48px 80px",
-          maxWidth: 1100,
-          margin: "0 auto",
-          width: "100%",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: -120,
-            right: -80,
-            width: 480,
-            height: 480,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(26,62,138,0.35) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: -80,
-            width: 300,
-            height: 300,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(200,168,67,0.06) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
+      <section className={styles.heroSection}>
+        <div className={styles.blobTopRight} />
+        <div className={styles.blobBottomLeft} />
 
         <div
+          className={styles.heroInner}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 64,
-            flexWrap: "wrap",
+            flexDirection: w < 768 ? "column" : "row",
+            gap: w < 768 ? 32 : 64,
           }}
         >
           <motion.div
-            style={{ flex: "1 1 340px" }}
+            className={styles.heroText}
             variants={stagger}
             initial="initial"
             animate="animate"
           >
-            <motion.div variants={childFade} style={{ marginBottom: 16 }}>
-              <span className="eyebrow">v0.1 · MVP</span>
-            </motion.div>
-
             <motion.h1
               variants={childFade}
-              className="display"
-              style={{
-                fontSize: "clamp(2.6rem, 5vw, 4.4rem)",
-                margin: "0 0 8px",
-                lineHeight: 1.05,
-              }}
+              className={`display ${styles.heroH1}`}
             >
               Low Analysis
             </motion.h1>
 
             <motion.p
               variants={childFade}
-              className="display"
-              style={{
-                fontSize: "clamp(1.1rem, 2vw, 1.5rem)",
-                fontStyle: "italic",
-                color: "#C8A843",
-                margin: "0 0 24px",
-                lineHeight: 1.3,
-              }}
+              className={`display ${styles.heroSubtitle}`}
             >
               Перетворення текстів законів на структуру
             </motion.p>
 
-            <motion.p
-              variants={childFade}
-              style={{
-                fontSize: "0.95rem",
-                color: "#7A98C0",
-                lineHeight: 1.75,
-                maxWidth: 460,
-                margin: "0 0 36px",
-              }}
-            >
+            <motion.p variants={childFade} className={styles.heroDesc}>
               Закони України існують як неструктуровані текстові полотна. Low
               Analysis розбиває кожен закон на атомарні одиниці — розділ →
               стаття → абзац — де кожен елемент має унікальний ієрархічний код і
               зв&apos;язок із батьківським елементом.
             </motion.p>
 
-            <motion.div
-              variants={childFade}
-              style={{ display: "flex", gap: 12, flexWrap: "wrap" }}
-            >
+            <motion.div variants={childFade} className={styles.heroBtns}>
               <Link
                 href={ROUTES.laws}
-                style={{
-                  fontWeight: 600,
-                  fontSize: "0.88rem",
-                  color: "#C8A843",
-                  background: "transparent",
-                  border: "1px solid #C8A843",
-                  borderRadius: 6,
-                  padding: "11px 28px",
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                }}
+                className={`btn btn-outline ${styles.btnWithIcon}`}
               >
                 Переглянути закони
                 <motion.span
@@ -467,51 +316,29 @@ export default function HomePage() {
                   →
                 </motion.span>
               </Link>
-              <Link
-                href={ROUTES.subjects}
-                style={{
-                  fontWeight: 600,
-                  fontSize: "0.88rem",
-                  color: "#4A80D4",
-                  background: "rgba(74,128,212,0.08)",
-                  border: "1px solid rgba(74,128,212,0.25)",
-                  borderRadius: 6,
-                  padding: "11px 22px",
-                  textDecoration: "none",
-                }}
-              >
+              <Link href={ROUTES.subjects} className="btn btn-azure">
                 Суб&apos;єкти
+              </Link>
+              <Link
+                href={ROUTES.search}
+                className={`btn btn-ghost ${styles.btnWithIconSm}`}
+              >
+                ⌕ Пошук
               </Link>
             </motion.div>
           </motion.div>
 
-          <motion.div {...fadeUp(0.3)} style={{ flex: "0 1 auto" }}>
-            <HerbFlipCard />
+          <motion.div {...fadeUp(0.3)} className={styles.heroCardWrapper}>
+            <HerbFlipCard
+              width={w < 768 ? 260 : 300}
+              height={w < 768 ? 310 : 360}
+            />
           </motion.div>
         </div>
       </section>
 
-      <div
-        ref={statsRef}
-        style={{
-          borderTop: "1px solid #1C3260",
-          borderBottom: "1px solid #1C3260",
-          background: "#0D1C3A",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1100,
-            margin: "0 auto",
-            padding: "32px 48px",
-            display: "flex",
-            justifyContent: "space-around",
-            flexWrap: "wrap",
-            gap: 24,
-            minHeight: 100,
-            alignItems: "center",
-          }}
-        >
+      <div ref={statsRef} className={styles.statsBand}>
+        <div className={styles.statsInner}>
           <AnimatePresence mode="wait">
             {loading ? (
               <motion.div
@@ -519,12 +346,7 @@ export default function HomePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                style={{
-                  display: "flex",
-                  gap: 48,
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                }}
+                className={styles.statsLoadingRow}
               >
                 {[80, 56, 72].map((width, index) => (
                   <motion.div
@@ -535,12 +357,8 @@ export default function HomePage() {
                       repeat: Infinity,
                       delay: index * 0.15,
                     }}
-                    style={{
-                      width,
-                      height: 48,
-                      background: "#1C3260",
-                      borderRadius: 6,
-                    }}
+                    className={styles.skeletonBlock}
+                    style={{ width }}
                   />
                 ))}
               </motion.div>
@@ -550,13 +368,7 @@ export default function HomePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-around",
-                  flexWrap: "wrap",
-                  gap: 24,
-                  width: "100%",
-                }}
+                className={styles.statsRow}
               >
                 {stats.map((stat, index) => (
                   <motion.div
@@ -578,43 +390,20 @@ export default function HomePage() {
         </div>
       </div>
 
-      <section
-        ref={stepsRef}
-        style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 48px" }}
-      >
+      <section ref={stepsRef} className={styles.stepsSection}>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={stepsInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.4 }}
-          style={{ marginBottom: 48 }}
+          className={styles.stepsSectionHeader}
         >
-          <div
-            className="mono"
-            style={{
-              fontSize: "0.62rem",
-              color: "#C8A843",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              marginBottom: 12,
-            }}
-          >
-            Як це працює
-          </div>
-          <h2
-            className="display"
-            style={{ fontSize: "2.2rem", margin: 0, lineHeight: 1.1 }}
-          >
+          <div className={`mono ${styles.stepsSectionLabel}`}>Як це працює</div>
+          <h2 className={`display ${styles.stepsSectionH2}`}>
             Від HTML до структури
           </h2>
         </motion.div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: 20,
-          }}
-        >
+        <div className={styles.stepsGrid}>
           {steps.map((step, index) => (
             <motion.div
               key={step.num}
@@ -622,106 +411,42 @@ export default function HomePage() {
               animate={stepsInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: index * 0.12, duration: 0.45 }}
               whileHover={{ y: -4, borderColor: "rgba(200,168,67,0.4)" }}
-              style={{
-                background: "#0D1C3A",
-                border: "1px solid #1C3260",
-                borderRadius: 8,
-                padding: "28px 24px",
-                position: "relative",
-                overflow: "hidden",
-                transition: "border-color 0.2s",
-              }}
+              className={styles.stepCard}
             >
-              <div
-                className="mono"
-                style={{
-                  position: "absolute",
-                  top: 16,
-                  right: 20,
-                  fontSize: "2.5rem",
-                  color: "rgba(28,50,96,0.8)",
-                  lineHeight: 1,
-                }}
-              >
-                {step.num}
-              </div>
-              <div
-                className="mono"
-                style={{
-                  fontSize: "1.8rem",
-                  color: "#C8A843",
-                  marginBottom: 16,
-                  lineHeight: 1,
-                }}
-              >
-                {step.icon}
-              </div>
-              <h3
-                className="display"
-                style={{
-                  fontSize: "1.3rem",
-                  margin: "0 0 10px",
-                  lineHeight: 1.2,
-                }}
-              >
+              <div className={`mono ${styles.stepCardNum}`}>{step.num}</div>
+              <div className={`mono ${styles.stepCardIcon}`}>{step.icon}</div>
+              <h3 className={`display ${styles.stepCardTitle}`}>
                 {step.title}
               </h3>
-              <p
-                style={{
-                  fontSize: "0.85rem",
-                  color: "#7A98C0",
-                  margin: 0,
-                  lineHeight: 1.65,
-                }}
-              >
-                {step.desc}
-              </p>
+              <p className={styles.stepCardDesc}>{step.desc}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      <section
-        ref={roadmapRef}
-        style={{ borderTop: "1px solid #1C3260", background: "#0D1C3A" }}
-      >
-        <div style={{ maxWidth: 700, margin: "0 auto", padding: "72px 48px" }}>
+      <section ref={roadmapRef} className={styles.roadmapSection}>
+        <div className={styles.roadmapInner}>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={roadInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.4 }}
-            style={{ marginBottom: 40 }}
+            className={styles.roadmapHeader}
           >
-            <div
-              className="mono"
-              style={{
-                fontSize: "0.62rem",
-                color: "#C8A843",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                marginBottom: 12,
-              }}
-            >
-              Дорожня карта
-            </div>
-            <h2 className="display" style={{ fontSize: "2.2rem", margin: 0 }}>
+            <div className={`mono ${styles.roadmapLabel}`}>Дорожня карта</div>
+            <h2 className={`display ${styles.roadmapH2}`}>
               Що зроблено і що далі
             </h2>
           </motion.div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div className={styles.roadmapList}>
             {roadmap.map((item, index) => (
               <motion.div
                 key={item.text}
                 initial={{ opacity: 0, x: -16 }}
                 animate={roadInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: index * 0.08, duration: 0.35 }}
+                className={styles.roadmapItem}
                 style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 14,
-                  padding: "12px 16px",
-                  borderRadius: 6,
                   background: item.done
                     ? "rgba(200,168,67,0.04)"
                     : "transparent",
@@ -731,22 +456,14 @@ export default function HomePage() {
                 }}
               >
                 <span
-                  className="mono"
-                  style={{
-                    fontSize: "0.85rem",
-                    flexShrink: 0,
-                    color: item.done ? "#C8A843" : "#1C3260",
-                    marginTop: 1,
-                  }}
+                  className={`mono ${styles.roadmapCheckmark}`}
+                  style={{ color: item.done ? "#C8A843" : "#1C3260" }}
                 >
                   {item.done ? "✓" : "○"}
                 </span>
                 <span
-                  style={{
-                    fontSize: "0.9rem",
-                    color: item.done ? "#D6E0F0" : "#7A98C0",
-                    lineHeight: 1.5,
-                  }}
+                  className={styles.roadmapItemText}
+                  style={{ color: item.done ? "#D6E0F0" : "#7A98C0" }}
                 >
                   {item.text}
                 </span>
@@ -758,52 +475,19 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={roadInView ? { opacity: 1 } : {}}
             transition={{ delay: 0.7, duration: 0.4 }}
-            style={{
-              marginTop: 48,
-              paddingTop: 32,
-              borderTop: "1px solid #1C3260",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              gap: 16,
-            }}
+            className={styles.roadmapFooter}
           >
             <div>
-              <p
-                className="display"
-                style={{
-                  fontSize: "1.3rem",
-                  color: "#FFFFFF",
-                  margin: "0 0 4px",
-                  fontStyle: "italic",
-                }}
-              >
+              <p className={`display ${styles.roadmapFooterTitle}`}>
                 {loading
                   ? "Завантаження…"
                   : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
               </p>
-              <p
-                className="mono"
-                style={{ fontSize: "0.65rem", color: "#7A98C0", margin: 0 }}
-              >
+              <p className={`mono ${styles.roadmapFooterMono}`}>
                 {loading ? "…" : laws.map((law) => law.code).join(" · ")}
               </p>
             </div>
-            <Link
-              href={ROUTES.laws}
-              style={{
-                fontWeight: 600,
-                fontSize: "0.85rem",
-                color: "#C8A843",
-                background: "transparent",
-                border: "1px solid #C8A843",
-                borderRadius: 6,
-                padding: "10px 22px",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-              }}
-            >
+            <Link href={ROUTES.laws} className={styles.roadmapFooterLink}>
               Відкрити закони →
             </Link>
           </motion.div>

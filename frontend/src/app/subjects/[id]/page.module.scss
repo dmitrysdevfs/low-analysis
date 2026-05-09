@@ -1,0 +1,149 @@
+.breadcrumbBar {
+  border-bottom: 1px solid #1c3260;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  background: rgba(13, 28, 58, 0.9);
+  backdrop-filter: blur(6px);
+}
+
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 100px;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeletonItem {
+  background: #0d1c3a;
+  border-radius: 4px;
+}
+
+.errorBox {
+  background: rgba(239, 68, 68, 0.07);
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  border-radius: 6px;
+  padding: 16px 20px;
+  color: #fca5a5;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.heading {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: #ffffff;
+  margin: 0 0 24px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.aliasesSection {
+  margin-bottom: 40px;
+}
+
+.aliasesLabel {
+  font-size: 0.62rem;
+  color: #7a98c0;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.aliasesFlex {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aliasBadge {
+  font-size: 0.72rem;
+  color: #c8a843;
+  background: rgba(200, 168, 67, 0.08);
+  border: 1px solid rgba(200, 168, 67, 0.25);
+  border-radius: 4px;
+  padding: 4px 12px;
+}
+
+.elementsHeading {
+  font-size: 1.3rem;
+  color: #ffffff;
+  margin: 0 0 16px;
+}
+
+.emptyInfo {
+  background: rgba(74, 128, 212, 0.07);
+  border: 1px solid rgba(74, 128, 212, 0.2);
+  border-radius: 6px;
+  padding: 18px 22px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.emptyInfoIcon {
+  color: #4a80d4;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.emptyInfoText {
+  font-size: 0.88rem;
+  color: #a8bedd;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.elementsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.elementCard {
+  background: #0d1c3a;
+  border: 1px solid #1c3260;
+  border-radius: 6px;
+  padding: 14px 18px;
+}
+
+.elementCodeRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.elementCode {
+  font-size: 0.62rem;
+  color: #4a80d4;
+  background: rgba(74, 128, 212, 0.1);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+  border-radius: 3px;
+  padding: 2px 7px;
+  flex-shrink: 0;
+}
+
+.elementTitle {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.elementText {
+  font-size: 0.85rem;
+  color: #a8bedd;
+  margin: 0;
+  line-height: 1.65;
+}

@@ -1,0 +1,181 @@
+.skeletonSection {
+  padding: 24px 20px;
+}
+
+.skeletonLabel {
+  height: 12px;
+  width: 28%;
+  background: #1c3260;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.skeletonTitle {
+  height: 26px;
+  width: 82%;
+  background: #16305c;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.skeletonRows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonRow {
+  height: 68px;
+  border-radius: 10px;
+  border: 1px solid rgba(28, 50, 96, 0.65);
+  background: rgba(8, 15, 32, 0.42);
+}
+
+.errorPanel {
+  padding: 20px 22px;
+  border-color: rgba(239, 68, 68, 0.22);
+  color: #fca5a5;
+}
+
+.errorLabel {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.errorText {
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.emptyIcon {
+  font-size: 2.2rem;
+  color: #1c3260;
+  margin-bottom: 12px;
+}
+
+.emptyTitle {
+  font-size: 1.12rem;
+  margin-bottom: 8px;
+}
+
+.emptyNote {
+  color: #7a98c0;
+  font-size: 0.76rem;
+}
+
+.contentFlex {
+  flex: 1;
+}
+
+.pageInner {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.emptyPanel {
+  padding: 42px 24px;
+  text-align: center;
+}
+
+.lawMeta {
+  padding: 20px 20px 18px;
+}
+
+.lawTitle {
+  margin: 14px 0 8px;
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.lawDesc {
+  margin: 0;
+  max-width: 720px;
+  color: #a8bedd;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(28, 50, 96, 0.55);
+}
+
+.controlsCopy {
+  min-width: 0;
+  flex: 1 1 360px;
+}
+
+.controlsLabel {
+  color: #d6e0f0;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.controlsHint {
+  margin: 8px 0 0;
+  max-width: 560px;
+  color: #7a98c0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.controlsActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+
+.limitField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 160px;
+}
+
+.limitLabel {
+  color: #a8bedd;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.limitSelect {
+  min-width: 160px;
+}
+
+.loadMoreButton {
+  min-width: 144px;
+}
+
+@media (max-width: 640px) {
+  .lawMeta {
+    padding: 18px 16px 16px;
+  }
+
+  .controls {
+    align-items: stretch;
+  }
+
+  .controlsActions {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .limitField,
+  .limitSelect,
+  .loadMoreButton {
+    width: 100%;
+  }
+}

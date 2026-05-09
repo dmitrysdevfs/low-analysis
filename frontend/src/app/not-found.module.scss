@@ -1,0 +1,215 @@
+// not-found page styles
+
+// ── Root container ──
+.container {
+  min-height: 100vh;
+  background: #080f20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+// ── Grid background ──
+.gridBackground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gridSvg {
+  opacity: 0.07;
+}
+
+.gridGlowLarge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(26, 62, 138, 0.4) 0%,
+    transparent 65%
+  );
+}
+
+.gridGlowSmall {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(200, 168, 67, 0.08) 0%,
+    transparent 65%
+  );
+}
+
+// ── Floating fragment ──
+.floatingFragment {
+  position: absolute;
+  color: #4a80d4;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  text-shadow: 0 0 12px rgba(74, 128, 212, 0.5);
+}
+
+// ── Content ──
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+}
+
+// ── 3D wrapper ──
+.perspectiveWrapper {
+  perspective: 1000px;
+  margin-bottom: 32px;
+}
+
+.transform3d {
+  transform-style: preserve-3d;
+  display: inline-block;
+}
+
+.numberWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+// ── 404 display ──
+.numberMain {
+  font-size: clamp(7rem, 20vw, 14rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: linear-gradient(
+    135deg,
+    #c8a843 0%,
+    #f0e070 40%,
+    #c8a843 65%,
+    #8a6820 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 40px rgba(200, 168, 67, 0.4));
+  user-select: none;
+}
+
+.numberShadow {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: clamp(7rem, 20vw, 14rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(26, 62, 138, 0.35);
+  user-select: none;
+  z-index: -1;
+  filter: blur(2px);
+}
+
+// ── Text block ──
+.statusLabel {
+  font-size: 0.7rem;
+  color: #4a80d4;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  color: #ffffff;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: #7a98c0;
+  line-height: 1.65;
+  max-width: 400px;
+  margin: 0 auto 40px;
+}
+
+// ── Buttons row ──
+.buttonsRow {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #c8a843, #e8c840);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  color: #080f20;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.05em;
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(74, 128, 212, 0.4);
+  border-radius: 8px;
+  padding: 12px 24px;
+  color: #4a80d4;
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.04em;
+}
+
+// ── Orbiting circles ──
+.orbitGold {
+  position: absolute;
+  bottom: 10%;
+  right: 8%;
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba(200, 168, 67, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.orbitBlue {
+  position: absolute;
+  top: 12%;
+  left: 6%;
+  width: 80px;
+  height: 80px;
+  border: 1px solid rgba(74, 128, 212, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}

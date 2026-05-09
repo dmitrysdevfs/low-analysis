@@ -3,9 +3,9 @@
 import type {
   ArticleResponse,
   Law,
+  LawTreeResponse,
   Subject,
   SubjectElements,
-  TreeNode,
 } from "@/types";
 
 const API_BASE = "/api";
@@ -25,11 +25,8 @@ export async function getLaws(q = ""): Promise<Law[]> {
   return getJson<Law[]>(`/laws${qs}`);
 }
 
-export async function getLawTree(id: string): Promise<TreeNode[]> {
-  const response = await getJson<{ law: Law; elements: TreeNode[] }>(
-    `/laws/${id}/tree`,
-  );
-  return response.elements;
+export async function getLawTree(id: string): Promise<LawTreeResponse> {
+  return getJson<LawTreeResponse>(`/laws/${id}/tree`);
 }
 
 export async function getArticle(
