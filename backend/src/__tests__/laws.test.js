@@ -68,7 +68,9 @@ describe('GET /api/laws/:id/tree', () => {
   it('returns 404 when law not found', async () => {
     lawService.getLawById.mockResolvedValue(null);
 
-    const res = await request(app).get('/api/laws/000000000000000000000000/tree');
+    const res = await request(app).get(
+      '/api/laws/000000000000000000000000/tree',
+    );
 
     expect(res.status).toBe(404);
     expect(res.body.message).toBe('Law not found');
@@ -77,7 +79,10 @@ describe('GET /api/laws/:id/tree', () => {
 
 describe('GET /api/laws/:id/articles/:num', () => {
   it('returns 200 with article and children', async () => {
-    lawService.getArticle.mockResolvedValue({ article: MOCK_ELEMENT, children: [] });
+    lawService.getArticle.mockResolvedValue({
+      article: MOCK_ELEMENT,
+      children: [],
+    });
 
     const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles/1`);
 
@@ -89,7 +94,9 @@ describe('GET /api/laws/:id/articles/:num', () => {
   it('returns 404 when article not found', async () => {
     lawService.getArticle.mockResolvedValue(null);
 
-    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles/999`);
+    const res = await request(app).get(
+      `/api/laws/${MOCK_LAW._id}/articles/999`,
+    );
 
     expect(res.status).toBe(404);
     expect(res.body.message).toBe('Article not found');

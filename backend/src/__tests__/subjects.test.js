@@ -47,7 +47,9 @@ describe('GET /api/subjects/:id/elements', () => {
       elements: [MOCK_ELEMENT],
     });
 
-    const res = await request(app).get(`/api/subjects/${MOCK_SUBJECT._id}/elements`);
+    const res = await request(app).get(
+      `/api/subjects/${MOCK_SUBJECT._id}/elements`,
+    );
 
     expect(res.status).toBe(200);
     expect(res.body.subject._id).toBe(MOCK_SUBJECT._id);
@@ -57,7 +59,9 @@ describe('GET /api/subjects/:id/elements', () => {
   it('returns 404 when subject not found', async () => {
     subjectService.getSubjectElements.mockResolvedValue(null);
 
-    const res = await request(app).get('/api/subjects/000000000000000000000000/elements');
+    const res = await request(app).get(
+      '/api/subjects/000000000000000000000000/elements',
+    );
 
     expect(res.status).toBe(404);
     expect(res.body.message).toBe('Subject not found');

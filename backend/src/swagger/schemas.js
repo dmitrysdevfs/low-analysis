@@ -38,7 +38,8 @@ export const schemas = {
 
   Element: {
     type: 'object',
-    description: 'Атомарний елемент закону (розділ, стаття, частина, пункт, підпункт, абзац)',
+    description:
+      'Атомарний елемент закону (розділ, стаття, частина, пункт, підпункт, абзац)',
     properties: {
       _id: { type: 'string', example: '69f84aa7395f1789bc7b2b8a' },
       lawId: {

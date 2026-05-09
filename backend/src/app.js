@@ -6,7 +6,11 @@ import swaggerUi from 'swagger-ui-express';
 import lawRoutes from './routes/lawRoutes.js';
 import subjectRoutes from './routes/subjectRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
-import { swaggerCustomCss, swaggerCustomJs, swaggerOptions } from './swagger/config.js';
+import {
+  swaggerCustomCss,
+  swaggerCustomJs,
+  swaggerOptions,
+} from './swagger/config.js';
 
 dotenv.config();
 
@@ -27,7 +31,9 @@ const configuredOrigins = process.env.CORS_ALLOWED_ORIGINS
   ? parseOrigins(process.env.CORS_ALLOWED_ORIGINS)
   : [];
 
-const allowedOrigins = [...new Set([...DEFAULT_ALLOWED_ORIGINS, ...configuredOrigins])];
+const allowedOrigins = [
+  ...new Set([...DEFAULT_ALLOWED_ORIGINS, ...configuredOrigins]),
+];
 
 const corsOptions = {
   origin(origin, callback) {
