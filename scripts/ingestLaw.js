@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import connectDB from '../src/config/db.js';
+import mongoose from 'mongoose';
 import { parseLawHtml } from '../src/services/parserService.js';
 import { createLaw, addElements, removeLawData } from '../src/services/lawService.js';
 
@@ -42,17 +43,46 @@ const ingestLaw = async (filePath) => {
   console.log(`🧹 Cleaning up existing data for code: ${code}`);
   await removeLawData(code);
 
-  // Persist Law document
   const law = await createLaw({
     title,
     code,
-    source: absolutePath,
+    source: `https://zakon.rada.gov.ua/laws/show/${code}#Text`,
   });
 
   // Persist Elements (attach lawId resolved from the created Law)
   let savedElements = [];
   if (elements.length > 0) {
-    const elementsWithLawId = elements.map((el) => ({ ...el, lawId: law._id }));
+    // 1. Pre-generate ObjectIds to build a lookup table
+    elements.forEach(el => {
+      el._id = new mongoose.Types.ObjectId();
+    });
+
+    const codeToIdMap = {};
+    elements.forEach(el => {
+      // Maps the original intended code to the LATEST seen _id
+      codeToIdMap[el.code] = el._id;
+    });
+
+    const usedCodes = new Set();
+
+    // 2. Map parentCode to parentId using the lookup table and deduplicate codes
+    const elementsWithLawId = elements.map((el) => {
+      let uniqueCode = el.code;
+      let counter = 1;
+      while (usedCodes.has(uniqueCode)) {
+        uniqueCode = `${el.code}_dup${counter}`;
+        counter++;
+      }
+      usedCodes.add(uniqueCode);
+
+      return { 
+        ...el, 
+        code: uniqueCode,
+        lawId: law._id,
+        parentId: el.parentCode ? (codeToIdMap[el.parentCode] || null) : null
+      };
+    });
+
     savedElements = await addElements(elementsWithLawId);
   }
 
