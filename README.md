@@ -5,6 +5,7 @@
 ## Концепція
 
 Закони України зараз існують як неструктуровані "текстові полотна". **Low Analysis** розбиває кожен закон на атомарні одиниці (розділ -> стаття -> абзац), де кожен елемент має:
+
 - унікальний ієрархічний код (напр. `rz1.st2.ch3`)
 - прив'язку до батьківського елемента
 - майбутній зв'язок із суб'єктами регулювання (студент, лікар, підприємець)
@@ -15,14 +16,14 @@
 
 **Base URL:** `https://low-analysis.onrender.com`
 
-| Метод | Ендпоінт | Опис |
-|-------|----------|------|
-| `GET` | `/` | Health check |
-| `GET` | `/api/laws` | Список розпарсених законів |
-| `GET` | `/api/laws/:id/tree` | Ієрархічне дерево закону |
-| `GET` | `/api/laws/:id/articles/:num` | Конкретна стаття з її вкладеними елементами |
-| `GET` | `/api/subjects` | Список усіх суб'єктів регулювання |
-| `GET` | `/api/subjects/:id/elements` | Елементи закону (абзаци/статті), що стосуються конкретного суб'єкта |
+| Метод | Ендпоінт                      | Опис                                                                |
+| ----- | ----------------------------- | ------------------------------------------------------------------- |
+| `GET` | `/`                           | Health check                                                        |
+| `GET` | `/api/laws`                   | Список розпарсених законів                                          |
+| `GET` | `/api/laws/:id/tree`          | Ієрархічне дерево закону                                            |
+| `GET` | `/api/laws/:id/articles/:num` | Конкретна стаття з її вкладеними елементами                         |
+| `GET` | `/api/subjects`               | Список усіх суб'єктів регулювання                                   |
+| `GET` | `/api/subjects/:id/elements`  | Елементи закону (абзаци/статті), що стосуються конкретного суб'єкта |
 
 ### Приклади запитів
 
@@ -37,20 +38,63 @@ curl https://low-analysis.onrender.com/api/laws/69f84aa7395f1789bc7b2b89/tree
 curl https://low-analysis.onrender.com/api/laws/69f84aa7395f1789bc7b2b89/articles/1
 ```
 
+### Приклад відповіді `/api/laws`
+
+```json
+[
+  {
+    "_id": "69f84aa7395f1789bc7b2b89",
+    "title": "КОНСТИТУЦІЯ УКРАЇНИ",
+    "code": "254к/96-вр",
+    "totalSections": 14,
+    "totalArticles": 166,
+    "createdAt": "2026-05-04T07:28:39.674Z"
+  }
+]
+```
+
+### Приклад елемента дерева (`/api/laws/:id/tree`)
+
+```json
+[
+  {
+    "type": "section",
+    "code": "rz1",
+    "title": "Розділ I ЗАГАЛЬНІ ЗАСАДИ",
+    "depth": 0
+  },
+  {
+    "type": "article",
+    "code": "rz1.st1",
+    "number": "1",
+    "title": "Стаття 1.",
+    "depth": 1,
+    "text": "Україна є суверенна і незалежна, демократична, соціальна, правова держава."
+  },
+  {
+    "type": "paragraph",
+    "code": "rz1.st2.ch1",
+    "depth": 2,
+    "text": "Україна є унітарною державою."
+  }
+]
+```
+
 ## Технологічний стек
 
-| Компонент | Технологія |
-|-----------|-----------|
-| Runtime | Node.js 20+ (ESM) |
-| Backend | Express.js 5 |
-| Database | MongoDB Atlas |
-| ODM | Mongoose |
-| Parser | Cheerio (HTML -> structured data) |
-| Frontend | Next.js 16+, React 19, TailwindCSS v4 |
+| Компонент | Технологія                            |
+| --------- | ------------------------------------- |
+| Runtime   | Node.js 20+ (ESM)                     |
+| Backend   | Express.js 5                          |
+| Database  | MongoDB Atlas                         |
+| ODM       | Mongoose                              |
+| Parser    | Cheerio (HTML -> structured data)     |
+| Frontend  | Next.js 16+, React 19, TailwindCSS v4 |
 
 ## Швидкий старт (локально)
 
 ### Бекенд (API + Парсер)
+
 ```bash
 git clone https://github.com/dmitrysdevfs/low-analysis.git
 cd low-analysis/backend
@@ -60,6 +104,7 @@ npm run dev            # API: http://localhost:3000
 ```
 
 ### Фронтенд (UI)
+
 ```bash
 cd low-analysis/frontend
 npm install
@@ -100,6 +145,7 @@ data-tree="ch_1:st2"    -> Частина 1 статті 2
 ## Wiki (Persistent Memory)
 
 Зовнішня база знань за методом LLM-Wiki (A. Karpathy) в Obsidian:
+
 - Архітектурні рішення (ADR)
 - Доменна онтологія законодавства
 - Технічна документація DOM-структури zakon.rada.gov.ua
