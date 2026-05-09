@@ -1,0 +1,4 @@
+echo "🧪 Running tests before push..."
+npm run test:run --workspace=backend
+npm run test:run --workspace=frontend
+echo "✅ All tests passed"

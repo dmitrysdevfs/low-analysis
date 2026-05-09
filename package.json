@@ -11,9 +11,25 @@
     "dev:frontend": "npm run dev --workspace=frontend",
     "install:all": "npm install",
     "lint": "npm run lint --workspaces",
-    "test": "npm run test:run --workspaces"
+    "test": "npm run test:run --workspaces",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.3"
+  },
+  "lint-staged": {
+    "backend/src/**/*.js": [
+      "prettier --write",
+      "eslint --fix --config backend/eslint.config.js"
+    ],
+    "frontend/src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix --config frontend/eslint.config.mjs"
+    ],
+    "frontend/src/**/*.{css,json}": [
+      "prettier --write"
+    ]
   }
 }

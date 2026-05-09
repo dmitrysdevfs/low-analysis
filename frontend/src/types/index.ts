@@ -9,12 +9,12 @@ export interface Law {
 }
 
 export type TreeNodeType =
-  | 'section'
-  | 'article'
-  | 'part'
-  | 'point'
-  | 'sub_point'
-  | 'paragraph';
+  | "section"
+  | "article"
+  | "part"
+  | "point"
+  | "sub_point"
+  | "paragraph";
 
 export interface TreeNode {
   _id?: string;

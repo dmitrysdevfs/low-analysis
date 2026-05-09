@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 export function SkeletonCard() {
   return (
     <div
       className="panel"
       style={{
-        padding: '24px',
-        display: 'flex',
-        flexDirection: 'column',
+        padding: "24px",
+        display: "flex",
+        flexDirection: "column",
         gap: 16,
       }}
     >
@@ -22,7 +22,7 @@ export function SkeletonCard() {
             width: `${width}%`,
             height: index === 0 ? 22 : 12,
             borderRadius: 999,
-            background: '#1C3260',
+            background: "#1C3260",
           }}
         />
       ))}

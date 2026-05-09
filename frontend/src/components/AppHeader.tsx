@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { NAV_ITEMS } from '@/constants/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+import { NAV_ITEMS } from "@/constants/navigation";
 
 function TryzubIcon() {
   return (
@@ -40,15 +40,15 @@ export function AppHeader() {
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-      style={{ position: 'sticky', top: 0, zIndex: 20 }}
+      style={{ position: "sticky", top: 0, zIndex: 20 }}
     >
       <div
         style={{
-          background: 'linear-gradient(135deg, #1A3E8A 0%, #0D2460 100%)',
-          borderBottom: '1px solid rgba(200,168,67,0.3)',
-          padding: '14px 24px',
-          display: 'flex',
-          alignItems: 'center',
+          background: "linear-gradient(135deg, #1A3E8A 0%, #0D2460 100%)",
+          borderBottom: "1px solid rgba(200,168,67,0.3)",
+          padding: "14px 24px",
+          display: "flex",
+          alignItems: "center",
           gap: 14,
         }}
       >
@@ -57,22 +57,22 @@ export function AppHeader() {
           <Link
             href="/"
             style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.5rem',
+              fontFamily: "var(--font-display)",
+              fontSize: "1.5rem",
               fontWeight: 700,
               lineHeight: 1,
-              textDecoration: 'none',
+              textDecoration: "none",
             }}
           >
             Low Analysis
           </Link>
           <div
             style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.62rem',
-              color: '#C8A843',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.62rem",
+              color: "#C8A843",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
               marginTop: 4,
             }}
           >
@@ -83,32 +83,33 @@ export function AppHeader() {
 
       <nav
         style={{
-          display: 'flex',
+          display: "flex",
           gap: 2,
-          padding: '0 24px',
-          background: 'rgba(13, 28, 58, 0.92)',
-          borderBottom: '1px solid #1C3260',
-          backdropFilter: 'blur(10px)',
+          padding: "0 24px",
+          background: "rgba(13, 28, 58, 0.92)",
+          borderBottom: "1px solid #1C3260",
+          backdropFilter: "blur(10px)",
         }}
       >
         {NAV_ITEMS.map((item) => {
           const isActive =
-            pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            pathname === item.href ||
+            (item.href !== "/" && pathname.startsWith(item.href));
 
           return (
             <Link
               key={item.href}
               href={item.href}
               style={{
-                padding: '12px 16px',
-                textDecoration: 'none',
+                padding: "12px 16px",
+                textDecoration: "none",
                 borderBottom: isActive
-                  ? '2px solid #C8A843'
-                  : '2px solid transparent',
-                color: isActive ? '#C8A843' : '#D6E0F0',
-                fontSize: '0.88rem',
+                  ? "2px solid #C8A843"
+                  : "2px solid transparent",
+                color: isActive ? "#C8A843" : "#D6E0F0",
+                fontSize: "0.88rem",
                 fontWeight: 500,
-                transition: 'color 0.2s ease, border-color 0.2s ease',
+                transition: "color 0.2s ease, border-color 0.2s ease",
               }}
             >
               {item.label}
