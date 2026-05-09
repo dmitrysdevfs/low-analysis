@@ -12,7 +12,7 @@
     "install:all": "npm install",
     "lint": "npm run lint --workspaces",
     "test": "npm run test:run --workspaces",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
