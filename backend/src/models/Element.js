@@ -9,7 +9,7 @@ const elementSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['section', 'article', 'part', 'point', 'paragraph'],
+      enum: ['section', 'article', 'part', 'point', 'sub_point', 'paragraph'],
       required: true,
     },
     code: {

@@ -39,11 +39,27 @@ npm-debug.log*
 .agents/
 .agent/
 .augment/
-GEMINI.md
 plans/
 skills-lock.json
-
-# Gemini CLI
-.gemini/
 prototypes/
 conductor/
+
+# Claude / Claude Code
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# Gemini / Google AI
+.gemini/
+GEMINI.md
+
+# Cursor / Windsurf / Codex
+.cursor/
+.cursorrules
+.windsurfrules
+.codex/
+.codeium/
+.continue/
+
+# Copilot
+.github/copilot-instructions.md

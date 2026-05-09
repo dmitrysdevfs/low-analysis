@@ -3,8 +3,9 @@ import Element from '../models/Element.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
-export const getAllLaws = async () => {
-  return await Law.find().select('-__v').sort({ adoptedDate: -1 });
+export const getAllLaws = async (q = '') => {
+  const filter = q ? { title: { $regex: q, $options: 'i' } } : {};
+  return await Law.find(filter).select('-__v').sort({ adoptedDate: -1 });
 };
 
 export const getLawById = async (id) => {
@@ -37,9 +38,12 @@ export const getArticle = async (lawId, articleNumber) => {
   if (!article) return null;
 
   const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const codePrefix = new RegExp('^' + escapeRegex(article.code) + '\\.');
+  const codePrefix = new RegExp(`^${escapeRegex(article.code)}\\.`);
 
-  const children = await Element.find({ lawId, code: codePrefix })
+  const children = await Element.find({
+    lawId,
+    $or: [{ parentId: article._id }, { code: codePrefix }],
+  })
     .select('-__v')
     .sort({ order: 1 });
 

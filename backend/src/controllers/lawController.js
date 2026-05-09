@@ -2,7 +2,8 @@ import * as lawService from '../services/lawService.js';
 
 export const getAllLaws = async (req, res, next) => {
   try {
-    const laws = await lawService.getAllLaws();
+    const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
+    const laws = await lawService.getAllLaws(q);
     res.json(laws);
   } catch (error) {
     next(error);

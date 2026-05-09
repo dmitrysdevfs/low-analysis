@@ -1,3 +1,5 @@
+import { AppHeader } from "@/components/AppHeader";
+
 export default function Header() {
-  return <div>Header</div>;
+  return <AppHeader />;
 }
