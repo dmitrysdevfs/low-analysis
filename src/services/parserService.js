@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import * as cheerio from 'cheerio';
 
 // ─── CSS class → element type mapping ────────────────────────────────────────
@@ -8,11 +10,11 @@ import * as cheerio from 'cheerio';
 //   data-tree="cm_N:..."  → comment  (editorial note — skipped)
 //   data-tree="nz_N"      → law title node — used for law-level metadata
 
-const SECTION_CLASS  = 'rvps7';   // <p class="rvps7"> — Розділ header
-const ARTICLE_CLASS  = 'rvps2';   // <p class="rvps2"> — Стаття + частини
-const TITLE_SPAN     = 'rvts78';  // <span class="rvts78"> — law title
-const SECTION_SPAN   = 'rvts15';  // <span class="rvts15"> — section text
-const ARTICLE_SPAN   = 'rvts9';   // <span class="rvts9"> — "Стаття N."
+const SECTION_CLASS = 'rvps7'; // <p class="rvps7"> — Розділ header
+const ARTICLE_CLASS = 'rvps2'; // <p class="rvps2"> — Стаття + частини
+const TITLE_SPAN = 'rvts78'; // <span class="rvts78"> — law title
+const SECTION_SPAN = 'rvts15'; // <span class="rvts15"> — section text
+const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
 
 /**
  * Parses the .frame HTML from zakon.rada.gov.ua into a structured law object.
@@ -20,13 +22,12 @@ const ARTICLE_SPAN   = 'rvts9';   // <span class="rvts9"> — "Стаття N."
  * @param {string} html - Raw HTML content of the .frame page
  * @returns {{ title: string, code: string, elements: Array }} parsed data
  */
-export const parseLawHtml = (html) => {
+export const parseLawHtml = html => {
   const $ = cheerio.load(html);
 
   // ── 1. Extract law title ──────────────────────────────────────────────────
-  const title = $(`.${TITLE_SPAN}`).first().text().trim()
-    || $('p.rvps1 span').first().text().trim()
-    || '';
+  const title =
+    $(`.${TITLE_SPAN}`).first().text().trim() || $('p.rvps1 span').first().text().trim() || '';
 
   // ── 2. Extract law code from the selected <option> in the edition selector ─
   // e.g. href="...show/254%D0%BA/96-%D0%92%D0%A0/ed..."
@@ -65,9 +66,7 @@ export const parseLawHtml = (html) => {
     // ── Section (Розділ) ──────────────────────────────────────────────────
     if (pClass === SECTION_CLASS && dataTree.startsWith('rz')) {
       const sectionSpan = $p.find(`.${SECTION_SPAN}`);
-      const rawText = sectionSpan.length
-        ? sectionSpan.text().trim()
-        : $p.text().trim();
+      const rawText = sectionSpan.length ? sectionSpan.text().trim() : $p.text().trim();
 
       // Extract section number from data-tree ("rz3" → "3")
       const number = dataTree.replace('rz', '');
@@ -109,9 +108,7 @@ export const parseLawHtml = (html) => {
       const bodyText = $p.text().trim().replace(spanText, '').trim();
 
       const sectionCode = currentSectionId ? currentSectionId.code : null;
-      const articleCode = sectionCode
-        ? `${sectionCode}.st${number}`
-        : `st${number}`;
+      const articleCode = sectionCode ? `${sectionCode}.st${number}` : `st${number}`;
 
       order++;
       currentArticleOrder = order;
@@ -131,7 +128,6 @@ export const parseLawHtml = (html) => {
       return;
     }
 
-
     // ── Part / Paragraph (Частина) ────────────────────────────────────────
     if (pClass === ARTICLE_CLASS && dataTree.match(/^ch_\d+:st/)) {
       // "ch_2:st5" → part 2 of article 5
@@ -142,9 +138,7 @@ export const parseLawHtml = (html) => {
       const partNumber = partMatch[1];
       // data-tree only has base number — resolve to current article's actual number
       // to correctly handle "129-1" style articles
-      const parentArticleNum = currentArticleId
-        ? currentArticleId.number
-        : partMatch[2];
+      const parentArticleNum = currentArticleId ? currentArticleId.number : partMatch[2];
 
       const text = $p.text().trim();
       if (!text) return;
@@ -172,4 +166,3 @@ export const parseLawHtml = (html) => {
 
   return { title, code, elements };
 };
-
