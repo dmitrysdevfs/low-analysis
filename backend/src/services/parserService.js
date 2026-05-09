@@ -26,7 +26,6 @@ export const parseLawHtml = html => {
   const $ = cheerio.load(html);
 
   // ── 1. Extract law title ──────────────────────────────────────────────────
-<<<<<<< HEAD
   let title = '';
   const titleAnchor = $('a[data-tree^="nz_"]').first();
   if (titleAnchor.length) {
@@ -37,10 +36,6 @@ export const parseLawHtml = html => {
       || $('p.rvps1 span').first().text().trim()
       || '';
   }
-=======
-  const title =
-    $(`.${TITLE_SPAN}`).first().text().trim() || $('p.rvps1 span').first().text().trim() || '';
->>>>>>> origin/frontend
 
   // ── 2. Extract law code from the selected <option> in the edition selector ─
   // e.g. href="...show/254%D0%BA/96-%D0%92%D0%A0/ed..."
@@ -118,13 +113,9 @@ export const parseLawHtml = html => {
       const bodyText = $p.text().trim().replace(spanText, '').trim();
 
       const sectionCode = currentSectionId ? currentSectionId.code : null;
-<<<<<<< HEAD
       const articleCode = sectionCode
         ? `${sectionCode}.st${number}`
         : (code ? `${code}.st${number}` : `st${number}`);
-=======
-      const articleCode = sectionCode ? `${sectionCode}.st${number}` : `st${number}`;
->>>>>>> origin/frontend
 
       order++;
       const elem = {
@@ -143,28 +134,11 @@ export const parseLawHtml = html => {
       return;
     }
 
-<<<<<<< HEAD
-
     // ── Generic Child Element (Частини, Пункти, Підпункти, Абзаци) ───────────
     if (pClass === ARTICLE_CLASS && dataTree.includes(':st')) {
       const parts = dataTree.split(':');
       const articleStr = parts.pop(); // typically 'st5' or 'st129'
       const childParts = parts.reverse(); // e.g. ['pu1', 'pp1']
-      
-=======
-    // ── Part / Paragraph (Частина) ────────────────────────────────────────
-    if (pClass === ARTICLE_CLASS && dataTree.match(/^ch_\d+:st/)) {
-      // "ch_2:st5" → part 2 of article 5
-      // "ch_1:st129-1" is also valid for sub-articles
-      const partMatch = dataTree.match(/^ch_(\d+):st(.+)$/);
-      if (!partMatch) return;
-
-      const partNumber = partMatch[1];
-      // data-tree only has base number — resolve to current article's actual number
-      // to correctly handle "129-1" style articles
-      const parentArticleNum = currentArticleId ? currentArticleId.number : partMatch[2];
-
->>>>>>> origin/frontend
       const text = $p.text().trim();
       if (!text) return;
 
