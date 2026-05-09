@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import styles from "./Layout.module.scss";
 
 export function Layout({
   children,
@@ -8,13 +9,7 @@ export function Layout({
   fullHeight?: boolean;
 }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: fullHeight ? "calc(100vh - 164px)" : undefined,
-      }}
-    >
+    <div className={`${styles.layout} ${fullHeight ? styles.layoutFullHeight : ""}`}>
       {children}
     </div>
   );

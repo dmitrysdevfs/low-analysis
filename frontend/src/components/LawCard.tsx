@@ -1,74 +1,280 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useState, useCallback, useRef, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ROUTES } from "@/constants/routes";
-import type { Law } from "@/types";
+import { getLawTree } from "@/lib/api";
+import { getArticleBadge } from "@/lib/lawTree";
+import type { Law, TreeNode } from "@/types";
+import styles from "./LawCard.module.scss";
+
+const CARD_HEIGHT = 148;
+const BACK_HEIGHT = 460;
+const PAGE_SIZE = 5;
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -16 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.26,
+      delay: i * 0.05,
+      ease: [0.25, 0.1, 0.25, 1] as const,
+    },
+  }),
+};
+
+function SkeletonLine({ width }: { width: string }) {
+  return (
+    <motion.div
+      animate={{ opacity: [0.2, 0.45, 0.2] }}
+      transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+      className={styles.skeletonLine}
+      style={{ width }}
+    />
+  );
+}
+
+function getArticleTitle(article: ArticleWithPreview): string {
+  if (article.title && article.title.trim()) return article.title.trim();
+  return `Стаття ${article.number ?? ""}`;
+}
+
+function getArticleLabel(article: ArticleWithPreview): string {
+  const badge = getArticleBadge(article);
+  const title = getArticleTitle(article);
+
+  return title === badge ? badge : `${badge}. ${title}`;
+}
+
+function getPreview(article: ArticleWithPreview): string | null {
+  const src = article._preview ?? article.text ?? null;
+  if (!src) return null;
+  const clean = src.trim();
+  return clean.length > 90 ? clean.slice(0, 90) + "…" : clean;
+}
+
+interface ArticleWithPreview extends TreeNode {
+  _preview?: string;
+}
 
 export function LawCard({ law, index }: { law: Law; index: number }) {
+  const [flipped, setFlipped] = useState(false);
+  const [allArticles, setAllArticles] = useState<ArticleWithPreview[]>([]);
+  const [loadingArticles, setLoadingArticles] = useState(false);
+  const [query, setQuery] = useState("");
+  const fetched = useRef(false);
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return allArticles;
+    const q = query.toLowerCase();
+    return allArticles.filter((a) => {
+      const title = getArticleLabel(a).toLowerCase();
+      const num = (a.number ?? "").toLowerCase();
+      const preview = (a._preview ?? a.text ?? "").toLowerCase();
+      return title.includes(q) || num.includes(q) || preview.includes(q);
+    });
+  }, [allArticles, query]);
+
+  const visible = filtered.slice(0, PAGE_SIZE);
+
+  const handleFlip = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!flipped && !fetched.current) {
+        fetched.current = true;
+        setLoadingArticles(true);
+        getLawTree(law._id)
+          .then((data) => {
+            const elements = data.elements;
+            const arts: ArticleWithPreview[] = elements
+              .filter((n) => n.type === "article")
+              .map((art) => {
+                const firstChild = elements.find(
+                  (el) =>
+                    el.parentId === art._id &&
+                    el.text &&
+                    el.text.trim().length > 2,
+                );
+                return {
+                  ...art,
+                  _preview: firstChild?.text?.trim(),
+                };
+              });
+            setAllArticles(arts);
+          })
+          .catch(() => {})
+          .finally(() => setLoadingArticles(false));
+      }
+
+      setFlipped((prev) => !prev);
+    },
+    [flipped, law._id],
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.06 }}
-      whileHover={{ y: -4 }}
+      className={styles.cardWrapper}
+      style={{
+        height: flipped ? BACK_HEIGHT : CARD_HEIGHT,
+        transition: "height 0.45s cubic-bezier(0.25,0.1,0.25,1)",
+      }}
     >
-      <Link
-        href={ROUTES.law(law._id)}
-        style={{
-          display: "block",
-          textDecoration: "none",
-          background: "#0D1C3A",
-          border: "1px solid #1C3260",
-          borderLeft: "2px solid #C8A843",
-          borderRadius: 10,
-          padding: "22px 24px",
-        }}
+      <motion.div
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        transition={{ duration: 0.52, ease: [0.25, 0.1, 0.25, 1] }}
+        className={styles.cardInner}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 16,
-            marginBottom: 14,
-          }}
-        >
-          <h2
-            className="display"
-            style={{
-              margin: 0,
-              fontSize: "1.6rem",
-              lineHeight: 1.15,
-              color: "#FFFFFF",
-            }}
-          >
-            {law.title}
-          </h2>
-          <span
-            className="mono"
-            style={{
-              whiteSpace: "nowrap",
-              color: "#C8A843",
-              background: "rgba(200,168,67,0.1)",
-              border: "1px solid rgba(200,168,67,0.2)",
-              borderRadius: 999,
-              padding: "3px 8px",
-              fontSize: "0.66rem",
-            }}
-          >
-            {law.code}
-          </span>
+        {/* ── FRONT ── */}
+        <div onClick={handleFlip} className={styles.cardFront}>
+          <div className={styles.frontHeader}>
+            <h2 className={`display ${styles.frontTitle}`}>
+              {law.title}
+            </h2>
+            <span className={`mono ${styles.lawCodeBadge}`}>
+              {law.code}
+            </span>
+          </div>
+
+          <div className={styles.frontStats}>
+            <div className={styles.statsGroup}>
+              <Stat value={law.totalSections} label="розділів" />
+              <Stat value={law.totalArticles} label="статей" />
+              {law.totalParagraphs ? (
+                <Stat value={law.totalParagraphs} label="абзаців" />
+              ) : null}
+            </div>
+            <span className={`mono ${styles.expandHint}`}>
+              Натисни щоб розгорнути ↻
+            </span>
+          </div>
         </div>
 
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-          <Stat value={law.totalSections} label="розділів" />
-          <Stat value={law.totalArticles} label="статей" />
-          {law.totalParagraphs ? (
-            <Stat value={law.totalParagraphs} label="абзаців" />
-          ) : null}
+        {/* ── BACK ── */}
+        <div className={styles.cardBack}>
+          {/* Back header */}
+          <div className={styles.backHeader}>
+            <div className={styles.backTitleWrap}>
+              <span className={`display ${styles.backTitle}`}>
+                {law.title}
+              </span>
+              <span className={`mono ${styles.backSubtitle}`}>
+                Статті закону · {law.totalArticles} всього
+              </span>
+            </div>
+            <button onClick={handleFlip} className={styles.collapseBtn}>
+              ↩ Згорнути
+            </button>
+          </div>
+
+          {/* Search input */}
+          <div className={styles.searchRow}>
+            <span className={styles.searchIcon}>⌕</span>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Пошук за назвою статті…"
+              className={styles.searchInput}
+            />
+            {query && (
+              <button onClick={() => setQuery("")} className={styles.searchClear}>
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Articles list — no scrollbar */}
+          <div className={styles.articlesList}>
+            <AnimatePresence mode="wait">
+              {loadingArticles ? (
+                <motion.div
+                  key="skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className={styles.skeletonContainer}
+                >
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className={styles.skeletonItem}>
+                      <SkeletonLine width={`${50 + (i % 3) * 15}%`} />
+                      <SkeletonLine width={`${30 + (i % 4) * 10}%`} />
+                    </div>
+                  ))}
+                </motion.div>
+              ) : filtered.length === 0 ? (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className={styles.emptyState}
+                >
+                  Нічого не знайдено
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={`list-${query}`}
+                  initial="hidden"
+                  animate="visible"
+                  className={styles.articleListCol}
+                >
+                  {visible.map((article, i) => (
+                    <motion.div
+                      key={article._id ?? `${i}`}
+                      custom={i}
+                      variants={itemVariants}
+                    >
+                      <Link
+                        href={
+                          article.number
+                            ? ROUTES.article(law._id, article.number)
+                            : ROUTES.law(law._id)
+                        }
+                        className={styles.articleLink}
+                      >
+                        <div className={styles.articleRow}>
+                          {article.number && (
+                            <span className={`mono ${styles.articleNumBadge}`}>
+                              ст.{article.number}
+                            </span>
+                          )}
+                          <div className={styles.articleInfo}>
+                            <span className={styles.articleTitle}>
+                              {getArticleLabel(article)}
+                            </span>
+                            {getPreview(article) && (
+                              <span className={styles.articlePreview}>
+                                {getPreview(article)}
+                              </span>
+                            )}
+                          </div>
+                          <span className={styles.articleArrow}>→</span>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Footer */}
+          <div className={styles.cardFooter}>
+            <Link href={ROUTES.law(law._id)} className={styles.allArticlesLink}>
+              <motion.div whileHover={{ x: 4 }} className={styles.allArticlesBtn}>
+                Всі статті закону ({law.totalArticles}) →
+              </motion.div>
+            </Link>
+          </div>
         </div>
-      </Link>
+      </motion.div>
     </motion.div>
   );
 }
@@ -76,19 +282,8 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
 function Stat({ value, label }: { value: number; label: string }) {
   return (
     <div>
-      <div className="mono" style={{ color: "#FFFFFF", fontSize: "1rem" }}>
-        {value}
-      </div>
-      <div
-        className="mono"
-        style={{
-          color: "#7A98C0",
-          fontSize: "0.62rem",
-          textTransform: "uppercase",
-        }}
-      >
-        {label}
-      </div>
+      <div className={`mono ${styles.statValue}`}>{value}</div>
+      <div className={`mono ${styles.statLabel}`}>{label}</div>
     </div>
   );
 }

@@ -1,272 +1,241 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useParams } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { LawStructureList } from "@/components/LawStructureList";
 import { Layout } from "@/components/Layout";
-import { TreeNode } from "@/components/TreeNode";
 import { ROUTES } from "@/constants/routes";
 import { useLawTree } from "@/hooks/useLawTree";
-import { useLaws } from "@/hooks/useLaws";
-import type { TreeNode as TreeNodeModel } from "@/types";
+import {
+  buildLawSections,
+  countArticlesInSections,
+  limitLawSections,
+} from "@/lib/lawTree";
+import styles from "./page.module.scss";
 
-function SidebarSkeleton() {
-  return (
-    <div
-      style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10 }}
-    >
-      {Array.from({ length: 7 }).map((_, index) => (
-        <motion.div
-          key={index}
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{
-            duration: 1.6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: index * 0.12,
-          }}
-          style={{
-            height: 13,
-            width: index % 2 === 0 ? "78%" : "55%",
-            background: "#1C3260",
-            borderRadius: 3,
-          }}
-        />
-      ))}
-    </div>
-  );
+const DEFAULT_ARTICLE_LIMIT = 20;
+const ARTICLE_LIMIT_OPTIONS = [10, 20, 50, 100] as const;
+
+function parseLimitValue(rawValue: string | null) {
+  if (rawValue === "all") {
+    return "all" as const;
+  }
+
+  const parsed = Number(rawValue);
+  return ARTICLE_LIMIT_OPTIONS.includes(parsed as (typeof ARTICLE_LIMIT_OPTIONS)[number])
+    ? parsed
+    : DEFAULT_ARTICLE_LIMIT;
+}
+
+function toLimitParam(value: number | "all") {
+  return value === "all" ? "all" : String(value);
+}
+
+function getNextLimitValue(current: number | "all") {
+  if (current === "all") {
+    return "all" as const;
+  }
+
+  return ARTICLE_LIMIT_OPTIONS.find((option) => option > current) ?? "all";
 }
 
 export default function LawTreePage() {
   const params = useParams<{ id: string }>();
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const lawId = params?.id;
-  const { laws } = useLaws();
-  const { tree, loading, error } = useLawTree(lawId);
-  const [activeNode, setActiveNode] = useState<TreeNodeModel | null>(null);
+  const { law, tree, loading, error } = useLawTree(lawId);
+  const [selectedLimit, setSelectedLimit] = useState<number | "all">(() =>
+    parseLimitValue(searchParams.get("limit")),
+  );
 
-  const law = laws.find((item) => item._id === lawId);
+  const sections = useMemo(() => buildLawSections(tree), [tree]);
+  const articleCount = useMemo(() => countArticlesInSections(sections), [sections]);
+  const visibleSections = useMemo(
+    () => limitLawSections(sections, selectedLimit === "all" ? null : selectedLimit),
+    [sections, selectedLimit],
+  );
+  const visibleArticleCount = useMemo(
+    () => countArticlesInSections(visibleSections),
+    [visibleSections],
+  );
+  const showLimitControls =
+    !loading && !error && articleCount > ARTICLE_LIMIT_OPTIONS[0];
+  const canLoadMore =
+    showLimitControls &&
+    selectedLimit !== "all" &&
+    visibleArticleCount < articleCount;
 
-  const sections = useMemo(() => {
-    const grouped: { section: TreeNodeModel; children: TreeNodeModel[] }[] = [];
-    let current: { section: TreeNodeModel; children: TreeNodeModel[] } | null =
-      null;
+  const updateLimit = (nextValue: number | "all") => {
+    setSelectedLimit(nextValue);
 
-    for (const node of tree) {
-      if (node.type === "section") {
-        current = { section: node, children: [] };
-        grouped.push(current);
-      } else if (current) {
-        current.children.push(node);
-      }
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    const nextParam = toLimitParam(nextValue);
+
+    if (nextParam === String(DEFAULT_ARTICLE_LIMIT)) {
+      nextSearchParams.delete("limit");
+    } else {
+      nextSearchParams.set("limit", nextParam);
     }
 
-    return grouped;
-  }, [tree]);
+    const nextQuery = nextSearchParams.toString();
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+  };
 
   return (
     <Layout fullHeight>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-        style={{
-          borderBottom: "1px solid #1C3260",
-          padding: "10px 24px",
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          flexShrink: 0,
-          background: "rgba(13,28,58,0.9)",
-          backdropFilter: "blur(6px)",
-        }}
-      >
-        <Breadcrumb
-          items={[
-            { label: "Закони", href: ROUTES.laws },
-            { label: law?.title ?? lawId ?? "…" },
-            ...(activeNode ? [{ label: activeNode.code }] : []),
-          ]}
-        />
-        {law ? (
-          <span
-            className="mono"
-            style={{
-              marginLeft: "auto",
-              fontSize: "0.62rem",
-              color: "#C8A843",
-              background: "rgba(200,168,67,0.08)",
-              border: "1px solid rgba(200,168,67,0.2)",
-              borderRadius: 4,
-              padding: "2px 8px",
-            }}
+      <div className={`section-pad ${styles.contentFlex}`}>
+        <div className={`page-frame ${styles.pageInner}`}>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            {law.code}
-          </span>
-        ) : null}
-      </motion.div>
+            <Breadcrumb
+              items={[
+                { label: "Закони", href: ROUTES.laws },
+                { label: law?.title ?? lawId ?? "…" },
+              ]}
+            />
+          </motion.div>
 
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        <motion.aside
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.35, delay: 0.1 }}
-          style={{
-            width: 300,
-            flexShrink: 0,
-            borderRight: "1px solid #1C3260",
-            overflowY: "auto",
-            background: "linear-gradient(180deg, #0D1C3A 0%, #080F20 100%)",
-          }}
-        >
-          {loading ? <SidebarSkeleton /> : null}
-          {!loading && error ? (
-            <div
-              style={{
-                padding: 16,
-                color: "#FCA5A5",
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.72rem",
-              }}
-            >
-              {error}
+          <motion.section
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, delay: 0.05 }}
+            className={`panel ${styles.lawMeta}`}
+          >
+            <span className="eyebrow">Структура закону</span>
+            <h1 className={`display ${styles.lawTitle}`}>
+              {law?.title ?? "Завантажуємо структуру закону"}
+            </h1>
+            <p className={styles.lawDesc}>
+              Список статей формується напряму з дерева закону. Клік по назві
+              статті відкриває повну сторінку, а кнопка праворуч показує
+              вкладену структуру частин, пунктів і абзаців.
+            </p>
+            <div className="law-structure-summary">
+              {law ? <span className="directory-chip mono">{law.code}</span> : null}
+              <span className="mono law-structure-inline-note">
+                {sections.length} розділів · {articleCount} статей
+              </span>
             </div>
-          ) : null}
-          {!loading && !error
-            ? sections.map(({ section, children }) => (
-                <TreeNode
-                  key={section.code}
-                  node={section}
-                  activeCode={activeNode?.code ?? null}
-                  onSelect={setActiveNode}
-                >
-                  {children}
-                </TreeNode>
-              ))
-            : null}
-        </motion.aside>
 
-        <main
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "40px 48px",
-            position: "relative",
-          }}
-        >
-          <AnimatePresence mode="wait">
-            {activeNode ? (
-              <motion.div
-                key={activeNode.code}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
-              >
-                <span
-                  className="mono"
-                  style={{
-                    fontSize: "0.68rem",
-                    color: "#4A80D4",
-                    background: "rgba(74,128,212,0.1)",
-                    border: "1px solid rgba(74,128,212,0.25)",
-                    borderRadius: 4,
-                    padding: "2px 8px",
-                    display: "inline-block",
-                    marginBottom: 14,
+            {showLimitControls ? (
+              <div className={styles.controls}>
+                <div className={styles.controlsCopy}>
+                  <div className={`mono ${styles.controlsLabel}`}>
+                    Показано {visibleArticleCount} із {articleCount} статей
+                  </div>
+                  <p className={styles.controlsHint}>
+                    Довгі закони можна переглядати частинами, щоб сторінка не
+                    перетворювалася на довгий суцільний список.
+                  </p>
+                </div>
+
+                <div className={styles.controlsActions}>
+                  <label className={styles.limitField}>
+                    <span className={`mono ${styles.limitLabel}`}>Показувати</span>
+                    <select
+                      aria-label="Показувати статей"
+                      className={`form-control form-select ${styles.limitSelect}`}
+                      value={toLimitParam(selectedLimit)}
+                      onChange={(event) =>
+                        updateLimit(parseLimitValue(event.target.value))
+                      }
+                    >
+                      {ARTICLE_LIMIT_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                      <option value="all">Всі</option>
+                    </select>
+                  </label>
+
+                  {canLoadMore ? (
+                    <button
+                      type="button"
+                      className={`btn btn-ghost ${styles.loadMoreButton}`}
+                      onClick={() => updateLimit(getNextLimitValue(selectedLimit))}
+                    >
+                      {getNextLimitValue(selectedLimit) === "all"
+                        ? "Показати всі"
+                        : "Показати ще"}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+          </motion.section>
+
+          {loading ? (
+            <div
+              className="law-structure-list"
+              role="status"
+              aria-live="polite"
+              aria-label="Завантажуємо структуру закону"
+            >
+              {Array.from({ length: 3 }).map((_, index) => (
+                <motion.div
+                  key={index}
+                  className={`panel law-structure-section ${styles.skeletonSection}`}
+                  animate={{ opacity: [0.35, 0.65, 0.35] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.1,
                   }}
                 >
-                  {activeNode.code}
-                </span>
-
-                {activeNode.title ? (
-                  <h1
-                    className="display"
-                    style={{
-                      fontSize: "1.55rem",
-                      color: "#FFFFFF",
-                      margin: "0 0 18px",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {activeNode.title}
-                  </h1>
-                ) : null}
-
-                {activeNode.text ? (
-                  <p
-                    style={{
-                      fontSize: "1rem",
-                      color: "#A8BEDD",
-                      lineHeight: 1.8,
-                      margin: 0,
-                      maxWidth: 680,
-                      borderLeft: "3px solid rgba(200,168,67,0.3)",
-                      paddingLeft: 20,
-                    }}
-                  >
-                    {activeNode.text}
-                  </p>
-                ) : (
-                  <p
-                    style={{
-                      fontSize: "0.9rem",
-                      color: "#7A98C0",
-                      margin: 0,
-                      maxWidth: 680,
-                    }}
-                  >
-                    Для цього вузла немає окремого текстового фрагмента. Оберіть
-                    інший елемент дерева.
-                  </p>
-                )}
-
-                {activeNode.type === "article" && lawId && activeNode.number ? (
-                  <div style={{ marginTop: 24 }}>
-                    <Link
-                      href={ROUTES.article(lawId, activeNode.number)}
-                      style={{
-                        textDecoration: "none",
-                        color: "#C8A843",
-                        border: "1px solid #C8A843",
-                        borderRadius: 999,
-                        padding: "10px 14px",
-                        display: "inline-flex",
-                      }}
-                    >
-                      Відкрити статтю
-                    </Link>
+                  <div className={styles.skeletonLabel} />
+                  <div className={styles.skeletonTitle} />
+                  <div className={styles.skeletonRows}>
+                    {Array.from({ length: 3 }).map((__, rowIndex) => (
+                      <div key={rowIndex} className={styles.skeletonRow} />
+                    ))}
                   </div>
-                ) : null}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "55vh",
-                  gap: 10,
-                  userSelect: "none",
-                }}
-              >
-                <span style={{ fontSize: "2.5rem", color: "#1C3260" }}>§</span>
-                <span
-                  className="mono"
-                  style={{ fontSize: "0.75rem", color: "#7A98C0" }}
-                >
-                  Оберіть статтю у дереві
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
+                </motion.div>
+              ))}
+            </div>
+          ) : null}
+
+          {!loading && error ? (
+            <motion.div
+              role="alert"
+              className={`panel ${styles.errorPanel}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className={`mono ${styles.errorLabel}`}>Помилка завантаження</div>
+              <div className={styles.errorText}>{error}</div>
+            </motion.div>
+          ) : null}
+
+          {!loading && !error && articleCount === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`panel ${styles.emptyPanel}`}
+            >
+              <div className={styles.emptyIcon}>§</div>
+              <div className={`display ${styles.emptyTitle}`}>
+                У цьому законі поки немає статей для відображення
+              </div>
+              <div className={`mono ${styles.emptyNote}`}>
+                Коли дерево закону буде наповнене, тут з&apos;явиться повна
+                структура розділів і статей.
+              </div>
+            </motion.div>
+          ) : null}
+
+          {!loading && !error && articleCount > 0 && lawId ? (
+            <LawStructureList sections={visibleSections} lawId={lawId} />
+          ) : null}
+        </div>
       </div>
     </Layout>
   );

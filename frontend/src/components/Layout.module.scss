@@ -1,0 +1,8 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.layoutFullHeight {
+  min-height: calc(100vh - 164px);
+}
