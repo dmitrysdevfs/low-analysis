@@ -27,8 +27,8 @@ dist/
 build/
 
 # Data (raw HTML files can be large)
-data/raw/*.html
-!data/.gitkeep
+backend/data/raw/*.html
+!backend/data/.gitkeep
 
 # Logs
 logs/
