@@ -36,14 +36,14 @@ describe("useSearch", () => {
     const { result } = renderHook(() => useSearch());
 
     act(() => {
-      result.current.search({ q: "закон", type: "19", sort: "title" });
+      result.current.search({ q: "закон", type: "ЗАКОН УКРАЇНИ", sort: "title" });
     });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(result.current.params).toMatchObject({
       q: "закон",
-      docType: "19",
+      docType: "ЗАКОН УКРАЇНИ",
       sort: "title",
     });
     expect(result.current.results).toEqual([LAW_FIXTURE_3]);

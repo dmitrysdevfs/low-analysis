@@ -71,11 +71,7 @@ function getPreview(article: ArticleWithPreview): string | null {
 }
 
 function normalizeArticleNumberQuery(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/ст\.?/giu, "")
-    .replace(/\s+/g, "")
-    .trim();
+  return value.toLowerCase().replace(/ст\.?/giu, "").replace(/\s+/g, "").trim();
 }
 
 interface ArticleWithPreview extends TreeNode {

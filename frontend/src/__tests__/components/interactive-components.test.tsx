@@ -76,15 +76,18 @@ describe("interactive frontend components", () => {
 
     await user.type(dateInputs[0], "10052026");
     await user.type(dateInputs[1], "11052026");
-    await user.type(screen.getByPlaceholderText("Код або номер акта..."), "254");
-    await user.selectOptions(selects[1], "ua");
+    await user.type(
+      screen.getByPlaceholderText("Код або номер акта..."),
+      "254",
+    );
+    await user.selectOptions(selects[1], "ЗАКОН УКРАЇНИ");
     await user.selectOptions(selects[4], "title");
     await user.click(screen.getByRole("button", { name: /Шукати/i }));
 
     expect(onSearch).toHaveBeenCalledWith({
       q: "конституція",
       wordField: "title",
-      docType: "ua",
+      docType: "ЗАКОН УКРАЇНИ",
       dateFrom: "2026-05-10",
       dateTo: "2026-05-11",
       numberType: "starts",

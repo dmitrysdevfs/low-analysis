@@ -132,7 +132,9 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                   autoComplete="off"
                   maxLength={10}
                   value={p.dateFrom}
-                  onChange={(e) => set("dateFrom", formatDateInput(e.target.value))}
+                  onChange={(e) =>
+                    set("dateFrom", formatDateInput(e.target.value))
+                  }
                   placeholder={DATE_PLACEHOLDER}
                   className={`form-control ${styles.inputDate}`}
                 />
@@ -145,7 +147,9 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                   autoComplete="off"
                   maxLength={10}
                   value={p.dateTo}
-                  onChange={(e) => set("dateTo", formatDateInput(e.target.value))}
+                  onChange={(e) =>
+                    set("dateTo", formatDateInput(e.target.value))
+                  }
                   placeholder={DATE_PLACEHOLDER}
                   className={`form-control ${styles.inputDate}`}
                 />
