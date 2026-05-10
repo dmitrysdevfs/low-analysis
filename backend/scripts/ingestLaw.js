@@ -103,8 +103,15 @@ const ingestLaw = async (filePath) => {
   }
 
   // Update law stats
-  const articleCount = elements.filter((el) => el.type === 'article').length;
-  const sectionCount = elements.filter((el) => el.type === 'section').length;
+  let articleCount = 0;
+  let sectionCount = 0;
+  for (const el of elements) {
+    if (el.type === 'article') {
+      articleCount++;
+    } else if (el.type === 'section') {
+      sectionCount++;
+    }
+  }
   law.totalArticles = articleCount;
   law.totalSections = sectionCount;
   await law.save();

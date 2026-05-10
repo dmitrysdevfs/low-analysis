@@ -80,12 +80,15 @@ export const parseLawFromUrl = async (req, res, next) => {
     await lawService.deleteMissingElements(law._id, activeCodes);
 
     // 5. Update law stats
-    const articleCount = parsedData.elements.filter(
-      (el) => el.type === 'article',
-    ).length;
-    const sectionCount = parsedData.elements.filter(
-      (el) => el.type === 'section',
-    ).length;
+    let articleCount = 0;
+    let sectionCount = 0;
+    for (const el of parsedData.elements) {
+      if (el.type === 'article') {
+        articleCount++;
+      } else if (el.type === 'section') {
+        sectionCount++;
+      }
+    }
     law.totalArticles = articleCount;
     law.totalSections = sectionCount;
     await law.save();

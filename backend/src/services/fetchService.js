@@ -7,32 +7,23 @@ import axios from 'axios';
  */
 export const extractLawCode = (input) => {
   if (!input) return null;
+  const decodedInput = decodeURI(input);
 
   // If it's a URL
-  if (input.includes('zakon.rada.gov.ua')) {
-    const match = input.match(/\/laws\/show\/([^/#?]+)/);
-    if (match) {
-      const decodedInput = decodeURI(input);
-      const urlMatch = decodedInput.match(
-        /\/laws\/show\/((?:[^/#?]+)(?:\/[^/#?]+)?)/,
-      );
-      if (urlMatch) {
-        let rawCode = urlMatch[1];
-        // strip /ed... if it's there
-        if (rawCode.includes('/ed')) {
-          rawCode = rawCode.split('/ed')[0];
-        }
-        // strip /print if it's there
-        if (rawCode.includes('/print')) {
-          rawCode = rawCode.split('/print')[0];
-        }
-        return rawCode;
-      }
+  if (decodedInput.includes('zakon.rada.gov.ua')) {
+    const urlMatch = decodedInput.match(/\/laws\/show\/((?:[^/#?]+)(?:\/[^/#?]+)?)/);
+    if (urlMatch && urlMatch[1]) {
+      let rawCode = urlMatch[1];
+      // strip /ed... if it's there
+      rawCode = rawCode.split('/ed')[0];
+      // strip /print if it's there
+      rawCode = rawCode.split('/print')[0];
+      return rawCode;
     }
   }
 
-  // If it's just the code string
-  return input.trim();
+  // Not a URL, assume direct code
+  return decodedInput.trim();
 };
 
 /**
