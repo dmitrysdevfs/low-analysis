@@ -11,7 +11,9 @@ export const extractLawCode = (input) => {
 
   // If it's a URL
   if (decodedInput.includes('zakon.rada.gov.ua')) {
-    const urlMatch = decodedInput.match(/\/laws\/show\/((?:[^/#?]+)(?:\/[^/#?]+)?)/);
+    const urlMatch = decodedInput.match(
+      /\/laws\/show\/((?:[^/#?]+)(?:\/[^/#?]+)?)/,
+    );
     if (urlMatch && urlMatch[1]) {
       let rawCode = urlMatch[1];
       // strip /ed... if it's there
