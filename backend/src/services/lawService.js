@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Law from '../models/Law.js';
 import Element from '../models/Element.js';
 
@@ -57,7 +58,7 @@ export const upsertLaw = async (lawData) => {
   const law = await Law.findOneAndUpdate(
     { code },
     { $set: { title, source, status, preamble, signatory } },
-    { new: true, upsert: true }
+    { new: true, upsert: true },
   );
   return law;
 };
@@ -88,4 +89,49 @@ export const deleteMissingElements = async (lawId, activeCodes) => {
     lawId,
     code: { $nin: activeCodes },
   });
+};
+
+/**
+ * Resolves the ObjectIds and parentIds for parsed elements to preserve database links.
+ * @param {string|mongoose.Types.ObjectId} lawId
+ * @param {Array} rawElements - elements returned by parserService
+ * @returns {Promise<{ elementsToSave: Array, activeCodes: string[] }>}
+ */
+export const resolveElementHierarchy = async (lawId, rawElements) => {
+  // 1. Query existing elements to preserve _id
+  const existingElements = await Element.find({ lawId }, { code: 1, _id: 1 });
+  const codeToIdMap = {};
+  existingElements.forEach(el => {
+    codeToIdMap[el.code] = el._id;
+  });
+
+  // 2. Resolve ObjectIds for all incoming elements (use existing or generate new)
+  const usedCodes = new Set();
+  
+  const elementsWithIds = rawElements.map(el => {
+    let uniqueCode = el.code;
+    let counter = 1;
+    while (usedCodes.has(uniqueCode)) {
+      uniqueCode = `${el.code}_dup${counter}`;
+      counter++;
+    }
+    usedCodes.add(uniqueCode);
+
+    // Assign existing ID or generate new
+    const id = codeToIdMap[uniqueCode] || new mongoose.Types.ObjectId();
+    codeToIdMap[uniqueCode] = id; // Add to map for parent resolution
+
+    return { ...el, code: uniqueCode, _id: id };
+  });
+
+  // 3. Resolve parentId
+  const elementsToSave = elementsWithIds.map((el) => {
+    return {
+      ...el,
+      lawId,
+      parentId: el.parentCode ? codeToIdMap[el.parentCode] || null : null,
+    };
+  });
+
+  return { elementsToSave, activeCodes: Array.from(usedCodes) };
 };

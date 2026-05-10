@@ -3,6 +3,7 @@ import {
   getAllLaws,
   getLawTree,
   getArticle,
+  parseLawFromUrl,
 } from '../controllers/lawController.js';
 
 const router = express.Router();
@@ -106,5 +107,46 @@ router.get('/:id/tree', getLawTree);
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/:id/articles/:num', getArticle);
+
+/**
+ * @swagger
+ * /api/laws/parse:
+ *   post:
+ *     tags: [Laws]
+ *     summary: Розпарсити закон за посиланням
+ *     description: Завантажує HTML закону з zakon.rada.gov.ua, парсить його та зберігає в базу даних.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - url
+ *             properties:
+ *               url:
+ *                 type: string
+ *                 example: "https://zakon.rada.gov.ua/laws/show/580-19"
+ *                 description: Посилання на закон або його код
+ *     responses:
+ *       200:
+ *         description: Успішно розпарсено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 lawId:
+ *                   type: string
+ *                 elementsCount:
+ *                   type: integer
+ *       400:
+ *         description: Невірний URL
+ *       500:
+ *         description: Помилка сервера або парсингу
+ */
+router.post('/parse', parseLawFromUrl);
 
 export default router;
