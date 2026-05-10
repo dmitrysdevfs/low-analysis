@@ -29,20 +29,28 @@ const ingestLaw = async (filePath) => {
   console.log(`📖 Reading: ${absolutePath}`);
 
   const html = await fs.readFile(absolutePath, 'utf-8');
-  
+
   // Attempt to read main HTML for status metadata
   let mainHtml = null;
   try {
-    const mainHtmlPath = absolutePath.replace(/_frame\.html$|\.frame\.html$/, '.html');
+    const mainHtmlPath = absolutePath.replace(
+      /_frame\.html$|\.frame\.html$/,
+      '.html',
+    );
     if (mainHtmlPath !== absolutePath) {
       mainHtml = await fs.readFile(mainHtmlPath, 'utf-8');
       console.log(`📖 Reading main HTML for metadata: ${mainHtmlPath}`);
     }
   } catch (err) {
-    console.log(`ℹ️ Main HTML not found or could not be read. Status will be null.`);
+    console.log(
+      `ℹ️ Main HTML not found or could not be read. Status will be null.`,
+    );
   }
 
-  const { title, code, elements, preamble, status, signatory } = parseLawHtml(html, mainHtml);
+  const { title, code, elements, preamble, status, signatory } = parseLawHtml(
+    html,
+    mainHtml,
+  );
 
   if (!title || !code) {
     throw new Error(
@@ -75,7 +83,10 @@ const ingestLaw = async (filePath) => {
 
   // Persist Elements (attach lawId resolved from the created Law)
   if (elements.length > 0) {
-    const { elementsToSave, activeCodes } = await resolveElementHierarchy(law._id, elements);
+    const { elementsToSave, activeCodes } = await resolveElementHierarchy(
+      law._id,
+      elements,
+    );
 
     // Bulk upsert
     console.log(`💾 Bulk upserting ${elementsToSave.length} elements...`);
