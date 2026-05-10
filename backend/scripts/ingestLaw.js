@@ -6,10 +6,11 @@ import connectDB from '../src/config/db.js';
 import mongoose from 'mongoose';
 import { parseLawHtml } from '../src/services/parserService.js';
 import {
-  createLaw,
-  addElements,
-  removeLawData,
+  upsertLaw,
+  bulkUpsertElements,
+  deleteMissingElements,
 } from '../src/services/lawService.js';
+import Element from '../src/models/Element.js';
 
 dotenv.config();
 
@@ -27,7 +28,20 @@ const ingestLaw = async (filePath) => {
   console.log(`📖 Reading: ${absolutePath}`);
 
   const html = await fs.readFile(absolutePath, 'utf-8');
-  const { title, code, elements } = parseLawHtml(html);
+  
+  // Attempt to read main HTML for status metadata
+  let mainHtml = null;
+  try {
+    const mainHtmlPath = absolutePath.replace(/_frame\.html$|\.frame\.html$/, '.html');
+    if (mainHtmlPath !== absolutePath) {
+      mainHtml = await fs.readFile(mainHtmlPath, 'utf-8');
+      console.log(`📖 Reading main HTML for metadata: ${mainHtmlPath}`);
+    }
+  } catch (err) {
+    console.log(`ℹ️ Main HTML not found or could not be read. Status will be null.`);
+  }
+
+  const { title, code, elements, preamble, status, signatory } = parseLawHtml(html, mainHtml);
 
   if (!title || !code) {
     throw new Error(
@@ -47,34 +61,30 @@ const ingestLaw = async (filePath) => {
     // Optional: filter out duplicates or investigate why they happen
   }
 
-  // Cleanup existing data for this law code
-  console.log(`🧹 Cleaning up existing data for code: ${code}`);
-  await removeLawData(code);
-
-  const law = await createLaw({
+  // Upsert Law
+  console.log(`🧹 Upserting Law data for code: ${code}`);
+  const law = await upsertLaw({
     title,
     code,
     source: `https://zakon.rada.gov.ua/laws/show/${code}#Text`,
+    status,
+    preamble,
+    signatory,
   });
 
   // Persist Elements (attach lawId resolved from the created Law)
-  let savedElements = [];
   if (elements.length > 0) {
-    // 1. Pre-generate ObjectIds to build a lookup table
-    elements.forEach((el) => {
-      el._id = new mongoose.Types.ObjectId();
-    });
-
+    // 1. Query existing elements to preserve _id
+    const existingElements = await Element.find({ lawId: law._id }, { code: 1, _id: 1 });
     const codeToIdMap = {};
-    elements.forEach((el) => {
-      // Maps the original intended code to the LATEST seen _id
+    existingElements.forEach(el => {
       codeToIdMap[el.code] = el._id;
     });
 
+    // 2. Resolve ObjectIds for all incoming elements (use existing or generate new)
     const usedCodes = new Set();
-
-    // 2. Map parentCode to parentId using the lookup table and deduplicate codes
-    const elementsWithLawId = elements.map((el) => {
+    
+    const elementsWithIds = elements.map(el => {
       let uniqueCode = el.code;
       let counter = 1;
       while (usedCodes.has(uniqueCode)) {
@@ -83,15 +93,35 @@ const ingestLaw = async (filePath) => {
       }
       usedCodes.add(uniqueCode);
 
+      // Assign existing ID or generate new
+      const id = codeToIdMap[uniqueCode] || new mongoose.Types.ObjectId();
+      codeToIdMap[uniqueCode] = id; // Add to map for parent resolution
+
+      return { ...el, code: uniqueCode, _id: id };
+    });
+
+    // 3. Resolve parentId
+    const elementsWithLawId = elementsWithIds.map((el) => {
       return {
         ...el,
-        code: uniqueCode,
         lawId: law._id,
         parentId: el.parentCode ? codeToIdMap[el.parentCode] || null : null,
       };
     });
 
-    savedElements = await addElements(elementsWithLawId);
+    // 4. Bulk upsert
+    console.log(`💾 Bulk upserting ${elementsWithLawId.length} elements...`);
+    await bulkUpsertElements(elementsWithLawId);
+
+    // 5. Hard delete missing elements
+    const activeCodes = Array.from(usedCodes);
+    const deletedRes = await deleteMissingElements(law._id, activeCodes);
+    if (deletedRes && deletedRes.deletedCount > 0) {
+      console.log(`🗑️ Deleted ${deletedRes.deletedCount} outdated elements.`);
+    }
+  } else {
+    // If no elements parsed, delete all existing
+    await deleteMissingElements(law._id, []);
   }
 
   // Update law stats
@@ -103,7 +133,7 @@ const ingestLaw = async (filePath) => {
 
   console.log(`✅ Ingested: lawId=${law._id}`);
   console.log(
-    `   Sections: ${sectionCount}, Articles: ${articleCount}, Elements total: ${savedElements.length}`,
+    `   Sections: ${sectionCount}, Articles: ${articleCount}, Elements parsed: ${elements.length}`,
   );
 
   process.exit(0);

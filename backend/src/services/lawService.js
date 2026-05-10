@@ -52,23 +52,40 @@ export const getArticle = async (lawId, articleNumber) => {
 
 // ── Write ─────────────────────────────────────────────────────────────────────
 
-export const createLaw = async (lawData) => {
-  return await Law.create(lawData);
+export const upsertLaw = async (lawData) => {
+  const { code, title, source, status, preamble, signatory } = lawData;
+  const law = await Law.findOneAndUpdate(
+    { code },
+    { $set: { title, source, status, preamble, signatory } },
+    { new: true, upsert: true }
+  );
+  return law;
 };
 
-export const addElements = async (elements) => {
-  return await Element.insertMany(elements);
-};
+export const bulkUpsertElements = async (elements) => {
+  const bulkOps = elements.map((el) => {
+    const { _id, code, ...updateFields } = el;
+    return {
+      updateOne: {
+        filter: { code },
+        update: {
+          $set: updateFields,
+          $setOnInsert: { _id, code },
+        },
+        upsert: true,
+      },
+    };
+  });
 
-/**
- * Removes a law and all its associated elements.
- */
-export const removeLawData = async (code) => {
-  const law = await Law.findOne({ code });
-  if (law) {
-    await Element.deleteMany({ lawId: law._id });
-    await Law.deleteOne({ _id: law._id });
-    return true;
+  if (bulkOps.length > 0) {
+    return await Element.bulkWrite(bulkOps);
   }
-  return false;
+  return null;
+};
+
+export const deleteMissingElements = async (lawId, activeCodes) => {
+  return await Element.deleteMany({
+    lawId,
+    code: { $nin: activeCodes },
+  });
 };
