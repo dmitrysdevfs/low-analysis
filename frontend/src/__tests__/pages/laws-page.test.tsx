@@ -1,3 +1,4 @@
+import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LawsPage from "@/app/laws/page";
@@ -12,7 +13,9 @@ describe("Laws page", () => {
   it("renders the laws catalogue and reacts to search input", async () => {
     const user = userEvent.setup();
 
-    vi.mocked(useLaws).mockImplementation((query = "") => {
+    vi.mocked(useLaws).mockImplementation((query = "", refreshKey = 0) => {
+      void refreshKey;
+
       if (query === "zzz") {
         return {
           fetchedQ: "zzz",
@@ -51,7 +54,7 @@ describe("Laws page", () => {
       target: { value: "zzz" },
     });
 
-    await vi.waitFor(() => expect(useLaws).toHaveBeenLastCalledWith("zzz"));
+    await vi.waitFor(() => expect(useLaws).toHaveBeenLastCalledWith("zzz", 0));
     await vi.waitFor(() =>
       expect(
         screen.getByText(/Нічого не знайдено за запитом «zzz»/i),

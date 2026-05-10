@@ -1,9 +1,11 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getArticle,
   getLawTree,
   getLaws,
   getSubjectElements,
   getSubjects,
+  parseLaw,
 } from "@/lib/api";
 import {
   ARTICLE_RESPONSE_FIXTURE,
@@ -104,5 +106,32 @@ describe("frontend API client", () => {
       2,
       `/api/subjects/${SUBJECT_FIXTURE._id}/elements`,
     );
+  });
+
+  it("sends a POST request to parse a law by URL", async () => {
+    const response = {
+      message: "Law successfully parsed and saved",
+      lawId: "law-1",
+      elementsCount: 42,
+    };
+
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => response,
+    });
+
+    await expect(
+      parseLaw("https://zakon.rada.gov.ua/laws/show/254к/96-вр"),
+    ).resolves.toEqual(response);
+
+    expect(fetchMock).toHaveBeenCalledWith("/api/laws/parse", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        url: "https://zakon.rada.gov.ua/laws/show/254к/96-вр",
+      }),
+    });
   });
 });
