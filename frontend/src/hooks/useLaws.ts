@@ -10,7 +10,7 @@ interface State {
   error: string | null;
 }
 
-export function useLaws(q = "") {
+export function useLaws(q = "", refreshKey = 0) {
   const [state, setState] = useState<State>({
     fetchedQ: null,
     laws: [],
@@ -36,7 +36,7 @@ export function useLaws(q = "") {
     );
 
     return () => clearTimeout(timer);
-  }, [q]);
+  }, [q, refreshKey]);
 
   return { ...state, loading };
 }

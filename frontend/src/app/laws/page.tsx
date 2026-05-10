@@ -4,13 +4,16 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { LawCard } from "@/components/LawCard";
+import { LawParseForm } from "@/components/LawParseForm";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { useLaws } from "@/hooks/useLaws";
 import styles from "./page.module.scss";
 
 export default function LawsPage() {
   const [query, setQuery] = useState("");
-  const { laws, loading, error } = useLaws(query);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const { laws, loading, error } = useLaws(query, refreshKey);
 
   return (
     <Layout>
@@ -60,6 +63,8 @@ export default function LawsPage() {
               </button>
             ) : null}
           </motion.div>
+
+          <LawParseForm onSuccess={() => setRefreshKey((prev) => prev + 1)} />
 
           <AnimatePresence mode="wait">
             {!loading && !error ? (

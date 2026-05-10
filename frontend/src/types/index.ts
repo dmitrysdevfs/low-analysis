@@ -55,3 +55,9 @@ export interface SubjectElements {
   subject: Subject;
   elements: TreeNode[];
 }
+
+export interface ParseLawResponse {
+  message: string;
+  lawId: string;
+  elementsCount: number;
+}
