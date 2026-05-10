@@ -23,7 +23,7 @@ export function LawParseForm({ onSuccess }: Props) {
     try {
       const parsed = new URL(value);
 
-      return parsed.hostname.includes("zakon.rada.gov.ua");
+      return parsed.hostname === "zakon.rada.gov.ua";
     } catch {
       return false;
     }
