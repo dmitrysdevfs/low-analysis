@@ -1,10 +1,20 @@
 .wrapper {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 20px 24px 80px;
+  padding: 20px clamp(14px, 4vw, 24px) 80px;
   width: 100%;
 }
 
 .formWrap {
   margin-bottom: 28px;
+}
+
+@media (max-width: 640px) {
+  .wrapper {
+    padding-bottom: 48px;
+  }
+
+  .formWrap {
+    margin-bottom: 20px;
+  }
 }

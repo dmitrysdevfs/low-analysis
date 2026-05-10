@@ -2,7 +2,8 @@
   background: #0d1c3a;
   border: 1px solid #1c3260;
   border-radius: 12px;
-  padding: 20px clamp(16px, 4vw, 48px) 20px;
+  padding: 20px clamp(16px, 4vw, 48px);
+  width: 100%;
 }
 
 .header {
@@ -41,6 +42,7 @@
 
 .fieldGroup {
   display: flex;
+  align-items: stretch;
   gap: 8px;
   flex: 1;
   min-width: 0;
@@ -48,16 +50,25 @@
 
 .dateGroup {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 8px;
   flex: 1;
-  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.dateField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .dateLabel {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: #7a98c0;
+  white-space: nowrap;
 }
 
 .selectSmall {
@@ -80,8 +91,8 @@
 }
 
 .inputDate {
-  flex: 1;
-  min-width: 120px;
+  width: 100%;
+  min-width: 0;
 }
 
 .actions {
@@ -104,4 +115,64 @@
 
 .spinnerChar {
   display: inline-block;
+}
+
+@media (max-width: 860px) {
+  .row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .label {
+    width: 100%;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 18px 14px;
+  }
+
+  .fieldGroup {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .dateGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .dateField {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .dateLabel {
+    padding-left: 2px;
+  }
+
+  .selectSmall,
+  .selectMedium,
+  .selectFull,
+  .inputFlex,
+  .inputDate {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btnReset,
+  .btnSubmit {
+    width: 100%;
+    min-width: 0;
+  }
 }

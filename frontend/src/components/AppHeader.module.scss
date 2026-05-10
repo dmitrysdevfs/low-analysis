@@ -1,12 +1,9 @@
-// AppHeader styles
-
 .header {
   position: sticky;
   top: 0;
   z-index: 20;
 }
 
-// ── Top bar ──
 .topBar {
   background: linear-gradient(135deg, #1a3e8a 0%, #0d2460 100%);
   border-bottom: 1px solid rgba(200, 168, 67, 0.3);
@@ -21,6 +18,17 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.logoMark {
+  flex-shrink: 0;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.18));
+}
+
+.logoCopy {
+  min-width: 0;
 }
 
 .logoLink {
@@ -50,9 +58,10 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   margin-top: 4px;
+  line-height: 1.35;
+  max-width: 26ch;
 }
 
-// ── Burger button ──
 .burgerBtn {
   display: flex;
   align-items: center;
@@ -63,6 +72,7 @@
   padding: 8px 10px;
   color: #c8a843;
   cursor: pointer;
+  flex-shrink: 0;
   transition:
     border-color 0.18s ease,
     background 0.18s ease;
@@ -73,7 +83,6 @@
   }
 }
 
-// ── Desktop nav ──
 .desktopNav {
   display: flex;
   gap: 2px;
@@ -83,7 +92,6 @@
   backdrop-filter: blur(10px);
 }
 
-// ── Mobile dropdown nav ──
 .mobileNav {
   overflow: hidden;
   background: rgba(13, 28, 58, 0.97);
@@ -116,5 +124,38 @@
 
   &:hover {
     color: #c8a843;
+  }
+}
+
+@media (max-width: 639px) {
+  .topBar {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .logoBlock {
+    gap: 10px;
+  }
+
+  .logoMark {
+    width: 30px;
+  }
+
+  .logoLink {
+    font-size: 1.05rem;
+  }
+
+  .logoSubtitle {
+    font-size: 0.56rem;
+    letter-spacing: 0.1em;
+    max-width: 18ch;
+  }
+
+  .desktopNav {
+    padding: 0 14px;
+  }
+
+  .mobileNavLink {
+    padding: 14px 16px;
   }
 }

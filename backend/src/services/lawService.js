@@ -5,7 +5,13 @@ import Element from '../models/Element.js';
 // ── Read ──────────────────────────────────────────────────────────────────────
 
 export const getAllLaws = async (q = '') => {
-  const filter = q ? { title: { $regex: q, $options: 'i' } } : {};
+  const filter = q
+    ? {
+        title: {
+          $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
+        },
+      }
+    : {};
   return await Law.find(filter).select('-__v').sort({ adoptedDate: -1 });
 };
 
