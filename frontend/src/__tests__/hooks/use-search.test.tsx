@@ -36,7 +36,11 @@ describe("useSearch", () => {
     const { result } = renderHook(() => useSearch());
 
     act(() => {
-      result.current.search({ q: "закон", type: "ЗАКОН УКРАЇНИ", sort: "title" });
+      result.current.search({
+        q: "закон",
+        type: "ЗАКОН УКРАЇНИ",
+        sort: "title",
+      });
     });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
