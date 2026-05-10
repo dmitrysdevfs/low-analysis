@@ -55,7 +55,23 @@ export async function parseLaw(url: string): Promise<ParseLawResponse> {
   });
 
   if (!res.ok) {
-    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    let errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+
+    try {
+      const errorBody = await res.json();
+
+      if (
+        errorBody &&
+        typeof errorBody === "object" &&
+        "message" in errorBody
+      ) {
+        errorMessage = String(errorBody.message);
+      }
+    } catch {
+      // ignore json parse errors
+    }
+
+    throw new Error(errorMessage);
   }
 
   return res.json() as Promise<ParseLawResponse>;

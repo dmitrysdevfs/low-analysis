@@ -134,4 +134,19 @@ describe("frontend API client", () => {
       }),
     });
   });
+
+  it("uses backend error message for parseLaw when available", async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      json: async () => ({
+        message: "Could not extract valid law code",
+      }),
+    });
+
+    await expect(parseLaw("invalid-url")).rejects.toThrow(
+      "Could not extract valid law code",
+    );
+  });
 });
