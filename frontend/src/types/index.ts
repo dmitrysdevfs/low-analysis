@@ -2,6 +2,8 @@ export interface Law {
   _id: string;
   title: string;
   code: string;
+  preamble?: string | null;
+  status?: string | null;
   totalSections: number;
   totalArticles: number;
   totalParagraphs?: number;

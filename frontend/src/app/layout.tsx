@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   description:
     "Platform for structuring, exploring, and analyzing Ukrainian legislation.",
   icons: {
-    icon: "favicon/favicon.ico",
+    icon: "/favicon/favicon.ico",
   },
 };
 
