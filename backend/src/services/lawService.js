@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Law from '../models/Law.js';
 import Element from '../models/Element.js';
 
@@ -52,23 +53,85 @@ export const getArticle = async (lawId, articleNumber) => {
 
 // ── Write ─────────────────────────────────────────────────────────────────────
 
-export const createLaw = async (lawData) => {
-  return await Law.create(lawData);
+export const upsertLaw = async (lawData) => {
+  const { code, title, source, status, preamble, signatory } = lawData;
+  const law = await Law.findOneAndUpdate(
+    { code },
+    { $set: { title, source, status, preamble, signatory } },
+    { new: true, upsert: true },
+  );
+  return law;
 };
 
-export const addElements = async (elements) => {
-  return await Element.insertMany(elements);
+export const bulkUpsertElements = async (elements) => {
+  const bulkOps = elements.map((el) => {
+    const { _id, code, ...updateFields } = el;
+    return {
+      updateOne: {
+        filter: { code },
+        update: {
+          $set: updateFields,
+          $setOnInsert: { _id, code },
+        },
+        upsert: true,
+      },
+    };
+  });
+
+  if (bulkOps.length > 0) {
+    return await Element.bulkWrite(bulkOps);
+  }
+  return null;
+};
+
+export const deleteMissingElements = async (lawId, activeCodes) => {
+  return await Element.deleteMany({
+    lawId,
+    code: { $nin: activeCodes },
+  });
 };
 
 /**
- * Removes a law and all its associated elements.
+ * Resolves the ObjectIds and parentIds for parsed elements to preserve database links.
+ * @param {string|mongoose.Types.ObjectId} lawId
+ * @param {Array} rawElements - elements returned by parserService
+ * @returns {Promise<{ elementsToSave: Array, activeCodes: string[] }>}
  */
-export const removeLawData = async (code) => {
-  const law = await Law.findOne({ code });
-  if (law) {
-    await Element.deleteMany({ lawId: law._id });
-    await Law.deleteOne({ _id: law._id });
-    return true;
-  }
-  return false;
+export const resolveElementHierarchy = async (lawId, rawElements) => {
+  // 1. Query existing elements to preserve _id
+  const existingElements = await Element.find({ lawId }, { code: 1, _id: 1 });
+  const codeToIdMap = {};
+  existingElements.forEach((el) => {
+    codeToIdMap[el.code] = el._id;
+  });
+
+  // 2. Resolve ObjectIds for all incoming elements (use existing or generate new)
+  const usedCodes = new Set();
+
+  const elementsWithIds = rawElements.map((el) => {
+    let uniqueCode = el.code;
+    let counter = 1;
+    while (usedCodes.has(uniqueCode)) {
+      uniqueCode = `${el.code}_dup${counter}`;
+      counter++;
+    }
+    usedCodes.add(uniqueCode);
+
+    // Assign existing ID or generate new
+    const id = codeToIdMap[uniqueCode] || new mongoose.Types.ObjectId();
+    codeToIdMap[uniqueCode] = id; // Add to map for parent resolution
+
+    return { ...el, code: uniqueCode, _id: id };
+  });
+
+  // 3. Resolve parentId
+  const elementsToSave = elementsWithIds.map((el) => {
+    return {
+      ...el,
+      lawId,
+      parentId: el.parentCode ? codeToIdMap[el.parentCode] || null : null,
+    };
+  });
+
+  return { elementsToSave, activeCodes: Array.from(usedCodes) };
 };

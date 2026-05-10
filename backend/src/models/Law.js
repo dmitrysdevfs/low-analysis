@@ -14,6 +14,18 @@ const lawSchema = new mongoose.Schema(
     adoptedDate: {
       type: Date,
     },
+    preamble: {
+      type: String,
+      default: null,
+    },
+    status: {
+      type: String,
+      default: null,
+    },
+    signatory: {
+      type: String,
+      default: null,
+    },
     source: {
       type: String,
     },

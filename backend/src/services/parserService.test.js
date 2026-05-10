@@ -32,13 +32,13 @@ describe('parseLawHtml', () => {
           <div id="article">
             <p class="rvps7"><a data-tree="rz1" name="n2"></a><span class="rvts15">Section I</span></p>
             <p class="rvps2"><a data-tree="st1" name="n3"></a><span class="rvts9">Article 1.</span> Body of article one.</p>
-            <p class="rvps2"><a data-tree="pu1:st1" name="n4"></a>Text of point one.</p>
+            <p class="rvps2"><a data-tree="pu1:st1" name="n4"></a>1) Text of point one.</p>
           </div>
         </body>
       </html>
     `;
 
-    const result = parseLawHtml(html);
+    const result = parseLawHtml(html, html);
 
     expect(result.elements).toHaveLength(3);
     expect(result.elements[0]).toMatchObject({

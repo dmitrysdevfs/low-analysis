@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import * as cheerio from 'cheerio';
 
 // ─── CSS class → element type mapping ────────────────────────────────────────
@@ -20,10 +18,21 @@ const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
  * Parses the .frame HTML from zakon.rada.gov.ua into a structured law object.
  *
  * @param {string} html - Raw HTML content of the .frame page
- * @returns {{ title: string, code: string, elements: Array }} parsed data
+ * @param {string} [mainHtml] - Raw HTML content of the main page (optional)
+ * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null }} parsed data
  */
-export const parseLawHtml = (html) => {
+export const parseLawHtml = (html, mainHtml = null) => {
   const $ = cheerio.load(html);
+
+  let status = null;
+  if (mainHtml) {
+    const $main = cheerio.load(mainHtml);
+    status =
+      $main('.status').first().text().trim() ||
+      $main('span.valid').first().text().trim() ||
+      $main('.doc-status').first().text().trim() ||
+      null;
+  }
 
   // ── 1. Extract law title ──────────────────────────────────────────────────
   let title = '';
@@ -50,23 +59,45 @@ export const parseLawHtml = (html) => {
     }
   });
 
-  // ── 3. Parse elements ─────────────────────────────────────────────────────
+  // ── 3. Parse elements & Extract metadata ──────────────────────────────────
   const elements = [];
   let order = 0;
   let currentSectionId = null;
   let currentArticleId = null;
 
-  // We iterate over all <p> tags inside #article that carry a data-tree anchor
+  let preambleText = [];
+  let signatoryText = [];
+  let hasHitFirstDataTree = false;
+
+  // We iterate over all <p> tags inside #article
   $('#article p').each((_, el) => {
     const $p = $(el);
     const anchor = $p.find('a[data-tree]').first();
-    if (!anchor.length) return;
+    const text = $p.text().trim();
+
+    if (!anchor.length) {
+      if (text && text.length > 0 && !text.startsWith('{')) {
+        if (!hasHitFirstDataTree) {
+          // It's before the first structured element, might be preamble
+          preambleText.push(text);
+        } else {
+          // It's after the first structured element but has no data-tree.
+          // We keep a rolling buffer of the last few elements for the signatory block.
+          // If a new valid element comes, we clear this buffer.
+          signatoryText.push(text);
+        }
+      }
+      return;
+    }
 
     const dataTree = anchor.attr('data-tree') || '';
     const anchorName = anchor.attr('name') || '';
 
     // Skip editorial comments (cm_N:...)
     if (dataTree.startsWith('cm_') || dataTree.startsWith('nz_')) return;
+
+    hasHitFirstDataTree = true;
+    signatoryText = []; // Clear signatory buffer because we found a real element
 
     const pClass = $p.attr('class') || '';
 
@@ -164,17 +195,38 @@ export const parseLawHtml = (html) => {
       const depth = 1 + childParts.length;
 
       const leafNodeStr = childParts[childParts.length - 1]; // e.g. 'ch_1', 'pu1', 'ppa_1'
-      const numberMatch = leafNodeStr.match(/\d+/);
-      const partNumber = numberMatch ? numberMatch[0] : '';
 
+      let elementType = 'paragraph';
+      let partNumber = '';
+
+      const partMatch = text.match(/^(\d+)\.\s/);
+      const pointMatch = text.match(/^(\d+)\)\s/);
+      const subPointMatch = text.match(/^([а-яєіїґ]+)\)\s/i);
+
+      if (partMatch) {
+        elementType = 'part';
+        partNumber = partMatch[1];
+      } else if (pointMatch) {
+        elementType = 'point';
+        partNumber = pointMatch[1];
+      } else if (subPointMatch) {
+        elementType = 'sub_point';
+        partNumber = subPointMatch[1];
+      } else {
+        const parentStr =
+          childParts.length > 1
+            ? childParts[childParts.length - 2]
+            : articleStr;
+        if (parentStr.startsWith('st')) {
+          elementType = 'part';
+        } else {
+          elementType = 'paragraph';
+        }
+        const numberMatch = leafNodeStr.match(/\d+/);
+        partNumber = numberMatch ? numberMatch[0] : '';
+      }
       elements.push({
-        type: leafNodeStr.startsWith('pu')
-          ? 'point'
-          : leafNodeStr.startsWith('pp')
-            ? 'sub_point'
-            : leafNodeStr.startsWith('ch')
-              ? 'part'
-              : 'paragraph',
+        type: elementType,
         code: partCode,
         number: partNumber,
         title: null,
@@ -187,5 +239,8 @@ export const parseLawHtml = (html) => {
     }
   });
 
-  return { title, code, elements };
+  const preamble = preambleText.length > 0 ? preambleText.join('\n') : null;
+  const signatory = signatoryText.length > 0 ? signatoryText.join('\n') : null;
+
+  return { title, code, elements, preamble, status, signatory };
 };
