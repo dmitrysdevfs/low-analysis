@@ -217,5 +217,4 @@ API_PROXY_TARGET_URL=https://low-analysis.onrender.com
 - **frontend/.env.local**: фронт вказує на production backend `https://low-analysis.onrender.com`
 - **backend/.env**: шаблон з `CORS_ALLOWED_ORIGINS` для localhost:3001
 - **frontend/vitest.config.ts**: доданий конфіг для тестів (jsdom, path alias `@/*`)
-- **Видалено**: `AGENTS.md`, `CLAUDE.md` з `frontend/` — службові файли прибрані з репо
 - **Порти**: backend `:3000`, frontend `:3001` (зафіксовано в `package.json`)

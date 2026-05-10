@@ -344,3 +344,60 @@
   font-size: 0.62rem;
   text-transform: uppercase;
 }
+
+@media (max-width: 640px) {
+  .cardFront {
+    padding: 18px 16px;
+  }
+
+  .frontHeader,
+  .frontStats,
+  .backHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .statsGroup {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .expandHint {
+    font-size: 0.58rem;
+  }
+
+  .backHeader,
+  .searchRow,
+  .cardFooter,
+  .skeletonContainer,
+  .articleRow {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .collapseBtn {
+    width: 100%;
+  }
+
+  .articleTitle,
+  .articlePreview {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: unset;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
+
+  .articleTitle {
+    -webkit-line-clamp: 2;
+  }
+
+  .articlePreview {
+    -webkit-line-clamp: 2;
+  }
+
+  .allArticlesBtn {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

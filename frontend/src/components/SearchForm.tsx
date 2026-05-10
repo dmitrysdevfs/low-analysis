@@ -23,6 +23,38 @@ const DEFAULT: SearchParams = {
   sort: "date",
 };
 
+const DATE_PLACEHOLDER = "дд.мм.рррр";
+
+function formatDateInput(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+
+  return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
+}
+
+function toIsoDate(value: string) {
+  const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value.trim());
+
+  if (!match) return "";
+
+  const [, day, month, year] = match;
+  const normalized = `${year}-${month}-${day}`;
+  const parsed = new Date(`${normalized}T00:00:00Z`);
+
+  if (
+    Number.isNaN(parsed.getTime()) ||
+    parsed.getUTCDate() !== Number(day) ||
+    parsed.getUTCMonth() + 1 !== Number(month) ||
+    parsed.getUTCFullYear() !== Number(year)
+  ) {
+    return "";
+  }
+
+  return normalized;
+}
+
 export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
   const [p, setP] = useState<SearchParams>(DEFAULT);
 
@@ -31,7 +63,11 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(p);
+    onSearch({
+      ...p,
+      dateFrom: toIsoDate(p.dateFrom),
+      dateTo: toIsoDate(p.dateTo),
+    });
   };
 
   const handleReset = () => {
@@ -45,7 +81,6 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
 
       <form onSubmit={handleSubmit}>
         <div className={styles.fields}>
-          {/* Слова */}
           <div className={styles.row}>
             <span className={styles.label}>Слова</span>
             <div className={styles.fieldGroup}>
@@ -57,7 +92,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                 className={`form-control form-select ${styles.selectSmall}`}
               >
                 <option value="title">в назві</option>
-                <option value="text">в тексті</option>
+                <option value="text">у тексті</option>
                 <option value="code">за кодом</option>
               </select>
               <input
@@ -70,7 +105,6 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
             </div>
           </div>
 
-          {/* Тип документа */}
           <div className={styles.row}>
             <span className={styles.label}>Тип документа</span>
             <select
@@ -79,36 +113,46 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
               className={`form-control form-select ${styles.selectFull}`}
             >
               <option value="">Всі</option>
-              <option value="ua">Конституція (UA)</option>
-              <option value="z">Закон (Z)</option>
-              <option value="uk">Кодекс (UK)</option>
-              <option value="n">Нормативний акт (N)</option>
-              <option value="p">Постанова (P)</option>
+              <option value="КОНСТИТУЦІЯ УКРАЇНИ">Конституція України</option>
+              <option value="ЗАКОН УКРАЇНИ">Закон України</option>
+              <option value="КОДЕКС">Кодекс</option>
+              <option value="ПОСТАНОВА">Постанова</option>
+              <option value="НАКАЗ">Наказ</option>
             </select>
           </div>
 
-          {/* Дата документа */}
           <div className={styles.row}>
             <span className={styles.label}>Дата документа</span>
             <div className={styles.dateGroup}>
-              <span className={styles.dateLabel}>з</span>
-              <input
-                type="date"
-                value={p.dateFrom}
-                onChange={(e) => set("dateFrom", e.target.value)}
-                className={`form-control ${styles.inputDate}`}
-              />
-              <span className={styles.dateLabel}>по</span>
-              <input
-                type="date"
-                value={p.dateTo}
-                onChange={(e) => set("dateTo", e.target.value)}
-                className={`form-control ${styles.inputDate}`}
-              />
+              <label className={styles.dateField}>
+                <span className={styles.dateLabel}>Від</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={10}
+                  value={p.dateFrom}
+                  onChange={(e) => set("dateFrom", formatDateInput(e.target.value))}
+                  placeholder={DATE_PLACEHOLDER}
+                  className={`form-control ${styles.inputDate}`}
+                />
+              </label>
+              <label className={styles.dateField}>
+                <span className={styles.dateLabel}>До</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={10}
+                  value={p.dateTo}
+                  onChange={(e) => set("dateTo", formatDateInput(e.target.value))}
+                  placeholder={DATE_PLACEHOLDER}
+                  className={`form-control ${styles.inputDate}`}
+                />
+              </label>
             </div>
           </div>
 
-          {/* Номер документа */}
           <div className={styles.row}>
             <span className={styles.label}>Номер документа</span>
             <div className={styles.fieldGroup}>
@@ -130,13 +174,12 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                 type="text"
                 value={p.number}
                 onChange={(e) => set("number", e.target.value)}
-                placeholder="Код або номер..."
+                placeholder="Код або номер акта..."
                 className={`form-control ${styles.inputFlex}`}
               />
             </div>
           </div>
 
-          {/* Стан документа */}
           <div className={styles.row}>
             <span className={styles.label}>Стан документа</span>
             <select
@@ -145,13 +188,12 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
               className={`form-control form-select ${styles.selectFull}`}
             >
               <option value=""></option>
-              <option value="active">Чинний</option>
-              <option value="inactive">Втратив чинність</option>
-              <option value="pending">Не набрав чинності</option>
+              <option value="чинний">Чинний</option>
+              <option value="втратив чинність">Втратив чинність</option>
+              <option value="не набрав чинності">Не набрав чинності</option>
             </select>
           </div>
 
-          {/* Сортування */}
           <div className={styles.row}>
             <span className={styles.label}>Сортування</span>
             <select
@@ -168,7 +210,6 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
           </div>
         </div>
 
-        {/* Кнопки */}
         <div className={styles.actions}>
           <motion.button
             type="button"

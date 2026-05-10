@@ -5,34 +5,8 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { NAV_ITEMS } from "@/constants/navigation";
+import { TryzubMark } from "@/components/TryzubMark";
 import styles from "./AppHeader.module.scss";
-
-function TryzubIcon() {
-  return (
-    <svg
-      width="28"
-      height="36"
-      viewBox="0 0 28 36"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M14 2 L14 34 M14 2 L6 10 M14 2 L22 10 M6 10 L6 18 Q6 22 10 22 L14 22 M22 10 L22 18 Q22 22 18 22 L14 22 M8 34 L20 34"
-        stroke="#C8A843"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M14 2 L14 10 M10 6 Q14 2 18 6"
-        stroke="#C8A843"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 function BurgerIcon({ open }: { open: boolean }) {
   return (
@@ -111,12 +85,10 @@ export function AppHeader() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
     >
-      {/* ── Top bar ── */}
       <div className={styles.topBar}>
-        {/* Logo block */}
         <div className={styles.logoBlock}>
-          <TryzubIcon />
-          <div>
+          <TryzubMark size={30} variant="header" className={styles.logoMark} />
+          <div className={styles.logoCopy}>
             <Link href="/" className={styles.logoLink}>
               Low Analysis
             </Link>
@@ -126,10 +98,10 @@ export function AppHeader() {
           </div>
         </div>
 
-        {/* Burger button — visible only on mobile via CSS class */}
         <button
+          type="button"
           className={`nav-mobile-btn ${styles.burgerBtn}`}
-          onClick={() => setMobileOpen((v) => !v)}
+          onClick={() => setMobileOpen((value) => !value)}
           aria-label={mobileOpen ? "Закрити меню" : "Відкрити меню"}
           aria-expanded={mobileOpen}
         >
@@ -137,7 +109,6 @@ export function AppHeader() {
         </button>
       </div>
 
-      {/* ── Desktop nav — hidden on mobile via CSS class ── */}
       <nav className={`nav-desktop ${styles.desktopNav}`}>
         {NAV_ITEMS.map((item) => {
           const isActive =
@@ -156,7 +127,6 @@ export function AppHeader() {
         })}
       </nav>
 
-      {/* ── Mobile dropdown nav ── */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav

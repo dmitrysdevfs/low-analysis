@@ -26,6 +26,10 @@ const itemVariants = {
   }),
 };
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function SkeletonLine({ width }: { width: string }) {
   return (
     <motion.div
@@ -46,7 +50,17 @@ function getArticleLabel(article: ArticleWithPreview): string {
   const badge = getArticleBadge(article);
   const title = getArticleTitle(article);
 
-  return title === badge ? badge : `${badge}. ${title}`;
+  if (!article.number) return title;
+
+  const duplicatePrefix = new RegExp(
+    `^стаття\\s*${escapeRegExp(article.number)}[\\s.:,-]*`,
+    "iu",
+  );
+  const trimmedTitle = title.replace(duplicatePrefix, "").trim();
+
+  if (!trimmedTitle) return badge;
+
+  return `${badge}. ${trimmedTitle}`;
 }
 
 function getPreview(article: ArticleWithPreview): string | null {
@@ -54,6 +68,14 @@ function getPreview(article: ArticleWithPreview): string | null {
   if (!src) return null;
   const clean = src.trim();
   return clean.length > 90 ? clean.slice(0, 90) + "…" : clean;
+}
+
+function normalizeArticleNumberQuery(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/ст\.?/giu, "")
+    .replace(/\s+/g, "")
+    .trim();
 }
 
 interface ArticleWithPreview extends TreeNode {
@@ -69,13 +91,12 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
 
   const filtered = useMemo(() => {
     if (!query.trim()) return allArticles;
-    const q = query.toLowerCase();
-    return allArticles.filter((a) => {
-      const title = getArticleLabel(a).toLowerCase();
-      const num = (a.number ?? "").toLowerCase();
-      const preview = (a._preview ?? a.text ?? "").toLowerCase();
-      return title.includes(q) || num.includes(q) || preview.includes(q);
-    });
+    const q = normalizeArticleNumberQuery(query);
+    if (!q) return allArticles;
+
+    return allArticles.filter((a) =>
+      (a.number ?? "").toLowerCase().replace(/\s+/g, "").includes(q),
+    );
   }, [allArticles, query]);
 
   const visible = filtered.slice(0, PAGE_SIZE);
@@ -175,7 +196,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Пошук за назвою статті…"
+              placeholder="Пошук за номером статті..."
               className={styles.searchInput}
             />
             {query && (

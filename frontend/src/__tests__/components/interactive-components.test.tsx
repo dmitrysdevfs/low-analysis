@@ -72,7 +72,11 @@ describe("interactive frontend components", () => {
       screen.getByPlaceholderText("Введіть ключові слова..."),
       "конституція",
     );
-    await user.type(screen.getByPlaceholderText("Код або номер..."), "254");
+    const dateInputs = screen.getAllByPlaceholderText("дд.мм.рррр");
+
+    await user.type(dateInputs[0], "10052026");
+    await user.type(dateInputs[1], "11052026");
+    await user.type(screen.getByPlaceholderText("Код або номер акта..."), "254");
     await user.selectOptions(selects[1], "ua");
     await user.selectOptions(selects[4], "title");
     await user.click(screen.getByRole("button", { name: /Шукати/i }));
@@ -81,8 +85,8 @@ describe("interactive frontend components", () => {
       q: "конституція",
       wordField: "title",
       docType: "ua",
-      dateFrom: "",
-      dateTo: "",
+      dateFrom: "2026-05-10",
+      dateTo: "2026-05-11",
       numberType: "starts",
       number: "254",
       status: "",

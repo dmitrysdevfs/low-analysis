@@ -73,9 +73,9 @@ export function useSearch() {
 
         if (normalizedParams.docType) {
           filtered = filtered.filter((law) =>
-            law.code
-              .toLowerCase()
-              .includes(normalizedParams.docType.toLowerCase()),
+            (law.preamble ?? "")
+              .toUpperCase()
+              .includes(normalizedParams.docType.toUpperCase()),
           );
         }
 
@@ -105,6 +105,14 @@ export function useSearch() {
           const to = new Date(normalizedParams.dateTo).getTime();
           filtered = filtered.filter(
             (law) => new Date(law.createdAt).getTime() <= to,
+          );
+        }
+
+        if (normalizedParams.status) {
+          filtered = filtered.filter((law) =>
+            (law.status ?? "")
+              .toLowerCase()
+              .includes(normalizedParams.status.toLowerCase()),
           );
         }
 

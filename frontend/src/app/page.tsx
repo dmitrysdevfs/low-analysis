@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Layout } from "@/components/Layout";
+import { TryzubMark } from "@/components/TryzubMark";
 import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import styles from "./page.module.scss";
@@ -58,50 +59,6 @@ const childFade = {
   },
 };
 
-function TryzubSvg({ size = 120 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size * 1.2}
-      viewBox="0 0 100 120"
-      fill="none"
-      aria-hidden="true"
-    >
-      <rect x="20" y="105" width="60" height="8" rx="2" fill="#C8A843" />
-      <rect x="44" y="60" width="12" height="48" rx="2" fill="#C8A843" />
-      <path d="M44 60 Q44 32 50 24 Q56 32 56 60 Z" fill="#C8A843" />
-      <path
-        d="M44 75 Q30 75 26 68 Q22 60 30 52 Q34 48 38 52 L44 58"
-        stroke="#C8A843"
-        strokeWidth="7"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M26 68 Q22 58 28 50 Q32 44 36 50 Q38 54 36 60"
-        stroke="#C8A843"
-        strokeWidth="6"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M56 75 Q70 75 74 68 Q78 60 70 52 Q66 48 62 52 L56 58"
-        stroke="#C8A843"
-        strokeWidth="7"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M74 68 Q78 58 72 50 Q68 44 64 50 Q62 54 64 60"
-        stroke="#C8A843"
-        strokeWidth="6"
-        strokeLinecap="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
-
 const rights = [
   { art: "21", text: "Усі люди є вільні і рівні у своїй гідності та правах" },
   { art: "27", text: "Кожна людина має невід'ємне право на життя" },
@@ -140,18 +97,18 @@ function HerbFlipCard({
             animate={{ scale: flipped ? 0.95 : 1 }}
             transition={{ duration: 0.3 }}
           >
-            <TryzubSvg size={110} />
+            <TryzubMark size={108} />
           </motion.div>
           <div className={styles.flipFrontTextCenter}>
             <div className={`display ${styles.flipFrontTitle}`}>
-              Герб України
+              Малий герб України
             </div>
             <div className={`mono ${styles.flipFrontMono}`}>
-              Тризуб · Символ держави
+              Тризуб · державний символ
             </div>
           </div>
           <div className={`mono ${styles.flipFrontHint}`}>
-            Наведи або натисни
+            Наведіть або натисніть
           </div>
         </div>
 
@@ -329,10 +286,7 @@ export default function HomePage() {
           </motion.div>
 
           <motion.div {...fadeUp(0.3)} className={styles.heroCardWrapper}>
-            <HerbFlipCard
-              width={w < 768 ? 260 : 300}
-              height={w < 768 ? 310 : 360}
-            />
+            <HerbFlipCard width={300} height={360} />
           </motion.div>
         </div>
       </section>

@@ -419,3 +419,84 @@
   text-decoration: none;
   white-space: nowrap;
 }
+
+@media (max-width: 767px) {
+  .heroSection {
+    padding: 32px 16px 56px;
+  }
+
+  .heroInner {
+    align-items: stretch;
+  }
+
+  .heroText,
+  .heroCardWrapper {
+    width: 100%;
+  }
+
+  .heroDesc {
+    max-width: none;
+    margin-bottom: 28px;
+  }
+
+  .heroBtns {
+    flex-direction: column;
+  }
+
+  .heroBtns :global(.btn) {
+    width: 100%;
+  }
+
+  .heroCardWrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .flipCardOuter {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .flipFront {
+    padding: 22px 18px;
+    gap: 16px;
+  }
+
+  .statsInner,
+  .stepsSection,
+  .roadmapInner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .roadmapFooter {
+    align-items: flex-start;
+  }
+
+  .roadmapFooterLink {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .heroH1 {
+    font-size: 2.4rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+
+  .flipFrontTitle {
+    font-size: 0.96rem;
+  }
+
+  .flipFrontMono {
+    font-size: 0.56rem;
+  }
+
+  .flipFrontHint {
+    font-size: 0.52rem;
+  }
+}
