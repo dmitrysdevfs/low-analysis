@@ -7,24 +7,26 @@ import axios from 'axios';
  */
 export const extractLawCode = (input) => {
   if (!input) return null;
-  
+
   // If it's a URL
   if (input.includes('zakon.rada.gov.ua')) {
     const match = input.match(/\/laws\/show\/([^/#?]+)/);
     if (match) {
       const decodedInput = decodeURI(input);
-      const urlMatch = decodedInput.match(/\/laws\/show\/((?:[^/#?]+)(?:\/[^/#?]+)?)/);
+      const urlMatch = decodedInput.match(
+        /\/laws\/show\/((?:[^/#?]+)(?:\/[^/#?]+)?)/,
+      );
       if (urlMatch) {
-         let rawCode = urlMatch[1];
-         // strip /ed... if it's there
-         if (rawCode.includes('/ed')) {
-             rawCode = rawCode.split('/ed')[0];
-         }
-         // strip /print if it's there
-         if (rawCode.includes('/print')) {
-             rawCode = rawCode.split('/print')[0];
-         }
-         return rawCode;
+        let rawCode = urlMatch[1];
+        // strip /ed... if it's there
+        if (rawCode.includes('/ed')) {
+          rawCode = rawCode.split('/ed')[0];
+        }
+        // strip /print if it's there
+        if (rawCode.includes('/print')) {
+          rawCode = rawCode.split('/print')[0];
+        }
+        return rawCode;
       }
     }
   }
@@ -54,12 +56,12 @@ export const fetchLawData = async (code) => {
   try {
     const [mainRes, frameRes] = await Promise.all([
       axios.get(mainUrl, axiosConfig),
-      axios.get(frameUrl, axiosConfig)
+      axios.get(frameUrl, axiosConfig),
     ]);
 
     return {
       mainHtml: mainRes.data,
-      frameHtml: frameRes.data
+      frameHtml: frameRes.data,
     };
   } catch (error) {
     if (error.response?.status === 404) {

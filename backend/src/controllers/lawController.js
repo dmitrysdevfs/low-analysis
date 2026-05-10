@@ -46,7 +46,11 @@ export const parseLawFromUrl = async (req, res, next) => {
 
     const code = fetchService.extractLawCode(url);
     if (!code) {
-      return res.status(400).json({ message: 'Could not extract valid law code from the provided URL' });
+      return res
+        .status(400)
+        .json({
+          message: 'Could not extract valid law code from the provided URL',
+        });
     }
 
     // 1. Fetch HTMLs
@@ -55,7 +59,9 @@ export const parseLawFromUrl = async (req, res, next) => {
     // 2. Parse HTML
     const parsedData = parseLawHtml(frameHtml, mainHtml);
     if (!parsedData.title || !parsedData.code) {
-      return res.status(500).json({ message: 'Failed to parse the law. Invalid HTML structure.' });
+      return res
+        .status(500)
+        .json({ message: 'Failed to parse the law. Invalid HTML structure.' });
     }
 
     // 3. Upsert Law
@@ -69,14 +75,19 @@ export const parseLawFromUrl = async (req, res, next) => {
     });
 
     // 4. Attach lawId, generate _id, and link parentId
-    const { elementsToSave, activeCodes } = await lawService.resolveElementHierarchy(law._id, parsedData.elements);
+    const { elementsToSave, activeCodes } =
+      await lawService.resolveElementHierarchy(law._id, parsedData.elements);
 
     await lawService.bulkUpsertElements(elementsToSave);
     await lawService.deleteMissingElements(law._id, activeCodes);
 
     // 5. Update law stats
-    const articleCount = parsedData.elements.filter((el) => el.type === 'article').length;
-    const sectionCount = parsedData.elements.filter((el) => el.type === 'section').length;
+    const articleCount = parsedData.elements.filter(
+      (el) => el.type === 'article',
+    ).length;
+    const sectionCount = parsedData.elements.filter(
+      (el) => el.type === 'section',
+    ).length;
     law.totalArticles = articleCount;
     law.totalSections = sectionCount;
     await law.save();
@@ -84,7 +95,7 @@ export const parseLawFromUrl = async (req, res, next) => {
     res.json({
       message: 'Law successfully parsed and saved',
       lawId: law._id,
-      elementsCount: elementsToSave.length
+      elementsCount: elementsToSave.length,
     });
   } catch (error) {
     next(error);

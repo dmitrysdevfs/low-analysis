@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 
 import * as cheerio from 'cheerio';
 
@@ -29,7 +29,11 @@ export const parseLawHtml = (html, mainHtml = null) => {
   let status = null;
   if (mainHtml) {
     const $main = cheerio.load(mainHtml);
-    status = $main('.status').first().text().trim() || $main('span.valid').first().text().trim() || $main('.doc-status').first().text().trim() || null;
+    status =
+      $main('.status').first().text().trim() ||
+      $main('span.valid').first().text().trim() ||
+      $main('.doc-status').first().text().trim() ||
+      null;
   }
 
   // ── 1. Extract law title ──────────────────────────────────────────────────
@@ -72,7 +76,7 @@ export const parseLawHtml = (html, mainHtml = null) => {
     const $p = $(el);
     const anchor = $p.find('a[data-tree]').first();
     const text = $p.text().trim();
-    
+
     if (!anchor.length) {
       if (text && text.length > 0 && !text.startsWith('{')) {
         if (!hasHitFirstDataTree) {
@@ -193,7 +197,7 @@ export const parseLawHtml = (html, mainHtml = null) => {
       const depth = 1 + childParts.length;
 
       const leafNodeStr = childParts[childParts.length - 1]; // e.g. 'ch_1', 'pu1', 'ppa_1'
-      
+
       let elementType = 'paragraph';
       let partNumber = '';
 
@@ -211,7 +215,10 @@ export const parseLawHtml = (html, mainHtml = null) => {
         elementType = 'sub_point';
         partNumber = subPointMatch[1];
       } else {
-        const parentStr = childParts.length > 1 ? childParts[childParts.length - 2] : articleStr;
+        const parentStr =
+          childParts.length > 1
+            ? childParts[childParts.length - 2]
+            : articleStr;
         if (parentStr.startsWith('st')) {
           elementType = 'part';
         } else {

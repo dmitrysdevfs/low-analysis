@@ -101,14 +101,14 @@ export const resolveElementHierarchy = async (lawId, rawElements) => {
   // 1. Query existing elements to preserve _id
   const existingElements = await Element.find({ lawId }, { code: 1, _id: 1 });
   const codeToIdMap = {};
-  existingElements.forEach(el => {
+  existingElements.forEach((el) => {
     codeToIdMap[el.code] = el._id;
   });
 
   // 2. Resolve ObjectIds for all incoming elements (use existing or generate new)
   const usedCodes = new Set();
-  
-  const elementsWithIds = rawElements.map(el => {
+
+  const elementsWithIds = rawElements.map((el) => {
     let uniqueCode = el.code;
     let counter = 1;
     while (usedCodes.has(uniqueCode)) {
