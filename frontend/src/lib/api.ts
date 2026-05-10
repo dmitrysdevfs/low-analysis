@@ -6,6 +6,7 @@ import type {
   LawTreeResponse,
   Subject,
   SubjectElements,
+  ParseLawResponse,
 } from "@/types";
 
 const API_BASE = "/api";
@@ -42,4 +43,20 @@ export async function getSubjects(): Promise<Subject[]> {
 
 export async function getSubjectElements(id: string): Promise<SubjectElements> {
   return getJson<SubjectElements>(`/subjects/${id}/elements`);
+}
+
+export async function parseLaw(url: string): Promise<ParseLawResponse> {
+  const res = await fetch(`${API_BASE}/laws/parse`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ url }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json() as Promise<ParseLawResponse>;
 }
