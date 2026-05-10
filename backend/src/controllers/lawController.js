@@ -46,11 +46,9 @@ export const parseLawFromUrl = async (req, res, next) => {
 
     const code = fetchService.extractLawCode(url);
     if (!code) {
-      return res
-        .status(400)
-        .json({
-          message: 'Could not extract valid law code from the provided URL',
-        });
+      return res.status(400).json({
+        message: 'Could not extract valid law code from the provided URL',
+      });
     }
 
     // 1. Fetch HTMLs

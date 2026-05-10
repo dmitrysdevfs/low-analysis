@@ -1,5 +1,3 @@
- 
-
 import * as cheerio from 'cheerio';
 
 // ─── CSS class → element type mapping ────────────────────────────────────────
