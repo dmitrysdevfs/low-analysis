@@ -273,6 +273,13 @@ export function getNodeContent(node: TreeNode) {
   return candidate ? normalizeText(candidate) : null;
 }
 
+/**
+ * Filters tree elements and returns only article nodes
+ * sorted according to their order in the law structure.
+ *
+ * @param elements Array of law tree nodes.
+ * @returns Sorted array containing only article nodes.
+ */
 export function getSortedArticles(elements: TreeNode[]) {
   return elements
     .filter((node) => node.type === "article")
