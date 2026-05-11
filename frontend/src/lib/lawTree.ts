@@ -272,3 +272,9 @@ export function getNodeContent(node: TreeNode) {
   const candidate = node.text?.trim() || node.title?.trim();
   return candidate ? normalizeText(candidate) : null;
 }
+
+export function getSortedArticles(elements: TreeNode[]) {
+  return elements
+    .filter((node) => node.type === "article")
+    .sort(compareTreeNodes);
+}

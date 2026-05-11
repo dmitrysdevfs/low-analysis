@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import {
   buildLawSections,
   countArticlesInSections,
@@ -7,6 +9,7 @@ import {
   getArticleTitle,
   getNodeContent,
   getNodeLabel,
+  getSortedArticles,
   limitLawSections,
 } from "@/lib/lawTree";
 import type { TreeNode } from "@/types";
@@ -113,5 +116,21 @@ describe("law tree helpers", () => {
     expect(getArticleTitle(articleOne)).toBe("Загальні терміни");
     expect(getNodeLabel(part)).toBe("Частина 1");
     expect(getNodeContent(part)).toBe(part.text);
+  });
+
+  it("returns only articles sorted by order", () => {
+    const unorderedElements: TreeNode[] = [
+      point,
+      articleTwo,
+      section,
+      articleOne,
+      part,
+    ];
+
+    const articles = getSortedArticles(unorderedElements);
+
+    expect(articles).toHaveLength(2);
+    expect(articles.map((article) => article.number)).toEqual(["1", "2"]);
+    expect(articles.every((node) => node.type === "article")).toBe(true);
   });
 });
