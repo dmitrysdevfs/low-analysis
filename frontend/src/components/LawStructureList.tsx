@@ -113,7 +113,6 @@ function ArticleEntry({
               {getArticleTitle(article)}
             </div>
           )}
-          <div className="law-structure-article-meta mono">{article.code}</div>
         </div>
 
         {nestedCount > 0 ? (
@@ -124,7 +123,7 @@ function ArticleEntry({
             aria-expanded={open}
           >
             <span>{open ? "Сховати структуру" : "Показати структуру"}</span>
-            <span className="mono">{nestedCount}</span>
+            <span className="mono">{nestedCount} ел.</span>
           </button>
         ) : null}
       </div>

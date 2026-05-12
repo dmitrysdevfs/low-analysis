@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import {
   buildLawSections,
   countArticlesInSections,
@@ -5,8 +7,10 @@ import {
   getArticleBadge,
   getArticleRouteNumber,
   getArticleTitle,
+  getNodeBadge,
   getNodeContent,
   getNodeLabel,
+  getSortedArticles,
   limitLawSections,
 } from "@/lib/lawTree";
 import type { TreeNode } from "@/types";
@@ -113,5 +117,40 @@ describe("law tree helpers", () => {
     expect(getArticleTitle(articleOne)).toBe("Загальні терміни");
     expect(getNodeLabel(part)).toBe("Частина 1");
     expect(getNodeContent(part)).toBe(part.text);
+  });
+
+  it("returns only articles sorted by order", () => {
+    const unorderedElements: TreeNode[] = [
+      point,
+      articleTwo,
+      section,
+      articleOne,
+      part,
+    ];
+
+    const articles = getSortedArticles(unorderedElements);
+
+    expect(articles).toHaveLength(2);
+    expect(articles.map((article) => article.number)).toEqual(["1", "2"]);
+    expect(articles.every((node) => node.type === "article")).toBe(true);
+  });
+
+  it("returns readable badges for nested law nodes", () => {
+    expect(getNodeBadge(part)).toBe("ч. 1");
+    expect(getNodeBadge(point)).toBe("п. 1");
+
+    const paragraph: TreeNode = {
+      _id: "paragraph-1",
+      lawId: "law-1",
+      parentId: "point-1",
+      type: "paragraph",
+      code: "law-1.rz1.st1.ch1.p1.abz1",
+      number: "1",
+      text: "Текст абзацу.",
+      depth: 4,
+      order: 24,
+    };
+
+    expect(getNodeBadge(paragraph)).toBe("1");
   });
 });

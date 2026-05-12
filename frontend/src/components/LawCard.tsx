@@ -3,9 +3,14 @@
 import Link from "next/link";
 import { useState, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
 import { ROUTES } from "@/constants/routes";
 import { getLawTree } from "@/lib/api";
-import { getArticleBadge } from "@/lib/lawTree";
+import {
+  getArticleTitle,
+  getNodeLabel,
+  getSortedArticles,
+} from "@/lib/lawTree";
 import type { Law, TreeNode } from "@/types";
 import styles from "./LawCard.module.scss";
 
@@ -26,10 +31,6 @@ const itemVariants = {
   }),
 };
 
-function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
 function SkeletonLine({ width }: { width: string }) {
   return (
     <motion.div
@@ -41,46 +42,15 @@ function SkeletonLine({ width }: { width: string }) {
   );
 }
 
-function getArticleTitle(article: ArticleWithPreview): string {
-  if (article.title && article.title.trim()) return article.title.trim();
-  return `Стаття ${article.number ?? ""}`;
-}
-
-function getArticleLabel(article: ArticleWithPreview): string {
-  const badge = getArticleBadge(article);
-  const title = getArticleTitle(article);
-
-  if (!article.number) return title;
-
-  const duplicatePrefix = new RegExp(
-    `^стаття\\s*${escapeRegExp(article.number)}[\\s.:,-]*`,
-    "iu",
-  );
-  const trimmedTitle = title.replace(duplicatePrefix, "").trim();
-
-  if (!trimmedTitle) return badge;
-
-  return `${badge}. ${trimmedTitle}`;
-}
-
-function getPreview(article: ArticleWithPreview): string | null {
-  const src = article._preview ?? article.text ?? null;
-  if (!src) return null;
-  const clean = src.trim();
-  return clean.length > 90 ? clean.slice(0, 90) + "…" : clean;
-}
-
 function normalizeArticleNumberQuery(value: string) {
   return value.toLowerCase().replace(/ст\.?/giu, "").replace(/\s+/g, "").trim();
 }
 
-interface ArticleWithPreview extends TreeNode {
-  _preview?: string;
-}
+type ArticleItem = TreeNode;
 
 export function LawCard({ law, index }: { law: Law; index: number }) {
   const [flipped, setFlipped] = useState(false);
-  const [allArticles, setAllArticles] = useState<ArticleWithPreview[]>([]);
+  const [allArticles, setAllArticles] = useState<ArticleItem[]>([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
   const [query, setQuery] = useState("");
   const fetched = useRef(false);
@@ -108,20 +78,8 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
         getLawTree(law._id)
           .then((data) => {
             const elements = data.elements;
-            const arts: ArticleWithPreview[] = elements
-              .filter((n) => n.type === "article")
-              .map((art) => {
-                const firstChild = elements.find(
-                  (el) =>
-                    el.parentId === art._id &&
-                    el.text &&
-                    el.text.trim().length > 2,
-                );
-                return {
-                  ...art,
-                  _preview: firstChild?.text?.trim(),
-                };
-              });
+
+            const arts: ArticleItem[] = getSortedArticles(elements);
             setAllArticles(arts);
           })
           .catch(() => {})
@@ -241,7 +199,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
                 >
                   {visible.map((article, i) => (
                     <motion.div
-                      key={article._id ?? `${i}`}
+                      key={article._id}
                       custom={i}
                       variants={itemVariants}
                     >
@@ -254,18 +212,14 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
                         className={styles.articleLink}
                       >
                         <div className={styles.articleRow}>
-                          {article.number && (
-                            <span className={`mono ${styles.articleNumBadge}`}>
-                              ст.{article.number}
-                            </span>
-                          )}
                           <div className={styles.articleInfo}>
                             <span className={styles.articleTitle}>
-                              {getArticleLabel(article)}
+                              {getNodeLabel(article)}
                             </span>
-                            {getPreview(article) && (
+
+                            {getArticleTitle(article) && (
                               <span className={styles.articlePreview}>
-                                {getPreview(article)}
+                                {getArticleTitle(article)}
                               </span>
                             )}
                           </div>

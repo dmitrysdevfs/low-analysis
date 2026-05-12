@@ -3,22 +3,50 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Layout } from "@/components/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import { useArticle } from "@/hooks/useArticle";
+import {
+  buildTreeBranches,
+  getNodeBadge,
+  type TreeBranch,
+} from "@/lib/lawTree";
 import styles from "./page.module.scss";
+import { useMemo } from "react";
 
-function getNodeTypeLabel(type: string): string {
-  const map: Record<string, string> = {
-    article: "Стаття",
-    part: "Частина",
-    point: "Пункт",
-    sub_point: "Підпункт",
-    paragraph: "Абзац",
-  };
-  return map[type] ?? type;
+function NestedNodeList({ nodes }: { nodes: TreeBranch[] }) {
+  return (
+    <div className={styles.childrenList}>
+      {nodes.map((node) => (
+        <NestedNode key={node.key} node={node} />
+      ))}
+    </div>
+  );
+}
+
+function NestedNode({ node }: { node: TreeBranch }) {
+  return (
+    <div className={styles.childItem}>
+      <span className={`mono ${styles.childBadge}`}>{getNodeBadge(node)}</span>
+
+      <div className={styles.childContent}>
+        {node.title ? (
+          <div className={styles.childTitle}>{node.title}</div>
+        ) : null}
+
+        {node.text ? (
+          <div className={styles.childTextOnly}>{node.text}</div>
+        ) : null}
+
+        {node.children.length > 0 ? (
+          <NestedNodeList nodes={node.children} />
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 export default function ArticlePage() {
@@ -34,6 +62,8 @@ export default function ArticlePage() {
 
   const lawTitle = law?.title ?? "Закон";
   const lawCode = law?.code ?? "";
+
+  const childTree = useMemo(() => buildTreeBranches(children), [children]);
 
   return (
     <Layout>
@@ -140,25 +170,33 @@ export default function ArticlePage() {
                       {lawCode}
                     </span>
                   )}
+
+                  {/* Open full law link */}
+                  {lawId && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3, duration: 0.3 }}
+                    >
+                      <Link
+                        href={ROUTES.law(lawId)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.lawLink}
+                      >
+                        <div className={styles.lawLinkLeft}>
+                          <span className={`mono ${styles.lawLinkLabel}`}>
+                            Повний закон
+                          </span>
+                        </div>
+                        <span className={styles.lawLinkArrow}>↗</span>
+                      </Link>
+                    </motion.div>
+                  )}
                 </motion.div>
 
                 {/* Article block */}
                 <div className={styles.articleBlock}>
-                  <div className={styles.articleMeta}>
-                    <span className={`mono ${styles.articleCode}`}>
-                      {article.code}
-                    </span>
-                    <span className={`mono ${styles.articleType}`}>
-                      {getNodeTypeLabel(article.type)}
-                    </span>
-                  </div>
-
-                  {article.number && (
-                    <p className={`display ${styles.articleNumber}`}>
-                      Стаття {article.number}
-                    </p>
-                  )}
-
                   {article.title && (
                     <h1 className={`display ${styles.articleTitle}`}>
                       {article.title}
@@ -191,71 +229,11 @@ export default function ArticlePage() {
                             ? "елементи"
                             : "елементів"}
                       </div>
-                      <div className={styles.childrenList}>
-                        {children.map((child, index) => (
-                          <motion.div
-                            key={child.code}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{
-                              delay: 0.1 + index * 0.05,
-                              duration: 0.28,
-                            }}
-                            className={styles.childItem}
-                          >
-                            <span className={`mono ${styles.childBadge}`}>
-                              {child.number ?? index + 1}
-                            </span>
-                            <div className={styles.childContent}>
-                              {child.title && child.text ? (
-                                <>
-                                  <div className={styles.childTitle}>
-                                    {child.title}
-                                  </div>
-                                  <div className={styles.childText}>
-                                    {child.text}
-                                  </div>
-                                </>
-                              ) : child.title ? (
-                                <div className={styles.childTitle}>
-                                  {child.title}
-                                </div>
-                              ) : (
-                                <div className={styles.childTextOnly}>
-                                  {child.text}
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        ))}
-                      </div>
+
+                      <NestedNodeList nodes={childTree} />
                     </motion.div>
                   ) : null}
                 </div>
-
-                {/* Open full law link */}
-                {lawId && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.3 }}
-                  >
-                    <Link
-                      href={ROUTES.law(lawId)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.lawLink}
-                    >
-                      <div className={styles.lawLinkLeft}>
-                        <span className={`mono ${styles.lawLinkLabel}`}>
-                          Повний закон
-                        </span>
-                        <span className={styles.lawLinkTitle}>{lawTitle}</span>
-                      </div>
-                      <span className={styles.lawLinkArrow}>↗</span>
-                    </Link>
-                  </motion.div>
-                )}
               </motion.div>
             ) : null}
           </AnimatePresence>

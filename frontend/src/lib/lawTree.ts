@@ -272,3 +272,37 @@ export function getNodeContent(node: TreeNode) {
   const candidate = node.text?.trim() || node.title?.trim();
   return candidate ? normalizeText(candidate) : null;
 }
+
+/**
+ * Filters tree elements and returns only article nodes
+ * sorted according to their order in the law structure.
+ *
+ * @param elements Array of law tree nodes.
+ * @returns Sorted array containing only article nodes.
+ */
+
+export function getSortedArticles(elements: TreeNode[]) {
+  return elements
+    .filter((node) => node.type === "article")
+    .sort(compareTreeNodes);
+}
+
+/**
+ * Returns a readable badge label for a law tree node
+ * based on its structural type and number.
+ */
+
+export function getNodeBadge(node: TreeNode) {
+  switch (node.type) {
+    case "part":
+      return `ч. ${node.number}`;
+    case "point":
+      return `п. ${node.number}`;
+    case "sub_point":
+      return `пп. ${node.number}`;
+    case "paragraph":
+      return `${node.number}`; //зараз сюди попадають і абзаци, і підпункти, тому просто номер без позначки
+    default:
+      return node.number ?? "•";
+  }
+}
