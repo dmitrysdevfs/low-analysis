@@ -7,6 +7,7 @@ import {
   getArticleBadge,
   getArticleRouteNumber,
   getArticleTitle,
+  getNodeBadge,
   getNodeContent,
   getNodeLabel,
   getSortedArticles,
@@ -132,5 +133,37 @@ describe("law tree helpers", () => {
     expect(articles).toHaveLength(2);
     expect(articles.map((article) => article.number)).toEqual(["1", "2"]);
     expect(articles.every((node) => node.type === "article")).toBe(true);
+  });
+
+  it("returns readable badges for nested law nodes", () => {
+    expect(getNodeBadge(part)).toBe("ч. 1");
+    expect(getNodeBadge(point)).toBe("п. 1");
+
+    const subPoint: TreeNode = {
+      _id: "sub-point-1",
+      lawId: "law-1",
+      parentId: "point-1",
+      type: "sub_point",
+      code: "law-1.rz1.st1.ch1.p1.pp1",
+      number: "1",
+      text: "Уточнення пункту.",
+      depth: 4,
+      order: 23,
+    };
+
+    const paragraph: TreeNode = {
+      _id: "paragraph-1",
+      lawId: "law-1",
+      parentId: "point-1",
+      type: "paragraph",
+      code: "law-1.rz1.st1.ch1.p1.abz1",
+      number: "1",
+      text: "Текст абзацу.",
+      depth: 4,
+      order: 24,
+    };
+
+    expect(getNodeBadge(subPoint)).toBe("пп. 1");
+    expect(getNodeBadge(paragraph)).toBe("абз. 1");
   });
 });
