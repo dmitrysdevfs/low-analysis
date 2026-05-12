@@ -37,6 +37,20 @@ const lawSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    /**
+     * Structured context extracted for LLM prompts.
+     * Especially critical for laws without a preamble or with a malformed one.
+     * definitions[] is typically populated from Article 1 ("Визначення термінів").
+     */
+    global_context: {
+      preamble: { type: String, default: null },
+      definitions: [
+        {
+          term: { type: String },
+          definition: { type: String },
+        },
+      ],
+    },
   },
   {
     timestamps: true,

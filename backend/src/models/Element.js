@@ -39,9 +39,29 @@ const elementSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    /**
+     * Regulatory subjects identified by LLM (Semantic Role Labeling).
+     * Each entry references the global Subject registry.
+     */
     subjects: [
       {
-        type: String,
+        subject_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Subject',
+          required: true,
+        },
+        role: {
+          type: String,
+          enum: [
+            'actor',
+            'recipient',
+            'regulator',
+            'protected_party',
+            'issuer_of_regulations',
+            'other',
+          ],
+          default: 'other',
+        },
       },
     ],
   },
