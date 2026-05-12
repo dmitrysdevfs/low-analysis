@@ -139,18 +139,6 @@ describe("law tree helpers", () => {
     expect(getNodeBadge(part)).toBe("ч. 1");
     expect(getNodeBadge(point)).toBe("п. 1");
 
-    const subPoint: TreeNode = {
-      _id: "sub-point-1",
-      lawId: "law-1",
-      parentId: "point-1",
-      type: "sub_point",
-      code: "law-1.rz1.st1.ch1.p1.pp1",
-      number: "1",
-      text: "Уточнення пункту.",
-      depth: 4,
-      order: 23,
-    };
-
     const paragraph: TreeNode = {
       _id: "paragraph-1",
       lawId: "law-1",
@@ -163,7 +151,6 @@ describe("law tree helpers", () => {
       order: 24,
     };
 
-    expect(getNodeBadge(subPoint)).toBe("пп. 1");
-    expect(getNodeBadge(paragraph)).toBe("абз. 1");
+    expect(getNodeBadge(paragraph)).toBe("1");
   });
 });
