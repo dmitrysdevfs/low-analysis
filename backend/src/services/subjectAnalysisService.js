@@ -54,9 +54,7 @@ const buildUserPrompt = (law, element) => {
   // Format definitions
   const definitionsText =
     gc.definitions && gc.definitions.length > 0
-      ? gc.definitions
-          .map((d) => `  - "${d.term}": ${d.definition}`)
-          .join('\n')
+      ? gc.definitions.map((d) => `  - "${d.term}": ${d.definition}`).join('\n')
       : '  (визначення термінів відсутні)';
 
   // Format preamble — prefer global_context.preamble, fallback to law.preamble
@@ -118,14 +116,32 @@ export const analyzeElement = async (elementId) => {
   // llmResult should be an array; guard against unexpected shapes
   const candidates = Array.isArray(llmResult) ? llmResult : [];
 
-  // Filter by confidence threshold
+  // Filter 1: confidence threshold
   const confident = candidates.filter(
     (c) => typeof c.confidence !== 'number' || c.confidence >= 0.6,
   );
 
+  // Filter 2: remove document/law references mistakenly identified as subjects
+  // (LLM sometimes includes law names despite being instructed to ignore them)
+  const DOCUMENT_MARKERS = [
+    'закон україни', 'кодекс україни', 'конституція україни',
+    'постанова', 'наказ', 'декрет', 'розпорядження',
+    'нормативно-правовий акт', 'нормативно-правові акти',
+    'спеціальні закони', 'інші закони', 'цей закон',
+  ];
+
+  const isDocumentRef = (name) => {
+    const lower = name.toLowerCase();
+    return DOCUMENT_MARKERS.some((marker) => lower.includes(marker));
+  };
+
+  const validCandidates = confident.filter(
+    (c) => c.canonical_name && !isDocumentRef(c.canonical_name),
+  );
+
   // 4. Resolve subjects via global registry
   const resolvedSubjects = await Promise.all(
-    confident.map(async (candidate) => {
+    validCandidates.map(async (candidate) => {
       const subjectId = await ensureSubjectExists(
         candidate.canonical_name,
         candidate.legal_status,
@@ -146,6 +162,6 @@ export const analyzeElement = async (elementId) => {
   return {
     elementId,
     subjects: resolvedSubjects,
-    raw: confident,
+    raw: validCandidates,
   };
 };

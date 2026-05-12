@@ -51,7 +51,8 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
         },
       });
 
-      const rawText = response.text();
+      // In @google/genai v1, response.text is a string property, not a method
+      const rawText = response.text;
 
       // Strip markdown code fences if the model wraps its output
       const cleaned = rawText
