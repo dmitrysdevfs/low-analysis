@@ -142,6 +142,12 @@ export const schemas = {
     type: 'object',
     description: 'Стаття з дочірніми елементами',
     properties: {
+      lawUrl: {
+        type: 'string',
+        nullable: true,
+        example: 'https://zakon.rada.gov.ua/laws/show/580-19#Text',
+        description: 'Посилання на повний текст закону',
+      },
       article: { $ref: '#/components/schemas/Element' },
       children: {
         type: 'array',

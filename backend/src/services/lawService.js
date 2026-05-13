@@ -31,16 +31,20 @@ export const getLawTree = async (lawId) => {
 };
 
 /**
- * Returns a specific article and all its child elements (parts, paragraphs).
+ * Returns a specific article, its child elements (parts, paragraphs), and the source URL of the law.
  * @param {string} lawId
  * @param {string} articleNumber - e.g. "1", "15"
+ * @returns {Promise<{lawUrl: string|null, article: object, children: object[]}|null>}
  */
 export const getArticle = async (lawId, articleNumber) => {
-  const article = await Element.findOne({
-    lawId,
-    type: 'article',
-    number: articleNumber,
-  }).select('-__v');
+  const [article, law] = await Promise.all([
+    Element.findOne({
+      lawId,
+      type: 'article',
+      number: articleNumber,
+    }).select('-__v'),
+    Law.findById(lawId).select('source'),
+  ]);
 
   if (!article) return null;
 
@@ -54,7 +58,7 @@ export const getArticle = async (lawId, articleNumber) => {
     .select('-__v')
     .sort({ order: 1 });
 
-  return { article, children };
+  return { lawUrl: law?.source ?? null, article, children };
 };
 
 // ── Write ─────────────────────────────────────────────────────────────────────
