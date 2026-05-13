@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Layout } from '@/components/Layout';
-import { SearchResults } from '@/components/SearchResults';
-import { useSearch } from '@/hooks/useSearch';
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Layout } from "@/components/Layout";
+import { SearchResults } from "@/components/SearchResults";
+import { useSearch } from "@/hooks/useSearch";
 
 function SearchResultsContent() {
   const urlParams = useSearchParams();
   const { results, loading, error, searched, search } = useSearch();
 
-  const q = urlParams.get('q') || '';
-  const docType = urlParams.get('docType') || '';
-  const dateFrom = urlParams.get('dateFrom') || '';
-  const dateTo = urlParams.get('dateTo') || '';
-  const number = urlParams.get('number') || '';
-  const status = urlParams.get('status') || '';
+  const q = urlParams.get("q") || "";
+  const docType = urlParams.get("docType") || "";
+  const dateFrom = urlParams.get("dateFrom") || "";
+  const dateTo = urlParams.get("dateTo") || "";
+  const number = urlParams.get("number") || "";
+  const status = urlParams.get("status") || "";
 
   useEffect(() => {
     search({
@@ -26,9 +26,9 @@ function SearchResultsContent() {
       dateTo,
       number,
       status,
-      wordField: 'title',
-      numberType: 'starts',
-      sort: 'date',
+      wordField: "title",
+      numberType: "starts",
+      sort: "date",
     });
   }, [q, docType, dateFrom, dateTo, number, status, search]);
 
