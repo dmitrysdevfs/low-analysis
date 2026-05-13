@@ -1,22 +1,20 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { Layout } from "@/components/Layout";
-import { TryzubMark } from "@/components/TryzubMark";
-import { ROUTES } from "@/constants/routes";
-import { useLaws } from "@/hooks/useLaws";
-import styles from "./page.module.scss";
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView } from 'framer-motion';
+import { Layout } from '@/components/Layout';
+import { TryzubMark } from '@/components/TryzubMark';
+import { ROUTES } from '@/constants/routes';
+import { useLaws } from '@/hooks/useLaws';
+import styles from './page.module.scss';
 
 function useWindowWidth() {
-  const [w, setW] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1200,
-  );
+  const [w, setW] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
   useEffect(() => {
     const h = () => setW(window.innerWidth);
-    window.addEventListener("resize", h);
-    return () => window.removeEventListener("resize", h);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
   }, []);
   return w;
 }
@@ -60,30 +58,24 @@ const childFade = {
 };
 
 const rights = [
-  { art: "21", text: "Усі люди є вільні і рівні у своїй гідності та правах" },
-  { art: "27", text: "Кожна людина має невід'ємне право на життя" },
-  { art: "34", text: "Кожному гарантується свобода думки і слова" },
+  { art: '21', text: 'Усі люди є вільні і рівні у своїй гідності та правах' },
+  { art: '27', text: "Кожна людина має невід'ємне право на життя" },
+  { art: '34', text: 'Кожному гарантується свобода думки і слова' },
   {
-    art: "41",
-    text: "Кожен має право володіти, користуватися і розпоряджатися своєю власністю",
+    art: '41',
+    text: 'Кожен має право володіти, користуватися і розпоряджатися своєю власністю',
   },
-  { art: "55", text: "Права і свободи людини і громадянина захищаються судом" },
+  { art: '55', text: 'Права і свободи людини і громадянина захищаються судом' },
 ];
 
-function HerbFlipCard({
-  width = 300,
-  height = 360,
-}: {
-  width?: number;
-  height?: number;
-}) {
+function HerbFlipCard({ width = 300, height = 360 }: { width?: number; height?: number }) {
   const [flipped, setFlipped] = useState(false);
 
   return (
     <div
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
-      onClick={() => setFlipped((value) => !value)}
+      onClick={() => setFlipped(value => !value)}
       className={styles.flipCardOuter}
       style={{ width, height }}
     >
@@ -93,32 +85,19 @@ function HerbFlipCard({
         className={styles.flipCardInner}
       >
         <div className={`panel ${styles.flipFront}`}>
-          <motion.div
-            animate={{ scale: flipped ? 0.95 : 1 }}
-            transition={{ duration: 0.3 }}
-          >
+          <motion.div animate={{ scale: flipped ? 0.95 : 1 }} transition={{ duration: 0.3 }}>
             <TryzubMark size={108} />
           </motion.div>
           <div className={styles.flipFrontTextCenter}>
-            <div className={`display ${styles.flipFrontTitle}`}>
-              Малий герб України
-            </div>
-            <div className={`mono ${styles.flipFrontMono}`}>
-              Тризуб · державний символ
-            </div>
+            <div className={`display ${styles.flipFrontTitle}`}>Малий герб України</div>
+            <div className={`mono ${styles.flipFrontMono}`}>Тризуб · державний символ</div>
           </div>
-          <div className={`mono ${styles.flipFrontHint}`}>
-            Наведіть або натисніть
-          </div>
+          <div className={`mono ${styles.flipFrontHint}`}>Наведіть або натисніть</div>
         </div>
 
         <div className={`panel ${styles.flipBack}`}>
-          <div className={`mono ${styles.flipBackLabel}`}>
-            Конституція України · Розділ II
-          </div>
-          <div className={`display ${styles.flipBackTitle}`}>
-            Права і свободи людини
-          </div>
+          <div className={`mono ${styles.flipBackLabel}`}>Конституція України · Розділ II</div>
+          <div className={`display ${styles.flipBackTitle}`}>Права і свободи людини</div>
           <div className={styles.flipBackRights}>
             {rights.map((right, index) => (
               <motion.div
@@ -131,9 +110,7 @@ function HerbFlipCard({
                 }}
                 className={styles.flipBackRightRow}
               >
-                <span className={`mono ${styles.flipBackArticleBadge}`}>
-                  ст.{right.art}
-                </span>
+                <span className={`mono ${styles.flipBackArticleBadge}`}>ст.{right.art}</span>
                 <span className={styles.flipBackRightText}>{right.text}</span>
               </motion.div>
             ))}
@@ -144,15 +121,7 @@ function HerbFlipCard({
   );
 }
 
-function StatItem({
-  value,
-  label,
-  active,
-}: {
-  value: number;
-  label: string;
-  active: boolean;
-}) {
+function StatItem({ value, label, active }: { value: number; label: string; active: boolean }) {
   const count = useCountUp(value, 1200, active);
 
   return (
@@ -165,30 +134,30 @@ function StatItem({
 
 const steps = [
   {
-    num: "01",
-    title: "Завантаження",
-    desc: "Cheerio парсить HTML-фрейм з zakon.rada.gov.ua за data-tree атрибутами кожного вузла.",
-    icon: "⟨/⟩",
+    num: '01',
+    title: 'Завантаження',
+    desc: 'Cheerio парсить HTML-фрейм з zakon.rada.gov.ua за data-tree атрибутами кожного вузла.',
+    icon: '⟨/⟩',
   },
   {
-    num: "02",
-    title: "Структурування",
-    desc: "Кожен елемент отримує ієрархічний код rz→st→ch і зберігається в MongoDB Atlas.",
-    icon: "§",
+    num: '02',
+    title: 'Структурування',
+    desc: 'Кожен елемент отримує ієрархічний код rz→st→ch і зберігається в MongoDB Atlas.',
+    icon: '§',
   },
   {
-    num: "03",
-    title: "Аналіз",
+    num: '03',
+    title: 'Аналіз',
     desc: "REST API відкриває доступ до дерева будь-якого закону. Майбутнє — граф зв'язків між нормами.",
-    icon: "◈",
+    icon: '◈',
   },
 ];
 
 const roadmap = [
-  { done: true, text: "Парсинг HTML → MongoDB (Конституція — 481 елемент)" },
-  { done: true, text: "REST API для читання структури законів" },
-  { done: true, text: "Пошук по законах (назва, регістронезалежний)" },
-  { done: false, text: "Інгест кодексів (КУпАП, ЦКУ, КК)" },
+  { done: true, text: 'Парсинг HTML → MongoDB (Конституція — 481 елемент)' },
+  { done: true, text: 'REST API для читання структури законів' },
+  { done: true, text: 'Пошук по законах (назва, регістронезалежний)' },
+  { done: false, text: 'Інгест кодексів (КУпАП, ЦКУ, КК)' },
   { done: false, text: "AI-визначення суб'єктів регулювання" },
   { done: false, text: "Граф зв'язків між нормами різних законів" },
   { done: false, text: '"Радіант" — 3D-візуалізація законодавчої бази' },
@@ -205,14 +174,14 @@ export default function HomePage() {
   const roadInView = useInView(roadmapRef, { once: true, amount: 0.2 });
 
   const stats = [
-    { value: laws.length, label: "законів у базі" },
+    { value: laws.length, label: 'законів у базі' },
     {
       value: laws.reduce((sum, law) => sum + law.totalSections, 0),
-      label: "розділів",
+      label: 'розділів',
     },
     {
       value: laws.reduce((sum, law) => sum + law.totalArticles, 0),
-      label: "статей",
+      label: 'статей',
     },
   ];
 
@@ -225,7 +194,7 @@ export default function HomePage() {
         <div
           className={styles.heroInner}
           style={{
-            flexDirection: w < 768 ? "column" : "row",
+            flexDirection: w < 768 ? 'column' : 'row',
             gap: w < 768 ? 32 : 64,
           }}
         >
@@ -235,39 +204,29 @@ export default function HomePage() {
             initial="initial"
             animate="animate"
           >
-            <motion.h1
-              variants={childFade}
-              className={`display ${styles.heroH1}`}
-            >
+            <motion.h1 variants={childFade} className={`display ${styles.heroH1}`}>
               Low Analysis
             </motion.h1>
 
-            <motion.p
-              variants={childFade}
-              className={`display ${styles.heroSubtitle}`}
-            >
+            <motion.p variants={childFade} className={`display ${styles.heroSubtitle}`}>
               Перетворення текстів законів на структуру
             </motion.p>
 
             <motion.p variants={childFade} className={styles.heroDesc}>
-              Закони України існують як неструктуровані текстові полотна. Low
-              Analysis розбиває кожен закон на атомарні одиниці — розділ →
-              стаття → абзац — де кожен елемент має унікальний ієрархічний код і
-              зв&apos;язок із батьківським елементом.
+              Закони України існують як неструктуровані текстові полотна. Low Analysis розбиває
+              кожен закон на атомарні одиниці — розділ → стаття → абзац — де кожен елемент має
+              унікальний ієрархічний код і зв&apos;язок із батьківським елементом.
             </motion.p>
 
             <motion.div variants={childFade} className={styles.heroBtns}>
-              <Link
-                href={ROUTES.laws}
-                className={`btn btn-outline ${styles.btnWithIcon}`}
-              >
+              <Link href={ROUTES.laws} className={`btn btn-outline ${styles.btnWithIcon}`}>
                 Переглянути закони
                 <motion.span
                   animate={{ x: [0, 4, 0] }}
                   transition={{
                     duration: 1.4,
                     repeat: Infinity,
-                    ease: "easeInOut",
+                    ease: 'easeInOut',
                   }}
                 >
                   →
@@ -276,10 +235,7 @@ export default function HomePage() {
               <Link href={ROUTES.subjects} className="btn btn-azure">
                 Суб&apos;єкти
               </Link>
-              <Link
-                href={ROUTES.search}
-                className={`btn btn-ghost ${styles.btnWithIconSm}`}
-              >
+              <Link href={ROUTES.search} className={`btn btn-ghost ${styles.btnWithIconSm}`}>
                 ⌕ Пошук
               </Link>
             </motion.div>
@@ -331,11 +287,7 @@ export default function HomePage() {
                     animate={statsInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: index * 0.1, duration: 0.4 }}
                   >
-                    <StatItem
-                      value={stat.value}
-                      label={stat.label}
-                      active={statsInView}
-                    />
+                    <StatItem value={stat.value} label={stat.label} active={statsInView} />
                   </motion.div>
                 ))}
               </motion.div>
@@ -352,9 +304,7 @@ export default function HomePage() {
           className={styles.stepsSectionHeader}
         >
           <div className={`mono ${styles.stepsSectionLabel}`}>Як це працює</div>
-          <h2 className={`display ${styles.stepsSectionH2}`}>
-            Від HTML до структури
-          </h2>
+          <h2 className={`display ${styles.stepsSectionH2}`}>Від HTML до структури</h2>
         </motion.div>
 
         <div className={styles.stepsGrid}>
@@ -364,14 +314,12 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 24 }}
               animate={stepsInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: index * 0.12, duration: 0.45 }}
-              whileHover={{ y: -4, borderColor: "rgba(200,168,67,0.4)" }}
+              whileHover={{ y: -4, borderColor: 'rgba(200,168,67,0.4)' }}
               className={styles.stepCard}
             >
               <div className={`mono ${styles.stepCardNum}`}>{step.num}</div>
               <div className={`mono ${styles.stepCardIcon}`}>{step.icon}</div>
-              <h3 className={`display ${styles.stepCardTitle}`}>
-                {step.title}
-              </h3>
+              <h3 className={`display ${styles.stepCardTitle}`}>{step.title}</h3>
               <p className={styles.stepCardDesc}>{step.desc}</p>
             </motion.div>
           ))}
@@ -387,9 +335,7 @@ export default function HomePage() {
             className={styles.roadmapHeader}
           >
             <div className={`mono ${styles.roadmapLabel}`}>Дорожня карта</div>
-            <h2 className={`display ${styles.roadmapH2}`}>
-              Що зроблено і що далі
-            </h2>
+            <h2 className={`display ${styles.roadmapH2}`}>Що зроблено і що далі</h2>
           </motion.div>
 
           <div className={styles.roadmapList}>
@@ -401,23 +347,19 @@ export default function HomePage() {
                 transition={{ delay: index * 0.08, duration: 0.35 }}
                 className={styles.roadmapItem}
                 style={{
-                  background: item.done
-                    ? "rgba(200,168,67,0.04)"
-                    : "transparent",
-                  border: item.done
-                    ? "1px solid rgba(200,168,67,0.12)"
-                    : "1px solid transparent",
+                  background: item.done ? 'rgba(200,168,67,0.04)' : 'transparent',
+                  border: item.done ? '1px solid rgba(200,168,67,0.12)' : '1px solid transparent',
                 }}
               >
                 <span
                   className={`mono ${styles.roadmapCheckmark}`}
-                  style={{ color: item.done ? "#C8A843" : "#1C3260" }}
+                  style={{ color: item.done ? '#C8A843' : '#1C3260' }}
                 >
-                  {item.done ? "✓" : "○"}
+                  {item.done ? '✓' : '○'}
                 </span>
                 <span
                   className={styles.roadmapItemText}
-                  style={{ color: item.done ? "#D6E0F0" : "#7A98C0" }}
+                  style={{ color: item.done ? '#D6E0F0' : '#7A98C0' }}
                 >
                   {item.text}
                 </span>
@@ -434,11 +376,11 @@ export default function HomePage() {
             <div>
               <p className={`display ${styles.roadmapFooterTitle}`}>
                 {loading
-                  ? "Завантаження…"
-                  : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
+                  ? 'Завантаження…'
+                  : `${laws.length} закон${laws.length === 1 ? '' : 'ів'} у базі`}
               </p>
               <p className={`mono ${styles.roadmapFooterMono}`}>
-                {loading ? "…" : laws.map((law) => law.code).join(" · ")}
+                {loading ? '…' : laws.map(law => law.code).join(' · ')}
               </p>
             </div>
             <Link href={ROUTES.laws} className={styles.roadmapFooterLink}>

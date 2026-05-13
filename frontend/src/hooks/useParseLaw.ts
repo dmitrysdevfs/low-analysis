@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { parseLaw } from "@/lib/api";
+import { useState } from 'react';
+import { parseLaw } from '@/lib/api';
 
 export function useParseLaw(onSuccess?: () => void) {
   const [loading, setLoading] = useState(false);
@@ -16,9 +16,7 @@ export function useParseLaw(onSuccess?: () => void) {
 
       onSuccess?.();
     } catch (error: unknown) {
-      setError(
-        error instanceof Error ? error.message : "Не вдалося додати закон",
-      );
+      setError(error instanceof Error ? error.message : 'Не вдалося додати закон');
     } finally {
       setLoading(false);
     }

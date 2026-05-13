@@ -1,26 +1,22 @@
-﻿"use client";
+﻿'use client';
 
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 
-import { Breadcrumb } from "@/components/Breadcrumb";
-import { Layout } from "@/components/Layout";
-import { ROUTES } from "@/constants/routes";
-import { useLaws } from "@/hooks/useLaws";
-import { useArticle } from "@/hooks/useArticle";
-import {
-  buildTreeBranches,
-  getNodeBadge,
-  type TreeBranch,
-} from "@/lib/lawTree";
-import styles from "./page.module.scss";
-import { useMemo } from "react";
+import { Breadcrumb } from '@/components/Breadcrumb';
+import { Layout } from '@/components/Layout';
+import { ROUTES } from '@/constants/routes';
+import { useLaws } from '@/hooks/useLaws';
+import { useArticle } from '@/hooks/useArticle';
+import { buildTreeBranches, getNodeBadge, type TreeBranch } from '@/lib/lawTree';
+import styles from './page.module.scss';
+import { useMemo } from 'react';
 
 function NestedNodeList({ nodes }: { nodes: TreeBranch[] }) {
   return (
     <div className={styles.childrenList}>
-      {nodes.map((node) => (
+      {nodes.map(node => (
         <NestedNode key={node.key} node={node} />
       ))}
     </div>
@@ -33,17 +29,11 @@ function NestedNode({ node }: { node: TreeBranch }) {
       <span className={`mono ${styles.childBadge}`}>{getNodeBadge(node)}</span>
 
       <div className={styles.childContent}>
-        {node.title ? (
-          <div className={styles.childTitle}>{node.title}</div>
-        ) : null}
+        {node.title ? <div className={styles.childTitle}>{node.title}</div> : null}
 
-        {node.text ? (
-          <div className={styles.childTextOnly}>{node.text}</div>
-        ) : null}
+        {node.text ? <div className={styles.childTextOnly}>{node.text}</div> : null}
 
-        {node.children.length > 0 ? (
-          <NestedNodeList nodes={node.children} />
-        ) : null}
+        {node.children.length > 0 ? <NestedNodeList nodes={node.children} /> : null}
       </div>
     </div>
   );
@@ -54,14 +44,11 @@ export default function ArticlePage() {
   const lawId = params?.id;
   const articleNumber = params?.num;
   const { laws } = useLaws();
-  const { article, children, loading, error } = useArticle(
-    lawId,
-    articleNumber,
-  );
-  const law = laws.find((item) => item._id === lawId);
+  const { article, children, loading, error } = useArticle(lawId, articleNumber);
+  const law = laws.find(item => item._id === lawId);
 
-  const lawTitle = law?.title ?? "Закон";
-  const lawCode = law?.code ?? "";
+  const lawTitle = law?.title ?? 'Закон';
+  const lawCode = law?.code ?? '';
 
   const childTree = useMemo(() => buildTreeBranches(children), [children]);
 
@@ -76,11 +63,11 @@ export default function ArticlePage() {
       >
         <Breadcrumb
           items={[
-            { label: "Закони", href: ROUTES.laws },
+            { label: 'Закони', href: ROUTES.laws },
             lawId
-              ? { label: law?.title ?? lawId ?? "…", href: ROUTES.law(lawId) }
-              : { label: law?.title ?? "…" },
-            { label: `Стаття ${articleNumber ?? ""}` },
+              ? { label: law?.title ?? lawId ?? '…', href: ROUTES.law(lawId) }
+              : { label: law?.title ?? '…' },
+            { label: `Стаття ${articleNumber ?? ''}` },
           ]}
         />
       </motion.div>
@@ -104,7 +91,7 @@ export default function ArticlePage() {
                     transition={{
                       duration: 1.6,
                       repeat: Infinity,
-                      ease: "easeInOut",
+                      ease: 'easeInOut',
                       delay: index * 0.12,
                     }}
                     className={styles.skeletonItem}
@@ -141,9 +128,7 @@ export default function ArticlePage() {
                 className={styles.emptyState}
               >
                 <span className={styles.emptyIcon}>§</span>
-                <span className={`mono ${styles.emptyText}`}>
-                  Статтю не знайдено
-                </span>
+                <span className={`mono ${styles.emptyText}`}>Статтю не знайдено</span>
               </motion.div>
             ) : null}
 
@@ -165,11 +150,7 @@ export default function ArticlePage() {
                 >
                   <span className={`mono ${styles.lawCardLabel}`}>Закон</span>
                   <span className={styles.lawCardTitle}>{lawTitle}</span>
-                  {lawCode && (
-                    <span className={`mono ${styles.lawCardCode}`}>
-                      {lawCode}
-                    </span>
-                  )}
+                  {lawCode && <span className={`mono ${styles.lawCardCode}`}>{lawCode}</span>}
 
                   {/* Open full law link */}
                   {lawId && (
@@ -185,9 +166,7 @@ export default function ArticlePage() {
                         className={styles.lawLink}
                       >
                         <div className={styles.lawLinkLeft}>
-                          <span className={`mono ${styles.lawLinkLabel}`}>
-                            Повний закон
-                          </span>
+                          <span className={`mono ${styles.lawLinkLabel}`}>Повний закон</span>
                         </div>
                         <span className={styles.lawLinkArrow}>↗</span>
                       </Link>
@@ -198,20 +177,14 @@ export default function ArticlePage() {
                 {/* Article block */}
                 <div className={styles.articleBlock}>
                   {article.title && (
-                    <h1 className={`display ${styles.articleTitle}`}>
-                      {article.title}
-                    </h1>
+                    <h1 className={`display ${styles.articleTitle}`}>{article.title}</h1>
                   )}
 
                   {!article.title && !article.number && (
-                    <h1 className={`display ${styles.articleTitle}`}>
-                      Стаття {articleNumber}
-                    </h1>
+                    <h1 className={`display ${styles.articleTitle}`}>Стаття {articleNumber}</h1>
                   )}
 
-                  {article.text ? (
-                    <p className={styles.articleBody}>{article.text}</p>
-                  ) : null}
+                  {article.text ? <p className={styles.articleBody}>{article.text}</p> : null}
 
                   {/* Children / paragraphs */}
                   {children.length > 0 ? (
@@ -222,12 +195,12 @@ export default function ArticlePage() {
                       transition={{ delay: 0.15, duration: 0.3 }}
                     >
                       <div className={`mono ${styles.childrenHeading}`}>
-                        Вміст статті · {children.length}{" "}
+                        Вміст статті · {children.length}{' '}
                         {children.length === 1
-                          ? "елемент"
+                          ? 'елемент'
                           : children.length < 5
-                            ? "елементи"
-                            : "елементів"}
+                            ? 'елементи'
+                            : 'елементів'}
                       </div>
 
                       <NestedNodeList nodes={childTree} />

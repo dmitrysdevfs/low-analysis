@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { getLaws } from "@/lib/api";
-import type { Law } from "@/types";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { getLaws } from '@/lib/api';
+import type { Law } from '@/types';
 
 export interface SearchParams {
   q: string;
-  wordField: "title" | "text" | "code";
+  wordField: 'title' | 'text' | 'code';
   docType: string;
   dateFrom: string;
   dateTo: string;
-  numberType: "starts" | "contains" | "exact";
+  numberType: 'starts' | 'contains' | 'exact';
   number: string;
   status: string;
-  sort: "date" | "title" | "relevance";
+  sort: 'date' | 'title' | 'relevance';
 }
 
 const DEFAULT_PARAMS: SearchParams = {
-  q: "",
-  wordField: "title",
-  docType: "",
-  dateFrom: "",
-  dateTo: "",
-  numberType: "starts",
-  number: "",
-  status: "",
-  sort: "date",
+  q: '',
+  wordField: 'title',
+  docType: '',
+  dateFrom: '',
+  dateTo: '',
+  numberType: 'starts',
+  number: '',
+  status: '',
+  sort: 'date',
 };
 
 interface State {
@@ -65,63 +65,50 @@ export function useSearch() {
     abortRef.current?.abort();
     abortRef.current = new AbortController();
 
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+    setState(prev => ({ ...prev, loading: true, error: null }));
 
     getLaws(normalizedParams.q)
-      .then((laws) => {
+      .then(laws => {
         let filtered = [...laws];
 
         if (normalizedParams.docType) {
-          filtered = filtered.filter((law) =>
-            (law.preamble ?? "")
-              .toUpperCase()
-              .includes(normalizedParams.docType.toUpperCase()),
+          filtered = filtered.filter(law =>
+            (law.preamble ?? '').toUpperCase().includes(normalizedParams.docType.toUpperCase())
           );
         }
 
         if (normalizedParams.number.trim()) {
           const num = normalizedParams.number.trim().toLowerCase();
-          if (normalizedParams.numberType === "starts") {
-            filtered = filtered.filter((law) =>
-              law.code.toLowerCase().startsWith(num),
-            );
-          } else if (normalizedParams.numberType === "contains") {
-            filtered = filtered.filter((law) =>
-              law.code.toLowerCase().includes(num),
-            );
+          if (normalizedParams.numberType === 'starts') {
+            filtered = filtered.filter(law => law.code.toLowerCase().startsWith(num));
+          } else if (normalizedParams.numberType === 'contains') {
+            filtered = filtered.filter(law => law.code.toLowerCase().includes(num));
           } else {
-            filtered = filtered.filter((law) => law.code.toLowerCase() === num);
+            filtered = filtered.filter(law => law.code.toLowerCase() === num);
           }
         }
 
         if (normalizedParams.dateFrom) {
           const from = new Date(normalizedParams.dateFrom).getTime();
-          filtered = filtered.filter(
-            (law) => new Date(law.createdAt).getTime() >= from,
-          );
+          filtered = filtered.filter(law => new Date(law.createdAt).getTime() >= from);
         }
 
         if (normalizedParams.dateTo) {
           const to = new Date(normalizedParams.dateTo).getTime();
-          filtered = filtered.filter(
-            (law) => new Date(law.createdAt).getTime() <= to,
-          );
+          filtered = filtered.filter(law => new Date(law.createdAt).getTime() <= to);
         }
 
         if (normalizedParams.status) {
-          filtered = filtered.filter((law) =>
-            (law.status ?? "")
-              .toLowerCase()
-              .includes(normalizedParams.status.toLowerCase()),
+          filtered = filtered.filter(law =>
+            (law.status ?? '').toLowerCase().includes(normalizedParams.status.toLowerCase())
           );
         }
 
-        if (normalizedParams.sort === "title") {
-          filtered.sort((a, b) => a.title.localeCompare(b.title, "uk"));
-        } else if (normalizedParams.sort === "date") {
+        if (normalizedParams.sort === 'title') {
+          filtered.sort((a, b) => a.title.localeCompare(b.title, 'uk'));
+        } else if (normalizedParams.sort === 'date') {
           filtered.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
         }
 
@@ -133,11 +120,11 @@ export function useSearch() {
         });
       })
       .catch((err: unknown) => {
-        if (err instanceof Error && err.name === "AbortError") return;
+        if (err instanceof Error && err.name === 'AbortError') return;
         setState({
           results: [],
           loading: false,
-          error: err instanceof Error ? err.message : "Помилка пошуку",
+          error: err instanceof Error ? err.message : 'Помилка пошуку',
           searched: true,
         });
       });

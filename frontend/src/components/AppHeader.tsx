@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { NAV_ITEMS } from "@/constants/navigation";
-import { TryzubMark } from "@/components/TryzubMark";
-import styles from "./AppHeader.module.scss";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { NAV_ITEMS } from '@/constants/navigation';
+import { TryzubMark } from '@/components/TryzubMark';
+import styles from './AppHeader.module.scss';
 
 function BurgerIcon({ open }: { open: boolean }) {
   return (
@@ -92,17 +92,15 @@ export function AppHeader() {
             <Link href="/" className={styles.logoLink}>
               Low Analysis
             </Link>
-            <div className={styles.logoSubtitle}>
-              Система аналізу законодавства України
-            </div>
+            <div className={styles.logoSubtitle}>Система аналізу законодавства України</div>
           </div>
         </div>
 
         <button
           type="button"
           className={`nav-mobile-btn ${styles.burgerBtn}`}
-          onClick={() => setMobileOpen((value) => !value)}
-          aria-label={mobileOpen ? "Закрити меню" : "Відкрити меню"}
+          onClick={() => setMobileOpen(value => !value)}
+          aria-label={mobileOpen ? 'Закрити меню' : 'Відкрити меню'}
           aria-expanded={mobileOpen}
         >
           <BurgerIcon open={mobileOpen} />
@@ -110,16 +108,15 @@ export function AppHeader() {
       </div>
 
       <nav className={`nav-desktop ${styles.desktopNav}`}>
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.map(item => {
           const isActive =
-            pathname === item.href ||
-            (item.href !== "/" && pathname.startsWith(item.href));
+            pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
 
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`nav-link${isActive ? " active" : ""}`}
+              className={`nav-link${isActive ? ' active' : ''}`}
             >
               {item.label}
             </Link>
@@ -133,21 +130,20 @@ export function AppHeader() {
             key="mobile-nav"
             className={styles.mobileNav}
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            {NAV_ITEMS.map((item) => {
+            {NAV_ITEMS.map(item => {
               const isActive =
-                pathname === item.href ||
-                (item.href !== "/" && pathname.startsWith(item.href));
+                pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ""}`}
+                  className={`${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ''}`}
                 >
                   {item.label}
                 </Link>

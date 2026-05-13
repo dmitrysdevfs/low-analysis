@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import type {
   ArticleResponse,
@@ -7,9 +7,9 @@ import type {
   Subject,
   SubjectElements,
   ParseLawResponse,
-} from "@/types";
+} from '@/types';
 
-const API_BASE = "/api";
+const API_BASE = '/api';
 
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`);
@@ -21,8 +21,8 @@ async function getJson<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function getLaws(q = ""): Promise<Law[]> {
-  const qs = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "";
+export async function getLaws(q = ''): Promise<Law[]> {
+  const qs = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : '';
   return getJson<Law[]>(`/laws${qs}`);
 }
 
@@ -30,15 +30,12 @@ export async function getLawTree(id: string): Promise<LawTreeResponse> {
   return getJson<LawTreeResponse>(`/laws/${id}/tree`);
 }
 
-export async function getArticle(
-  id: string,
-  num: string,
-): Promise<ArticleResponse> {
+export async function getArticle(id: string, num: string): Promise<ArticleResponse> {
   return getJson<ArticleResponse>(`/laws/${id}/articles/${num}`);
 }
 
 export async function getSubjects(): Promise<Subject[]> {
-  return getJson<Subject[]>("/subjects");
+  return getJson<Subject[]>('/subjects');
 }
 
 export async function getSubjectElements(id: string): Promise<SubjectElements> {
@@ -47,9 +44,9 @@ export async function getSubjectElements(id: string): Promise<SubjectElements> {
 
 export async function parseLaw(url: string): Promise<ParseLawResponse> {
   const res = await fetch(`${API_BASE}/laws/parse`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ url }),
   });
@@ -60,11 +57,7 @@ export async function parseLaw(url: string): Promise<ParseLawResponse> {
     try {
       const errorBody = await res.json();
 
-      if (
-        errorBody &&
-        typeof errorBody === "object" &&
-        "message" in errorBody
-      ) {
+      if (errorBody && typeof errorBody === 'object' && 'message' in errorBody) {
         errorMessage = String(errorBody.message);
       }
     } catch {

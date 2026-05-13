@@ -1,18 +1,14 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState, useCallback, useRef, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import Link from 'next/link';
+import { useState, useCallback, useRef, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-import { ROUTES } from "@/constants/routes";
-import { getLawTree } from "@/lib/api";
-import {
-  getArticleTitle,
-  getNodeLabel,
-  getSortedArticles,
-} from "@/lib/lawTree";
-import type { Law, TreeNode } from "@/types";
-import styles from "./LawCard.module.scss";
+import { ROUTES } from '@/constants/routes';
+import { getLawTree } from '@/lib/api';
+import { getArticleTitle, getNodeLabel, getSortedArticles } from '@/lib/lawTree';
+import type { Law, TreeNode } from '@/types';
+import styles from './LawCard.module.scss';
 
 const CARD_HEIGHT = 148;
 const BACK_HEIGHT = 460;
@@ -35,7 +31,7 @@ function SkeletonLine({ width }: { width: string }) {
   return (
     <motion.div
       animate={{ opacity: [0.2, 0.45, 0.2] }}
-      transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+      transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
       className={styles.skeletonLine}
       style={{ width }}
     />
@@ -43,7 +39,7 @@ function SkeletonLine({ width }: { width: string }) {
 }
 
 function normalizeArticleNumberQuery(value: string) {
-  return value.toLowerCase().replace(/ст\.?/giu, "").replace(/\s+/g, "").trim();
+  return value.toLowerCase().replace(/ст\.?/giu, '').replace(/\s+/g, '').trim();
 }
 
 type ArticleItem = TreeNode;
@@ -52,7 +48,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
   const [flipped, setFlipped] = useState(false);
   const [allArticles, setAllArticles] = useState<ArticleItem[]>([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const fetched = useRef(false);
 
   const filtered = useMemo(() => {
@@ -60,9 +56,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
     const q = normalizeArticleNumberQuery(query);
     if (!q) return allArticles;
 
-    return allArticles.filter((a) =>
-      (a.number ?? "").toLowerCase().replace(/\s+/g, "").includes(q),
-    );
+    return allArticles.filter(a => (a.number ?? '').toLowerCase().replace(/\s+/g, '').includes(q));
   }, [allArticles, query]);
 
   const visible = filtered.slice(0, PAGE_SIZE);
@@ -76,7 +70,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
         fetched.current = true;
         setLoadingArticles(true);
         getLawTree(law._id)
-          .then((data) => {
+          .then(data => {
             const elements = data.elements;
 
             const arts: ArticleItem[] = getSortedArticles(elements);
@@ -86,9 +80,9 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
           .finally(() => setLoadingArticles(false));
       }
 
-      setFlipped((prev) => !prev);
+      setFlipped(prev => !prev);
     },
-    [flipped, law._id],
+    [flipped, law._id]
   );
 
   return (
@@ -99,7 +93,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
       className={styles.cardWrapper}
       style={{
         height: flipped ? BACK_HEIGHT : CARD_HEIGHT,
-        transition: "height 0.45s cubic-bezier(0.25,0.1,0.25,1)",
+        transition: 'height 0.45s cubic-bezier(0.25,0.1,0.25,1)',
       }}
     >
       <motion.div
@@ -118,13 +112,9 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
             <div className={styles.statsGroup}>
               <Stat value={law.totalSections} label="розділів" />
               <Stat value={law.totalArticles} label="статей" />
-              {law.totalParagraphs ? (
-                <Stat value={law.totalParagraphs} label="абзаців" />
-              ) : null}
+              {law.totalParagraphs ? <Stat value={law.totalParagraphs} label="абзаців" /> : null}
             </div>
-            <span className={`mono ${styles.expandHint}`}>
-              Натисни щоб розгорнути ↻
-            </span>
+            <span className={`mono ${styles.expandHint}`}>Натисни щоб розгорнути ↻</span>
           </div>
         </div>
 
@@ -149,15 +139,12 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={e => setQuery(e.target.value)}
               placeholder="Пошук за номером статті..."
               className={styles.searchInput}
             />
             {query && (
-              <button
-                onClick={() => setQuery("")}
-                className={styles.searchClear}
-              >
+              <button onClick={() => setQuery('')} className={styles.searchClear}>
                 ✕
               </button>
             )}
@@ -198,11 +185,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
                   className={styles.articleListCol}
                 >
                   {visible.map((article, i) => (
-                    <motion.div
-                      key={article._id}
-                      custom={i}
-                      variants={itemVariants}
-                    >
+                    <motion.div key={article._id} custom={i} variants={itemVariants}>
                       <Link
                         href={
                           article.number
@@ -213,9 +196,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
                       >
                         <div className={styles.articleRow}>
                           <div className={styles.articleInfo}>
-                            <span className={styles.articleTitle}>
-                              {getNodeLabel(article)}
-                            </span>
+                            <span className={styles.articleTitle}>{getNodeLabel(article)}</span>
 
                             {getArticleTitle(article) && (
                               <span className={styles.articlePreview}>
@@ -236,10 +217,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
           {/* Footer */}
           <div className={styles.cardFooter}>
             <Link href={ROUTES.law(law._id)} className={styles.allArticlesLink}>
-              <motion.div
-                whileHover={{ x: 4 }}
-                className={styles.allArticlesBtn}
-              >
+              <motion.div whileHover={{ x: 4 }} className={styles.allArticlesBtn}>
                 Всі статті закону ({law.totalArticles}) →
               </motion.div>
             </Link>

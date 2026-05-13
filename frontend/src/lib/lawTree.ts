@@ -1,21 +1,21 @@
-import type { TreeNode } from "@/types";
+import type { TreeNode } from '@/types';
 
 export interface TreeBranch extends TreeNode {
   children: TreeBranch[];
   key: string;
 }
 
-const TYPE_LABELS: Record<TreeNode["type"], string> = {
-  section: "Розділ",
-  article: "Стаття",
-  part: "Частина",
-  point: "Пункт",
-  sub_point: "Підпункт",
-  paragraph: "Абзац",
+const TYPE_LABELS: Record<TreeNode['type'], string> = {
+  section: 'Розділ',
+  article: 'Стаття',
+  part: 'Частина',
+  point: 'Пункт',
+  sub_point: 'Підпункт',
+  paragraph: 'Абзац',
 };
 
 function normalizeText(value: string) {
-  return value.replace(/\s+/g, " ").trim();
+  return value.replace(/\s+/g, ' ').trim();
 }
 
 function parseNumericValue(value?: string | null) {
@@ -25,7 +25,7 @@ function parseNumericValue(value?: string | null) {
     return null;
   }
 
-  const normalized = cleaned.replace(",", ".").replace(/[^\d.-]/g, "");
+  const normalized = cleaned.replace(',', '.').replace(/[^\d.-]/g, '');
 
   if (!normalized) {
     return null;
@@ -36,7 +36,7 @@ function parseNumericValue(value?: string | null) {
 }
 
 function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function createBranchKey(node: TreeNode, index: number) {
@@ -44,12 +44,9 @@ function createBranchKey(node: TreeNode, index: number) {
 }
 
 function stripLeadingArticleLabel(value: string, label: string) {
-  const pattern = new RegExp(
-    `^${escapeRegExp(label).replace(/\s+/g, "\\s+")}[\\s.:;,-]*`,
-    "iu",
-  );
+  const pattern = new RegExp(`^${escapeRegExp(label).replace(/\s+/g, '\\s+')}[\\s.:;,-]*`, 'iu');
 
-  return value.replace(pattern, "").trim();
+  return value.replace(pattern, '').trim();
 }
 
 export function compareTreeNodes(a: TreeNode, b: TreeNode) {
@@ -75,9 +72,9 @@ export function compareTreeNodes(a: TreeNode, b: TreeNode) {
     return 1;
   }
 
-  return a.code.localeCompare(b.code, "uk", {
+  return a.code.localeCompare(b.code, 'uk', {
     numeric: true,
-    sensitivity: "base",
+    sensitivity: 'base',
   });
 }
 
@@ -99,9 +96,7 @@ export function buildTreeBranches(elements: TreeNode[]) {
   const roots: TreeBranch[] = [];
 
   for (const branch of branches) {
-    const parent = branch.parentId
-      ? branchesById.get(branch.parentId)
-      : undefined;
+    const parent = branch.parentId ? branchesById.get(branch.parentId) : undefined;
 
     if (parent) {
       parent.children.push(branch);
@@ -112,7 +107,7 @@ export function buildTreeBranches(elements: TreeNode[]) {
 
   const sortRecursively = (nodes: TreeBranch[]) => {
     nodes.sort(compareTreeNodes);
-    nodes.forEach((node) => sortRecursively(node.children));
+    nodes.forEach(node => sortRecursively(node.children));
   };
 
   sortRecursively(roots);
@@ -122,8 +117,8 @@ export function buildTreeBranches(elements: TreeNode[]) {
 
 export function buildLawSections(elements: TreeNode[]) {
   const roots = buildTreeBranches(elements);
-  const sections = roots.filter((node) => node.type === "section");
-  const looseNodes = roots.filter((node) => node.type !== "section");
+  const sections = roots.filter(node => node.type === 'section');
+  const looseNodes = roots.filter(node => node.type !== 'section');
 
   if (!looseNodes.length) {
     return sections;
@@ -131,14 +126,14 @@ export function buildLawSections(elements: TreeNode[]) {
 
   return [
     {
-      key: "__unsectioned__",
-      _id: "__unsectioned__",
-      type: "section" as const,
-      code: "__unsectioned__",
+      key: '__unsectioned__',
+      _id: '__unsectioned__',
+      type: 'section' as const,
+      code: '__unsectioned__',
       lawId: looseNodes[0]?.lawId,
       parentId: null,
       number: null,
-      title: "Статті без розділу",
+      title: 'Статті без розділу',
       text: null,
       depth: 0,
       order: -1,
@@ -150,14 +145,11 @@ export function buildLawSections(elements: TreeNode[]) {
 }
 
 export function countSectionArticles(section: TreeBranch) {
-  return section.children.filter((child) => child.type === "article").length;
+  return section.children.filter(child => child.type === 'article').length;
 }
 
 export function countArticlesInSections(sections: TreeBranch[]) {
-  return sections.reduce(
-    (total, section) => total + countSectionArticles(section),
-    0,
-  );
+  return sections.reduce((total, section) => total + countSectionArticles(section), 0);
 }
 
 export function limitLawSections(sections: TreeBranch[], limit: number | null) {
@@ -183,8 +175,8 @@ export function limitLawSections(sections: TreeBranch[], limit: number | null) {
     const takeCount = Math.min(sectionArticles, remaining);
     let taken = 0;
 
-    const children = section.children.filter((child) => {
-      if (child.type !== "article") {
+    const children = section.children.filter(child => {
+      if (child.type !== 'article') {
         return true;
       }
 
@@ -203,10 +195,7 @@ export function limitLawSections(sections: TreeBranch[], limit: number | null) {
 }
 
 export function countNestedNodes(node: TreeBranch): number {
-  return node.children.reduce(
-    (total, child) => total + 1 + countNestedNodes(child),
-    0,
-  );
+  return node.children.reduce((total, child) => total + 1 + countNestedNodes(child), 0);
 }
 
 export function getArticleBadge(node: TreeNode) {
@@ -217,10 +206,10 @@ export function getArticleBadge(node: TreeNode) {
   }
 
   if (node.title?.trim()) {
-    return normalizeText(node.title.replace(/[.:]+$/u, ""));
+    return normalizeText(node.title.replace(/[.:]+$/u, ''));
   }
 
-  return "Стаття";
+  return 'Стаття';
 }
 
 export function getArticleRouteNumber(node: TreeNode) {
@@ -230,16 +219,14 @@ export function getArticleRouteNumber(node: TreeNode) {
     return number;
   }
 
-  const match = `${node.title ?? ""} ${node.text ?? ""}`.match(
-    /\d+(?:[-–]\d+)?/u,
-  );
+  const match = `${node.title ?? ''} ${node.text ?? ''}`.match(/\d+(?:[-–]\d+)?/u);
   return match?.[0] ?? null;
 }
 
 export function getArticleTitle(node: TreeNode) {
   const badge = getArticleBadge(node);
   const candidates = [node.text, node.title]
-    .map((value) => value?.trim())
+    .map(value => value?.trim())
     .filter(Boolean) as string[];
 
   for (const candidate of candidates) {
@@ -254,7 +241,7 @@ export function getArticleTitle(node: TreeNode) {
 }
 
 export function getNodeLabel(node: TreeNode) {
-  if (node.type === "article") {
+  if (node.type === 'article') {
     return getArticleBadge(node);
   }
 
@@ -265,7 +252,7 @@ export function getNodeLabel(node: TreeNode) {
 }
 
 export function getNodeContent(node: TreeNode) {
-  if (node.type === "article") {
+  if (node.type === 'article') {
     return getArticleTitle(node);
   }
 
@@ -282,9 +269,7 @@ export function getNodeContent(node: TreeNode) {
  */
 
 export function getSortedArticles(elements: TreeNode[]) {
-  return elements
-    .filter((node) => node.type === "article")
-    .sort(compareTreeNodes);
+  return elements.filter(node => node.type === 'article').sort(compareTreeNodes);
 }
 
 /**
@@ -294,15 +279,15 @@ export function getSortedArticles(elements: TreeNode[]) {
 
 export function getNodeBadge(node: TreeNode) {
   switch (node.type) {
-    case "part":
+    case 'part':
       return `ч. ${node.number}`;
-    case "point":
+    case 'point':
       return `п. ${node.number}`;
-    case "sub_point":
+    case 'sub_point':
       return `пп. ${node.number}`;
-    case "paragraph":
+    case 'paragraph':
       return `${node.number}`; //зараз сюди попадають і абзаци, і підпункти, тому просто номер без позначки
     default:
-      return node.number ?? "•";
+      return node.number ?? '•';
   }
 }

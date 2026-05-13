@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import * as RadixDialog from "@radix-ui/react-dialog";
-import { motion, AnimatePresence } from "framer-motion";
-import type { ReactNode } from "react";
-import styles from "./Dialog.module.scss";
+import * as RadixDialog from '@radix-ui/react-dialog';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { ReactNode } from 'react';
+import styles from './Dialog.module.scss';
 
 interface DialogProps {
   open: boolean;
@@ -53,7 +53,7 @@ export function Dialog({
                 style={{ width: `min(${maxWidth}px, calc(100vw - 32px))` }}
               >
                 <div
-                  className={`${styles.header} ${title || description ? styles.headerHasTitle : ""}`}
+                  className={`${styles.header} ${title || description ? styles.headerHasTitle : ''}`}
                 >
                   <div>
                     {title && (
@@ -68,10 +68,7 @@ export function Dialog({
                     )}
                   </div>
 
-                  <RadixDialog.Close
-                    className={styles.closeBtn}
-                    aria-label="Закрити"
-                  >
+                  <RadixDialog.Close className={styles.closeBtn} aria-label="Закрити">
                     ✕
                   </RadixDialog.Close>
                 </div>

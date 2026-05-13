@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { getLaws } from "@/lib/api";
-import type { Law } from "@/types";
+import { useEffect, useState } from 'react';
+import { getLaws } from '@/lib/api';
+import type { Law } from '@/types';
 
 interface State {
   fetchedQ: string | null;
@@ -10,7 +10,7 @@ interface State {
   error: string | null;
 }
 
-export function useLaws(q = "", refreshKey = 0) {
+export function useLaws(q = '', refreshKey = 0) {
   const [state, setState] = useState<State>({
     fetchedQ: null,
     laws: [],
@@ -23,16 +23,16 @@ export function useLaws(q = "", refreshKey = 0) {
     const timer = setTimeout(
       () => {
         getLaws(q)
-          .then((laws) => setState({ fetchedQ: q, laws, error: null }))
+          .then(laws => setState({ fetchedQ: q, laws, error: null }))
           .catch((error: unknown) =>
             setState({
               fetchedQ: q,
               laws: [],
-              error: error instanceof Error ? error.message : "Unknown error",
-            }),
+              error: error instanceof Error ? error.message : 'Unknown error',
+            })
           );
       },
-      q ? 250 : 0,
+      q ? 250 : 0
     );
 
     return () => clearTimeout(timer);

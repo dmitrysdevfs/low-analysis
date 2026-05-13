@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { getArticle } from "@/lib/api";
-import type { TreeNode } from "@/types";
+import { useEffect, useState } from 'react';
+import { getArticle } from '@/lib/api';
+import type { TreeNode } from '@/types';
 
 interface State {
   fetchedKey: string | null;
@@ -28,21 +28,21 @@ export function useArticle(lawId?: string, num?: string) {
     const key = `${lawId}:${num}`;
 
     getArticle(lawId, num)
-      .then((data) =>
+      .then(data =>
         setState({
           fetchedKey: key,
           article: data.article,
           children: data.children,
           error: null,
-        }),
+        })
       )
       .catch((error: unknown) =>
         setState({
           fetchedKey: key,
           article: null,
           children: [],
-          error: error instanceof Error ? error.message : "Unknown error",
-        }),
+          error: error instanceof Error ? error.message : 'Unknown error',
+        })
       );
   }, [lawId, num]);
 

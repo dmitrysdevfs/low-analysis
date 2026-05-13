@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import styles from "./Breadcrumb.module.scss";
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import styles from './Breadcrumb.module.scss';
 
 interface Crumb {
   label: string;
@@ -20,9 +20,7 @@ export function Breadcrumb({ items }: { items: Crumb[] }) {
           transition={{ duration: 0.2, delay: index * 0.04 }}
           className={styles.crumb}
         >
-          {index > 0 ? (
-            <span className={`mono ${styles.separator}`}>/</span>
-          ) : null}
+          {index > 0 ? <span className={`mono ${styles.separator}`}>/</span> : null}
           {item.href ? (
             <Link href={item.href} className={`mono ${styles.link}`}>
               {item.label}
