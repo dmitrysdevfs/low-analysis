@@ -34,15 +34,14 @@ export interface TreeNode {
   text?: string | null;
   depth: number;
   order?: number;
-  subjects?: string[];
+  subjects?: { subject_id: string; role: string }[];
 }
 
 export interface Subject {
   _id: string;
-  name: string;
+  canonical_name: string;
+  legal_status: string;
   aliases: string[];
-  elementIds: string[];
-  lawIds: string[];
   createdAt: string;
 }
 

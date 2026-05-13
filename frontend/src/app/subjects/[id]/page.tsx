@@ -24,7 +24,7 @@ export default function SubjectDetailPage() {
         <Breadcrumb
           items={[
             { label: "Суб'єкти", href: ROUTES.subjects },
-            { label: subject?.name ?? subjectId ?? "…" },
+            { label: subject?.canonical_name ?? subjectId ?? "…" },
           ]}
         />
       </motion.div>
@@ -69,7 +69,7 @@ export default function SubjectDetailPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <h1 className={`display ${styles.heading}`}>{subject.name}</h1>
+              <h1 className={`display ${styles.heading}`}>{subject.canonical_name}</h1>
 
               {subject.aliases.length > 0 ? (
                 <div className={styles.aliasesSection}>
