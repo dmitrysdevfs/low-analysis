@@ -3,6 +3,7 @@ export interface Law {
   title: string;
   code: string;
   preamble?: string | null;
+  signatory?: string | null;
   status?: string | null;
   totalSections: number;
   totalArticles: number;

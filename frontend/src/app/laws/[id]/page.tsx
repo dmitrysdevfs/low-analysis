@@ -128,11 +128,9 @@ export default function LawTreePage() {
             <h1 className={`display ${styles.lawTitle}`}>
               {law?.title ?? "Завантажуємо структуру закону"}
             </h1>
-            <p className={styles.lawDesc}>
-              Список статей формується напряму з дерева закону. Клік по назві
-              статті відкриває повну сторінку, а кнопка праворуч показує
-              вкладену структуру частин, пунктів і абзаців.
-            </p>
+            {law?.signatory && (
+              <div className={styles.lawSignatory}>{law.signatory}</div>
+            )}
             <div className="law-structure-summary">
               {law ? (
                 <span className="directory-chip mono">{law.code}</span>
@@ -141,6 +139,17 @@ export default function LawTreePage() {
                 {sections.length} розділів · {articleCount} статей
               </span>
             </div>
+            {law?.status && (
+              <div className={styles.lawStatus}>
+                {law.status.charAt(0).toUpperCase() +
+                  law.status.slice(1).toLowerCase()}
+              </div>
+            )}
+            <p className={styles.lawDesc}>
+              Список статей формується напряму з дерева закону. Клік по назві
+              статті відкриває повну сторінку, а кнопка праворуч показує
+              вкладену структуру частин, пунктів і абзаців.
+            </p>
 
             {showLimitControls ? (
               <div className={styles.controls}>

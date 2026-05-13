@@ -85,12 +85,13 @@ export function SearchResults({
   return (
     <div>
       <div className={`mono ${styles.countLine}`}>
-        Знайдено: {results.length}{" "}
+        Результат пошуку ({results.length}{" "}
         {results.length === 1
           ? "закон"
           : results.length < 5
-            ? "закони"
-            : "законів"}
+            ? "документ"
+            : "документів"}
+        )
       </div>
 
       <AnimatePresence>
@@ -106,12 +107,24 @@ export function SearchResults({
                 <span className="directory-index mono">{index + 1}.</span>
                 <span className="directory-body">
                   <span className="directory-title">{law.title}</span>
+                  <span className="text-xs font-medium leading-relaxed">
+                    {law.preamble}
+                  </span>
+                  <span className="text-xs font-medium leading-relaxed">
+                    {law.signatory}
+                  </span>
                   <span className="directory-meta">
                     <span className="directory-chip mono">{law.code}</span>
                     <span className="mono">
                       {law.totalSections} розд. · {law.totalArticles} статей
                     </span>
                   </span>
+                  {law?.status && (
+                    <span className="text-[#008d00] text-xs font-medium">
+                      {law.status.charAt(0).toUpperCase() +
+                        law.status.slice(1).toLowerCase()}
+                    </span>
+                  )}
                 </span>
                 <span className="directory-arrow" aria-hidden="true">
                   →
