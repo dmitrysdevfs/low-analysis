@@ -84,10 +84,9 @@ export const PART_NODE: TreeNode = {
 
 export const SUBJECT_FIXTURE: Subject = {
   _id: "subject-1",
-  name: "Підприємець",
+  canonical_name: "Підприємець",
+  legal_status: "individual",
   aliases: ["ФОП", "суб'єкт підприємницької діяльності"],
-  elementIds: [ARTICLE_NODE._id!],
-  lawIds: [LAW_FIXTURE._id],
   createdAt: "2026-05-09T10:00:00.000Z",
 };
 
