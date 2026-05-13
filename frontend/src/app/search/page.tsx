@@ -1,15 +1,24 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Layout } from "@/components/Layout";
-import { SearchForm } from "@/components/SearchForm";
-import { SearchResults } from "@/components/SearchResults";
-import { useSearch } from "@/hooks/useSearch";
-import styles from "./page.module.scss";
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { Layout } from '@/components/Layout';
+import { SearchForm } from '@/components/SearchForm';
+import { SearchParams } from '@/hooks/useSearch';
+import styles from './page.module.scss';
 
 export default function SearchPage() {
-  const { results, loading, error, searched, params, search, reset } =
-    useSearch();
+  const router = useRouter();
+
+  const handleSearch = (params: SearchParams) => {
+    const query = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) query.set(key, String(value));
+    });
+
+    router.push(`/search/results?${query.toString()}`);
+  };
 
   return (
     <Layout>
@@ -20,21 +29,7 @@ export default function SearchPage() {
           transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
           className={styles.formWrap}
         >
-          <SearchForm onSearch={search} onReset={reset} loading={loading} />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
-          <SearchResults
-            results={results}
-            loading={loading}
-            error={error}
-            searched={searched}
-            query={params.q}
-          />
+          <SearchForm onSearch={handleSearch} loading={false} />
         </motion.div>
       </div>
     </Layout>
