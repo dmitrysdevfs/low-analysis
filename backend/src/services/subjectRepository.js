@@ -14,7 +14,10 @@ export const ensureSubjectExists = async (
   legalStatus = 'other',
 ) => {
   // Normalize whitespace (remove newlines, extra spaces) and lowercase
-  const normalizedName = canonicalName.replace(/\s+/g, ' ').trim().toLowerCase();
+  const normalizedName = canonicalName
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 
   const existing = await Subject.findOne({
     $or: [{ canonical_name: normalizedName }, { aliases: normalizedName }],
