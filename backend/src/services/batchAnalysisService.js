@@ -22,7 +22,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @returns {Promise<{ processed: number, subjectsFound: number, skipped: number, errors: number }>}
  */
 export const analyzeLaw = async (lawId, options = {}) => {
-  const { force = false, delayMs = 500 } = options;
+  const { force = false, delayMs = 500, limit = 0 } = options;
 
   // Verify law exists
   const law = await Law.findById(lawId);
@@ -39,10 +39,13 @@ export const analyzeLaw = async (lawId, options = {}) => {
 
   const elements = await Element.find(query)
     .select('_id text type subjects')
-    .sort({ depth: 1, order: 1 });
+    .sort({ depth: 1, order: 1 })
+    .limit(limit > 0 ? limit : 0); // 0 = no limit (for CLI)
+
+  const totalAvailable = await Element.countDocuments(query);
 
   console.log(
-    `[batchAnalysisService] Starting batch analysis for law "${law.title}" — ${elements.length} elements to process.`,
+    `[batchAnalysisService] Starting batch analysis for law "${law.title}" — ${elements.length} of ${totalAvailable} elements (limit=${limit || 'none'}).`,
   );
 
   let processed = 0;
@@ -77,5 +80,5 @@ export const analyzeLaw = async (lawId, options = {}) => {
     `[batchAnalysisService] Done. processed=${processed}, subjectsFound=${subjectsFound}, skipped=${skipped}, errors=${errors}`,
   );
 
-  return { processed, subjectsFound, skipped, errors };
+  return { processed, subjectsFound, skipped, errors, totalAvailable };
 };

@@ -124,10 +124,18 @@ export const analyzeElement = async (elementId) => {
   // Filter 2: remove document/law references mistakenly identified as subjects
   // (LLM sometimes includes law names despite being instructed to ignore them)
   const DOCUMENT_MARKERS = [
-    'закон україни', 'кодекс україни', 'конституція україни',
-    'постанова', 'наказ', 'декрет', 'розпорядження',
-    'нормативно-правовий акт', 'нормативно-правові акти',
-    'спеціальні закони', 'інші закони', 'цей закон',
+    'закон україни',
+    'кодекс україни',
+    'конституція україни',
+    'постанова',
+    'наказ',
+    'декрет',
+    'розпорядження',
+    'нормативно-правовий акт',
+    'нормативно-правові акти',
+    'спеціальні закони',
+    'інші закони',
+    'цей закон',
   ];
 
   const isDocumentRef = (name) => {

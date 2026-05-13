@@ -154,7 +154,7 @@ async function main() {
     'Код елемента',
     'Текст',
     "Суб'єкти (comma-separated)",
-    'Кількість суб\'єктів',
+    "Кількість суб'єктів",
   ];
 
   const fullRows = elements.map((el) => {
