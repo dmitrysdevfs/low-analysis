@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { getLawTree } from '@/lib/api';
-import type { Law, TreeNode } from '@/types';
+import { useEffect, useState } from "react";
+import { getLawTree } from "@/lib/api";
+import type { Law, TreeNode } from "@/types";
 
 interface State {
   fetchedId: string | null;
@@ -25,21 +25,21 @@ export function useLawTree(id?: string) {
     if (!id) return;
 
     getLawTree(id)
-      .then(response =>
+      .then((response) =>
         setState({
           fetchedId: id,
           law: response.law,
           tree: response.elements,
           error: null,
-        })
+        }),
       )
       .catch((error: unknown) =>
         setState({
           fetchedId: id,
           law: null,
           tree: [],
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
+          error: error instanceof Error ? error.message : "Unknown error",
+        }),
       );
   }, [id]);
 

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Breadcrumb } from '@/components/Breadcrumb';
-import { Layout } from '@/components/Layout';
-import { ROUTES } from '@/constants/routes';
-import { useSubjectDetail } from '@/hooks/useSubjectDetail';
-import styles from './page.module.scss';
+import { useParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { Layout } from "@/components/Layout";
+import { ROUTES } from "@/constants/routes";
+import { useSubjectDetail } from "@/hooks/useSubjectDetail";
+import styles from "./page.module.scss";
 
 export default function SubjectDetailPage() {
   const params = useParams<{ id: string }>();
@@ -24,7 +24,7 @@ export default function SubjectDetailPage() {
         <Breadcrumb
           items={[
             { label: "Суб'єкти", href: ROUTES.subjects },
-            { label: subject?.name ?? subjectId ?? '…' },
+            { label: subject?.name ?? subjectId ?? "…" },
           ]}
         />
       </motion.div>
@@ -33,20 +33,20 @@ export default function SubjectDetailPage() {
         <div className={styles.inner}>
           {loading ? (
             <div className={styles.skeletonList}>
-              {[0, 1, 2].map(index => (
+              {[0, 1, 2].map((index) => (
                 <motion.div
                   key={index}
                   animate={{ opacity: [0.3, 0.6, 0.3] }}
                   transition={{
                     duration: 1.6,
                     repeat: Infinity,
-                    ease: 'easeInOut',
+                    ease: "easeInOut",
                     delay: index * 0.15,
                   }}
                   className={styles.skeletonItem}
                   style={{
                     height: index === 0 ? 48 : 22,
-                    width: index === 0 ? '60%' : `${45 + index * 15}%`,
+                    width: index === 0 ? "60%" : `${45 + index * 15}%`,
                   }}
                 />
               ))}
@@ -73,9 +73,11 @@ export default function SubjectDetailPage() {
 
               {subject.aliases.length > 0 ? (
                 <div className={styles.aliasesSection}>
-                  <div className={`mono ${styles.aliasesLabel}`}>Псевдоніми / синоніми</div>
+                  <div className={`mono ${styles.aliasesLabel}`}>
+                    Псевдоніми / синоніми
+                  </div>
                   <div className={styles.aliasesFlex}>
-                    {subject.aliases.map(alias => (
+                    {subject.aliases.map((alias) => (
                       <span key={alias} className={`mono ${styles.aliasBadge}`}>
                         {alias}
                       </span>
@@ -93,7 +95,8 @@ export default function SubjectDetailPage() {
                   <div className={styles.emptyInfo}>
                     <span className={styles.emptyInfoIcon}>ℹ</span>
                     <p className={styles.emptyInfoText}>
-                      Елементи ще не прив&apos;язані. Pipeline AI-аналізу в розробці.
+                      Елементи ще не прив&apos;язані. Pipeline AI-аналізу в
+                      розробці.
                     </p>
                   </div>
                 ) : (
@@ -112,12 +115,16 @@ export default function SubjectDetailPage() {
                             marginBottom: element.title || element.text ? 8 : 0,
                           }}
                         >
-                          <span className={`mono ${styles.elementCode}`}>{element.code}</span>
+                          <span className={`mono ${styles.elementCode}`}>
+                            {element.code}
+                          </span>
                         </div>
                         {element.title ? (
                           <p className={styles.elementTitle}>{element.title}</p>
                         ) : null}
-                        {element.text ? <p className={styles.elementText}>{element.text}</p> : null}
+                        {element.text ? (
+                          <p className={styles.elementText}>{element.text}</p>
+                        ) : null}
                       </motion.div>
                     ))}
                   </div>

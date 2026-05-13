@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import styles from './SkeletonCard.module.scss';
+import { motion } from "framer-motion";
+import styles from "./SkeletonCard.module.scss";
 
 export function SkeletonCard() {
   return (

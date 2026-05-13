@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import type { SearchParams } from '@/hooks/useSearch';
-import styles from './SearchForm.module.scss';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import type { SearchParams } from "@/hooks/useSearch";
+import styles from "./SearchForm.module.scss";
 
 interface SearchFormProps {
   onSearch: (params: SearchParams) => void;
@@ -12,21 +12,21 @@ interface SearchFormProps {
 }
 
 const DEFAULT: SearchParams = {
-  q: '',
-  wordField: 'title',
-  docType: '',
-  dateFrom: '',
-  dateTo: '',
-  numberType: 'starts',
-  number: '',
-  status: '',
-  sort: 'date',
+  q: "",
+  wordField: "title",
+  docType: "",
+  dateFrom: "",
+  dateTo: "",
+  numberType: "starts",
+  number: "",
+  status: "",
+  sort: "date",
 };
 
-const DATE_PLACEHOLDER = 'дд.мм.рррр';
+const DATE_PLACEHOLDER = "дд.мм.рррр";
 
 function formatDateInput(value: string) {
-  const digits = value.replace(/\D/g, '').slice(0, 8);
+  const digits = value.replace(/\D/g, "").slice(0, 8);
 
   if (digits.length <= 2) return digits;
   if (digits.length <= 4) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
@@ -37,7 +37,7 @@ function formatDateInput(value: string) {
 function toIsoDate(value: string) {
   const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value.trim());
 
-  if (!match) return '';
+  if (!match) return "";
 
   const [, day, month, year] = match;
   const normalized = `${year}-${month}-${day}`;
@@ -49,7 +49,7 @@ function toIsoDate(value: string) {
     parsed.getUTCMonth() + 1 !== Number(month) ||
     parsed.getUTCFullYear() !== Number(year)
   ) {
-    return '';
+    return "";
   }
 
   return normalized;
@@ -59,7 +59,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
   const [p, setP] = useState<SearchParams>(DEFAULT);
 
   const set = <K extends keyof SearchParams>(key: K, value: SearchParams[K]) =>
-    setP(prev => ({ ...prev, [key]: value }));
+    setP((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +86,9 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
             <div className={styles.fieldGroup}>
               <select
                 value={p.wordField}
-                onChange={e => set('wordField', e.target.value as SearchParams['wordField'])}
+                onChange={(e) =>
+                  set("wordField", e.target.value as SearchParams["wordField"])
+                }
                 className={`form-control form-select ${styles.selectSmall}`}
               >
                 <option value="title">в назві</option>
@@ -96,7 +98,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
               <input
                 type="text"
                 value={p.q}
-                onChange={e => set('q', e.target.value)}
+                onChange={(e) => set("q", e.target.value)}
                 placeholder="Введіть ключові слова..."
                 className={`form-control ${styles.inputFlex}`}
               />
@@ -107,7 +109,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
             <span className={styles.label}>Тип документа</span>
             <select
               value={p.docType}
-              onChange={e => set('docType', e.target.value)}
+              onChange={(e) => set("docType", e.target.value)}
               className={`form-control form-select ${styles.selectFull}`}
             >
               <option value="">Всі</option>
@@ -130,7 +132,9 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                   autoComplete="off"
                   maxLength={10}
                   value={p.dateFrom}
-                  onChange={e => set('dateFrom', formatDateInput(e.target.value))}
+                  onChange={(e) =>
+                    set("dateFrom", formatDateInput(e.target.value))
+                  }
                   placeholder={DATE_PLACEHOLDER}
                   className={`form-control ${styles.inputDate}`}
                 />
@@ -143,7 +147,9 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                   autoComplete="off"
                   maxLength={10}
                   value={p.dateTo}
-                  onChange={e => set('dateTo', formatDateInput(e.target.value))}
+                  onChange={(e) =>
+                    set("dateTo", formatDateInput(e.target.value))
+                  }
                   placeholder={DATE_PLACEHOLDER}
                   className={`form-control ${styles.inputDate}`}
                 />
@@ -156,7 +162,12 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
             <div className={styles.fieldGroup}>
               <select
                 value={p.numberType}
-                onChange={e => set('numberType', e.target.value as SearchParams['numberType'])}
+                onChange={(e) =>
+                  set(
+                    "numberType",
+                    e.target.value as SearchParams["numberType"],
+                  )
+                }
                 className={`form-control form-select ${styles.selectMedium}`}
               >
                 <option value="starts">починається</option>
@@ -166,7 +177,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
               <input
                 type="text"
                 value={p.number}
-                onChange={e => set('number', e.target.value)}
+                onChange={(e) => set("number", e.target.value)}
                 placeholder="Код або номер акта..."
                 className={`form-control ${styles.inputFlex}`}
               />
@@ -177,7 +188,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
             <span className={styles.label}>Стан документа</span>
             <select
               value={p.status}
-              onChange={e => set('status', e.target.value)}
+              onChange={(e) => set("status", e.target.value)}
               className={`form-control form-select ${styles.selectFull}`}
             >
               <option value=""></option>
@@ -191,7 +202,9 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
             <span className={styles.label}>Сортування</span>
             <select
               value={p.sort}
-              onChange={e => set('sort', e.target.value as SearchParams['sort'])}
+              onChange={(e) =>
+                set("sort", e.target.value as SearchParams["sort"])
+              }
               className={`form-control form-select ${styles.selectFull}`}
             >
               <option value="date">за датою</option>
@@ -226,7 +239,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                   transition={{
                     duration: 0.8,
                     repeat: Infinity,
-                    ease: 'linear',
+                    ease: "linear",
                   }}
                   className={styles.spinnerChar}
                 >
@@ -235,7 +248,7 @@ export function SearchForm({ onSearch, onReset, loading }: SearchFormProps) {
                 Шукаємо...
               </>
             ) : (
-              'Шукати'
+              "Шукати"
             )}
           </motion.button>
         </div>

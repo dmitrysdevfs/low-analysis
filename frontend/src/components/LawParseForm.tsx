@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { motion } from "framer-motion";
 
-import { useParseLaw } from '@/hooks/useParseLaw';
-import styles from './LawParseForm.module.scss';
+import { useParseLaw } from "@/hooks/useParseLaw";
+import styles from "./LawParseForm.module.scss";
 
 interface Props {
   onSuccess?: () => void;
 }
 
 export function LawParseForm({ onSuccess }: Props) {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const { submit, loading, error } = useParseLaw(() => {
-    setUrl('');
+    setUrl("");
     onSuccess?.();
   });
 
@@ -23,7 +23,7 @@ export function LawParseForm({ onSuccess }: Props) {
     try {
       const parsed = new URL(value);
 
-      return parsed.hostname === 'zakon.rada.gov.ua';
+      return parsed.hostname === "zakon.rada.gov.ua";
     } catch {
       return false;
     }
@@ -33,12 +33,12 @@ export function LawParseForm({ onSuccess }: Props) {
     const trimmedUrl = url.trim();
 
     if (!trimmedUrl) {
-      setValidationError('Вставте посилання на закон');
+      setValidationError("Вставте посилання на закон");
       return;
     }
 
     if (!isValidUrl(trimmedUrl)) {
-      setValidationError('Введіть коректне посилання на zakon.rada.gov.ua');
+      setValidationError("Введіть коректне посилання на zakon.rada.gov.ua");
       return;
     }
 
@@ -57,14 +57,16 @@ export function LawParseForm({ onSuccess }: Props) {
       <div className={styles.content}>
         <div className={styles.textBlock}>
           <p className={styles.title}>Не знайшли закон?</p>
-          <p className={styles.description}>Додайте його за посиланням з zakon.rada.gov.ua</p>
+          <p className={styles.description}>
+            Додайте його за посиланням з zakon.rada.gov.ua
+          </p>
         </div>
 
         <div className={styles.controls}>
           <input
             type="text"
             value={url}
-            onChange={event => {
+            onChange={(event) => {
               setUrl(event.target.value);
 
               if (validationError) {
@@ -80,16 +82,20 @@ export function LawParseForm({ onSuccess }: Props) {
             className={styles.button}
             disabled={loading || !url.trim()}
           >
-            {loading ? 'Додаємо...' : 'Додати'}
+            {loading ? "Додаємо..." : "Додати"}
           </button>
         </div>
 
-        {validationError ? <p className={styles.validationError}>{validationError}</p> : null}
+        {validationError ? (
+          <p className={styles.validationError}>{validationError}</p>
+        ) : null}
 
         {error ? <p className={styles.error}>{error}</p> : null}
 
         {loading ? (
-          <p className={styles.loadingText}>Парсимо закон. Це може зайняти кілька секунд...</p>
+          <p className={styles.loadingText}>
+            Парсимо закон. Це може зайняти кілька секунд...
+          </p>
         ) : null}
       </div>
     </motion.div>

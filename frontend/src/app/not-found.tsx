@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRef, useCallback } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ROUTES } from '@/constants/routes';
-import styles from './not-found.module.scss';
+import Link from "next/link";
+import { useRef, useCallback } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ROUTES } from "@/constants/routes";
+import styles from "./not-found.module.scss";
 
 const LEGAL_FRAGMENTS = [
-  { text: 'Ст. 1', x: '8%', y: '18%', delay: 0 },
-  { text: '§ 248', x: '82%', y: '14%', delay: 0.3 },
-  { text: 'Ч. 3', x: '14%', y: '72%', delay: 0.6 },
-  { text: 'п. 4.1', x: '76%', y: '68%', delay: 0.9 },
-  { text: 'розд. II', x: '48%', y: '8%', delay: 0.15 },
-  { text: 'Ст. 61', x: '91%', y: '42%', delay: 0.45 },
-  { text: '§ 17', x: '3%', y: '44%', delay: 0.75 },
-  { text: 'п. 2б', x: '55%', y: '88%', delay: 0.2 },
-  { text: 'Ч. 1', x: '28%', y: '90%', delay: 0.55 },
-  { text: '§ 94', x: '65%', y: '82%', delay: 0.85 },
+  { text: "Ст. 1", x: "8%", y: "18%", delay: 0 },
+  { text: "§ 248", x: "82%", y: "14%", delay: 0.3 },
+  { text: "Ч. 3", x: "14%", y: "72%", delay: 0.6 },
+  { text: "п. 4.1", x: "76%", y: "68%", delay: 0.9 },
+  { text: "розд. II", x: "48%", y: "8%", delay: 0.15 },
+  { text: "Ст. 61", x: "91%", y: "42%", delay: 0.45 },
+  { text: "§ 17", x: "3%", y: "44%", delay: 0.75 },
+  { text: "п. 2б", x: "55%", y: "88%", delay: 0.2 },
+  { text: "Ч. 1", x: "28%", y: "90%", delay: 0.55 },
+  { text: "§ 94", x: "65%", y: "82%", delay: 0.85 },
 ];
 
 function FloatingFragment({
@@ -40,8 +40,8 @@ function FloatingFragment({
         scale: [0.6, 1, 0.95, 1],
       }}
       transition={{
-        opacity: { duration: 6, repeat: Infinity, delay, ease: 'easeInOut' },
-        y: { duration: 8, repeat: Infinity, delay, ease: 'easeInOut' },
+        opacity: { duration: 6, repeat: Infinity, delay, ease: "easeInOut" },
+        y: { duration: 8, repeat: Infinity, delay, ease: "easeInOut" },
         scale: { duration: 1.2, delay },
       }}
       style={{ left: x, top: y }}
@@ -54,10 +54,25 @@ function FloatingFragment({
 function GridBackground() {
   return (
     <div className={styles.gridBackground}>
-      <svg className={styles.gridSvg} width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        className={styles.gridSvg}
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <defs>
-          <pattern id="grid404" width="48" height="48" patternUnits="userSpaceOnUse">
-            <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#4A80D4" strokeWidth="0.5" />
+          <pattern
+            id="grid404"
+            width="48"
+            height="48"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M 48 0 L 0 0 0 48"
+              fill="none"
+              stroke="#4A80D4"
+              strokeWidth="0.5"
+            />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid404)" />
@@ -90,7 +105,7 @@ export default function NotFound() {
       mouseX.set((e.clientX - cx) / (rect.width / 2));
       mouseY.set((e.clientY - cy) / (rect.height / 2));
     },
-    [mouseX, mouseY]
+    [mouseX, mouseY],
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -107,7 +122,7 @@ export default function NotFound() {
     >
       <GridBackground />
 
-      {LEGAL_FRAGMENTS.map(f => (
+      {LEGAL_FRAGMENTS.map((f) => (
         <FloatingFragment key={f.text} {...f} />
       ))}
 
@@ -118,7 +133,10 @@ export default function NotFound() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <motion.div className={styles.transform3d} style={{ rotateX, rotateY }}>
+          <motion.div
+            className={styles.transform3d}
+            style={{ rotateX, rotateY }}
+          >
             <div className={styles.numberWrapper}>
               <div className={`display ${styles.numberMain}`}>404</div>
 
@@ -132,12 +150,15 @@ export default function NotFound() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.3 }}
         >
-          <span className={`mono ${styles.statusLabel}`}>Стаття · Не знайдена</span>
+          <span className={`mono ${styles.statusLabel}`}>
+            Стаття · Не знайдена
+          </span>
 
           <h1 className={`display ${styles.heading}`}>Сторінку не знайдено</h1>
 
           <p className={styles.description}>
-            Схоже, цей розділ законодавства не існує або був переміщений до іншого реєстру.
+            Схоже, цей розділ законодавства не існує або був переміщений до
+            іншого реєстру.
           </p>
 
           <div className={styles.buttonsRow}>
@@ -159,12 +180,12 @@ export default function NotFound() {
       <motion.div
         className={styles.orbitGold}
         animate={{ rotate: [0, 360] }}
-        transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
       />
       <motion.div
         className={styles.orbitBlue}
         animate={{ rotate: [360, 0] }}
-        transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
+        transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
       />
     </div>
   );

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { getSubjectElements } from '@/lib/api';
-import type { Subject, TreeNode } from '@/types';
+import { useEffect, useState } from "react";
+import { getSubjectElements } from "@/lib/api";
+import type { Subject, TreeNode } from "@/types";
 
 interface State {
   fetchedId: string | null;
@@ -25,21 +25,21 @@ export function useSubjectDetail(id?: string) {
     if (!id) return;
 
     getSubjectElements(id)
-      .then(data =>
+      .then((data) =>
         setState({
           fetchedId: id,
           subject: data.subject,
           elements: data.elements,
           error: null,
-        })
+        }),
       )
       .catch((error: unknown) =>
         setState({
           fetchedId: id,
           subject: null,
           elements: [],
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
+          error: error instanceof Error ? error.message : "Unknown error",
+        }),
       );
   }, [id]);
 

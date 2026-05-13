@@ -32,7 +32,11 @@
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(26, 62, 138, 0.4) 0%, transparent 65%);
+  background: radial-gradient(
+    circle,
+    rgba(26, 62, 138, 0.4) 0%,
+    transparent 65%
+  );
 }
 
 .gridGlowSmall {
@@ -43,7 +47,11 @@
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200, 168, 67, 0.08) 0%, transparent 65%);
+  background: radial-gradient(
+    circle,
+    rgba(200, 168, 67, 0.08) 0%,
+    transparent 65%
+  );
 }
 
 // ── Floating fragment ──
@@ -91,7 +99,13 @@
   font-size: clamp(7rem, 20vw, 14rem);
   line-height: 1;
   letter-spacing: -0.04em;
-  background: linear-gradient(135deg, #c8a843 0%, #f0e070 40%, #c8a843 65%, #8a6820 100%);
+  background: linear-gradient(
+    135deg,
+    #c8a843 0%,
+    #f0e070 40%,
+    #c8a843 65%,
+    #8a6820 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

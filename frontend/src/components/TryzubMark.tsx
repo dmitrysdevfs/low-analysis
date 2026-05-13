@@ -1,25 +1,29 @@
 interface TryzubMarkProps {
   size?: number;
-  variant?: 'hero' | 'header';
+  variant?: "hero" | "header";
   className?: string;
 }
 
 const PALETTES = {
   hero: {
-    shield: '#1152A4',
-    outline: '#C8A843',
-    accent: '#0A1732',
-    glyph: '#F0CF5A',
+    shield: "#1152A4",
+    outline: "#C8A843",
+    accent: "#0A1732",
+    glyph: "#F0CF5A",
   },
   header: {
-    shield: '#163B82',
-    outline: '#D9BC58',
-    accent: '#0D1C3A',
-    glyph: '#F0CF5A',
+    shield: "#163B82",
+    outline: "#D9BC58",
+    accent: "#0D1C3A",
+    glyph: "#F0CF5A",
   },
 } as const;
 
-export function TryzubMark({ size = 120, variant = 'hero', className }: TryzubMarkProps) {
+export function TryzubMark({
+  size = 120,
+  variant = "hero",
+  className,
+}: TryzubMarkProps) {
   const palette = PALETTES[variant];
 
   return (
@@ -48,9 +52,9 @@ export function TryzubMark({ size = 120, variant = 'hero', className }: TryzubMa
       />
       <g
         transform={
-          variant === 'header'
-            ? 'translate(18 18) scale(0.22) translate(-121 -1) translate(132 0)'
-            : 'translate(48 56) scale(0.18) translate(-121 -1) translate(0 -200)'
+          variant === "header"
+            ? "translate(18 18) scale(0.22) translate(-121 -1) translate(132 0)"
+            : "translate(48 56) scale(0.18) translate(-121 -1) translate(0 -200)"
         }
       >
         <path

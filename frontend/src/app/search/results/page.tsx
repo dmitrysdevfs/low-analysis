@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
-import { Layout } from '@/components/Layout';
-import { SearchResults } from '@/components/SearchResults';
-import { useSearch } from '@/hooks/useSearch';
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
+import { Layout } from "@/components/Layout";
+import { SearchResults } from "@/components/SearchResults";
+import { useSearch } from "@/hooks/useSearch";
 
 export default function SearchResultsPage() {
   const urlParams = useSearchParams();
 
   const { results, loading, error, searched, search } = useSearch();
 
-  const q = urlParams.get('q') || '';
-  const docType = urlParams.get('docType') || '';
-  const dateFrom = urlParams.get('dateFrom') || '';
-  const dateTo = urlParams.get('dateTo') || '';
-  const number = urlParams.get('number') || '';
-  const status = urlParams.get('status') || '';
+  const q = urlParams.get("q") || "";
+  const docType = urlParams.get("docType") || "";
+  const dateFrom = urlParams.get("dateFrom") || "";
+  const dateTo = urlParams.get("dateTo") || "";
+  const number = urlParams.get("number") || "";
+  const status = urlParams.get("status") || "";
 
   useEffect(() => {
     search({
       q,
-      wordField: 'title',
+      wordField: "title",
       docType,
       dateFrom,
       dateTo,
-      numberType: 'starts',
+      numberType: "starts",
       number,
       status,
-      sort: 'date',
+      sort: "date",
     });
   }, [q, docType, dateFrom, dateTo, number, status, search]);
 

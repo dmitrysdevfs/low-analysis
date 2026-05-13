@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Layout } from '@/components/Layout';
-import { SearchForm } from '@/components/SearchForm';
-import { SearchParams } from '@/hooks/useSearch';
-import styles from './page.module.scss';
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Layout } from "@/components/Layout";
+import { SearchForm } from "@/components/SearchForm";
+import { SearchParams } from "@/hooks/useSearch";
+import styles from "./page.module.scss";
 
 export default function SearchPage() {
   const router = useRouter();

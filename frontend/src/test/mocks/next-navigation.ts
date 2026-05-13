@@ -1,8 +1,8 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
-let pathname = '/';
+let pathname = "/";
 let params: Record<string, string> = {};
-let searchParams = '';
+let searchParams = "";
 
 const router = {
   back: vi.fn(),
@@ -14,7 +14,7 @@ const router = {
 };
 
 function updateNavigationState(href: string) {
-  const url = new URL(href, 'https://codex.test');
+  const url = new URL(href, "https://codex.test");
   pathname = url.pathname;
   searchParams = url.searchParams.toString();
 }
@@ -27,9 +27,11 @@ export function setMockParams(value: Record<string, string>) {
   params = value;
 }
 
-export function setMockSearchParams(value: string | Record<string, string | string[] | undefined>) {
-  if (typeof value === 'string') {
-    searchParams = value.startsWith('?') ? value.slice(1) : value;
+export function setMockSearchParams(
+  value: string | Record<string, string | string[] | undefined>,
+) {
+  if (typeof value === "string") {
+    searchParams = value.startsWith("?") ? value.slice(1) : value;
     return;
   }
 
@@ -41,7 +43,7 @@ export function setMockSearchParams(value: string | Record<string, string | stri
     }
 
     if (Array.isArray(rawValue)) {
-      rawValue.forEach(item => nextSearchParams.append(key, item));
+      rawValue.forEach((item) => nextSearchParams.append(key, item));
       continue;
     }
 
@@ -56,9 +58,9 @@ export function getRouterMock() {
 }
 
 export function resetNavigationMocks() {
-  pathname = '/';
+  pathname = "/";
   params = {};
-  searchParams = '';
+  searchParams = "";
 }
 
 export function usePathname() {

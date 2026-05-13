@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Layout } from '@/components/Layout';
-import { LawCard } from '@/components/LawCard';
-import { LawParseForm } from '@/components/LawParseForm';
-import { SkeletonCard } from '@/components/SkeletonCard';
-import { useLaws } from '@/hooks/useLaws';
-import styles from './page.module.scss';
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Layout } from "@/components/Layout";
+import { LawCard } from "@/components/LawCard";
+import { LawParseForm } from "@/components/LawParseForm";
+import { SkeletonCard } from "@/components/SkeletonCard";
+import { useLaws } from "@/hooks/useLaws";
+import styles from "./page.module.scss";
 
 export default function LawsPage() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const { laws, loading, error } = useLaws(query, refreshKey);
@@ -35,8 +35,8 @@ export default function LawsPage() {
             </h1>
 
             <p className={styles.subtitle}>
-              Структуровані тексти законів України — від лінійного полотна до ієрархічної бази
-              атомарних елементів.
+              Структуровані тексти законів України — від лінійного полотна до
+              ієрархічної бази атомарних елементів.
             </p>
           </motion.div>
 
@@ -50,18 +50,21 @@ export default function LawsPage() {
             <input
               type="text"
               value={query}
-              onChange={event => setQuery(event.target.value)}
+              onChange={(event) => setQuery(event.target.value)}
               placeholder="Пошук за назвою закону…"
               className={`form-control ${styles.searchInput}`}
             />
             {query ? (
-              <button onClick={() => setQuery('')} className={styles.clearButton}>
+              <button
+                onClick={() => setQuery("")}
+                className={styles.clearButton}
+              >
                 ✕
               </button>
             ) : null}
           </motion.div>
 
-          <LawParseForm onSuccess={() => setRefreshKey(prev => prev + 1)} />
+          <LawParseForm onSuccess={() => setRefreshKey((prev) => prev + 1)} />
 
           <AnimatePresence mode="wait">
             {!loading && !error ? (
@@ -74,8 +77,8 @@ export default function LawsPage() {
                 className={`mono ${styles.countLine}`}
               >
                 {query
-                  ? `${laws.length} результат${laws.length === 1 ? '' : 'ів'} для «${query}»`
-                  : `${laws.length} документ${laws.length === 1 ? '' : 'ів'} у базі`}
+                  ? `${laws.length} результат${laws.length === 1 ? "" : "ів"} для «${query}»`
+                  : `${laws.length} документ${laws.length === 1 ? "" : "ів"} у базі`}
               </motion.div>
             ) : null}
           </AnimatePresence>
@@ -104,7 +107,9 @@ export default function LawsPage() {
               className={styles.emptyState}
             >
               <div className={styles.emptyIcon}>§</div>
-              {query ? `Нічого не знайдено за запитом «${query}»` : 'Нічого не знайдено'}
+              {query
+                ? `Нічого не знайдено за запитом «${query}»`
+                : "Нічого не знайдено"}
             </motion.div>
           ) : null}
 

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { TreeNode as TreeNodeModel } from '@/types';
-import styles from './TreeNode.module.scss';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import type { TreeNode as TreeNodeModel } from "@/types";
+import styles from "./TreeNode.module.scss";
 
 interface Props {
   node: TreeNodeModel;
@@ -15,10 +15,13 @@ interface Props {
 export function TreeNode({ node, children = [], activeCode, onSelect }: Props) {
   const [open, setOpen] = useState(true);
 
-  if (node.type === 'section') {
+  if (node.type === "section") {
     return (
       <div>
-        <button onClick={() => setOpen(value => !value)} className={styles.sectionBtn}>
+        <button
+          onClick={() => setOpen((value) => !value)}
+          className={styles.sectionBtn}
+        >
           <motion.span
             animate={{ rotate: open ? 90 : 0 }}
             transition={{ duration: 0.2 }}
@@ -33,12 +36,12 @@ export function TreeNode({ node, children = [], activeCode, onSelect }: Props) {
           {open ? (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
+              animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
               className={styles.sectionChildren}
             >
-              {children.map(child => (
+              {children.map((child) => (
                 <LeafNode
                   key={child.code}
                   node={child}
@@ -70,10 +73,12 @@ function LeafNode({
   return (
     <button
       onClick={() => onSelect(node)}
-      className={`${styles.leafBtn} ${isActive ? styles.leafBtnActive : ''}`}
+      className={`${styles.leafBtn} ${isActive ? styles.leafBtnActive : ""}`}
     >
       <span className={`mono ${styles.leafCode}`}>{node.code}</span>
-      <span className={`${styles.leafText} ${isActive ? styles.leafTextActive : ''}`}>
+      <span
+        className={`${styles.leafText} ${isActive ? styles.leafTextActive : ""}`}
+      >
         {node.title ?? node.text ?? node.code}
       </span>
     </button>

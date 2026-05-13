@@ -16,7 +16,13 @@ export interface LawTreeResponse {
   elements: TreeNode[];
 }
 
-export type TreeNodeType = 'section' | 'article' | 'part' | 'point' | 'sub_point' | 'paragraph';
+export type TreeNodeType =
+  | "section"
+  | "article"
+  | "part"
+  | "point"
+  | "sub_point"
+  | "paragraph";
 
 export interface TreeNode {
   _id?: string;

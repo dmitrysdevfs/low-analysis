@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ROUTES } from '@/constants/routes';
-import type { Law } from '@/types';
-import styles from './SearchResults.module.scss';
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { ROUTES } from "@/constants/routes";
+import type { Law } from "@/types";
+import styles from "./SearchResults.module.scss";
 
 interface SearchResultsProps {
   results: Law[];
@@ -31,7 +31,13 @@ const skeletonItem = (index: number) => (
   </motion.div>
 );
 
-export function SearchResults({ results, loading, error, searched, query }: SearchResultsProps) {
+export function SearchResults({
+  results,
+  loading,
+  error,
+  searched,
+  query,
+}: SearchResultsProps) {
   if (loading) {
     return (
       <div
@@ -57,7 +63,9 @@ export function SearchResults({ results, loading, error, searched, query }: Sear
     return (
       <div className={styles.emptyBox}>
         <div className={styles.emptyIcon}>§</div>
-        <div className={`mono ${styles.emptyHint}`}>Введіть запит і натисніть «Знайти»</div>
+        <div className={`mono ${styles.emptyHint}`}>
+          Введіть запит і натисніть «Знайти»
+        </div>
       </div>
     );
   }
@@ -67,7 +75,9 @@ export function SearchResults({ results, loading, error, searched, query }: Sear
       <div className={styles.emptyBox}>
         <div className={styles.emptyIconSearch}>⌕</div>
         <div className={`display ${styles.emptyTitle}`}>Нічого не знайдено</div>
-        <div className={`mono ${styles.emptySubtext}`}>За запитом «{query}» результатів немає</div>
+        <div className={`mono ${styles.emptySubtext}`}>
+          За запитом «{query}» результатів немає
+        </div>
       </div>
     );
   }
@@ -75,8 +85,13 @@ export function SearchResults({ results, loading, error, searched, query }: Sear
   return (
     <div>
       <div className={`mono ${styles.countLine}`}>
-        Результат пошуку ({results.length}{' '}
-        {results.length === 1 ? 'закон' : results.length < 5 ? 'документ' : 'документів'})
+        Результат пошуку ({results.length}{" "}
+        {results.length === 1
+          ? "закон"
+          : results.length < 5
+            ? "документ"
+            : "документів"}
+        )
       </div>
 
       <AnimatePresence>
@@ -92,8 +107,12 @@ export function SearchResults({ results, loading, error, searched, query }: Sear
                 <span className="directory-index mono">{index + 1}.</span>
                 <span className="directory-body">
                   <span className="directory-title">{law.title}</span>
-                  <span className="text-xs font-medium leading-relaxed">{law.preamble}</span>
-                  <span className="text-xs font-medium leading-relaxed">{law.signatory}</span>
+                  <span className="text-xs font-medium leading-relaxed">
+                    {law.preamble}
+                  </span>
+                  <span className="text-xs font-medium leading-relaxed">
+                    {law.signatory}
+                  </span>
                   <span className="directory-meta">
                     <span className="directory-chip mono">{law.code}</span>
                     <span className="mono">
@@ -102,7 +121,8 @@ export function SearchResults({ results, loading, error, searched, query }: Sear
                   </span>
                   {law?.status && (
                     <span className="text-[#008d00] text-xs font-medium">
-                      {law.status.charAt(0).toUpperCase() + law.status.slice(1).toLowerCase()}
+                      {law.status.charAt(0).toUpperCase() +
+                        law.status.slice(1).toLowerCase()}
                     </span>
                   )}
                 </span>

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Layout } from '@/components/Layout';
-import { ROUTES } from '@/constants/routes';
-import { useSubjects } from '@/hooks/useSubjects';
-import styles from './page.module.scss';
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { Layout } from "@/components/Layout";
+import { ROUTES } from "@/constants/routes";
+import { useSubjects } from "@/hooks/useSubjects";
+import styles from "./page.module.scss";
 
 export default function SubjectsPage() {
   const { subjects, loading, error } = useSubjects();
@@ -30,8 +30,8 @@ export default function SubjectsPage() {
             </h1>
 
             <p className={styles.subtitle}>
-              Фізичні та юридичні особи, права та обов&apos;язки яких регулюються законодавством
-              України.
+              Фізичні та юридичні особи, права та обов&apos;язки яких
+              регулюються законодавством України.
             </p>
           </motion.div>
 
@@ -52,14 +52,14 @@ export default function SubjectsPage() {
 
           {loading ? (
             <div className={styles.skeletonList}>
-              {[0, 1, 2].map(index => (
+              {[0, 1, 2].map((index) => (
                 <motion.div
                   key={index}
                   animate={{ opacity: [0.3, 0.6, 0.3] }}
                   transition={{
                     duration: 1.6,
                     repeat: Infinity,
-                    ease: 'easeInOut',
+                    ease: "easeInOut",
                     delay: index * 0.15,
                   }}
                   className={styles.skeletonItem}
@@ -100,14 +100,22 @@ export default function SubjectsPage() {
                     transition={{ delay: index * 0.07, duration: 0.4 }}
                     whileHover={{ y: -3 }}
                   >
-                    <Link href={ROUTES.subject(subject._id)} className={styles.cardLink}>
+                    <Link
+                      href={ROUTES.subject(subject._id)}
+                      className={styles.cardLink}
+                    >
                       <div className={styles.cardHeader}>
-                        <h2 className={`display ${styles.cardTitle}`}>{subject.name}</h2>
+                        <h2 className={`display ${styles.cardTitle}`}>
+                          {subject.name}
+                        </h2>
                         <span className={styles.cardArrow}>→</span>
                       </div>
                       <div className={styles.aliasList}>
-                        {subject.aliases.map(alias => (
-                          <span key={alias} className={`mono ${styles.aliasBadge}`}>
+                        {subject.aliases.map((alias) => (
+                          <span
+                            key={alias}
+                            className={`mono ${styles.aliasBadge}`}
+                          >
                             {alias}
                           </span>
                         ))}
