@@ -13,8 +13,10 @@ export const ensureSubjectExists = async (
   canonicalName,
   legalStatus = 'other',
 ) => {
+  const normalizedName = canonicalName.trim().toLowerCase();
+
   const existing = await Subject.findOne({
-    $or: [{ canonical_name: canonicalName }, { aliases: canonicalName }],
+    $or: [{ canonical_name: normalizedName }, { aliases: normalizedName }],
   });
 
   if (existing) {
@@ -22,7 +24,7 @@ export const ensureSubjectExists = async (
   }
 
   const created = await Subject.create({
-    canonical_name: canonicalName,
+    canonical_name: normalizedName,
     legal_status: legalStatus,
     aliases: [],
   });
