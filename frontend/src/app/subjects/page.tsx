@@ -106,7 +106,7 @@ export default function SubjectsPage() {
                     >
                       <div className={styles.cardHeader}>
                         <h2 className={`display ${styles.cardTitle}`}>
-                          {subject.name}
+                          {subject.canonical_name}
                         </h2>
                         <span className={styles.cardArrow}>→</span>
                       </div>

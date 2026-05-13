@@ -48,7 +48,7 @@ describe("Subjects pages", () => {
     render(<SubjectDetailPage />);
 
     expect(
-      screen.getByRole("heading", { name: SUBJECT_FIXTURE.name }),
+      screen.getByRole("heading", { name: SUBJECT_FIXTURE.canonical_name }),
     ).toBeInTheDocument();
     expect(screen.getByText(/Псевдоніми \/ синоніми/i)).toBeInTheDocument();
     expect(screen.getByText(/Пов'язані елементи законів/i)).toBeInTheDocument();
