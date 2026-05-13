@@ -13,7 +13,8 @@ export const ensureSubjectExists = async (
   canonicalName,
   legalStatus = 'other',
 ) => {
-  const normalizedName = canonicalName.trim().toLowerCase();
+  // Normalize whitespace (remove newlines, extra spaces) and lowercase
+  const normalizedName = canonicalName.replace(/\s+/g, ' ').trim().toLowerCase();
 
   const existing = await Subject.findOne({
     $or: [{ canonical_name: normalizedName }, { aliases: normalizedName }],
@@ -23,13 +24,27 @@ export const ensureSubjectExists = async (
     return existing._id;
   }
 
-  const created = await Subject.create({
-    canonical_name: normalizedName,
-    legal_status: legalStatus,
-    aliases: [],
-  });
-
-  return created._id;
+  try {
+    const created = await Subject.create({
+      canonical_name: normalizedName,
+      legal_status: legalStatus,
+      aliases: [],
+    });
+    return created._id;
+  } catch (error) {
+    // 11000 is MongoDB's duplicate key error.
+    // If another concurrent request just created this subject, we catch the error
+    // and fetch the newly created subject instead of crashing.
+    if (error.code === 11000) {
+      const concurrentExisting = await Subject.findOne({
+        $or: [{ canonical_name: normalizedName }, { aliases: normalizedName }],
+      });
+      if (concurrentExisting) {
+        return concurrentExisting._id;
+      }
+    }
+    throw error;
+  }
 };
 
 /**
