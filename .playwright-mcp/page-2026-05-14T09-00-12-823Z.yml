@@ -1,0 +1,286 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - img [ref=e6]
+        - generic [ref=e12]:
+          - link "Low Analysis" [ref=e13] [cursor=pointer]:
+            - /url: /
+          - generic [ref=e14]: Система аналізу законодавства України
+      - navigation [ref=e15]:
+        - link "Головна" [ref=e16] [cursor=pointer]:
+          - /url: /
+        - link "Закони" [ref=e17] [cursor=pointer]:
+          - /url: /laws
+        - link "Суб'єкти" [ref=e18] [cursor=pointer]:
+          - /url: /subjects
+        - link "Пошук" [ref=e19] [cursor=pointer]:
+          - /url: /search
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - heading "Закони України" [level=1] [ref=e25]:
+          - text: Закони
+          - text: України
+        - paragraph [ref=e26]: Структуровані тексти законів України — від лінійного полотна до ієрархічної бази атомарних елементів.
+      - generic [ref=e27]:
+        - generic: ⌕
+        - textbox "Пошук за назвою закону…" [ref=e28]
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: Не знайшли закон?
+          - paragraph [ref=e33]: Додайте його за посиланням з zakon.rada.gov.ua
+        - generic [ref=e34]:
+          - textbox "https://zakon.rada.gov.ua/laws/show/..." [ref=e35]
+          - button "Додати" [disabled] [ref=e36]
+      - generic [ref=e58]: 9 документів у базі
+      - generic [ref=e59]:
+        - generic [ref=e61]:
+          - generic [ref=e62] [cursor=pointer]:
+            - generic [ref=e63]:
+              - heading "КОНСТИТУЦІЯ УКРАЇНИ" [level=2] [ref=e64]
+              - generic [ref=e65]: 254к/96-вр
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - generic [ref=e69]: "14"
+                  - generic [ref=e70]: розділів
+                - generic [ref=e71]:
+                  - generic [ref=e72]: "166"
+                  - generic [ref=e73]: статей
+              - generic [ref=e74]: Натисни щоб розгорнути ↻
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e77]:
+                - generic [ref=e78]: КОНСТИТУЦІЯ УКРАЇНИ
+                - generic [ref=e79]: Статті закону · 166 всього
+              - button "↩ Згорнути" [ref=e80] [cursor=pointer]
+            - generic [ref=e81]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e82]
+            - generic [ref=e83]: Нічого не знайдено
+            - link "Всі статті закону (166) →" [ref=e85] [cursor=pointer]:
+              - /url: /laws/69f84aa7395f1789bc7b2b89
+              - generic [ref=e86]: Всі статті закону (166) →
+        - generic [ref=e88]:
+          - generic [ref=e89] [cursor=pointer]:
+            - generic [ref=e90]:
+              - heading "Про фінансові послуги та фінансові компанії" [level=2] [ref=e91]
+              - generic [ref=e92]: 1953-20
+            - generic [ref=e93]:
+              - generic [ref=e94]:
+                - generic [ref=e95]:
+                  - generic [ref=e96]: "8"
+                  - generic [ref=e97]: розділів
+                - generic [ref=e98]:
+                  - generic [ref=e99]: "58"
+                  - generic [ref=e100]: статей
+              - generic [ref=e101]: Натисни щоб розгорнути ↻
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - generic [ref=e104]:
+                - generic [ref=e105]: Про фінансові послуги та фінансові компанії
+                - generic [ref=e106]: Статті закону · 58 всього
+              - button "↩ Згорнути" [ref=e107] [cursor=pointer]
+            - generic [ref=e108]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e109]
+            - generic [ref=e110]: Нічого не знайдено
+            - link "Всі статті закону (58) →" [ref=e112] [cursor=pointer]:
+              - /url: /laws/69fce97366410d6c59fd21d6
+              - generic [ref=e113]: Всі статті закону (58) →
+        - generic [ref=e115]:
+          - generic [ref=e116] [cursor=pointer]:
+            - generic [ref=e117]:
+              - heading "Про ринок електричної енергії" [level=2] [ref=e118]
+              - generic [ref=e119]: 2019-19
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - generic [ref=e122]:
+                  - generic [ref=e123]: "19"
+                  - generic [ref=e124]: розділів
+                - generic [ref=e125]:
+                  - generic [ref=e126]: "98"
+                  - generic [ref=e127]: статей
+              - generic [ref=e128]: Натисни щоб розгорнути ↻
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - generic [ref=e131]:
+                - generic [ref=e132]: Про ринок електричної енергії
+                - generic [ref=e133]: Статті закону · 98 всього
+              - button "↩ Згорнути" [ref=e134] [cursor=pointer]
+            - generic [ref=e135]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e136]
+            - generic [ref=e137]: Нічого не знайдено
+            - link "Всі статті закону (98) →" [ref=e139] [cursor=pointer]:
+              - /url: /laws/69fd096aba02f877655e4e49
+              - generic [ref=e140]: Всі статті закону (98) →
+        - generic [ref=e142]:
+          - generic [ref=e143] [cursor=pointer]:
+            - generic [ref=e144]:
+              - heading "Про Національну поліцію" [level=2] [ref=e145]
+              - generic [ref=e146]: 580-19
+            - generic [ref=e147]:
+              - generic [ref=e148]:
+                - generic [ref=e149]:
+                  - generic [ref=e150]: "11"
+                  - generic [ref=e151]: розділів
+                - generic [ref=e152]:
+                  - generic [ref=e153]: "110"
+                  - generic [ref=e154]: статей
+              - generic [ref=e155]: Натисни щоб розгорнути ↻
+          - generic [ref=e156]:
+            - generic [ref=e157]:
+              - generic [ref=e158]:
+                - generic [ref=e159]: Про Національну поліцію
+                - generic [ref=e160]: Статті закону · 110 всього
+              - button "↩ Згорнути" [ref=e161] [cursor=pointer]
+            - generic [ref=e162]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e163]
+            - generic [ref=e164]: Нічого не знайдено
+            - link "Всі статті закону (110) →" [ref=e166] [cursor=pointer]:
+              - /url: /laws/69ffe5f394bdb4884d7dac7c
+              - generic [ref=e167]: Всі статті закону (110) →
+        - generic [ref=e169]:
+          - generic [ref=e170] [cursor=pointer]:
+            - generic [ref=e171]:
+              - heading "Про освіту" [level=2] [ref=e172]
+              - generic [ref=e173]: 2145-19
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - generic [ref=e176]:
+                  - generic [ref=e177]: "13"
+                  - generic [ref=e178]: розділів
+                - generic [ref=e179]:
+                  - generic [ref=e180]: "96"
+                  - generic [ref=e181]: статей
+              - generic [ref=e182]: Натисни щоб розгорнути ↻
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - generic [ref=e185]:
+                - generic [ref=e186]: Про освіту
+                - generic [ref=e187]: Статті закону · 96 всього
+              - button "↩ Згорнути" [ref=e188] [cursor=pointer]
+            - generic [ref=e189]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e190]
+            - generic [ref=e191]: Нічого не знайдено
+            - link "Всі статті закону (96) →" [ref=e193] [cursor=pointer]:
+              - /url: /laws/6a00953494bdb4884d7dca4d
+              - generic [ref=e194]: Всі статті закону (96) →
+        - generic [ref=e196]:
+          - generic [ref=e197] [cursor=pointer]:
+            - generic [ref=e198]:
+              - heading "ЦИВІЛЬНИЙ КОДЕКС УКРАЇНИ" [level=2] [ref=e199]
+              - generic [ref=e200]: 435-15
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - generic [ref=e203]:
+                  - generic [ref=e204]: "10"
+                  - generic [ref=e205]: розділів
+                - generic [ref=e206]:
+                  - generic [ref=e207]: "1328"
+                  - generic [ref=e208]: статей
+              - generic [ref=e209]: Натисни щоб розгорнути ↻
+          - generic [ref=e210]:
+            - generic [ref=e211]:
+              - generic [ref=e212]:
+                - generic [ref=e213]: ЦИВІЛЬНИЙ КОДЕКС УКРАЇНИ
+                - generic [ref=e214]: Статті закону · 1328 всього
+              - button "↩ Згорнути" [ref=e215] [cursor=pointer]
+            - generic [ref=e216]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e217]
+            - generic [ref=e218]: Нічого не знайдено
+            - link "Всі статті закону (1328) →" [ref=e220] [cursor=pointer]:
+              - /url: /laws/6a00eb0594bdb4884d7dd82f
+              - generic [ref=e221]: Всі статті закону (1328) →
+        - generic [ref=e223]:
+          - generic [ref=e224] [cursor=pointer]:
+            - generic [ref=e225]:
+              - heading "Про захист прав споживачів" [level=2] [ref=e226]
+              - generic [ref=e227]: 3153-20
+            - generic [ref=e228]:
+              - generic [ref=e229]:
+                - generic [ref=e230]:
+                  - generic [ref=e231]: "9"
+                  - generic [ref=e232]: розділів
+                - generic [ref=e233]:
+                  - generic [ref=e234]: "44"
+                  - generic [ref=e235]: статей
+              - generic [ref=e236]: Натисни щоб розгорнути ↻
+          - generic [ref=e237]:
+            - generic [ref=e238]:
+              - generic [ref=e239]:
+                - generic [ref=e240]: Про захист прав споживачів
+                - generic [ref=e241]: Статті закону · 44 всього
+              - button "↩ Згорнути" [ref=e242] [cursor=pointer]
+            - generic [ref=e243]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e244]
+            - generic [ref=e245]: Нічого не знайдено
+            - link "Всі статті закону (44) →" [ref=e247] [cursor=pointer]:
+              - /url: /laws/6a0102b494bdb4884d7dddb9
+              - generic [ref=e248]: Всі статті закону (44) →
+        - generic [ref=e250]:
+          - generic [ref=e251] [cursor=pointer]:
+            - generic [ref=e252]:
+              - heading "Про державну службу" [level=2] [ref=e253]
+              - generic [ref=e254]: 889-19
+            - generic [ref=e255]:
+              - generic [ref=e256]:
+                - generic [ref=e257]:
+                  - generic [ref=e258]: "11"
+                  - generic [ref=e259]: розділів
+                - generic [ref=e260]:
+                  - generic [ref=e261]: "96"
+                  - generic [ref=e262]: статей
+              - generic [ref=e263]: Натисни щоб розгорнути ↻
+          - generic [ref=e264]:
+            - generic [ref=e265]:
+              - generic [ref=e266]:
+                - generic [ref=e267]: Про державну службу
+                - generic [ref=e268]: Статті закону · 96 всього
+              - button "↩ Згорнути" [ref=e269] [cursor=pointer]
+            - generic [ref=e270]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e271]
+            - generic [ref=e272]: Нічого не знайдено
+            - link "Всі статті закону (96) →" [ref=e274] [cursor=pointer]:
+              - /url: /laws/6a010bf094bdb4884d7ddf2c
+              - generic [ref=e275]: Всі статті закону (96) →
+        - generic [ref=e277]:
+          - generic [ref=e278] [cursor=pointer]:
+            - generic [ref=e279]:
+              - heading "Про запобігання корупції" [level=2] [ref=e280]
+              - generic [ref=e281]: 1700-18
+            - generic [ref=e282]:
+              - generic [ref=e283]:
+                - generic [ref=e284]:
+                  - generic [ref=e285]: "13"
+                  - generic [ref=e286]: розділів
+                - generic [ref=e287]:
+                  - generic [ref=e288]: "102"
+                  - generic [ref=e289]: статей
+              - generic [ref=e290]: Натисни щоб розгорнути ↻
+          - generic [ref=e291]:
+            - generic [ref=e292]:
+              - generic [ref=e293]:
+                - generic [ref=e294]: Про запобігання корупції
+                - generic [ref=e295]: Статті закону · 102 всього
+              - button "↩ Згорнути" [ref=e296] [cursor=pointer]
+            - generic [ref=e297]:
+              - generic: ⌕
+              - textbox "Пошук за номером статті..." [ref=e298]
+            - generic [ref=e299]: Нічого не знайдено
+            - link "Всі статті закону (102) →" [ref=e301] [cursor=pointer]:
+              - /url: /laws/6a010e5e94bdb4884d7ddf84
+              - generic [ref=e302]: Всі статті закону (102) →
+    - contentinfo [ref=e46]:
+      - generic [ref=e47]: Low Analysis · Система аналізу законодавства України
+      - link "Документація API" [ref=e48] [cursor=pointer]:
+        - /url: /api-docs
+  - button "Open Next.js Dev Tools" [ref=e54] [cursor=pointer]:
+    - img [ref=e55]
+  - alert [ref=e303]
