@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -266,7 +266,8 @@ export default function ArticlePage() {
                       transition={{ delay: 0.2, duration: 0.3 }}
                     >
                       <div className={`mono ${styles.childrenHeading}`}>
-                        Регулятори · {articleSubjects.length} суб&apos;єктів
+                        {"Суб'єкти (актори)"} · {articleSubjects.length}{" "}
+                        суб&apos;єктів
                       </div>
                       <div
                         style={{
