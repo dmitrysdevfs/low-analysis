@@ -1,17 +1,23 @@
 "use client";
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Layout } from "@/components/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
+import { useLaws } from "@/hooks/useLaws";
+import { parseElementCode } from "@/lib/lawTree";
 import styles from "./page.module.scss";
 
 export default function SubjectDetailPage() {
   const params = useParams<{ id: string }>();
   const subjectId = params?.id;
   const { subject, elements, loading, error } = useSubjectDetail(subjectId);
+  const { laws } = useLaws();
+  const lawsMap = useMemo(() => new Map(laws.map((l) => [l._id, l])), [laws]);
 
   return (
     <Layout>
@@ -103,32 +109,94 @@ export default function SubjectDetailPage() {
                   </div>
                 ) : (
                   <div className={styles.elementsList}>
-                    {elements.map((element, index) => (
-                      <motion.div
-                        key={element._id ?? element.code}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05, duration: 0.3 }}
-                        className={styles.elementCard}
-                      >
-                        <div
-                          className={styles.elementCodeRow}
-                          style={{
-                            marginBottom: element.title || element.text ? 8 : 0,
-                          }}
+                    {elements.map((element, index) => {
+                      const parsed = parseElementCode(element.code);
+                      const law = element.lawId
+                        ? lawsMap.get(element.lawId)
+                        : undefined;
+                      const role = element.subjects?.find(
+                        (s) => s.subject_id === subjectId,
+                      )?.role;
+
+                      return (
+                        <motion.div
+                          key={element._id ?? element.code}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05, duration: 0.3 }}
+                          className={styles.elementCard}
                         >
-                          <span className={`mono ${styles.elementCode}`}>
-                            {element.code}
-                          </span>
-                        </div>
-                        {element.title ? (
-                          <p className={styles.elementTitle}>{element.title}</p>
-                        ) : null}
-                        {element.text ? (
-                          <p className={styles.elementText}>{element.text}</p>
-                        ) : null}
-                      </motion.div>
-                    ))}
+                          {(law || parsed.lawCode) && element.lawId ? (
+                            <Link
+                              href={ROUTES.law(element.lawId)}
+                              className={styles.lawRow}
+                            >
+                              <span className={`mono ${styles.elementCode}`}>
+                                {parsed.lawCode}
+                              </span>
+                              <span className={styles.lawTitle}>
+                                {law?.title ?? ""}
+                              </span>
+                              <span className={styles.navArrow}>→</span>
+                            </Link>
+                          ) : parsed.lawCode ? (
+                            <div className={styles.lawRow}>
+                              <span className={`mono ${styles.elementCode}`}>
+                                {parsed.lawCode}
+                              </span>
+                            </div>
+                          ) : null}
+
+                          {(parsed.sectionLabel || parsed.articleNumber) ? (
+                            <div className={styles.navRow}>
+                              {parsed.sectionLabel ? (
+                                <>
+                                  <span className={`mono ${styles.navItem}`}>
+                                    {parsed.sectionLabel}
+                                  </span>
+                                  {parsed.articleNumber ? (
+                                    <span className={styles.navSep}>›</span>
+                                  ) : null}
+                                </>
+                              ) : null}
+                              {parsed.articleNumber && element.lawId ? (
+                                <Link
+                                  href={ROUTES.article(
+                                    element.lawId,
+                                    parsed.articleNumber,
+                                  )}
+                                  className={`mono ${styles.navLink}`}
+                                >
+                                  Стаття {parsed.articleNumber} →
+                                </Link>
+                              ) : null}
+                            </div>
+                          ) : null}
+
+                          {element.title ? (
+                            <p className={styles.elementTitle}>
+                              {element.title}
+                            </p>
+                          ) : null}
+                          {element.text ? (
+                            <p className={styles.elementText}>{element.text}</p>
+                          ) : null}
+
+                          {(role || element.type) ? (
+                            <div className={styles.footerBadges}>
+                              {role ? (
+                                <span className={styles.roleBadge}>{role}</span>
+                              ) : null}
+                              {element.type ? (
+                                <span className={styles.typeBadge}>
+                                  {element.type}
+                                </span>
+                              ) : null}
+                            </div>
+                          ) : null}
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
               </div>

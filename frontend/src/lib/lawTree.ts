@@ -306,3 +306,18 @@ export function getNodeBadge(node: TreeNode) {
       return node.number ?? "•";
   }
 }
+
+export function parseElementCode(code: string): {
+  lawCode: string;
+  sectionLabel: string | null;
+  articleNumber: string | null;
+} {
+  const [lawCode, ...parts] = code.split(".");
+  const sectionPart = parts.find((p) => p.startsWith("rz"));
+  const articlePart = parts.find((p) => p.startsWith("st"));
+  return {
+    lawCode,
+    sectionLabel: sectionPart ? `Розділ ${sectionPart.replace("rz", "")}` : null,
+    articleNumber: articlePart ? articlePart.replace("st", "") : null,
+  };
+}
