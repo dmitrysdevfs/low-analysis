@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { getSubjects } from "@/lib/api";
-import type { Subject } from "@/types";
+/**
+ * Хук для завантаження всіх суб'єктів з API та повернення їх у вигляді Map для швидкого пошуку за ID.
+ * @returns {{subjectsMap: Map<string, Subject>, loading: boolean}} Об'єкт, що містить мапу суб'єктів та статус завантаження.
+ */
+export function useSubjectsMap(): {
+  subjectsMap: Map<string, Subject>;
+  loading: boolean;
+} {
 
 export function useSubjectsMap(): {
   subjectsMap: Map<string, Subject>;
