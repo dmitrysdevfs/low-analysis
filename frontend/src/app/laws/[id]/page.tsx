@@ -171,7 +171,7 @@ export default function LawTreePage() {
             {lawSubjects.length > 0 && (
               <div style={{ marginTop: "16px" }}>
                 <div className="eyebrow" style={{ marginBottom: "8px" }}>
-                  Регулятори · {lawSubjects.length}
+                  {"Суб'єкти (актори)"} · {lawSubjects.length}
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                   {lawSubjects.map(({ subject_id, name }) => (
