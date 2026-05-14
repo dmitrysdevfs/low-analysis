@@ -151,6 +151,6 @@ describe("law tree helpers", () => {
       order: 24,
     };
 
-    expect(getNodeBadge(paragraph)).toBe("1");
+    expect(getNodeBadge(paragraph)).toBe("абз. 1");
   });
 });

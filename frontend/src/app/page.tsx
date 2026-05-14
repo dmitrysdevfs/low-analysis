@@ -270,12 +270,12 @@ export default function HomePage() {
                   →
                 </motion.span>
               </Link>
-              <Link href={ROUTES.subjects} className="btn btn-azure">
+              <Link href={ROUTES.subjects} className="btn btn-outline">
                 Суб&apos;єкти
               </Link>
               <Link
                 href={ROUTES.search}
-                className={`btn btn-ghost ${styles.btnWithIconSm}`}
+                className={`btn btn-outline ${styles.btnWithIconSm}`}
               >
                 ⌕ Пошук
               </Link>

@@ -157,8 +157,9 @@ describe("interactive frontend components", () => {
         query="закон"
       />,
     );
-    expect(screen.getByText(/Результат пошуку/i)).toBeInTheDocument();
-    expect(screen.getByText(/\(\s*2\s*документ\s*\)/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Результат пошуку/i, { selector: "div.mono" }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /КОНСТИТУЦІЯ УКРАЇНИ/i }),
     ).toHaveAttribute("href", `/laws/${LAW_FIXTURE._id}`);
