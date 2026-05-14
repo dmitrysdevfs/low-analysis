@@ -53,6 +53,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
   const [allArticles, setAllArticles] = useState<ArticleItem[]>([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
   const [query, setQuery] = useState("");
+  const [subjectCount, setSubjectCount] = useState(0);
   const fetched = useRef(false);
 
   const filtered = useMemo(() => {
@@ -81,6 +82,13 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
 
             const arts: ArticleItem[] = getSortedArticles(elements);
             setAllArticles(arts);
+
+            const uniqueSubjectIds = new Set(
+              elements.flatMap(
+                (el) => el.subjects?.map((s) => s.subject_id) ?? [],
+              ),
+            );
+            setSubjectCount(uniqueSubjectIds.size);
           })
           .catch(() => {})
           .finally(() => setLoadingArticles(false));
@@ -137,6 +145,11 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
               <span className={`mono ${styles.backSubtitle}`}>
                 Статті закону · {law.totalArticles} всього
               </span>
+              {subjectCount > 0 && (
+                <span className={`mono ${styles.backSubtitle}`}>
+                  {subjectCount} регуляторів
+                </span>
+              )}
             </div>
             <button onClick={handleFlip} className={styles.collapseBtn}>
               ↩ Згорнути
