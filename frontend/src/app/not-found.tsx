@@ -5,6 +5,8 @@ import { useRef, useCallback } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ROUTES } from "@/constants/routes";
 import styles from "./not-found.module.scss";
+import { FloatingFragment } from "@/components/FloatingFragment";
+import { GridBackground } from "@/components/GridBackground";
 
 const LEGAL_FRAGMENTS = [
   { text: "Ст. 1", x: "8%", y: "18%", delay: 0 },
@@ -18,71 +20,6 @@ const LEGAL_FRAGMENTS = [
   { text: "Ч. 1", x: "28%", y: "90%", delay: 0.55 },
   { text: "§ 94", x: "65%", y: "82%", delay: 0.85 },
 ];
-
-function FloatingFragment({
-  text,
-  x,
-  y,
-  delay,
-}: {
-  text: string;
-  x: string;
-  y: string;
-  delay: number;
-}) {
-  return (
-    <motion.div
-      className={styles.floatingFragment}
-      initial={{ opacity: 0, scale: 0.6 }}
-      animate={{
-        opacity: [0, 0.35, 0.18, 0.35],
-        y: [0, -14, 0, 14, 0],
-        scale: [0.6, 1, 0.95, 1],
-      }}
-      transition={{
-        opacity: { duration: 6, repeat: Infinity, delay, ease: "easeInOut" },
-        y: { duration: 8, repeat: Infinity, delay, ease: "easeInOut" },
-        scale: { duration: 1.2, delay },
-      }}
-      style={{ left: x, top: y }}
-    >
-      {text}
-    </motion.div>
-  );
-}
-
-function GridBackground() {
-  return (
-    <div className={styles.gridBackground}>
-      <svg
-        className={styles.gridSvg}
-        width="100%"
-        height="100%"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <pattern
-            id="grid404"
-            width="48"
-            height="48"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M 48 0 L 0 0 0 48"
-              fill="none"
-              stroke="#4A80D4"
-              strokeWidth="0.5"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid404)" />
-      </svg>
-
-      <div className={styles.gridGlowLarge} />
-      <div className={styles.gridGlowSmall} />
-    </div>
-  );
-}
 
 export default function NotFound() {
   const containerRef = useRef<HTMLDivElement>(null);

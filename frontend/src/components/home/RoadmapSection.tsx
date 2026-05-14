@@ -1,0 +1,92 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import Link from "next/link";
+import { roadmap } from "@/constants/homeContent";
+import { ROUTES } from "@/constants/routes";
+import type { Law } from "@/types";
+import styles from "@/app/page.module.scss";
+
+export function RoadmapSection({
+  laws,
+  loading,
+}: {
+  laws: Law[];
+  loading: boolean;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.2 });
+
+  return (
+    <section ref={ref} className={styles.roadmapSection}>
+      <div className={styles.roadmapInner}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4 }}
+          className={styles.roadmapHeader}
+        >
+          <div className={`mono ${styles.roadmapLabel}`}>Дорожня карта</div>
+          <h2 className={`display ${styles.roadmapH2}`}>
+            Що зроблено і що далі
+          </h2>
+        </motion.div>
+
+        <div className={styles.roadmapList}>
+          {roadmap.map((item, index) => (
+            <motion.div
+              key={item.text}
+              initial={{ opacity: 0, x: -16 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: index * 0.08, duration: 0.35 }}
+              className={styles.roadmapItem}
+              style={{
+                background: item.done
+                  ? "rgba(200,168,67,0.04)"
+                  : "transparent",
+                border: item.done
+                  ? "1px solid rgba(200,168,67,0.12)"
+                  : "1px solid transparent",
+              }}
+            >
+              <span
+                className={`mono ${styles.roadmapCheckmark}`}
+                style={{ color: item.done ? "#C8A843" : "#1C3260" }}
+              >
+                {item.done ? "✓" : "○"}
+              </span>
+              <span
+                className={styles.roadmapItemText}
+                style={{ color: item.done ? "#D6E0F0" : "#7A98C0" }}
+              >
+                {item.text}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.7, duration: 0.4 }}
+          className={styles.roadmapFooter}
+        >
+          <div>
+            <p className={`display ${styles.roadmapFooterTitle}`}>
+              {loading
+                ? "Завантаження…"
+                : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
+            </p>
+            <p className={`mono ${styles.roadmapFooterMono}`}>
+              {loading ? "…" : laws.map((law) => law.code).join(" · ")}
+            </p>
+          </div>
+          <Link href={ROUTES.laws} className={styles.roadmapFooterLink}>
+            Відкрити закони →
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
