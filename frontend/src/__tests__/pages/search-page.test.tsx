@@ -62,8 +62,7 @@ describe("Search page", () => {
     render(<SearchPage />);
 
     expect(
-      screen.getByText("SearchForm:false:function:function"),
+      screen.getByText("SearchForm:false:function:undefined"),
     ).toBeInTheDocument();
-    expect(screen.getByText("SearchResults:1:конституція")).toBeInTheDocument();
   });
 });

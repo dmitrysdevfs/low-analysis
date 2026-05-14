@@ -87,6 +87,11 @@ export default function ArticlePage() {
 
       <main className={styles.page}>
         <div className={styles.container}>
+          {lawId && (
+            <Link href={ROUTES.law(lawId)} className={styles.backLink}>
+              ← Структура закону
+            </Link>
+          )}
           <AnimatePresence mode="wait">
             {/* Loading skeleton */}
             {loading ? (
