@@ -301,7 +301,7 @@ export function getNodeBadge(node: TreeNode) {
     case "sub_point":
       return `пп. ${node.number}`;
     case "paragraph":
-      return `${node.number}`; //зараз сюди попадають і абзаци, і підпункти, тому просто номер без позначки
+      return `абз. ${node.number}`;
     default:
       return node.number ?? "•";
   }

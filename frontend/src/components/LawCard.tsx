@@ -143,7 +143,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
             <div className={styles.backTitleWrap}>
               <span className={`display ${styles.backTitle}`}>{law.title}</span>
               <span className={`mono ${styles.backSubtitle}`}>
-                Статті закону · {law.totalArticles} всього
+                Статті закону · {allArticles.length || law.totalArticles} всього
               </span>
               {subjectCount > 0 && (
                 <span className={`mono ${styles.backSubtitle}`}>

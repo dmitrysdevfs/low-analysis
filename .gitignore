@@ -61,6 +61,7 @@ GEMINI.md
 .codex/
 .codeium/
 .continue/
+.playwright-mcp/
 
 # Copilot
 .github/copilot-instructions.md
