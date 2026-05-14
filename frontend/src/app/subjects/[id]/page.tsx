@@ -147,7 +147,7 @@ export default function SubjectDetailPage() {
                             </div>
                           ) : null}
 
-                          {(parsed.sectionLabel || parsed.articleNumber) ? (
+                          {parsed.sectionLabel || parsed.articleNumber ? (
                             <div className={styles.navRow}>
                               {parsed.sectionLabel ? (
                                 <>
@@ -182,7 +182,7 @@ export default function SubjectDetailPage() {
                             <p className={styles.elementText}>{element.text}</p>
                           ) : null}
 
-                          {(role || element.type) ? (
+                          {role || element.type ? (
                             <div className={styles.footerBadges}>
                               {role ? (
                                 <span className={styles.roleBadge}>{role}</span>

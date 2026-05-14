@@ -317,7 +317,9 @@ export function parseElementCode(code: string): {
   const articlePart = parts.find((p) => p.startsWith("st"));
   return {
     lawCode,
-    sectionLabel: sectionPart ? `Розділ ${sectionPart.replace("rz", "")}` : null,
+    sectionLabel: sectionPart
+      ? `Розділ ${sectionPart.replace("rz", "")}`
+      : null,
     articleNumber: articlePart ? articlePart.replace("st", "") : null,
   };
 }
