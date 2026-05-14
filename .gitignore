@@ -46,6 +46,7 @@ conductor/
 
 # Claude / Claude Code
 .claude/
+.playwright-mcp/
 CLAUDE.md
 AGENTS.md
 
@@ -60,6 +61,7 @@ GEMINI.md
 .codex/
 .codeium/
 .continue/
+.playwright-mcp/
 
 # Copilot
 .github/copilot-instructions.md
