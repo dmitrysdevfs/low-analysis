@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   useParams,
   usePathname,
@@ -13,6 +14,7 @@ import { LawStructureList } from "@/components/LawStructureList";
 import { Layout } from "@/components/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useLawTree } from "@/hooks/useLawTree";
+import { useSubjectsMap } from "@/hooks/useSubjectsMap";
 import {
   buildLawSections,
   countArticlesInSections,
@@ -55,9 +57,30 @@ export default function LawTreePage() {
   const searchParams = useSearchParams();
   const lawId = params?.id;
   const { law, tree, loading, error } = useLawTree(lawId);
+  const { subjectsMap } = useSubjectsMap();
   const [selectedLimit, setSelectedLimit] = useState<number | "all">(() =>
     parseLimitValue(searchParams.get("limit")),
   );
+
+  const lawSubjects = useMemo(() => {
+    const seen = new Set<string>();
+    const result: Array<{ subject_id: string; name: string; status: string }> =
+      [];
+    tree.forEach((el) => {
+      el.subjects?.forEach((s) => {
+        const subj = subjectsMap.get(s.subject_id);
+        if (!seen.has(s.subject_id) && subj) {
+          seen.add(s.subject_id);
+          result.push({
+            subject_id: s.subject_id,
+            name: subj.canonical_name,
+            status: subj.legal_status,
+          });
+        }
+      });
+    });
+    return result;
+  }, [tree, subjectsMap]);
 
   const sections = useMemo(() => buildLawSections(tree), [tree]);
   const articleCount = useMemo(
@@ -143,6 +166,25 @@ export default function LawTreePage() {
               <div className={styles.lawStatus}>
                 {law.status.charAt(0).toUpperCase() +
                   law.status.slice(1).toLowerCase()}
+              </div>
+            )}
+            {lawSubjects.length > 0 && (
+              <div style={{ marginTop: "16px" }}>
+                <div className="eyebrow" style={{ marginBottom: "8px" }}>
+                  Регулятори · {lawSubjects.length}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  {lawSubjects.map(({ subject_id, name }) => (
+                    <Link
+                      key={subject_id}
+                      href={ROUTES.subject(subject_id)}
+                      className="directory-chip mono"
+                      style={{ textDecoration: "none" }}
+                    >
+                      {name}
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
             <p className={styles.lawDesc}>
