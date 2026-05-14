@@ -1,1 +1,1 @@
-export { LawMetaPanel } from './law/LawMetaPanel';
+export { LawMetaPanel } from "./law/LawMetaPanel";

@@ -1,1 +1,1 @@
-export { applySearchFilters, sortLaws } from './filters';
+export { applySearchFilters, sortLaws } from "./filters";

@@ -1,1 +1,1 @@
-export { SkeletonCard } from './ui/SkeletonCard';
+export { SkeletonCard } from "./ui/SkeletonCard";

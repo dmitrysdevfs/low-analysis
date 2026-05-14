@@ -1,1 +1,1 @@
-export { HerbFlipCard } from './home/HerbFlipCard';
+export { HerbFlipCard } from "./home/HerbFlipCard";

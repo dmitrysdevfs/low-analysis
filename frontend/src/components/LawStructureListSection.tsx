@@ -1,1 +1,1 @@
-export { SectionBlock } from './law/LawStructureListSection';
+export { SectionBlock } from "./law/LawStructureListSection";

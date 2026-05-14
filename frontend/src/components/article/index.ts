@@ -1,3 +1,3 @@
-export { NestedNodeList } from './ArticleTreeNode';
-export { ArticleLawCard } from './ArticleLawCard';
-export { TreeNode } from './TreeNode';
+export { NestedNodeList } from "./ArticleTreeNode";
+export { ArticleLawCard } from "./ArticleLawCard";
+export { TreeNode } from "./TreeNode";

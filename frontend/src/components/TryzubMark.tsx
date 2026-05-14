@@ -1,1 +1,1 @@
-export { TryzubMark } from './ui/TryzubMark';
+export { TryzubMark } from "./ui/TryzubMark";

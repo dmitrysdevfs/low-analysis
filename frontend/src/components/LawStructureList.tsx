@@ -1,1 +1,1 @@
-export { LawStructureList } from './law/LawStructureList';
+export { LawStructureList } from "./law/LawStructureList";

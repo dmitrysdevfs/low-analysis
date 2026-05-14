@@ -6,9 +6,7 @@ export function applySearchFilters(laws: Law[], params: SearchParams): Law[] {
 
   if (params.docType) {
     filtered = filtered.filter((law) =>
-      (law.preamble ?? "")
-        .toUpperCase()
-        .includes(params.docType.toUpperCase()),
+      (law.preamble ?? "").toUpperCase().includes(params.docType.toUpperCase()),
     );
   }
 
@@ -19,9 +17,7 @@ export function applySearchFilters(laws: Law[], params: SearchParams): Law[] {
         law.code.toLowerCase().startsWith(num),
       );
     } else if (params.numberType === "contains") {
-      filtered = filtered.filter((law) =>
-        law.code.toLowerCase().includes(num),
-      );
+      filtered = filtered.filter((law) => law.code.toLowerCase().includes(num));
     } else {
       filtered = filtered.filter((law) => law.code.toLowerCase() === num);
     }
@@ -43,9 +39,7 @@ export function applySearchFilters(laws: Law[], params: SearchParams): Law[] {
 
   if (params.status) {
     filtered = filtered.filter((law) =>
-      (law.status ?? "")
-        .toLowerCase()
-        .includes(params.status.toLowerCase()),
+      (law.status ?? "").toLowerCase().includes(params.status.toLowerCase()),
     );
   }
 

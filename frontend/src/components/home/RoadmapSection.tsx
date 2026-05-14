@@ -42,9 +42,7 @@ export function RoadmapSection({
               transition={{ delay: index * 0.08, duration: 0.35 }}
               className={styles.roadmapItem}
               style={{
-                background: item.done
-                  ? "rgba(200,168,67,0.04)"
-                  : "transparent",
+                background: item.done ? "rgba(200,168,67,0.04)" : "transparent",
                 border: item.done
                   ? "1px solid rgba(200,168,67,0.12)"
                   : "1px solid transparent",

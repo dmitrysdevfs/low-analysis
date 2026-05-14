@@ -71,11 +71,7 @@ export function LawCardArticlesList({
             className={styles.articleListCol}
           >
             {visible.map((article, i) => (
-              <motion.div
-                key={article._id}
-                custom={i}
-                variants={itemVariants}
-              >
+              <motion.div key={article._id} custom={i} variants={itemVariants}>
                 <Link
                   href={
                     article.number

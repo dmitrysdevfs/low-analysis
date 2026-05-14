@@ -1,1 +1,1 @@
-export { ArticleEntry } from './law/LawStructureListArticle';
+export { ArticleEntry } from "./law/LawStructureListArticle";

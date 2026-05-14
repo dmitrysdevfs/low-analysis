@@ -46,9 +46,7 @@ export function LawMetaPanel({
         <div className={styles.lawSignatory}>{law.signatory}</div>
       )}
       <div className="law-structure-summary">
-        {law ? (
-          <span className="directory-chip mono">{law.code}</span>
-        ) : null}
+        {law ? <span className="directory-chip mono">{law.code}</span> : null}
         <span className="mono law-structure-inline-note">
           {sectionsCount} розділів · {articleCount} статей
         </span>
@@ -60,9 +58,9 @@ export function LawMetaPanel({
         </div>
       )}
       <p className={styles.lawDesc}>
-        Список статей формується напряму з дерева закону. Клік по назві
-        статті відкриває повну сторінку, а кнопка праворуч показує
-        вкладену структуру частин, пунктів і абзаців.
+        Список статей формується напряму з дерева закону. Клік по назві статті
+        відкриває повну сторінку, а кнопка праворуч показує вкладену структуру
+        частин, пунктів і абзаців.
       </p>
 
       {showLimitControls ? (
@@ -79,9 +77,7 @@ export function LawMetaPanel({
 
           <div className={styles.controlsActions}>
             <label className={styles.limitField}>
-              <span className={`mono ${styles.limitLabel}`}>
-                Показувати
-              </span>
+              <span className={`mono ${styles.limitLabel}`}>Показувати</span>
               <select
                 aria-label="Показувати статей"
                 className={`form-control form-select ${styles.limitSelect}`}

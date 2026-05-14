@@ -35,9 +35,7 @@ export function StepsSection() {
           >
             <div className={`mono ${styles.stepCardNum}`}>{step.num}</div>
             <div className={`mono ${styles.stepCardIcon}`}>{step.icon}</div>
-            <h3 className={`display ${styles.stepCardTitle}`}>
-              {step.title}
-            </h3>
+            <h3 className={`display ${styles.stepCardTitle}`}>{step.title}</h3>
             <p className={styles.stepCardDesc}>{step.desc}</p>
           </motion.div>
         ))}

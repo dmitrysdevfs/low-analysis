@@ -1,1 +1,1 @@
-export { LawCardSkeletonLine } from './law/LawCardSkeletonLine';
+export { LawCardSkeletonLine } from "./law/LawCardSkeletonLine";

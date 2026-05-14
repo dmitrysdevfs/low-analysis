@@ -9,7 +9,10 @@ interface SearchFormFiltersProps {
   onChange: (patch: Partial<SearchParams>) => void;
 }
 
-export function SearchFormFilters({ params, onChange }: SearchFormFiltersProps) {
+export function SearchFormFilters({
+  params,
+  onChange,
+}: SearchFormFiltersProps) {
   return (
     <>
       <div className={styles.row}>

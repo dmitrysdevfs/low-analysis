@@ -1,4 +1,22 @@
-export type { TreeBranch } from './tree';
-export { compareTreeNodes, buildTreeBranches, buildLawSections, getSortedArticles } from './tree';
-export { countSectionArticles, countArticlesInSections, limitLawSections, countNestedNodes } from './tree';
-export { getArticleBadge, getArticleRouteNumber, getArticleTitle, getNodeLabel, getNodeContent, getNodeBadge, parseElementCode } from './tree';
+export type { TreeBranch } from "./tree";
+export {
+  compareTreeNodes,
+  buildTreeBranches,
+  buildLawSections,
+  getSortedArticles,
+} from "./tree";
+export {
+  countSectionArticles,
+  countArticlesInSections,
+  limitLawSections,
+  countNestedNodes,
+} from "./tree";
+export {
+  getArticleBadge,
+  getArticleRouteNumber,
+  getArticleTitle,
+  getNodeLabel,
+  getNodeContent,
+  getNodeBadge,
+  parseElementCode,
+} from "./tree";

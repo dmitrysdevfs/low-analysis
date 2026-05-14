@@ -1,1 +1,1 @@
-export { LawCardStat } from './law/LawCardStat';
+export { LawCardStat } from "./law/LawCardStat";

@@ -1,1 +1,1 @@
-export { LawParseForm } from './LawParseForm';
+export { LawParseForm } from "./LawParseForm";

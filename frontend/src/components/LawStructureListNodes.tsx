@@ -1,1 +1,1 @@
-export { NestedNodeList } from './law/LawStructureListNodes';
+export { NestedNodeList } from "./law/LawStructureListNodes";

@@ -1,1 +1,1 @@
-export { FloatingFragment } from './ui/FloatingFragment';
+export { FloatingFragment } from "./ui/FloatingFragment";

@@ -1,4 +1,4 @@
-import type { TreeNode } from './law.types';
+import type { TreeNode } from "./law.types";
 
 export interface Subject {
   _id: string;

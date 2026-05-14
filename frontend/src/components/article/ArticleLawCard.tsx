@@ -11,7 +11,11 @@ interface ArticleLawCardProps {
   lawId: string | undefined;
 }
 
-export function ArticleLawCard({ lawTitle, lawCode, lawId }: ArticleLawCardProps) {
+export function ArticleLawCard({
+  lawTitle,
+  lawCode,
+  lawId,
+}: ArticleLawCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -6 }}
@@ -22,9 +26,7 @@ export function ArticleLawCard({ lawTitle, lawCode, lawId }: ArticleLawCardProps
       <span className={`mono ${styles.lawCardLabel}`}>Закон</span>
       <span className={styles.lawCardTitle}>{lawTitle}</span>
       {lawCode && (
-        <span className={`mono ${styles.lawCardCode}`}>
-          {lawCode}
-        </span>
+        <span className={`mono ${styles.lawCardCode}`}>{lawCode}</span>
       )}
 
       {/* Open full law link */}
