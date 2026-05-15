@@ -18,5 +18,7 @@ export {
   getNodeLabel,
   getNodeContent,
   getNodeBadge,
+  getRoleLabel,
+  getTypeLabel,
   parseElementCode,
 } from "./tree";

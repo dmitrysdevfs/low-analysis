@@ -1,6 +1,16 @@
 import type { TreeNode } from "@/types";
 import { normalizeText, stripLeadingArticleLabel } from "./helpers";
 
+const ROLE_LABELS: Record<string, string> = {
+  actor: "Суб'єкт",
+  target_of_control: "Об'єкт контролю",
+  recipient: "Отримувач",
+  regulator: "Регулятор",
+  protected_party: "Захищена сторона",
+  issuer_of_regulations: "Видавець норм",
+  other: "Інше",
+};
+
 const TYPE_LABELS: Record<TreeNode["type"], string> = {
   section: "Розділ",
   article: "Стаття",
@@ -94,6 +104,14 @@ export function getNodeBadge(node: TreeNode) {
   }
 }
 
+export function getRoleLabel(role: string): string {
+  return ROLE_LABELS[role.toLowerCase()] ?? role;
+}
+
+export function getTypeLabel(type: string): string {
+  return TYPE_LABELS[type as TreeNode["type"]] ?? type;
+}
+
 export function parseElementCode(code: string): {
   lawCode: string;
   sectionLabel: string | null;
@@ -115,10 +133,16 @@ export function parseElementCode(code: string): {
 
   for (const part of parts.slice(1)) {
     const rz = part.match(/^rz(\d+)$/);
-    if (rz) { sectionLabel = `Розділ ${rz[1]}`; continue; }
+    if (rz) {
+      sectionLabel = `Розділ ${rz[1]}`;
+      continue;
+    }
 
     const st = part.match(/^st(\d+(?:-\d+)?)$/);
-    if (st) { articleNumber = st[1]; continue; }
+    if (st) {
+      articleNumber = st[1];
+      continue;
+    }
   }
 
   return { lawCode, sectionLabel, articleNumber };
