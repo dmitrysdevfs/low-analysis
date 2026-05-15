@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import type { Law } from "@/types";
 import { ROUTES } from "@/constants/routes";
 import {
@@ -21,7 +20,6 @@ interface LawMetaPanelProps {
   canLoadMore: boolean;
   selectedLimit: number | "all";
   onLimitChange: (value: number | "all") => void;
-  lawSubjects?: Array<{ subject_id: string; name: string; status: string }>;
 }
 
 export function LawMetaPanel({
@@ -33,7 +31,6 @@ export function LawMetaPanel({
   canLoadMore,
   selectedLimit,
   onLimitChange,
-  lawSubjects = [],
 }: LawMetaPanelProps) {
   return (
     <motion.section
@@ -59,25 +56,6 @@ export function LawMetaPanel({
         <div className={styles.lawStatus}>
           {law.status.charAt(0).toUpperCase() +
             law.status.slice(1).toLowerCase()}
-        </div>
-      )}
-      {lawSubjects.length > 0 && (
-        <div style={{ marginTop: "16px" }}>
-          <div className="eyebrow" style={{ marginBottom: "8px" }}>
-            {"Суб'єкти (актори)"} · {lawSubjects.length}
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-            {lawSubjects.map(({ subject_id, name }) => (
-              <Link
-                key={subject_id}
-                href={ROUTES.subject(subject_id)}
-                className="directory-chip mono"
-                style={{ textDecoration: "none" }}
-              >
-                {name}
-              </Link>
-            ))}
-          </div>
         </div>
       )}
       <p className={styles.lawDesc}>
