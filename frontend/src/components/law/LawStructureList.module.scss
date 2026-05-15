@@ -7,3 +7,20 @@
   flex-shrink: 0;
   white-space: nowrap;
 }
+
+.highlightedNode {
+  background: rgba(200, 168, 67, 0.08);
+  border-left-color: rgba(200, 168, 67, 0.6) !important;
+  border-radius: 4px;
+  padding: 8px 12px 8px 16px;
+  margin-left: -12px;
+
+  &::before {
+    border-top-color: rgba(200, 168, 67, 0.6) !important;
+    left: -13px !important;
+  }
+}
+
+.highlightedText {
+  color: var(--color-ink) !important;
+}
