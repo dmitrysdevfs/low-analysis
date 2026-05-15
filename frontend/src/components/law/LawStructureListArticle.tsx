@@ -16,17 +16,34 @@ import { NestedNodeList } from "./LawStructureListNodes";
 export function ArticleEntry({
   article,
   lawId,
+  highlightSubjectId,
 }: {
   article: TreeBranch;
   lawId: string;
+  highlightSubjectId?: string | null;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(!!highlightSubjectId);
+  const [prevHighlightId, setPrevHighlightId] = useState(highlightSubjectId);
+
+  if (highlightSubjectId !== prevHighlightId) {
+    setPrevHighlightId(highlightSubjectId);
+    if (highlightSubjectId) {
+      setOpen(true);
+    }
+  }
   const nestedCount = countNestedNodes(article);
   const routeNumber = getArticleRouteNumber(article);
 
   return (
-    <article className="law-structure-article">
-      <div className="law-structure-article-head">
+    <motion.article
+      layout
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.2 } }}
+      transition={{ duration: 0.2 }}
+      className="law-structure-article"
+    >
+      <motion.div layout="position" className="law-structure-article-head">
         <div className="law-structure-article-main">
           <div className="law-structure-article-label mono">
             {getArticleBadge(article)}
@@ -56,7 +73,7 @@ export function ArticleEntry({
             <span className="mono">{nestedCount} ел.</span>
           </button>
         ) : null}
-      </div>
+      </motion.div>
 
       <AnimatePresence initial={false}>
         {open ? (
@@ -67,10 +84,13 @@ export function ArticleEntry({
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.22 }}
           >
-            <NestedNodeList nodes={article.children} />
+            <NestedNodeList
+              nodes={article.children}
+              highlightSubjectId={highlightSubjectId}
+            />
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </article>
+    </motion.article>
   );
 }
