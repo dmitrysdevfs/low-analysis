@@ -67,7 +67,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="sticky top-6 w-full sm:max-w-70 lg:max-w-80 shrink-0 lg:pt-18 md:pt-14 pt-10 lg:pl-10 md:pl-8 pl-6 pr-6 sm:pr-1">
+    <aside className="top-6 w-full sm:max-w-70 lg:max-w-80 shrink-0 lg:pt-18 md:pt-14 pt-10 lg:pl-10 md:pl-8 pl-6 pr-6 sm:pr-1">
       <div className="relative">
         <motion.div
           initial={{ opacity: 0, y: 10 }}

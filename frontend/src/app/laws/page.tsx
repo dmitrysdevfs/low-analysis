@@ -8,7 +8,7 @@ import { LawParseForm } from "@/components/LawParseForm";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { useLaws } from "@/hooks/useLaws";
 import styles from "./page.module.scss";
-import LawSidebar from "@/components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 
 export default function LawsPage() {
   const [query, setQuery] = useState("");
@@ -22,7 +22,7 @@ export default function LawsPage() {
         <div className={styles.blobGold} />
         <div className={styles.blobBlue} />
         <div className="sm:flex">
-          <LawSidebar />
+          <Sidebar />
           <div className={`section-pad ${styles.sectionInner}`}>
             <motion.div
               initial={{ opacity: 0, y: -20 }}

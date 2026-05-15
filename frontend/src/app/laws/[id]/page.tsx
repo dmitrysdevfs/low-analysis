@@ -29,6 +29,7 @@ import {
   toLimitParam,
   getNextLimitValue,
 } from "@/lib/pageLimits";
+import Sidebar from "@/components/Sidebar";
 
 export default function LawTreePage() {
   const params = useParams<{ id: string }>();
@@ -106,98 +107,101 @@ export default function LawTreePage() {
 
   return (
     <Layout fullHeight>
-      <div className={`section-pad ${styles.contentFlex}`}>
-        <div className={`page-frame ${styles.pageInner}`}>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Breadcrumb
-              items={[
-                { label: "Закони", href: ROUTES.laws },
-                { label: law?.title ?? lawId ?? "…" },
-              ]}
-            />
-          </motion.div>
-
-          <LawMetaPanel
-            law={law}
-            sectionsCount={sections.length}
-            articleCount={articleCount}
-            showLimitControls={showLimitControls}
-            visibleArticleCount={visibleArticleCount}
-            canLoadMore={canLoadMore}
-            selectedLimit={selectedLimit}
-            onLimitChange={updateLimit}
-            lawSubjects={lawSubjects}
-          />
-
-          {loading ? (
-            <div
-              className="law-structure-list"
-              role="status"
-              aria-live="polite"
-              aria-label="Завантажуємо структуру закону"
-            >
-              {Array.from({ length: 3 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  className={`panel law-structure-section ${styles.skeletonSection}`}
-                  animate={{ opacity: [0.35, 0.65, 0.35] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: index * 0.1,
-                  }}
-                >
-                  <div className={styles.skeletonLabel} />
-                  <div className={styles.skeletonTitle} />
-                  <div className={styles.skeletonRows}>
-                    {Array.from({ length: 3 }).map((__, rowIndex) => (
-                      <div key={rowIndex} className={styles.skeletonRow} />
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          ) : null}
-
-          {!loading && error ? (
+      <div className="sm:flex">
+        <Sidebar />
+        <div className={`section-pad ${styles.contentFlex}`}>
+          <div className={`page-frame ${styles.pageInner}`}>
             <motion.div
-              role="alert"
-              className={`panel ${styles.errorPanel}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <div className={`mono ${styles.errorLabel}`}>
-                Помилка завантаження
-              </div>
-              <div className={styles.errorText}>{error}</div>
+              <Breadcrumb
+                items={[
+                  { label: "Закони", href: ROUTES.laws },
+                  { label: law?.title ?? lawId ?? "…" },
+                ]}
+              />
             </motion.div>
-          ) : null}
 
-          {!loading && !error && articleCount === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className={`panel ${styles.emptyPanel}`}
-            >
-              <div className={styles.emptyIcon}>§</div>
-              <div className={`display ${styles.emptyTitle}`}>
-                У цьому законі поки немає статей для відображення
-              </div>
-              <div className={`mono ${styles.emptyNote}`}>
-                Коли дерево закону буде наповнене, тут з&apos;явиться повна
-                структура розділів і статей.
-              </div>
-            </motion.div>
-          ) : null}
+            <LawMetaPanel
+              law={law}
+              sectionsCount={sections.length}
+              articleCount={articleCount}
+              showLimitControls={showLimitControls}
+              visibleArticleCount={visibleArticleCount}
+              canLoadMore={canLoadMore}
+              selectedLimit={selectedLimit}
+              onLimitChange={updateLimit}
+              lawSubjects={lawSubjects}
+            />
 
-          {!loading && !error && articleCount > 0 && lawId ? (
-            <LawStructureList sections={visibleSections} lawId={lawId} />
-          ) : null}
+            {loading ? (
+              <div
+                className="law-structure-list"
+                role="status"
+                aria-live="polite"
+                aria-label="Завантажуємо структуру закону"
+              >
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <motion.div
+                    key={index}
+                    className={`panel law-structure-section ${styles.skeletonSection}`}
+                    animate={{ opacity: [0.35, 0.65, 0.35] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: index * 0.1,
+                    }}
+                  >
+                    <div className={styles.skeletonLabel} />
+                    <div className={styles.skeletonTitle} />
+                    <div className={styles.skeletonRows}>
+                      {Array.from({ length: 3 }).map((__, rowIndex) => (
+                        <div key={rowIndex} className={styles.skeletonRow} />
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : null}
+
+            {!loading && error ? (
+              <motion.div
+                role="alert"
+                className={`panel ${styles.errorPanel}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className={`mono ${styles.errorLabel}`}>
+                  Помилка завантаження
+                </div>
+                <div className={styles.errorText}>{error}</div>
+              </motion.div>
+            ) : null}
+
+            {!loading && !error && articleCount === 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className={`panel ${styles.emptyPanel}`}
+              >
+                <div className={styles.emptyIcon}>§</div>
+                <div className={`display ${styles.emptyTitle}`}>
+                  У цьому законі поки немає статей для відображення
+                </div>
+                <div className={`mono ${styles.emptyNote}`}>
+                  Коли дерево закону буде наповнене, тут з&apos;явиться повна
+                  структура розділів і статей.
+                </div>
+              </motion.div>
+            ) : null}
+
+            {!loading && !error && articleCount > 0 && lawId ? (
+              <LawStructureList sections={visibleSections} lawId={lawId} />
+            ) : null}
+          </div>
         </div>
       </div>
     </Layout>
