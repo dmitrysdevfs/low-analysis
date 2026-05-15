@@ -25,22 +25,18 @@ export const notify = {
   success: (msg: string) =>
     toast.success(msg, {
       ...base,
-      progressStyle: { background: "#c8a843" },
     }),
   error: (msg: string) =>
     toast.error(msg, {
       ...base,
       autoClose: 6000,
-      progressStyle: { background: "#c85a5a" },
     }),
   warning: (msg: string) =>
     toast.warning(msg, {
       ...base,
-      progressStyle: { background: "#c8a843" },
     }),
   info: (msg: string) =>
     toast.info(msg, {
       ...base,
-      progressStyle: { background: "#4a80d4" },
     }),
 };
