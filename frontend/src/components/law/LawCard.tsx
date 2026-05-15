@@ -78,6 +78,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={!flipped ? { y: -3 } : {}}
       transition={{ duration: 0.35, delay: index * 0.06 }}
       className={styles.cardWrapper}
       style={{
@@ -105,9 +106,6 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
                 <LawCardStat value={law.totalParagraphs} label="абзаців" />
               ) : null}
             </div>
-            <span className={`mono ${styles.expandHint}`}>
-              Натисни щоб розгорнути ↻
-            </span>
           </div>
         </div>
 
