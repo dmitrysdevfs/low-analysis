@@ -4,7 +4,10 @@ import type { Law, LawTreeResponse, ArticleResponse } from "@/types";
 
 const API_BASE = "/api";
 
-export async function getJson<T>(path: string, options?: RequestInit): Promise<T> {
+export async function getJson<T>(
+  path: string,
+  options?: RequestInit,
+): Promise<T> {
   const res = options
     ? await fetch(`${API_BASE}${path}`, options)
     : await fetch(`${API_BASE}${path}`);

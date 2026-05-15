@@ -16,7 +16,8 @@ export function parseApiError(error: unknown): string {
     ) {
       return "Доступ заборонено.";
     }
-    if (error.message.match(/^HTTP 5/)) return "Помилка сервера. Спробуйте пізніше.";
+    if (error.message.match(/^HTTP 5/))
+      return "Помилка сервера. Спробуйте пізніше.";
     if (error.message.trim()) return error.message;
   }
   return "Невідома помилка. Спробуйте знову.";

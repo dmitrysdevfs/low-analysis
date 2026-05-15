@@ -20,10 +20,9 @@ export function fetchWithTimeout(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  const signal =
-    init?.signal
-      ? combineSignals(init.signal as AbortSignal, controller.signal)
-      : controller.signal;
+  const signal = init?.signal
+    ? combineSignals(init.signal as AbortSignal, controller.signal)
+    : controller.signal;
 
   return fetch(input, { ...init, signal }).finally(() => clearTimeout(timer));
 }

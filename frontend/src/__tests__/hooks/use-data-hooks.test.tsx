@@ -49,7 +49,10 @@ describe("frontend data hooks", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(getLaws).toHaveBeenCalledWith("", expect.objectContaining({ signal: expect.any(Object) }));
+    expect(getLaws).toHaveBeenCalledWith(
+      "",
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
     expect(result.current.laws).toEqual([LAW_FIXTURE]);
     expect(result.current.error).toBeNull();
   });
@@ -72,7 +75,10 @@ describe("frontend data hooks", () => {
       await vi.advanceTimersByTimeAsync(1);
     });
 
-    expect(getLaws).toHaveBeenCalledWith("конституція", expect.objectContaining({ signal: expect.any(Object) }));
+    expect(getLaws).toHaveBeenCalledWith(
+      "конституція",
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
 
     vi.useRealTimers();
     await waitFor(() => expect(result.current.loading).toBe(false));
