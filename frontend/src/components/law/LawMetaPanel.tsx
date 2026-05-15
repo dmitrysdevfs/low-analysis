@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { Law } from "@/types";
-import { ROUTES } from "@/constants/routes";
+
 import {
   ARTICLE_LIMIT_OPTIONS,
   parseLimitValue,

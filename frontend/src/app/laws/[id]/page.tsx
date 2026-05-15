@@ -159,7 +159,7 @@ export default function LawTreePage() {
 
   return (
     <Layout fullHeight>
-      <div className={`section-pad ${styles.contentFlex}`}>
+      <div className={styles.contentFlex}>
         <div className="sm:flex sm:gap-8 max-w-[1400px] mx-auto w-full">
           <Sidebar
             subjectsList={lawSubjects.map((s) => ({
@@ -169,7 +169,7 @@ export default function LawTreePage() {
             selectedId={selectedSubjectId}
             onSelect={updateSubject}
           />
-          <div className={`page-frame ${styles.pageInner} flex-1`}>
+          <div className={`section-pad page-frame ${styles.pageInner} flex-1`}>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
