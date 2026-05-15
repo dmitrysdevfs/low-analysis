@@ -54,6 +54,7 @@ const elementSchema = new mongoose.Schema(
           type: String,
           enum: [
             'actor',
+            'target_of_control',
             'recipient',
             'regulator',
             'protected_party',

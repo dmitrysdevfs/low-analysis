@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { parseLaw } from "@/lib/api";
+import { parseApiError } from "@/lib/utils";
+import { notify } from "@/lib/toast";
 
 export function useParseLaw(onSuccess?: () => void) {
   const [loading, setLoading] = useState(false);
@@ -14,19 +16,16 @@ export function useParseLaw(onSuccess?: () => void) {
 
       await parseLaw(url);
 
+      notify.success("Закон успішно додано!");
       onSuccess?.();
-    } catch (error: unknown) {
-      setError(
-        error instanceof Error ? error.message : "Не вдалося додати закон",
-      );
+    } catch (err: unknown) {
+      const msg = parseApiError(err);
+      setError(msg);
+      notify.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  return {
-    submit,
-    loading,
-    error,
-  };
+  return { submit, loading, error };
 }

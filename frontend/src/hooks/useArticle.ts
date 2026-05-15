@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getArticle } from "@/lib/api";
+import { parseApiError, fetchWithTimeout } from "@/lib/utils";
 import type { TreeNode } from "@/types";
 
 interface State {
@@ -26,8 +27,9 @@ export function useArticle(lawId?: string, num?: string) {
     if (!lawId || !num) return;
 
     const key = `${lawId}:${num}`;
+    const controller = new AbortController();
 
-    getArticle(lawId, num)
+    getArticle(lawId, num, { signal: controller.signal })
       .then((data) =>
         setState({
           fetchedKey: key,
@@ -36,14 +38,18 @@ export function useArticle(lawId?: string, num?: string) {
           error: null,
         }),
       )
-      .catch((error: unknown) =>
+      .catch((error: unknown) => {
+        const msg = parseApiError(error);
+        if (msg === "__ABORT__") return;
         setState({
           fetchedKey: key,
           article: null,
           children: [],
-          error: error instanceof Error ? error.message : "Unknown error",
-        }),
-      );
+          error: msg,
+        });
+      });
+
+    return () => controller.abort();
   }, [lawId, num]);
 
   return { ...state, loading };

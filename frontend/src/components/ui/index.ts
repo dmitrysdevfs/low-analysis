@@ -4,3 +4,4 @@ export { SkeletonCard } from "./SkeletonCard";
 export { FloatingFragment } from "./FloatingFragment";
 export { GridBackground } from "./GridBackground";
 export { TryzubMark } from "./TryzubMark";
+export { ErrorBoundary } from "./ErrorBoundary";

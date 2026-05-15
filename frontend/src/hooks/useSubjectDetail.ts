@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSubjectElements } from "@/lib/api";
+import { parseApiError } from "@/lib/utils";
 import type { Subject, TreeNode } from "@/types";
 
 interface State {
@@ -24,7 +25,9 @@ export function useSubjectDetail(id?: string) {
   useEffect(() => {
     if (!id) return;
 
-    getSubjectElements(id)
+    const controller = new AbortController();
+
+    getSubjectElements(id, { signal: controller.signal })
       .then((data) =>
         setState({
           fetchedId: id,
@@ -33,14 +36,18 @@ export function useSubjectDetail(id?: string) {
           error: null,
         }),
       )
-      .catch((error: unknown) =>
+      .catch((error: unknown) => {
+        const msg = parseApiError(error);
+        if (msg === "__ABORT__") return;
         setState({
           fetchedId: id,
           subject: null,
           elements: [],
-          error: error instanceof Error ? error.message : "Unknown error",
-        }),
-      );
+          error: msg,
+        });
+      });
+
+    return () => controller.abort();
   }, [id]);
 
   return { ...state, loading };

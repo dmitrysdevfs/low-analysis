@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getLaws } from "@/lib/api";
+import { parseApiError } from "@/lib/utils";
 import type { Law } from "@/types";
 import type { SearchParams } from "@/types/search.types";
 import { applySearchFilters, sortLaws } from "@/lib/searchFilters";
@@ -56,10 +57,11 @@ export function useSearch() {
 
     abortRef.current?.abort();
     abortRef.current = new AbortController();
+    const { signal } = abortRef.current;
 
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
-    getLaws(normalizedParams.q)
+    getLaws(normalizedParams.q, { signal })
       .then((laws) => {
         const filtered = applySearchFilters(laws, normalizedParams);
         const sorted = sortLaws(filtered, normalizedParams.sort);
@@ -72,11 +74,12 @@ export function useSearch() {
         });
       })
       .catch((err: unknown) => {
-        if (err instanceof Error && err.name === "AbortError") return;
+        const msg = parseApiError(err);
+        if (msg === "__ABORT__") return;
         setState({
           results: [],
           loading: false,
-          error: err instanceof Error ? err.message : "Помилка пошуку",
+          error: msg,
           searched: true,
         });
       });

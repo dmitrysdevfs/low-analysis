@@ -10,10 +10,12 @@ import { ArticleLawCard } from "@/components/ArticleLawCard";
 import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import { useArticle } from "@/hooks/useArticle";
+import { useSubjectsMap } from "@/hooks/useSubjectsMap";
 import { buildTreeBranches } from "@/lib/lawTree";
 import styles from "./page.module.scss";
 import { useMemo } from "react";
 import { NestedNodeList } from "@/components/ArticleTreeNode";
+import type { Subject } from "@/types";
 
 export default function ArticlePage() {
   const params = useParams<{ id: string; num: string }>();
@@ -30,6 +32,22 @@ export default function ArticlePage() {
   const lawCode = law?.code ?? "";
 
   const childTree = useMemo(() => buildTreeBranches(children), [children]);
+
+  const { subjectsMap, loading: subjectsLoading } = useSubjectsMap();
+
+  const articleSubjects = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { subject_id: string; role: string; subject: Subject }[] = [];
+    children.forEach((child) => {
+      child.subjects?.forEach((s) => {
+        if (!seen.has(s.subject_id) && subjectsMap.get(s.subject_id)) {
+          seen.add(s.subject_id);
+          result.push({ ...s, subject: subjectsMap.get(s.subject_id)! });
+        }
+      });
+    });
+    return result;
+  }, [children, subjectsMap]);
 
   return (
     <Layout>
@@ -172,6 +190,39 @@ export default function ArticlePage() {
                       <NestedNodeList nodes={childTree} />
                     </motion.div>
                   ) : null}
+
+                  {!subjectsLoading && articleSubjects.length > 0 && (
+                    <motion.div
+                      className={styles.childrenSection}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2, duration: 0.3 }}
+                    >
+                      <div className={`mono ${styles.childrenHeading}`}>
+                        {"Суб'єкти (актори)"} · {articleSubjects.length}{" "}
+                        суб&apos;єктів
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "8px",
+                          marginTop: "8px",
+                        }}
+                      >
+                        {articleSubjects.map(({ subject_id, subject }) => (
+                          <Link
+                            key={subject_id}
+                            href={ROUTES.subject(subject_id)}
+                            className={styles.childBadge}
+                            style={{ textDecoration: "none" }}
+                          >
+                            {subject.canonical_name}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </motion.div>
             ) : null}

@@ -19,6 +19,10 @@ vi.mock("@/hooks/useLawTree", () => ({
   useLawTree: vi.fn(),
 }));
 
+vi.mock("@/hooks/useSubjectsMap", () => ({
+  useSubjectsMap: () => ({ subjectsMap: new Map(), loading: false }),
+}));
+
 function createArticleNode(index: number): TreeNode {
   return {
     ...TREE_ARTICLE_NODE,

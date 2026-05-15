@@ -78,8 +78,9 @@ describe('GET /api/laws/:id/tree', () => {
 });
 
 describe('GET /api/laws/:id/articles/:num', () => {
-  it('returns 200 with article and children', async () => {
+  it('returns 200 with lawUrl, article and children', async () => {
     lawService.getArticle.mockResolvedValue({
+      lawUrl: 'https://zakon.rada.gov.ua/laws/show/254k/96-vr#Text',
       article: MOCK_ELEMENT,
       children: [],
     });
@@ -87,8 +88,24 @@ describe('GET /api/laws/:id/articles/:num', () => {
     const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles/1`);
 
     expect(res.status).toBe(200);
+    expect(res.body.lawUrl).toBe(
+      'https://zakon.rada.gov.ua/laws/show/254k/96-vr#Text',
+    );
     expect(res.body.article._id).toBe(MOCK_ELEMENT._id);
     expect(Array.isArray(res.body.children)).toBe(true);
+  });
+
+  it('returns lawUrl as null when law has no source', async () => {
+    lawService.getArticle.mockResolvedValue({
+      lawUrl: null,
+      article: MOCK_ELEMENT,
+      children: [],
+    });
+
+    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles/1`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.lawUrl).toBeNull();
   });
 
   it('returns 404 when article not found', async () => {

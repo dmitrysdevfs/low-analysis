@@ -12,6 +12,7 @@ import Subject from '../models/Subject.js';
 export const ensureSubjectExists = async (
   canonicalName,
   legalStatus = 'other',
+  aliases = [],
 ) => {
   // Normalize whitespace (remove newlines, extra spaces) and lowercase
   const normalizedName = canonicalName
@@ -19,11 +20,21 @@ export const ensureSubjectExists = async (
     .trim()
     .toLowerCase();
 
+  const cleanAliases = Array.isArray(aliases)
+    ? aliases.map((a) => a.trim().toLowerCase()).filter(Boolean)
+    : [];
+
   const existing = await Subject.findOne({
     $or: [{ canonical_name: normalizedName }, { aliases: normalizedName }],
   });
 
   if (existing) {
+    if (cleanAliases.length > 0) {
+      await Subject.updateOne(
+        { _id: existing._id },
+        { $addToSet: { aliases: { $each: cleanAliases } } },
+      );
+    }
     return existing._id;
   }
 
@@ -31,7 +42,7 @@ export const ensureSubjectExists = async (
     const created = await Subject.create({
       canonical_name: normalizedName,
       legal_status: legalStatus,
-      aliases: [],
+      aliases: cleanAliases,
     });
     return created._id;
   } catch (error) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getLaws } from "@/lib/api";
+import { parseApiError } from "@/lib/utils";
 import type { Law } from "@/types";
 
 interface State {
@@ -20,22 +21,25 @@ export function useLaws(q = "", refreshKey = 0) {
   const loading = state.fetchedQ !== q;
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const timer = setTimeout(
       () => {
-        getLaws(q)
+        getLaws(q, { signal: controller.signal })
           .then((laws) => setState({ fetchedQ: q, laws, error: null }))
-          .catch((error: unknown) =>
-            setState({
-              fetchedQ: q,
-              laws: [],
-              error: error instanceof Error ? error.message : "Unknown error",
-            }),
-          );
+          .catch((error: unknown) => {
+            const msg = parseApiError(error);
+            if (msg === "__ABORT__") return;
+            setState({ fetchedQ: q, laws: [], error: msg });
+          });
       },
       q ? 250 : 0,
     );
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [q, refreshKey]);
 
   return { ...state, loading };

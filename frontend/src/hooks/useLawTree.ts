@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getLawTree } from "@/lib/api";
+import { parseApiError } from "@/lib/utils";
 import type { Law, TreeNode } from "@/types";
 
 interface State {
@@ -24,7 +25,9 @@ export function useLawTree(id?: string) {
   useEffect(() => {
     if (!id) return;
 
-    getLawTree(id)
+    const controller = new AbortController();
+
+    getLawTree(id, { signal: controller.signal })
       .then((response) =>
         setState({
           fetchedId: id,
@@ -33,14 +36,18 @@ export function useLawTree(id?: string) {
           error: null,
         }),
       )
-      .catch((error: unknown) =>
+      .catch((error: unknown) => {
+        const msg = parseApiError(error);
+        if (msg === "__ABORT__") return;
         setState({
           fetchedId: id,
           law: null,
           tree: [],
-          error: error instanceof Error ? error.message : "Unknown error",
-        }),
-      );
+          error: msg,
+        });
+      });
+
+    return () => controller.abort();
   }, [id]);
 
   return { ...state, loading };

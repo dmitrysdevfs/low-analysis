@@ -43,9 +43,6 @@ export function HerbFlipCard({
               Тризуб · державний символ
             </div>
           </div>
-          <div className={`mono ${styles.flipFrontHint}`}>
-            Наведіть або натисніть
-          </div>
         </div>
 
         <div className={`panel ${styles.flipBack}`}>

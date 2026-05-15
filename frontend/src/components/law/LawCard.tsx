@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ROUTES } from "@/constants/routes";
 import { getLawTree } from "@/lib/api";
 import { getSortedArticles } from "@/lib/lawTree";
+import { notify } from "@/lib/toast";
 import type { Law, TreeNode } from "@/types";
 import styles from "./LawCard.module.scss";
 import { LawCardStat } from "./LawCardStat";
@@ -25,6 +26,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
   const [allArticles, setAllArticles] = useState<TreeNode[]>([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
   const [query, setQuery] = useState("");
+  const [subjectCount, setSubjectCount] = useState(0);
   const fetched = useRef(false);
 
   const filtered = useMemo(() => {
@@ -53,8 +55,17 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
 
             const arts: TreeNode[] = getSortedArticles(elements);
             setAllArticles(arts);
+
+            const uniqueSubjectIds = new Set(
+              elements.flatMap(
+                (el) => el.subjects?.map((s) => s.subject_id) ?? [],
+              ),
+            );
+            setSubjectCount(uniqueSubjectIds.size);
           })
-          .catch(() => {})
+          .catch(() => {
+            notify.error("Не вдалося завантажити статті закону");
+          })
           .finally(() => setLoadingArticles(false));
       }
 
@@ -109,6 +120,11 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
               <span className={`mono ${styles.backSubtitle}`}>
                 Статті закону · {allArticles.length || law.totalArticles} всього
               </span>
+              {subjectCount > 0 && (
+                <span className={`mono ${styles.backSubtitle}`}>
+                  {subjectCount} {"суб'єктів"}
+                </span>
+              )}
             </div>
             <button onClick={handleFlip} className={styles.collapseBtn}>
               ↩ Згорнути
