@@ -99,11 +99,27 @@ export function parseElementCode(code: string): {
   sectionLabel: string | null;
   articleNumber: string | null;
 } {
-  const parts = code.split(":");
+  if (code.includes(":")) {
+    const parts = code.split(":");
+    return {
+      lawCode: parts[0] ?? code,
+      sectionLabel: parts[1] ?? null,
+      articleNumber: parts[2] ?? null,
+    };
+  }
 
-  return {
-    lawCode: parts[0] ?? code,
-    sectionLabel: parts[1] ?? null,
-    articleNumber: parts[2] ?? null,
-  };
+  const parts = code.split(".");
+  const lawCode = parts[0] ?? code;
+  let sectionLabel: string | null = null;
+  let articleNumber: string | null = null;
+
+  for (const part of parts.slice(1)) {
+    const rz = part.match(/^rz(\d+)$/);
+    if (rz) { sectionLabel = `Розділ ${rz[1]}`; continue; }
+
+    const st = part.match(/^st(\d+(?:-\d+)?)$/);
+    if (st) { articleNumber = st[1]; continue; }
+  }
+
+  return { lawCode, sectionLabel, articleNumber };
 }
