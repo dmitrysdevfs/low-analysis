@@ -9,7 +9,7 @@ import { Layout } from "@/components/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
 import { useLaws } from "@/hooks/useLaws";
-import { parseElementCode } from "@/lib/lawTree";
+import { parseElementCode, getRoleLabel, getTypeLabel } from "@/lib/lawTree";
 import styles from "./page.module.scss";
 
 export default function SubjectDetailPage() {
@@ -185,11 +185,13 @@ export default function SubjectDetailPage() {
                           {role || element.type ? (
                             <div className={styles.footerBadges}>
                               {role ? (
-                                <span className={styles.roleBadge}>{role}</span>
+                                <span className={styles.roleBadge}>
+                                  {getRoleLabel(role)}
+                                </span>
                               ) : null}
                               {element.type ? (
                                 <span className={styles.typeBadge}>
-                                  {element.type}
+                                  {getTypeLabel(element.type)}
                                 </span>
                               ) : null}
                             </div>

@@ -23,18 +23,5 @@
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.3"
-  },
-  "lint-staged": {
-    "backend/src/**/*.js": [
-      "prettier --write",
-      "eslint --fix --config backend/eslint.config.js"
-    ],
-    "frontend/src/**/*.{ts,tsx}": [
-      "prettier --write",
-      "eslint --fix --config frontend/eslint.config.mjs"
-    ],
-    "frontend/src/**/*.{css,json}": [
-      "prettier --write"
-    ]
   }
 }

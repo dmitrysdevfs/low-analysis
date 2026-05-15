@@ -49,7 +49,10 @@ describe("frontend data hooks", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(getLaws).toHaveBeenCalledWith("");
+    expect(getLaws).toHaveBeenCalledWith(
+      "",
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
     expect(result.current.laws).toEqual([LAW_FIXTURE]);
     expect(result.current.error).toBeNull();
   });
@@ -72,7 +75,10 @@ describe("frontend data hooks", () => {
       await vi.advanceTimersByTimeAsync(1);
     });
 
-    expect(getLaws).toHaveBeenCalledWith("конституція");
+    expect(getLaws).toHaveBeenCalledWith(
+      "конституція",
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
 
     vi.useRealTimers();
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -85,6 +91,54 @@ describe("frontend data hooks", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe("laws failed");
+    expect(result.current.laws).toEqual([]);
+  });
+
+  it("useLaws maps HTTP 404 to Ukrainian message", async () => {
+    vi.mocked(getLaws).mockRejectedValue(new Error("HTTP 404 Not Found"));
+
+    const { result } = renderHook(() => useLaws());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.error).toBe("Дані не знайдено.");
+    expect(result.current.laws).toEqual([]);
+  });
+
+  it("useLaws maps network TypeError to Ukrainian message", async () => {
+    vi.mocked(getLaws).mockRejectedValue(new TypeError("Failed to fetch"));
+
+    const { result } = renderHook(() => useLaws());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.error).toMatch(/зв'язку з сервером/);
+    expect(result.current.laws).toEqual([]);
+  });
+
+  it("useLaws maps HTTP 500 to server error message", async () => {
+    vi.mocked(getLaws).mockRejectedValue(
+      new Error("HTTP 500 Internal Server Error"),
+    );
+
+    const { result } = renderHook(() => useLaws());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.error).toBe("Помилка сервера. Спробуйте пізніше.");
+    expect(result.current.laws).toEqual([]);
+  });
+
+  it("useLaws does not update state when request is aborted", async () => {
+    const abortErr = new DOMException("Aborted", "AbortError");
+    vi.mocked(getLaws).mockRejectedValue(abortErr);
+
+    const { result } = renderHook(() => useLaws());
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    // parseApiError returns "__ABORT__" → setState is skipped
+    expect(result.current.loading).toBe(true);
+    expect(result.current.error).toBeNull();
     expect(result.current.laws).toEqual([]);
   });
 

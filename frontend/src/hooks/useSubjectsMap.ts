@@ -2,12 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { getSubjects } from "@/lib/api";
+import { parseApiError } from "@/lib/utils";
 import type { Subject } from "@/types";
 
-/**
- * Хук для завантаження всіх суб'єктів з API та повернення їх у вигляді Map для швидкого пошуку за ID.
- * @returns {{subjectsMap: Map<string, Subject>, loading: boolean, error: string | null}} Об'єкт, що містить мапу суб'єктів та статус завантаження.
- */
 export function useSubjectsMap(): {
   subjectsMap: Map<string, Subject>;
   loading: boolean;
@@ -20,17 +17,22 @@ export function useSubjectsMap(): {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getSubjects()
+    const controller = new AbortController();
+
+    getSubjects({ signal: controller.signal })
       .then((subjects) => {
         const map = new Map<string, Subject>(subjects.map((s) => [s._id, s]));
         setSubjectsMap(map);
         setError(null);
       })
-      .catch((err) => {
-        console.error("Failed to fetch subjects:", err);
-        setError(err instanceof Error ? err.message : "Невідома помилка");
+      .catch((err: unknown) => {
+        const msg = parseApiError(err);
+        if (msg === "__ABORT__") return;
+        setError(msg);
       })
       .finally(() => setLoading(false));
+
+    return () => controller.abort();
   }, []);
 
   return { subjectsMap, loading, error };

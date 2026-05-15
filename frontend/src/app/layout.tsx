@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import Header from "@/layout/Header/Header";
 import Footer from "@/layout/Footer/Footer";
 import { BackendWarmup } from "@/components/BackendWarmup";
 import { ScrollRestore } from "@/components/ScrollRestore";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
@@ -44,13 +47,16 @@ export default function RootLayout({
       className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <div className="site-shell">
-          <BackendWarmup />
-          <ScrollRestore />
-          <Header />
-          <div className="site-content">{children}</div>
-          <Footer />
-        </div>
+        <ErrorBoundary>
+          <div className="site-shell">
+            <BackendWarmup />
+            <ScrollRestore />
+            <Header />
+            <div className="site-content">{children}</div>
+            <Footer />
+          </div>
+        </ErrorBoundary>
+        <ToastContainer />
       </body>
     </html>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSubjects } from "@/lib/api";
+import { parseApiError } from "@/lib/utils";
 import type { Subject } from "@/types";
 
 interface State {
@@ -18,15 +19,17 @@ export function useSubjects() {
   });
 
   useEffect(() => {
-    getSubjects()
+    const controller = new AbortController();
+
+    getSubjects({ signal: controller.signal })
       .then((subjects) => setState({ fetched: true, subjects, error: null }))
-      .catch((error: unknown) =>
-        setState({
-          fetched: true,
-          subjects: [],
-          error: error instanceof Error ? error.message : "Unknown error",
-        }),
-      );
+      .catch((error: unknown) => {
+        const msg = parseApiError(error);
+        if (msg === "__ABORT__") return;
+        setState({ fetched: true, subjects: [], error: msg });
+      });
+
+    return () => controller.abort();
   }, []);
 
   return { ...state, loading: !state.fetched };
