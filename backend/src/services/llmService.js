@@ -65,6 +65,8 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
       lastError = error;
 
       const isRetryable =
+        error instanceof SyntaxError ||
+        error.message?.includes('JSON') ||
         error.message?.includes('429') ||
         error.message?.includes('503') ||
         error.message?.includes('UNAVAILABLE');
