@@ -2,10 +2,35 @@ import { useSubjects } from "@/hooks/useSubjects";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 
-export default function Sidebar() {
+export interface SidebarSubject {
+  _id: string;
+  canonical_name: string;
+}
+
+interface SidebarProps {
+  subjectsList?: SidebarSubject[];
+  selectedId?: string | null;
+  onSelect?: (id: string | null) => void;
+  isLoading?: boolean;
+}
+
+export default function Sidebar({
+  subjectsList,
+  selectedId,
+  onSelect,
+  isLoading,
+}: SidebarProps = {}) {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
-  const { subjects, loading, error } = useSubjects();
+  const {
+    subjects: fetchedSubjects,
+    loading: fetchLoading,
+    error: fetchError,
+  } = useSubjects();
+
+  const subjects = subjectsList ?? fetchedSubjects;
+  const loading = isLoading ?? (subjectsList ? false : fetchLoading);
+  const error = subjectsList ? null : fetchError;
 
   const sortedSubjects = useMemo(() => {
     return [...subjects].sort((a, b) =>
@@ -82,12 +107,15 @@ export default function Sidebar() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Пошук..."
-            className="w-full bg-[#080f20] border border-[#1c3260] rounded-[8px] py-[7px] pr-[12px] pl-[38px] text-white text-[0.86rem] font-inherit outline-none appearance-none box-border transition-[border-color,box-shadow] duration-[0.18s] ease-in-out placeholder-[#4a5e7a] hover:not-focus:border-[#4a80d4]/[0.45] focus:border-[#c8a843]/[0.6] focus:shadow-[0_0_0_3px_rgba(200,168,67,0.12)] truncate"
+            className="w-full bg-[#080f20] border border-[#1c3260] rounded-[8px] py-[7px] pr-[12px] pl-[38px] text-white text-[0.86rem] font-inherit outline-none appearance-none box-border transition-[border-color,box-shadow] duration-[0.18s] ease-in-out placeholder-[#4a5e7a] hover:not-focus:border-[#4a80d4]/45 focus:border-[#c8a843]/60 focus:shadow-[0_0_0_3px_rgba(200,168,67,0.12)] truncate"
           />
 
           {search && (
             <button
-              onClick={() => setSearch("")}
+              onClick={() => {
+                setSearch("");
+                if (onSelect) onSelect(null);
+              }}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               ✕
@@ -103,9 +131,23 @@ export default function Sidebar() {
               <li
                 key={subject._id}
                 onClick={() => {
-                  setSearch(subject.canonical_name);
+                  if (onSelect) {
+                    if (selectedId === subject._id) {
+                      onSelect(null);
+                      setSearch("");
+                    } else {
+                      onSelect(subject._id);
+                      setSearch(subject.canonical_name);
+                    }
+                  } else {
+                    setSearch(subject.canonical_name);
+                  }
                 }}
-                className="cursor-pointer break-words text-sm leading-5 text-[#7a98c0] hover:text-[#c8a843] hover:bg-[#1c3260] rounded px-1 py-2"
+                className={`cursor-pointer text-sm leading-5 rounded px-1 py-2 ${
+                  selectedId === subject._id
+                    ? "text-[#c8a843] bg-[#1c3260]"
+                    : "text-[#7a98c0] hover:text-[#c8a843] hover:bg-[#1c3260]"
+                }`}
               >
                 {highlightMatch(subject.canonical_name, search)}
               </li>
