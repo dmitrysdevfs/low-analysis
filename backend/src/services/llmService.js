@@ -70,7 +70,7 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
                 role: {
                   type: Type.STRING,
                   description:
-                    "Роль: actor, target_of_control, recipient, regulator, protected_party, other.",
+                    'Роль: actor, target_of_control, recipient, regulator, protected_party, other.',
                 },
                 confidence: {
                   type: Type.STRING,
@@ -98,7 +98,15 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
         .replace(/\s*```$/i, '')
         .trim();
 
-      return JSON.parse(cleaned);
+      try {
+        return JSON.parse(cleaned);
+      } catch (parseError) {
+        console.error('[llmService] JSON Parse Error. Raw response was:');
+        console.error(rawText);
+        console.error('[llmService] Cleaned response was:');
+        console.error(cleaned);
+        throw parseError;
+      }
     } catch (error) {
       lastError = error;
 
