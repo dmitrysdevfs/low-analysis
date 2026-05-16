@@ -60,19 +60,21 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
                 aliases: {
                   type: Type.ARRAY,
                   items: { type: Type.STRING },
-                  description: "Список альтернативних назв або займенників.",
+                  description: 'Список альтернативних назв або займенників.',
                 },
                 legal_status: {
                   type: Type.STRING,
-                  description: "Юридичний статус: citizen, company, state, undefined.",
+                  description:
+                    'Юридичний статус: executive_body, official, legal_entity, individual, self_regulatory_org, other.',
                 },
                 role: {
                   type: Type.STRING,
-                  description: "Роль: actor, target, regulator, target_of_control, affected, third_party.",
+                  description:
+                    "Роль: actor, target_of_control, recipient, regulator, protected_party, other.",
                 },
                 confidence: {
                   type: Type.STRING,
-                  description: "Впевненість: high, medium, low.",
+                  description: 'Впевненість: high, medium, low.',
                 },
               },
               required: [
