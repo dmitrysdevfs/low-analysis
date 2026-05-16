@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, Type } from '@google/genai';
 import { LLM_CONFIG } from '../config/llm.js';
 
 const RETRY_ATTEMPTS = 3;
@@ -48,6 +48,42 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
           temperature: LLM_CONFIG.temperature,
           maxOutputTokens: LLM_CONFIG.maxOutputTokens,
           responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                canonical_name: {
+                  type: Type.STRING,
+                  description: "Головна офіційна назва суб'єкта.",
+                },
+                aliases: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                  description: "Список альтернативних назв або займенників.",
+                },
+                legal_status: {
+                  type: Type.STRING,
+                  description: "Юридичний статус: citizen, company, state, undefined.",
+                },
+                role: {
+                  type: Type.STRING,
+                  description: "Роль: actor, target, regulator, target_of_control, affected, third_party.",
+                },
+                confidence: {
+                  type: Type.STRING,
+                  description: "Впевненість: high, medium, low.",
+                },
+              },
+              required: [
+                'canonical_name',
+                'aliases',
+                'legal_status',
+                'role',
+                'confidence',
+              ],
+            },
+          },
         },
       });
 

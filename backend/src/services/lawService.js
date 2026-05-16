@@ -64,10 +64,11 @@ export const getArticle = async (lawId, articleNumber) => {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export const upsertLaw = async (lawData) => {
-  const { code, title, source, status, preamble, signatory } = lawData;
+  const { code, title, source, status, preamble, signatory, global_context } =
+    lawData;
   const law = await Law.findOneAndUpdate(
     { code },
-    { $set: { title, source, status, preamble, signatory } },
+    { $set: { title, source, status, preamble, signatory, global_context } },
     { new: true, upsert: true },
   );
   return law;

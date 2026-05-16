@@ -47,10 +47,8 @@ const ingestLaw = async (filePath) => {
     );
   }
 
-  const { title, code, elements, preamble, status, signatory } = parseLawHtml(
-    html,
-    mainHtml,
-  );
+  const { title, code, elements, preamble, status, signatory, global_context } =
+    parseLawHtml(html, mainHtml);
 
   if (!title || !code) {
     throw new Error(
@@ -79,6 +77,7 @@ const ingestLaw = async (filePath) => {
     status,
     preamble,
     signatory,
+    global_context,
   });
 
   // Persist Elements (attach lawId resolved from the created Law)
