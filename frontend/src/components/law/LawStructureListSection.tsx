@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { type TreeBranch } from "@/lib/lawTree";
 import styles from "./LawStructureList.module.scss";
 import { ArticleEntry } from "./LawStructureListArticle";
@@ -9,18 +9,22 @@ export function SectionBlock({
   section,
   lawId,
   index,
+  highlightSubjectId,
 }: {
   section: TreeBranch;
   lawId: string;
   index: number;
+  highlightSubjectId?: string | null;
 }) {
   const articles = section.children.filter((node) => node.type === "article");
 
   return (
     <motion.section
+      layout
       className="panel law-structure-section"
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.2 } }}
       transition={{ duration: 0.28, delay: index * 0.05 }}
     >
       <div className="law-structure-section-head">
@@ -38,11 +42,18 @@ export function SectionBlock({
       </div>
 
       {articles.length > 0 ? (
-        <div className="law-structure-articles">
-          {articles.map((article) => (
-            <ArticleEntry key={article.key} article={article} lawId={lawId} />
-          ))}
-        </div>
+        <motion.div layout className="law-structure-articles">
+          <AnimatePresence mode="popLayout">
+            {articles.map((article) => (
+              <ArticleEntry
+                key={article.key}
+                article={article}
+                lawId={lawId}
+                highlightSubjectId={highlightSubjectId}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
       ) : null}
     </motion.section>
   );

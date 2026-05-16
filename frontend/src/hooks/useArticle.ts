@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getArticle } from "@/lib/api";
-import { parseApiError, fetchWithTimeout } from "@/lib/utils";
+import { parseApiError } from "@/lib/utils";
 import type { TreeNode } from "@/types";
 
 interface State {
