@@ -13,6 +13,7 @@ export const ensureSubjectExists = async (
   canonicalName,
   legalStatus = 'other',
   aliases = [],
+  description = null,
 ) => {
   // Normalize whitespace (remove newlines, extra spaces) and lowercase
   const normalizedName = canonicalName
@@ -29,11 +30,17 @@ export const ensureSubjectExists = async (
   });
 
   if (existing) {
+    const updateQuery = {};
     if (cleanAliases.length > 0) {
-      await Subject.updateOne(
-        { _id: existing._id },
-        { $addToSet: { aliases: { $each: cleanAliases } } },
-      );
+      updateQuery.$addToSet = { aliases: { $each: cleanAliases } };
+    }
+    // Only update description if the subject doesn't have one and LLM provided one
+    if (description && !existing.description) {
+      updateQuery.$set = { description };
+    }
+
+    if (Object.keys(updateQuery).length > 0) {
+      await Subject.updateOne({ _id: existing._id }, updateQuery);
     }
     return existing._id;
   }
@@ -43,6 +50,7 @@ export const ensureSubjectExists = async (
       canonical_name: normalizedName,
       legal_status: legalStatus,
       aliases: cleanAliases,
+      description,
     });
     return created._id;
   } catch (error) {

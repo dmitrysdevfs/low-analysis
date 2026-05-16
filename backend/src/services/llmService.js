@@ -45,7 +45,10 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
         contents: userPrompt,
         config: {
           systemInstruction: systemPrompt,
-          temperature: Math.min(1.0, LLM_CONFIG.temperature + (attempt - 1) * 0.2), // Increase temp on retries (e.g., 0.1, 0.3, 0.5)
+          temperature: Math.min(
+            1.0,
+            LLM_CONFIG.temperature + (attempt - 1) * 0.2,
+          ), // Increase temp on retries (e.g., 0.1, 0.3, 0.5)
           maxOutputTokens: LLM_CONFIG.maxOutputTokens,
           responseMimeType: 'application/json',
           responseSchema: {
@@ -72,6 +75,12 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
                   description:
                     'Роль: actor, target_of_control, recipient, regulator, protected_party, other.',
                 },
+                description: {
+                  type: Type.STRING,
+                  description:
+                    "Коротке визначення суб'єкта на основі GLOBAL_CONTEXT (до 1-2 речень). Якщо визначення відсутнє, повертай null.",
+                  nullable: true,
+                },
                 confidence: {
                   type: Type.STRING,
                   description: 'Впевненість: high, medium, low.',
@@ -82,6 +91,7 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
                 'aliases',
                 'legal_status',
                 'role',
+                'description',
                 'confidence',
               ],
             },
