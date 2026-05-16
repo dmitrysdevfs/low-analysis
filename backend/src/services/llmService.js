@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { LLM_CONFIG } from '../config/llm.js';
 
-const RETRY_ATTEMPTS = 3;
+const RETRY_ATTEMPTS = 5;
 const RETRY_DELAY_MS = 1000;
 
 let genaiClient = null;
@@ -45,7 +45,7 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
         contents: userPrompt,
         config: {
           systemInstruction: systemPrompt,
-          temperature: LLM_CONFIG.temperature,
+          temperature: Math.min(1.0, LLM_CONFIG.temperature + (attempt - 1) * 0.2), // Increase temp on retries (e.g., 0.1, 0.3, 0.5)
           maxOutputTokens: LLM_CONFIG.maxOutputTokens,
           responseMimeType: 'application/json',
           responseSchema: {
