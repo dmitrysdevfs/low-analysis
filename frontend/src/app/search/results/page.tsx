@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { SearchResults } from "@/components/SearchResults";
 import { useSearch } from "@/hooks/useSearch";
-import Sidebar from "@/components/Sidebar";
 
 function SearchResultsContent() {
   const urlParams = useSearchParams();
@@ -34,23 +33,20 @@ function SearchResultsContent() {
   }, [q, docType, dateFrom, dateTo, number, status, search]);
 
   return (
-    <div className="sm:flex">
-      <Sidebar />
-      <div className="section-pad max-w-[960px] w-full mx-auto">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
-          <SearchResults
-            results={results}
-            loading={loading}
-            error={error}
-            searched={searched}
-            query={q}
-          />
-        </motion.div>
-      </div>
+    <div className="section-pad max-w-[960px] w-full mx-auto">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <SearchResults
+          results={results}
+          loading={loading}
+          error={error}
+          searched={searched}
+          query={q}
+        />
+      </motion.div>
     </div>
   );
 }

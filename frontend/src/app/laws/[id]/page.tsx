@@ -1,41 +1,53 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Breadcrumb } from '@/components/Breadcrumb';
-import { LawMetaPanel } from '@/components/LawMetaPanel';
-import { LawStructureList } from '@/components/LawStructureList';
-import Sidebar from '@/components/Sidebar';
-import type { TreeNode } from '@/types';
-import { Layout } from '@/components/Layout';
-import { ROUTES } from '@/constants/routes';
-import { useLawTree } from '@/hooks/useLawTree';
-import { useSubjectsMap } from '@/hooks/useSubjectsMap';
-import { buildLawSections, countArticlesInSections, limitLawSections } from '@/lib/lawTree';
-import styles from './page.module.scss';
+import { useMemo, useState } from "react";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { motion } from "framer-motion";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { LawMetaPanel } from "@/components/LawMetaPanel";
+import { LawStructureList } from "@/components/LawStructureList";
+import Sidebar from "@/components/Sidebar";
+import type { TreeNode } from "@/types";
+import { Layout } from "@/components/Layout";
+import { ROUTES } from "@/constants/routes";
+import { useLawTree } from "@/hooks/useLawTree";
+import { useSubjectsMap } from "@/hooks/useSubjectsMap";
+import {
+  buildLawSections,
+  countArticlesInSections,
+  limitLawSections,
+} from "@/lib/lawTree";
+import styles from "./page.module.scss";
 import {
   DEFAULT_ARTICLE_LIMIT,
   ARTICLE_LIMIT_OPTIONS,
   parseLimitValue,
   toLimitParam,
-} from '@/lib/pageLimits';
+} from "@/lib/pageLimits";
 
-function filterTreeBySubject(tree: TreeNode[], subjectId: string | null): TreeNode[] {
+function filterTreeBySubject(
+  tree: TreeNode[],
+  subjectId: string | null,
+): TreeNode[] {
   if (!subjectId) return tree;
 
   const matchingNodeIds = new Set<string>();
   const parentMap = new Map<string, string | null>();
 
-  tree.forEach(node => {
+  tree.forEach((node) => {
     if (node._id) parentMap.set(node._id, node.parentId || null);
-    if (node.subjects?.some(s => s.subject_id === subjectId)) {
+    if (node.subjects?.some((s) => s.subject_id === subjectId)) {
       if (node._id) matchingNodeIds.add(node._id);
     }
   });
 
   const nodesToKeep = new Set<string>(matchingNodeIds);
-  matchingNodeIds.forEach(id => {
+  matchingNodeIds.forEach((id) => {
     let currentId: string | null = id;
     while (currentId) {
       const parentId = parentMap.get(currentId);
@@ -46,7 +58,7 @@ function filterTreeBySubject(tree: TreeNode[], subjectId: string | null): TreeNo
     }
   });
 
-  return tree.filter(node => node._id && nodesToKeep.has(node._id));
+  return tree.filter((node) => node._id && nodesToKeep.has(node._id));
 }
 
 export default function LawTreePage() {
@@ -57,16 +69,17 @@ export default function LawTreePage() {
   const lawId = params?.id;
   const { law, tree, loading, error } = useLawTree(lawId);
   const { subjectsMap } = useSubjectsMap();
-  const [selectedLimit, setSelectedLimit] = useState<number | 'all'>(() =>
-    parseLimitValue(searchParams.get('limit'))
+  const [selectedLimit, setSelectedLimit] = useState<number | "all">(() =>
+    parseLimitValue(searchParams.get("limit")),
   );
-  const selectedSubjectId = searchParams.get('subject');
+  const selectedSubjectId = searchParams.get("subject");
 
   const lawSubjects = useMemo(() => {
     const seen = new Set<string>();
-    const result: Array<{ subject_id: string; name: string; status: string }> = [];
-    tree.forEach(el => {
-      el.subjects?.forEach(s => {
+    const result: Array<{ subject_id: string; name: string; status: string }> =
+      [];
+    tree.forEach((el) => {
+      el.subjects?.forEach((s) => {
         const subj = subjectsMap.get(s.subject_id);
         if (!seen.has(s.subject_id) && subj) {
           seen.add(s.subject_id);
@@ -83,33 +96,46 @@ export default function LawTreePage() {
 
   const filteredTree = useMemo(
     () => filterTreeBySubject(tree, selectedSubjectId),
-    [tree, selectedSubjectId]
+    [tree, selectedSubjectId],
   );
 
-  const sections = useMemo(() => buildLawSections(filteredTree), [filteredTree]);
-  const articleCount = useMemo(() => countArticlesInSections(sections), [sections]);
+  const sections = useMemo(
+    () => buildLawSections(filteredTree),
+    [filteredTree],
+  );
+  const articleCount = useMemo(
+    () => countArticlesInSections(sections),
+    [sections],
+  );
   const visibleSections = useMemo(
-    () => limitLawSections(sections, selectedLimit === 'all' ? null : selectedLimit),
-    [sections, selectedLimit]
+    () =>
+      limitLawSections(
+        sections,
+        selectedLimit === "all" ? null : selectedLimit,
+      ),
+    [sections, selectedLimit],
   );
   const visibleArticleCount = useMemo(
     () => countArticlesInSections(visibleSections),
-    [visibleSections]
+    [visibleSections],
   );
-  const showLimitControls = !loading && !error && articleCount > ARTICLE_LIMIT_OPTIONS[0];
+  const showLimitControls =
+    !loading && !error && articleCount > ARTICLE_LIMIT_OPTIONS[0];
   const canLoadMore =
-    showLimitControls && selectedLimit !== 'all' && visibleArticleCount < articleCount;
+    showLimitControls &&
+    selectedLimit !== "all" &&
+    visibleArticleCount < articleCount;
 
-  const updateLimit = (nextValue: number | 'all') => {
+  const updateLimit = (nextValue: number | "all") => {
     setSelectedLimit(nextValue);
 
     const nextSearchParams = new URLSearchParams(searchParams.toString());
     const nextParam = toLimitParam(nextValue);
 
     if (nextParam === String(DEFAULT_ARTICLE_LIMIT)) {
-      nextSearchParams.delete('limit');
+      nextSearchParams.delete("limit");
     } else {
-      nextSearchParams.set('limit', nextParam);
+      nextSearchParams.set("limit", nextParam);
     }
 
     const nextQuery = nextSearchParams.toString();
@@ -121,22 +147,25 @@ export default function LawTreePage() {
   const updateSubject = (nextValue: string | null) => {
     const nextSearchParams = new URLSearchParams(searchParams.toString());
     if (nextValue) {
-      nextSearchParams.set('subject', nextValue);
+      nextSearchParams.set("subject", nextValue);
     } else {
-      nextSearchParams.delete('subject');
+      nextSearchParams.delete("subject");
     }
     const nextQuery = nextSearchParams.toString();
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
       scroll: false,
     });
   };
+  console.log("lawSubjects", lawSubjects);
+  console.log(subjectsMap.size);
+  console.log(tree[0]?.subjects);
 
   return (
     <Layout fullHeight>
       <div className={styles.contentFlex}>
-        <div className="sm:flex sm:gap-8 max-w-[1400px] mx-auto w-full">
+        <div className="sm:flex">
           <Sidebar
-            subjectsList={lawSubjects.map(s => ({
+            subjectsList={lawSubjects.map((s) => ({
               _id: s.subject_id,
               canonical_name: s.name,
             }))}
@@ -151,8 +180,8 @@ export default function LawTreePage() {
             >
               <Breadcrumb
                 items={[
-                  { label: 'Закони', href: ROUTES.laws },
-                  { label: law?.title ?? lawId ?? '…' },
+                  { label: "Закони", href: ROUTES.laws },
+                  { label: law?.title ?? lawId ?? "…" },
                 ]}
               />
             </motion.div>
@@ -183,7 +212,7 @@ export default function LawTreePage() {
                     transition={{
                       duration: 1.5,
                       repeat: Infinity,
-                      ease: 'easeInOut',
+                      ease: "easeInOut",
                       delay: index * 0.1,
                     }}
                   >
@@ -206,7 +235,9 @@ export default function LawTreePage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <div className={`mono ${styles.errorLabel}`}>Помилка завантаження</div>
+                <div className={`mono ${styles.errorLabel}`}>
+                  Помилка завантаження
+                </div>
                 <div className={styles.errorText}>{error}</div>
               </motion.div>
             ) : null}
@@ -222,8 +253,8 @@ export default function LawTreePage() {
                   У цьому законі поки немає статей для відображення
                 </div>
                 <div className={`mono ${styles.emptyNote}`}>
-                  Коли дерево закону буде наповнене, тут з&apos;явиться повна структура розділів і
-                  статей.
+                  Коли дерево закону буде наповнене, тут з&apos;явиться повна
+                  структура розділів і статей.
                 </div>
               </motion.div>
             ) : null}

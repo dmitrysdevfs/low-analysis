@@ -28,8 +28,8 @@ export default function Sidebar({
     error: fetchError,
   } = useSubjects();
 
-  const subjects = subjectsList ?? fetchedSubjects;
-  const loading = isLoading ?? (subjectsList ? false : fetchLoading);
+  const loading = isLoading ?? fetchLoading;
+  const subjects = subjectsList?.length ? subjectsList : fetchedSubjects;
   const error = subjectsList ? null : fetchError;
 
   const sortedSubjects = useMemo(() => {
@@ -73,7 +73,7 @@ export default function Sidebar({
 
   if (loading) {
     return (
-      <aside className="sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
+      <aside className="sm:sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
         <div className="text-sm text-gray-400 animate-pulse">
           Завантаження...
         </div>
@@ -83,7 +83,7 @@ export default function Sidebar({
 
   if (error) {
     return (
-      <aside className="sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
+      <aside className="sm:sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
         <div className="text-sm text-red-500">
           Сталась помилка при завантаженні даних
         </div>
@@ -92,11 +92,7 @@ export default function Sidebar({
   }
 
   return (
-<<<<<<< HEAD
-    <aside className="top-6 w-full sm:max-w-70 lg:max-w-80 shrink-0 lg:pt-18 md:pt-14 pt-10 lg:pl-10 md:pl-8 pl-6 pr-6 sm:pr-1">
-=======
-    <aside className="sticky top-[120px] self-start w-full sm:max-w-70 lg:max-w-80 shrink-0 lg:pt-18 md:pt-14 pt-10 lg:pl-10 md:pl-8 pl-6 pr-6 sm:pr-1">
->>>>>>> develop
+    <aside className="sm:sticky  self-start w-full sm:max-w-70 lg:max-w-80 shrink-0 lg:pt-18 md:pt-14 pt-10 lg:pl-10 md:pl-8 pl-6 pr-6 sm:pr-1">
       <div className="relative">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
