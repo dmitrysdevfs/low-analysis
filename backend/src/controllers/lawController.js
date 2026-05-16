@@ -2,10 +2,28 @@ import * as lawService from '../services/lawService.js';
 import * as fetchService from '../services/fetchService.js';
 import { parseLawHtml } from '../services/parserService.js';
 
+const VALID_SORT_BY = ['date', 'title'];
+const VALID_SORT_ORDER = ['asc', 'desc'];
+
 export const getAllLaws = async (req, res, next) => {
   try {
     const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
-    const laws = await lawService.getAllLaws(q);
+
+    const sortBy = req.query.sortBy ?? 'date';
+    const sortOrder = req.query.sortOrder ?? 'desc';
+
+    if (!VALID_SORT_BY.includes(sortBy)) {
+      return res.status(400).json({
+        message: `Invalid sortBy value. Allowed: ${VALID_SORT_BY.join(', ')}`,
+      });
+    }
+    if (!VALID_SORT_ORDER.includes(sortOrder)) {
+      return res.status(400).json({
+        message: `Invalid sortOrder value. Allowed: ${VALID_SORT_ORDER.join(', ')}`,
+      });
+    }
+
+    const laws = await lawService.getAllLaws({ q, sortBy, sortOrder });
     res.json(laws);
   } catch (error) {
     next(error);
@@ -70,6 +88,7 @@ export const parseLawFromUrl = async (req, res, next) => {
       status: parsedData.status,
       preamble: parsedData.preamble,
       signatory: parsedData.signatory,
+      adoptedDate: parsedData.adoptedDate,
     });
 
     // 4. Attach lawId, generate _id, and link parentId

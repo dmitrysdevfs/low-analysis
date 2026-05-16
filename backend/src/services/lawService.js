@@ -4,7 +4,7 @@ import Element from '../models/Element.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
-export const getAllLaws = async (q = '') => {
+export const getAllLaws = async ({ q = '', sortBy = 'date', sortOrder = 'desc' } = {}) => {
   const filter = q
     ? {
         title: {
@@ -12,7 +12,11 @@ export const getAllLaws = async (q = '') => {
         },
       }
     : {};
-  return await Law.find(filter).select('-__v').sort({ adoptedDate: -1 });
+
+  const sortField = sortBy === 'title' ? 'title' : 'adoptedDate';
+  const sortDirection = sortOrder === 'asc' ? 1 : -1;
+
+  return await Law.find(filter).select('-__v').sort({ [sortField]: sortDirection });
 };
 
 export const getLawById = async (id) => {
@@ -64,10 +68,12 @@ export const getArticle = async (lawId, articleNumber) => {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export const upsertLaw = async (lawData) => {
-  const { code, title, source, status, preamble, signatory } = lawData;
+  const { code, title, source, status, preamble, signatory, adoptedDate } = lawData;
+  const update = { title, source, status, preamble, signatory };
+  if (adoptedDate != null) update.adoptedDate = adoptedDate;
   const law = await Law.findOneAndUpdate(
     { code },
-    { $set: { title, source, status, preamble, signatory } },
+    { $set: update },
     { new: true, upsert: true },
   );
   return law;

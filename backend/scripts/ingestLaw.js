@@ -79,6 +79,7 @@ const ingestLaw = async (filePath) => {
     status,
     preamble,
     signatory,
+    adoptedDate,
   });
 
   // Persist Elements (attach lawId resolved from the created Law)

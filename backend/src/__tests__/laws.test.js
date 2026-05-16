@@ -49,7 +49,37 @@ describe('GET /api/laws', () => {
 
     await request(app).get('/api/laws?q=constitution');
 
-    expect(lawService.getAllLaws).toHaveBeenCalledWith('constitution');
+    expect(lawService.getAllLaws).toHaveBeenCalledWith({
+      q: 'constitution',
+      sortBy: 'date',
+      sortOrder: 'desc',
+    });
+  });
+
+  it('passes sortBy and sortOrder to the service', async () => {
+    lawService.getAllLaws.mockResolvedValue([]);
+
+    await request(app).get('/api/laws?sortBy=title&sortOrder=asc');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith({
+      q: '',
+      sortBy: 'title',
+      sortOrder: 'asc',
+    });
+  });
+
+  it('returns 400 for invalid sortBy', async () => {
+    const res = await request(app).get('/api/laws?sortBy=invalid');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/sortBy/);
+  });
+
+  it('returns 400 for invalid sortOrder', async () => {
+    const res = await request(app).get('/api/laws?sortOrder=random');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/sortOrder/);
   });
 });
 

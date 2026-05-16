@@ -19,12 +19,13 @@ const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
  *
  * @param {string} html - Raw HTML content of the .frame page
  * @param {string} [mainHtml] - Raw HTML content of the main page (optional)
- * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null }} parsed data
+ * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null, adoptedDate: Date|null }} parsed data
  */
 export const parseLawHtml = (html, mainHtml = null) => {
   const $ = cheerio.load(html);
 
   let status = null;
+  let adoptedDate = null;
   if (mainHtml) {
     const $main = cheerio.load(mainHtml);
     status =
@@ -32,6 +33,14 @@ export const parseLawHtml = (html, mainHtml = null) => {
       $main('span.valid').first().text().trim() ||
       $main('.doc-status').first().text().trim() ||
       null;
+
+    // Extract adoption date from <title>: "... від 28.06.1996 ..."
+    const titleText = $main('title').first().text();
+    const dateMatch = titleText.match(/від (\d{2})\.(\d{2})\.(\d{4})/);
+    if (dateMatch) {
+      const [, day, month, year] = dateMatch;
+      adoptedDate = new Date(`${year}-${month}-${day}`);
+    }
   }
 
   // ── 1. Extract law title ──────────────────────────────────────────────────
@@ -242,5 +251,5 @@ export const parseLawHtml = (html, mainHtml = null) => {
   const preamble = preambleText.length > 0 ? preambleText.join('\n') : null;
   const signatory = signatoryText.length > 0 ? signatoryText.join('\n') : null;
 
-  return { title, code, elements, preamble, status, signatory };
+  return { title, code, elements, preamble, status, signatory, adoptedDate };
 };
