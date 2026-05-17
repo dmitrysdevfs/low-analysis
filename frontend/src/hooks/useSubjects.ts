@@ -11,6 +11,9 @@ interface State {
   error: string | null;
 }
 
+let subjectsCacheEntry: { data: Subject[]; ts: number } | null = null;
+const SUBJECTS_CACHE_TTL = 60_000;
+
 export function useSubjects() {
   const [state, setState] = useState<State>({
     fetched: false,
@@ -21,8 +24,16 @@ export function useSubjects() {
   useEffect(() => {
     const controller = new AbortController();
 
+    if (subjectsCacheEntry && Date.now() - subjectsCacheEntry.ts < SUBJECTS_CACHE_TTL) {
+      setState({ fetched: true, subjects: subjectsCacheEntry.data, error: null });
+      return;
+    }
+
     getSubjects({ signal: controller.signal })
-      .then((subjects) => setState({ fetched: true, subjects, error: null }))
+      .then((subjects) => {
+        subjectsCacheEntry = { data: subjects, ts: Date.now() };
+        setState({ fetched: true, subjects, error: null });
+      })
       .catch((error: unknown) => {
         const msg = parseApiError(error);
         if (msg === "__ABORT__") return;
@@ -33,4 +44,8 @@ export function useSubjects() {
   }, []);
 
   return { ...state, loading: !state.fetched };
+}
+
+export function __resetSubjectsCacheForTests() {
+  subjectsCacheEntry = null;
 }

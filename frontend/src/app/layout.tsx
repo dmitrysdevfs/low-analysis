@@ -7,6 +7,10 @@ import Header from "@/layout/Header/Header";
 import Footer from "@/layout/Footer/Footer";
 import { BackendWarmup } from "@/components/BackendWarmup";
 import { ScrollRestore } from "@/components/ScrollRestore";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { RouteAccessGate } from "@/components/auth/RouteAccessGate";
+import { BillingProvider } from "@/components/billing/BillingProvider";
+import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 const display = Cormorant_Garamond({
@@ -28,7 +32,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Low Analysis",
+  title: "Law Analysis",
   description:
     "Platform for structuring, exploring, and analyzing Ukrainian legislation.",
   icons: {
@@ -48,13 +52,21 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <ErrorBoundary>
-          <div className="site-shell">
-            <BackendWarmup />
-            <ScrollRestore />
-            <Header />
-            <div className="site-content">{children}</div>
-            <Footer />
-          </div>
+          <AuthProvider>
+            <BillingProvider>
+              <GuestLimitsProvider>
+                <div className="site-shell">
+                  <BackendWarmup />
+                  <ScrollRestore />
+                  <Header />
+                  <div className="site-content">
+                    <RouteAccessGate>{children}</RouteAccessGate>
+                  </div>
+                  <Footer />
+                </div>
+              </GuestLimitsProvider>
+            </BillingProvider>
+          </AuthProvider>
         </ErrorBoundary>
         <ToastContainer />
       </body>

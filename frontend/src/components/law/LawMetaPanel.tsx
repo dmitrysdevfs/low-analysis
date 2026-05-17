@@ -62,17 +62,16 @@ export function LawMetaPanel({
         </div>
       )}
       {lawSubjects.length > 0 && (
-        <div style={{ marginTop: "16px" }}>
-          <div className="eyebrow" style={{ marginBottom: "8px" }}>
+        <div className={styles.subjectsBlock}>
+          <div className={`eyebrow ${styles.subjectsLabel}`}>
             {"Суб'єкти (актори)"} · {lawSubjects.length}
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+          <div className={styles.subjectsList}>
             {lawSubjects.map(({ subject_id, name }) => (
               <Link
                 key={subject_id}
                 href={ROUTES.subject(subject_id)}
-                className="directory-chip mono"
-                style={{ textDecoration: "none" }}
+                className={`directory-chip mono ${styles.subjectLink}`}
               >
                 {name}
               </Link>

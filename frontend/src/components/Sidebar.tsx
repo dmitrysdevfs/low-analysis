@@ -1,6 +1,7 @@
 import { useSubjects } from "@/hooks/useSubjects";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { highlightMatch } from "@/lib/utils/highlightMatch";
 
 export default function Sidebar() {
   const [search, setSearch] = useState("");
@@ -28,23 +29,6 @@ export default function Sidebar() {
       : showAll
         ? sortedSubjects
         : sortedSubjects.slice(0, 10);
-
-  const highlightMatch = (text: string, query: string) => {
-    if (!query.trim()) return text;
-
-    const regex = new RegExp(`(${query})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} className="font-semibold text-[#c8a843]">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
 
   if (loading) {
     return (
@@ -107,7 +91,7 @@ export default function Sidebar() {
                 }}
                 className="cursor-pointer break-words text-sm leading-5 text-[#7a98c0] hover:text-[#c8a843] hover:bg-[#1c3260] rounded px-1 py-2"
               >
-                {highlightMatch(subject.canonical_name, search)}
+                {highlightMatch(subject.canonical_name, search ? [search] : [])}
               </li>
             ))}
           </ul>

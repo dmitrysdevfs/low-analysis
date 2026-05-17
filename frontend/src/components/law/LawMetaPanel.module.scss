@@ -106,3 +106,21 @@
   margin-top: 14px;
   color: #008d00;
 }
+
+.subjectsBlock {
+  margin-top: 16px;
+}
+
+.subjectsLabel {
+  margin-bottom: 8px;
+}
+
+.subjectsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.subjectLink {
+  text-decoration: none;
+}

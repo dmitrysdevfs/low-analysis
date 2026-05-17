@@ -1,0 +1,39 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.icon {
+  font-size: 2.5rem;
+  color: #c85a5a;
+  font-family: var(--font-mono);
+}
+
+.message {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #7a98c0;
+  max-width: 480px;
+}
+
+.resetButton {
+  background: transparent;
+  border: 1px solid #1c3260;
+  border-radius: 8px;
+  color: #d6e0f0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: border-color 0.18s;
+}
+
+.resetButton:hover {
+  border-color: #4a80d4;
+}

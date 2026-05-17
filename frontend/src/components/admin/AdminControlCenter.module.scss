@@ -1,0 +1,647 @@
+.page {
+  position: relative;
+  min-height: calc(100vh - 190px);
+  padding: clamp(28px, 5vw, 56px) 0 clamp(34px, 6vw, 72px);
+  background:
+    radial-gradient(circle at 16% 18%, rgba(74, 128, 212, 0.2), transparent 28%),
+    radial-gradient(circle at 84% 16%, rgba(200, 168, 67, 0.18), transparent 22%),
+    linear-gradient(180deg, rgba(7, 15, 32, 0.98) 0%, rgba(12, 22, 44, 0.98) 100%);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.heroCopy,
+.heroPanel,
+.metricCard,
+.panel {
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
+    rgba(9, 18, 38, 0.84);
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.heroCopy {
+  padding: clamp(24px, 4vw, 38px);
+}
+
+.eyebrow,
+.panelEyebrow,
+.metricLabel,
+.heroPanelLabel {
+  display: inline-flex;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 18px 0 0;
+  color: #ffffff;
+  font-size: clamp(2.3rem, 5vw, 4rem);
+  line-height: 0.98;
+}
+
+.description {
+  max-width: 60ch;
+  margin: 18px 0 0;
+  color: #d6e0f0;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.heroPanel {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.heroPanelValue {
+  margin-top: 16px;
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.heroPanelMeta {
+  margin-top: 8px;
+  color: #d6e0f0;
+}
+
+.heroPill {
+  width: fit-content;
+  margin-top: 18px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(200, 168, 67, 0.12);
+  color: #fff1bf;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.metricsGrid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metricCard {
+  padding: 20px;
+}
+
+.metricValue {
+  display: block;
+  margin-top: 14px;
+  color: #ffffff;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1;
+}
+
+.metricNote {
+  margin: 12px 0 0;
+  color: #c7d5ea;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.contentGrid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.panel {
+  padding: 22px;
+}
+
+.panelWide {
+  grid-column: span 2;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.panelTitle {
+  margin: 10px 0 0;
+  color: #ffffff;
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.matrix {
+  display: grid;
+  gap: 10px;
+}
+
+.matrixHead,
+.matrixRow {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(5, 0.65fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.matrixHead {
+  color: #9eb5d9;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.matrixRow {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+}
+
+.matrixRole {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.checklist,
+.sequence {
+  margin: 0;
+  padding-left: 18px;
+  color: #eef3fb;
+  display: grid;
+  gap: 12px;
+  line-height: 1.7;
+}
+
+.panelDescription {
+  margin: 0;
+  color: #d6e0f0;
+  line-height: 1.7;
+}
+
+.ghostAction,
+.primaryAction,
+.secondaryAction {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.primaryAction,
+.secondaryAction {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ghostAction {
+  border: 1px solid rgba(200, 168, 67, 0.24);
+  background: rgba(200, 168, 67, 0.08);
+  color: #fff1bf;
+}
+
+.ghostAction:hover,
+.primaryAction:hover,
+.secondaryAction:hover {
+  transform: translateY(-1px);
+}
+
+.accountList {
+  display: grid;
+  gap: 12px;
+}
+
+.superCodeCard {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(200, 168, 67, 0.12);
+  margin-bottom: 14px;
+}
+
+.superCodeValue {
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.superCodeMeta {
+  margin-top: 10px;
+  color: #c7d5ea;
+  font-size: 0.88rem;
+}
+
+.accountRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto minmax(190px, 0.95fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.accountName {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.accountMeta,
+.accountMetaBlock {
+  color: #c7d5ea;
+  font-size: 0.88rem;
+}
+
+.accountMetaBlock {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.accountBadges {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.accountBadge,
+.accountBadgeAccent {
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.accountBadge {
+  background: rgba(74, 128, 212, 0.14);
+  color: #b7cdf0;
+}
+
+.accountBadgeAccent {
+  background: rgba(200, 168, 67, 0.16);
+  color: #fff1bf;
+}
+
+.emptyState {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #d6e0f0;
+}
+
+.actionStack {
+  display: grid;
+  gap: 10px;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.toolbarInput {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  padding: 0 16px;
+  outline: none;
+}
+
+.toolbarInput:focus {
+  border-color: rgba(200, 168, 67, 0.45);
+  box-shadow: 0 0 0 4px rgba(200, 168, 67, 0.08);
+}
+
+.filterTabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filterTab {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+  cursor: pointer;
+  font: inherit;
+  text-transform: capitalize;
+}
+
+.filterTabActive {
+  border-color: rgba(200, 168, 67, 0.36);
+  background: rgba(200, 168, 67, 0.12);
+  color: #fff1bf;
+}
+
+.historyList,
+.auditList,
+.pressureGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.historyRow,
+.auditRow,
+.pressureCard {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 14px 16px;
+}
+
+.historyRow {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.historyCode {
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.historyMeta {
+  margin-top: 6px;
+  color: #c7d5ea;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.historyStatus {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(200, 168, 67, 0.14);
+  color: #fff1bf;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pressureGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.pressureTitle {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.pressureValue {
+  margin-top: 12px;
+  color: #fff1bf;
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  letter-spacing: 0.06em;
+}
+
+.pressureMeta {
+  margin-top: 8px;
+  color: #c7d5ea;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.auditRow {
+  display: grid;
+  gap: 8px;
+}
+
+.auditMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #9eb5d9;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.auditBadge {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(74, 128, 212, 0.14);
+  color: #b7cdf0;
+}
+
+.auditBadgeWarning {
+  background: rgba(200, 168, 67, 0.16);
+  color: #fff1bf;
+}
+
+.auditBadgeSecurity {
+  background: rgba(233, 119, 75, 0.16);
+  color: #ffb39b;
+}
+
+.auditTitle {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.auditDetail {
+  color: #d6e0f0;
+  line-height: 1.65;
+}
+
+.primaryAction {
+  border: 0;
+  background: linear-gradient(135deg, #f7f6f2 0%, #d9d5c9 100%);
+  color: #081020;
+}
+
+.secondaryAction {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+}
+
+/* ── Zone tabs ─────────────────────────────────────────────── */
+
+.zoneTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 20px;
+  border-bottom: 1px solid #0d1735;
+  padding-bottom: 0;
+}
+
+.zoneTab {
+  padding: 8px 16px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #2a4070;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease;
+  margin-bottom: -1px;
+}
+
+.zoneTab:hover {
+  color: #7a9ec8;
+}
+
+.zoneTabActive {
+  color: #c8a843;
+  border-bottom-color: #c8a843;
+}
+
+/* ── Metrics inline (overview tab) ─────────────────────────── */
+
+.metricsInline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* ── Account action buttons ─────────────────────────────────── */
+
+.accountActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.accountActionBtn {
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #c7d5ea;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.accountActionBtn:hover {
+  border-color: rgba(200, 168, 67, 0.36);
+  background: rgba(200, 168, 67, 0.1);
+  color: #fff1bf;
+}
+
+.accountActionBtnDanger {
+  border-color: rgba(233, 119, 75, 0.2);
+  color: #ffb39b;
+}
+
+.accountActionBtnDanger:hover {
+  border-color: rgba(233, 119, 75, 0.5);
+  background: rgba(233, 119, 75, 0.1);
+  color: #ffb39b;
+}
+
+@media (max-width: 1100px) {
+  .hero,
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .panelWide {
+    grid-column: auto;
+  }
+
+  .metricsGrid,
+  .metricsInline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .accountRow {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .accountMetaBlock {
+    justify-items: start;
+  }
+
+  .toolbar,
+  .pressureGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .metricsGrid,
+  .metricsInline {
+    grid-template-columns: 1fr;
+  }
+
+  .matrixHead {
+    display: none;
+  }
+
+  .matrixRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panel,
+  .heroPanel,
+  .heroCopy,
+  .metricCard {
+    border-radius: 22px;
+  }
+
+  .historyRow {
+    flex-direction: column;
+  }
+}

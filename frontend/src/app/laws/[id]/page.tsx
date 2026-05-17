@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import {
   useParams,
   usePathname,
@@ -27,7 +26,6 @@ import {
   ARTICLE_LIMIT_OPTIONS,
   parseLimitValue,
   toLimitParam,
-  getNextLimitValue,
 } from "@/lib/pageLimits";
 
 export default function LawTreePage() {

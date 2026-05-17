@@ -20,6 +20,7 @@
   justify-content: center;
 }
 
+/* Залишаємо .container але тепер outerContainer виконує його роль */
 .container {
   width: 100%;
   max-width: 760px;
@@ -166,6 +167,7 @@
 }
 
 .childItem {
+  position: relative;
   display: flex;
   gap: 14px;
   align-items: flex-start;
@@ -184,6 +186,10 @@
     padding-right: 8px;
     border-radius: 4px;
   }
+
+  &:hover .copyBtn {
+    opacity: 1;
+  }
 }
 
 .childBadge {
@@ -198,6 +204,16 @@
   min-width: 36px;
   text-align: center;
   white-space: nowrap;
+}
+
+.charCount {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: #2a4070;
+  letter-spacing: 0.04em;
+  margin-left: 6px;
+  margin-top: 3px;
+  flex-shrink: 0;
 }
 
 .childContent {
@@ -324,6 +340,54 @@
   color: #7a98c0;
 }
 
+/* ── FE-T62: Node subjects ── */
+.nodeSubjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.subjectChip {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #4a80d4;
+  background: rgba(74, 128, 212, 0.08);
+  border: 1px solid rgba(74, 128, 212, 0.2);
+  border-radius: 3px;
+  padding: 2px 7px;
+  letter-spacing: 0.03em;
+}
+
+.noSubjects {
+  font-size: 0.62rem;
+  color: #2a4070;
+  font-family: var(--font-mono);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* ── FE-T63: Copy button ── */
+.copyBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: 1px solid #1c3260;
+  border-radius: 3px;
+  color: #2a4070;
+  font-size: 0.75rem;
+  padding: 3px 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.18s ease, color 0.18s ease;
+
+  &:hover {
+    color: #c8a843;
+    border-color: #c8a843;
+  }
+}
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .page {
@@ -344,5 +408,39 @@
       padding-left: 0;
       padding-right: 0;
     }
+  }
+}
+
+/* ── Two-column article layout ── */
+.outerContainer {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.articleLayout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.articleMain {
+  flex: 1;
+  min-width: 0;
+  max-width: 760px;
+}
+
+/* ── Responsive: sidebar зверху на мобайлі ── */
+@media (max-width: 840px) {
+  .articleLayout {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .articleMain {
+    max-width: 100%;
   }
 }

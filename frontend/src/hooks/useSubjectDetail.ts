@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useGuestLimits } from "@/components/guest/GuestLimitsProvider";
 import { getSubjectElements } from "@/lib/api";
 import { parseApiError } from "@/lib/utils";
 import type { Subject, TreeNode } from "@/types";
@@ -13,6 +14,7 @@ interface State {
 }
 
 export function useSubjectDetail(id?: string) {
+  const { consumeView } = useGuestLimits();
   const [state, setState] = useState<State>({
     fetchedId: null,
     subject: null,
@@ -26,6 +28,17 @@ export function useSubjectDetail(id?: string) {
     if (!id) return;
 
     const controller = new AbortController();
+    const guestAttempt = consumeView(`subject:${id}`);
+
+    if (!guestAttempt.allowed) {
+      setState({
+        fetchedId: id,
+        subject: null,
+        elements: [],
+        error: guestAttempt.message ?? "Guest deep-view limit reached.",
+      });
+      return;
+    }
 
     getSubjectElements(id, { signal: controller.signal })
       .then((data) =>
@@ -48,7 +61,7 @@ export function useSubjectDetail(id?: string) {
       });
 
     return () => controller.abort();
-  }, [id]);
+  }, [consumeView, id]);
 
   return { ...state, loading };
 }

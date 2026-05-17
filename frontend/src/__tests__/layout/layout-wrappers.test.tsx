@@ -14,7 +14,7 @@ describe("frontend layout wrappers", () => {
   });
 
   it("exports root metadata and html shell structure", () => {
-    expect(metadata.title).toBe("Low Analysis");
+    expect(metadata.title).toBe("Law Analysis");
     expect(metadata.description).toContain("Ukrainian legislation");
 
     const tree = RootLayout({

@@ -83,13 +83,16 @@ export function buildLawSections(elements: TreeNode[]) {
     return sections;
   }
 
+  const lawId = looseNodes[0]?.lawId;
+  const unsectionedId = lawId ? `__unsectioned__:${lawId}` : "__unsectioned__";
+
   return [
     {
-      key: "__unsectioned__",
-      _id: "__unsectioned__",
+      key: unsectionedId,
+      _id: unsectionedId,
       type: "section" as const,
       code: "__unsectioned__",
-      lawId: looseNodes[0]?.lawId,
+      lawId,
       parentId: null,
       number: null,
       title: "Статті без розділу",

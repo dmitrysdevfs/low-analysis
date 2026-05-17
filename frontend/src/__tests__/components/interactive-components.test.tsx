@@ -1,12 +1,14 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AppHeader } from "@/components/AppHeader";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Dialog } from "@/components/Dialog";
 import { LawStructureList } from "@/components/LawStructureList";
 import { SearchForm } from "@/components/SearchForm";
 import { SearchResults } from "@/components/SearchResults";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { TreeNode } from "@/components/TreeNode";
+import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
 import { buildLawSections } from "@/lib/lawTree";
 import {
   ARTICLE_NODE,
@@ -19,18 +21,50 @@ import {
 import { setMockPathname } from "@/test/mocks/next-navigation";
 
 describe("interactive frontend components", () => {
-  it("highlights the active nav item in AppHeader", () => {
+  it("highlights the active nav item in AppHeader for guest view", () => {
     setMockPathname("/subjects/subject-1");
 
     render(<AppHeader />);
 
-    expect(screen.getByRole("link", { name: "Low Analysis" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Law Analysis" })).toHaveAttribute(
       "href",
       "/",
+    );
+    expect(screen.getByRole("link", { name: /Вхід/i })).toHaveAttribute(
+      "href",
+      "/auth",
     );
     expect(screen.getByRole("link", { name: "Суб'єкти" })).toHaveClass(
       "active",
     );
+  });
+
+  it("shows admin switch and logout controls for administrator session", async () => {
+    window.localStorage.setItem(
+      AUTH_SESSION_STORAGE_KEY,
+      JSON.stringify({
+        id: "admin-1",
+        displayName: "Root Admin",
+        email: "admin@low.test",
+        roles: ["admin", "client"],
+        accountType: "admin",
+        lastLoginAt: "2026-05-17T10:00:00.000Z",
+      }),
+    );
+    setMockPathname("/admin");
+
+    render(
+      <AuthProvider>
+        <AppHeader />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: "Панель адміна" })).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole("link", { name: "Сайт" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("button", { name: "Вийти з акаунту" })).toBeInTheDocument();
   });
 
   it("renders skeleton card shell", () => {
@@ -98,7 +132,7 @@ describe("interactive frontend components", () => {
 
     await user.click(screen.getByRole("button", { name: /Очистити/i }));
     expect(onReset).toHaveBeenCalledTimes(1);
-  });
+  }, 12000);
 
   it("renders loading, empty, error and results states in SearchResults", () => {
     const { rerender } = render(

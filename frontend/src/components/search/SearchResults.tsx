@@ -12,6 +12,8 @@ interface SearchResultsProps {
   error: string | null;
   searched: boolean;
   query: string;
+  guestPreview?: boolean;
+  guestResultLimit?: number;
 }
 
 const skeletonItem = (index: number) => (
@@ -37,6 +39,8 @@ export function SearchResults({
   error,
   searched,
   query,
+  guestPreview = false,
+  guestResultLimit = 0,
 }: SearchResultsProps) {
   if (loading) {
     return (
@@ -84,6 +88,16 @@ export function SearchResults({
 
   return (
     <div>
+      {guestPreview ? (
+        <div className={styles.guestNotice}>
+          <span className={styles.guestNoticeTitle}>Режим перегляду гостя</span>
+          <span className={styles.guestNoticeText}>
+            Пошук доступний для гостей, але відображаються лише перші {guestResultLimit} результати.
+            Ліміти запитів спільні для всіх відкритих вкладок.
+          </span>
+        </div>
+      ) : null}
+
       <div className={`mono ${styles.countLine}`}>
         Результат пошуку ({results.length}{" "}
         {results.length === 1

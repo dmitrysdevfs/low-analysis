@@ -1,9 +1,9 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useArticle } from "@/hooks/useArticle";
-import { useLaws } from "@/hooks/useLaws";
+import { __resetLawsCacheForTests, useLaws } from "@/hooks/useLaws";
 import { useLawTree } from "@/hooks/useLawTree";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
-import { useSubjects } from "@/hooks/useSubjects";
+import { __resetSubjectsCacheForTests, useSubjects } from "@/hooks/useSubjects";
 import {
   getArticle,
   getLaws,
@@ -34,6 +34,8 @@ describe("frontend data hooks", () => {
     vi.mocked(getArticle).mockReset();
     vi.mocked(getSubjects).mockReset();
     vi.mocked(getSubjectElements).mockReset();
+    __resetLawsCacheForTests();
+    __resetSubjectsCacheForTests();
   });
 
   afterEach(() => {

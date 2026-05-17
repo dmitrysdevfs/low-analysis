@@ -1,0 +1,117 @@
+.shell {
+  position: relative;
+  min-height: calc(100vh - 190px);
+  display: grid;
+  place-items: center;
+  padding: clamp(28px, 6vw, 72px) 16px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(245, 209, 111, 0.16) 0%, rgba(245, 209, 111, 0.04) 20%, transparent 42%),
+    linear-gradient(180deg, rgba(17, 35, 81, 0.82) 0%, rgba(8, 16, 32, 0.96) 66%, #081020 100%);
+  overflow: hidden;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(74, 128, 212, 0.18), transparent 28%),
+    radial-gradient(circle at 82% 30%, rgba(200, 168, 67, 0.16), transparent 26%);
+  pointer-events: none;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  padding: clamp(26px, 4vw, 38px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.03) 100%),
+    rgba(12, 25, 52, 0.74);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.eyebrow {
+  display: inline-flex;
+  margin-bottom: 16px;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1.02;
+}
+
+.description {
+  margin: 16px 0 0;
+  color: #d6e0f0;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.primaryAction {
+  background: linear-gradient(135deg, #f7f6f2 0%, #d9d5c9 100%);
+  color: #081020;
+}
+
+.secondaryAction {
+  border: 1px solid rgba(200, 168, 67, 0.34);
+  background: rgba(200, 168, 67, 0.08);
+  color: #f9f4e4;
+}
+
+.primaryAction:hover,
+.secondaryAction:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+  .card {
+    border-radius: 24px;
+    padding: 24px 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+  }
+}

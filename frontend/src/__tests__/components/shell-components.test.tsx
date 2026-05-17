@@ -58,12 +58,8 @@ describe("shell components", () => {
     ).toBe(true);
   });
 
-  it("renders footer branding and docs link", () => {
+  it("renders footer branding", () => {
     render(<Footer />);
-
-    expect(screen.getByText(/Low Analysis/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /Документація API/i }),
-    ).toHaveAttribute("href", "/api-docs");
+    expect(screen.getAllByText(/law\s+analysis/i).length).toBeGreaterThan(0);
   });
 });

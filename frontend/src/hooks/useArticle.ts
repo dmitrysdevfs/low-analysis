@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useGuestLimits } from "@/components/guest/GuestLimitsProvider";
 import { getArticle } from "@/lib/api";
-import { parseApiError, fetchWithTimeout } from "@/lib/utils";
+import { parseApiError } from "@/lib/utils";
 import type { TreeNode } from "@/types";
 
 interface State {
@@ -13,6 +14,7 @@ interface State {
 }
 
 export function useArticle(lawId?: string, num?: string) {
+  const { consumeView } = useGuestLimits();
   const [state, setState] = useState<State>({
     fetchedKey: null,
     article: null,
@@ -28,6 +30,17 @@ export function useArticle(lawId?: string, num?: string) {
 
     const key = `${lawId}:${num}`;
     const controller = new AbortController();
+    const guestAttempt = consumeView(`article:${key}`);
+
+    if (!guestAttempt.allowed) {
+      setState({
+        fetchedKey: key,
+        article: null,
+        children: [],
+        error: guestAttempt.message ?? "Guest deep-view limit reached.",
+      });
+      return;
+    }
 
     getArticle(lawId, num, { signal: controller.signal })
       .then((data) =>
@@ -50,7 +63,7 @@ export function useArticle(lawId?: string, num?: string) {
       });
 
     return () => controller.abort();
-  }, [lawId, num]);
+  }, [consumeView, lawId, num]);
 
   return { ...state, loading };
 }

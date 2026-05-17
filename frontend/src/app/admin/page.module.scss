@@ -1,0 +1,10 @@
+.wrap {
+  width: min(1320px, calc(100% - 24px));
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .wrap {
+    width: min(100%, calc(100% - 16px));
+  }
+}

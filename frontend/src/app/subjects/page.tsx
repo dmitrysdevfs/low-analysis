@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjects } from "@/hooks/useSubjects";
+import { getLegalStatusLabel, getLegalStatusColor } from "@/lib/lawTree";
 import styles from "./page.module.scss";
 
 export default function SubjectsPage() {
@@ -92,37 +93,76 @@ export default function SubjectsPage() {
           {!loading && !error && subjects.length > 0 ? (
             <AnimatePresence>
               <div className={styles.cardList}>
-                {subjects.map((subject, index) => (
-                  <motion.div
-                    key={subject._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.07, duration: 0.4 }}
-                    whileHover={{ y: -3 }}
-                  >
-                    <Link
-                      href={ROUTES.subject(subject._id)}
-                      className={styles.cardLink}
+                {subjects.map((subject, index) => {
+                  const statusColor = getLegalStatusColor(subject.legal_status);
+                  const statusLabel = getLegalStatusLabel(subject.legal_status);
+                  return (
+                    <motion.div
+                      key={subject._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.07, duration: 0.4 }}
+                      whileHover={{ y: -2 }}
                     >
-                      <div className={styles.cardHeader}>
+                      <Link
+                        href={ROUTES.subject(subject._id)}
+                        className={styles.cardLink}
+                        style={
+                          { "--status-color": statusColor } as Record<string, string>
+                        }
+                      >
+                        <div className={styles.cardTop}>
+                          <span
+                            className={`mono ${styles.statusBadge}`}
+                            style={{
+                              color: statusColor,
+                              background: `${statusColor}18`,
+                              borderColor: `${statusColor}40`,
+                            }}
+                          >
+                            {statusLabel}
+                          </span>
+                          <span className={styles.cardArrow}>→</span>
+                        </div>
+
                         <h2 className={`display ${styles.cardTitle}`}>
                           {subject.canonical_name}
                         </h2>
-                        <span className={styles.cardArrow}>→</span>
-                      </div>
-                      <div className={styles.aliasList}>
-                        {subject.aliases.map((alias) => (
-                          <span
-                            key={alias}
-                            className={`mono ${styles.aliasBadge}`}
-                          >
-                            {alias}
-                          </span>
-                        ))}
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
+
+                        {subject.description ? (
+                          <p className={styles.cardDescription}>
+                            {subject.description}
+                          </p>
+                        ) : null}
+
+                        {subject.aliases.length > 0 ? (
+                          <div className={styles.aliasList}>
+                            {subject.aliases.map((alias) => (
+                              <span
+                                key={alias}
+                                className={`mono ${styles.aliasBadge}`}
+                              >
+                                {alias}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
+
+                        {(subject.laws_count != null ||
+                          subject.elements_count != null) ? (
+                          <div className={`mono ${styles.cardFooter}`}>
+                            {subject.laws_count != null ? (
+                              <span>{subject.laws_count} законів</span>
+                            ) : null}
+                            {subject.elements_count != null ? (
+                              <span>{subject.elements_count} норм</span>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </div>
             </AnimatePresence>
           ) : null}
