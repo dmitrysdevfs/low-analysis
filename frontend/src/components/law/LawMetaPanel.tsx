@@ -87,10 +87,14 @@ export function LawMetaPanel({
                 key={subject_id}
                 type="button"
                 className={`directory-chip mono ${styles.subjectChip} ${
-                  selectedSubjectId === subject_id ? styles.subjectChipActive : ""
+                  selectedSubjectId === subject_id
+                    ? styles.subjectChipActive
+                    : ""
                 }`}
                 onClick={() =>
-                  onSubjectSelect(selectedSubjectId === subject_id ? null : subject_id)
+                  onSubjectSelect(
+                    selectedSubjectId === subject_id ? null : subject_id,
+                  )
                 }
               >
                 {name}
