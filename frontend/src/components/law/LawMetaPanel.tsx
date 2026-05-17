@@ -1,14 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import type { Law } from "@/types";
-import { ROUTES } from "@/constants/routes";
 import {
   ARTICLE_LIMIT_OPTIONS,
+  getNextLimitValue,
   parseLimitValue,
   toLimitParam,
-  getNextLimitValue,
 } from "@/lib/pageLimits";
 import styles from "./LawMetaPanel.module.scss";
 
@@ -21,7 +19,11 @@ interface LawMetaPanelProps {
   canLoadMore: boolean;
   selectedLimit: number | "all";
   onLimitChange: (value: number | "all") => void;
-  lawSubjects?: Array<{ subject_id: string; name: string; status: string }>;
+  lawSubjects: Array<{ subject_id: string; name: string; status: string }>;
+  selectedSubjectId: string | null;
+  onSubjectSelect: (value: string | null) => void;
+  isSidebarOpen: boolean;
+  onSidebarToggle: () => void;
 }
 
 export function LawMetaPanel({
@@ -33,7 +35,11 @@ export function LawMetaPanel({
   canLoadMore,
   selectedLimit,
   onLimitChange,
-  lawSubjects = [],
+  lawSubjects,
+  selectedSubjectId,
+  onSubjectSelect,
+  isSidebarOpen,
+  onSidebarToggle,
 }: LawMetaPanelProps) {
   return (
     <motion.section
@@ -63,18 +69,32 @@ export function LawMetaPanel({
       )}
       {lawSubjects.length > 0 && (
         <div className={styles.subjectsBlock}>
-          <div className={`eyebrow ${styles.subjectsLabel}`}>
-            {"Суб'єкти (актори)"} · {lawSubjects.length}
+          <div className={styles.subjectsHeader}>
+            <div className={`eyebrow ${styles.subjectsLabel}`}>
+              {"Суб'єкти (актори)"} · {lawSubjects.length}
+            </div>
+            <button
+              type="button"
+              className={`btn btn-ghost ${styles.subjectsToggle}`}
+              onClick={onSidebarToggle}
+            >
+              {isSidebarOpen ? "Сховати список" : "Розгорнути список"}
+            </button>
           </div>
           <div className={styles.subjectsList}>
             {lawSubjects.map(({ subject_id, name }) => (
-              <Link
+              <button
                 key={subject_id}
-                href={ROUTES.subject(subject_id)}
-                className={`directory-chip mono ${styles.subjectLink}`}
+                type="button"
+                className={`directory-chip mono ${styles.subjectChip} ${
+                  selectedSubjectId === subject_id ? styles.subjectChipActive : ""
+                }`}
+                onClick={() =>
+                  onSubjectSelect(selectedSubjectId === subject_id ? null : subject_id)
+                }
               >
                 {name}
-              </Link>
+              </button>
             ))}
           </div>
         </div>

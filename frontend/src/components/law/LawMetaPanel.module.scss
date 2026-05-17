@@ -111,8 +111,21 @@
   margin-top: 16px;
 }
 
-.subjectsLabel {
+.subjectsHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   margin-bottom: 8px;
+}
+
+.subjectsLabel {
+  margin-bottom: 0;
+}
+
+.subjectsToggle {
+  min-width: 172px;
 }
 
 .subjectsList {
@@ -121,6 +134,24 @@
   gap: 6px;
 }
 
-.subjectLink {
+.subjectChip {
   text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.subjectChipActive {
+  border-color: rgba(200, 168, 67, 0.75);
+  color: #f6d35f;
+  background: rgba(200, 168, 67, 0.12);
+}
+
+@media (max-width: 640px) {
+  .subjectsHeader {
+    align-items: stretch;
+  }
+
+  .subjectsToggle {
+    width: 100%;
+  }
 }
