@@ -20,7 +20,12 @@ describe("mock billing subscription flows", () => {
   });
 
   it("activates a trial plan and records a local payment", () => {
-    const result = purchaseDemoPlan("client-1", "trial", "apple_pay", "Client One");
+    const result = purchaseDemoPlan(
+      "client-1",
+      "trial",
+      "apple_pay",
+      "Client One",
+    );
 
     expect(result.ok).toBe(true);
     expect(result.snapshot?.planId).toBe("trial");

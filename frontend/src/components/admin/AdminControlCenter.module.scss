@@ -3,9 +3,21 @@
   min-height: calc(100vh - 190px);
   padding: clamp(28px, 5vw, 56px) 0 clamp(34px, 6vw, 72px);
   background:
-    radial-gradient(circle at 16% 18%, rgba(74, 128, 212, 0.2), transparent 28%),
-    radial-gradient(circle at 84% 16%, rgba(200, 168, 67, 0.18), transparent 22%),
-    linear-gradient(180deg, rgba(7, 15, 32, 0.98) 0%, rgba(12, 22, 44, 0.98) 100%);
+    radial-gradient(
+      circle at 16% 18%,
+      rgba(74, 128, 212, 0.2),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 84% 16%,
+      rgba(200, 168, 67, 0.18),
+      transparent 22%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(7, 15, 32, 0.98) 0%,
+      rgba(12, 22, 44, 0.98) 100%
+    );
 }
 
 .hero {
@@ -22,7 +34,11 @@
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    ),
     rgba(9, 18, 38, 0.84);
   box-shadow:
     0 28px 60px rgba(0, 0, 0, 0.24),

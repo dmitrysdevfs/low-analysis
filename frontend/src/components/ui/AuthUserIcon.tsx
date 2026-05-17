@@ -3,10 +3,7 @@ interface AuthUserIconProps {
   className?: string;
 }
 
-export function AuthUserIcon({
-  size = 20,
-  className,
-}: AuthUserIconProps) {
+export function AuthUserIcon({ size = 20, className }: AuthUserIconProps) {
   return (
     <svg
       className={className}

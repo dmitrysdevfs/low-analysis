@@ -45,64 +45,68 @@ export function useSearch() {
 
   const abortRef = useRef<AbortController | null>(null);
 
-  const search = useCallback((nextParams: SearchInput) => {
-    const normalizedParams: SearchParams = {
-      ...DEFAULT_PARAMS,
-      ...nextParams,
-      docType: nextParams.docType ?? nextParams.type ?? DEFAULT_PARAMS.docType,
-    };
+  const search = useCallback(
+    (nextParams: SearchInput) => {
+      const normalizedParams: SearchParams = {
+        ...DEFAULT_PARAMS,
+        ...nextParams,
+        docType:
+          nextParams.docType ?? nextParams.type ?? DEFAULT_PARAMS.docType,
+      };
 
-    setParams(normalizedParams);
+      setParams(normalizedParams);
 
-    if (!normalizedParams.q.trim() && !normalizedParams.number.trim()) {
-      setState({ results: [], loading: false, error: null, searched: false });
-      return;
-    }
+      if (!normalizedParams.q.trim() && !normalizedParams.number.trim()) {
+        setState({ results: [], loading: false, error: null, searched: false });
+        return;
+      }
 
-    abortRef.current?.abort();
-    abortRef.current = new AbortController();
-    const { signal } = abortRef.current;
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+      const { signal } = abortRef.current;
 
-    const guestAttempt = consumeSearch();
+      const guestAttempt = consumeSearch();
 
-    if (!guestAttempt.allowed) {
-      setState({
-        results: [],
-        loading: false,
-        error: guestAttempt.message ?? "Guest search limit reached.",
-        searched: true,
-      });
-      return;
-    }
-
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-
-    getLaws(normalizedParams.q, { signal })
-      .then((laws) => {
-        const filtered = applySearchFilters(laws, normalizedParams);
-        const sorted = sortLaws(filtered, normalizedParams.sort);
-        const visibleResults = isGuest
-          ? sorted.slice(0, GUEST_VISIBLE_RESULTS_LIMIT)
-          : sorted;
-
-        setState({
-          results: visibleResults,
-          loading: false,
-          error: null,
-          searched: true,
-        });
-      })
-      .catch((err: unknown) => {
-        const msg = parseApiError(err);
-        if (msg === "__ABORT__") return;
+      if (!guestAttempt.allowed) {
         setState({
           results: [],
           loading: false,
-          error: msg,
+          error: guestAttempt.message ?? "Guest search limit reached.",
           searched: true,
         });
-      });
-  }, [consumeSearch, isGuest]);
+        return;
+      }
+
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+
+      getLaws(normalizedParams.q, { signal })
+        .then((laws) => {
+          const filtered = applySearchFilters(laws, normalizedParams);
+          const sorted = sortLaws(filtered, normalizedParams.sort);
+          const visibleResults = isGuest
+            ? sorted.slice(0, GUEST_VISIBLE_RESULTS_LIMIT)
+            : sorted;
+
+          setState({
+            results: visibleResults,
+            loading: false,
+            error: null,
+            searched: true,
+          });
+        })
+        .catch((err: unknown) => {
+          const msg = parseApiError(err);
+          if (msg === "__ABORT__") return;
+          setState({
+            results: [],
+            loading: false,
+            error: msg,
+            searched: true,
+          });
+        });
+    },
+    [consumeSearch, isGuest],
+  );
 
   const reset = useCallback(() => {
     abortRef.current?.abort();

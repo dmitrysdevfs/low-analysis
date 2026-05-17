@@ -125,7 +125,9 @@
   overflow: hidden;
   text-decoration: none;
   display: block;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 
   &:hover {
     background: #0f2044;

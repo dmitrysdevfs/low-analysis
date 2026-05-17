@@ -35,7 +35,10 @@ export function ClientWorkspaceSaved() {
     }
 
     return laws
-      .filter((law) => !workspace.savedArticles.some((item) => item.lawId === law._id))
+      .filter(
+        (law) =>
+          !workspace.savedArticles.some((item) => item.lawId === law._id),
+      )
       .slice(0, 4);
   }, [laws, workspace]);
 
@@ -82,15 +85,20 @@ export function ClientWorkspaceSaved() {
           <span className={styles.eyebrow}>Збережені статті</span>
           <h1 className={styles.title}>Закріплені правові матеріали</h1>
           <p className={styles.description}>
-            Створіть швидкий доступ до законів та документів, до яких часто повертаєтесь.
+            Створіть швидкий доступ до законів та документів, до яких часто
+            повертаєтесь.
           </p>
         </div>
 
         <div className={styles.heroMeta}>
           <div className={styles.heroIdentity}>
             <span className={styles.rolePill}>Полиця кабінету</span>
-            <div className={styles.identityName}>{workspace.savedArticles.length} збережених елементів</div>
-            <div className={styles.identityEmail}>Підібрано для {user.displayName}</div>
+            <div className={styles.identityName}>
+              {workspace.savedArticles.length} збережених елементів
+            </div>
+            <div className={styles.identityEmail}>
+              Підібрано для {user.displayName}
+            </div>
           </div>
 
           <div className={styles.heroActions}>
@@ -106,7 +114,9 @@ export function ClientWorkspaceSaved() {
           <div className={styles.panelHeader}>
             <div>
               <span className={styles.panelEyebrow}>Список кабінету</span>
-              <h2 className={styles.panelTitle}>Ваш набір збережених законів</h2>
+              <h2 className={styles.panelTitle}>
+                Ваш набір збережених законів
+              </h2>
             </div>
           </div>
 
@@ -118,7 +128,9 @@ export function ClientWorkspaceSaved() {
                     <div>
                       <div className={styles.savedCode}>{item.code}</div>
                       <div className={styles.savedTitle}>{item.title}</div>
-                      <div className={styles.savedMeta}>Збережено {formatDateMedium(item.savedAt)}</div>
+                      <div className={styles.savedMeta}>
+                        Збережено {formatDateMedium(item.savedAt)}
+                      </div>
                     </div>
                     <span className={styles.badge}>saved</span>
                   </div>
@@ -126,7 +138,10 @@ export function ClientWorkspaceSaved() {
                   <div className={styles.savedNote}>{item.note}</div>
 
                   <div className={styles.savedActions}>
-                    <Link href={ROUTES.law(item.lawId)} className={styles.linkText}>
+                    <Link
+                      href={ROUTES.law(item.lawId)}
+                      className={styles.linkText}
+                    >
                       Відкрити закон
                     </Link>
                     <button
@@ -142,7 +157,8 @@ export function ClientWorkspaceSaved() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              Ще немає закріплених законів. Скористайтесь панеллю пропозицій щоб додати перший.
+              Ще немає закріплених законів. Скористайтесь панеллю пропозицій щоб
+              додати перший.
             </div>
           )}
         </article>
@@ -156,7 +172,9 @@ export function ClientWorkspaceSaved() {
           </div>
 
           {loading ? (
-            <div className={styles.emptyState}>Завантаження законів для пропозицій…</div>
+            <div className={styles.emptyState}>
+              Завантаження законів для пропозицій…
+            </div>
           ) : error ? (
             <div className={styles.emptyState}>{error}</div>
           ) : suggestions.length > 0 ? (

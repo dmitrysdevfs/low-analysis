@@ -69,7 +69,10 @@ export function CheckoutDemo() {
     return null;
   }
 
-  function handleCardChange<K extends keyof CardState>(key: K, value: CardState[K]) {
+  function handleCardChange<K extends keyof CardState>(
+    key: K,
+    value: CardState[K],
+  ) {
     setCard((current) => ({
       ...current,
       [key]: value,
@@ -88,7 +91,9 @@ export function CheckoutDemo() {
         card.expiry.trim().length < 4 ||
         card.cvv.trim().length < 3
       ) {
-        notify.warning("Fill in the card demo fields before completing payment.");
+        notify.warning(
+          "Fill in the card demo fields before completing payment.",
+        );
         return;
       }
     }
@@ -120,9 +125,9 @@ export function CheckoutDemo() {
           <span className={styles.eyebrow}>Checkout demo</span>
           <h1 className={styles.title}>Local plan activation</h1>
           <p className={styles.description}>
-            This checkout is a frontend-only demo. It writes only the selected plan,
-            payment method, and timestamp to local storage. Card numbers, CVV, and
-            expiry values are never persisted.
+            This checkout is a frontend-only demo. It writes only the selected
+            plan, payment method, and timestamp to local storage. Card numbers,
+            CVV, and expiry values are never persisted.
           </p>
         </div>
 
@@ -133,7 +138,10 @@ export function CheckoutDemo() {
             <div className={styles.metaText}>{selectedPlan.badge}</div>
           </div>
           <div className={styles.actions}>
-            <Link href={ROUTES.accountBilling} className={styles.secondaryAction}>
+            <Link
+              href={ROUTES.accountBilling}
+              className={styles.secondaryAction}
+            >
               Back to billing
             </Link>
           </div>
@@ -154,7 +162,9 @@ export function CheckoutDemo() {
             <select
               className={styles.fieldSelect}
               value={planId}
-              onChange={(event) => setPlanId(event.target.value as BillingPlanId)}
+              onChange={(event) =>
+                setPlanId(event.target.value as BillingPlanId)
+              }
             >
               {planCatalog.map((plan) => (
                 <option key={plan.id} value={plan.id}>
@@ -172,32 +182,32 @@ export function CheckoutDemo() {
           </div>
 
           <div className={styles.checkoutMethods}>
-            {(["apple_pay", "google_pay", "card"] as BillingPaymentMethod[]).map(
-              (method) => (
-                <button
-                  key={method}
-                  type="button"
-                  className={`${styles.checkoutMethod} ${styles.checkoutMethodButton} ${
-                    paymentMethod === method ? styles.checkoutMethodActive : ""
-                  }`}
-                  onClick={() => setPaymentMethod(method)}
-                >
-                  <div className={styles.checkoutTopRow}>
-                    <div>
-                      <div className={styles.historyValue}>
-                        {PAYMENT_COPY[method].label}
-                      </div>
-                      <div className={styles.checkoutHint}>
-                        {PAYMENT_COPY[method].hint}
-                      </div>
+            {(
+              ["apple_pay", "google_pay", "card"] as BillingPaymentMethod[]
+            ).map((method) => (
+              <button
+                key={method}
+                type="button"
+                className={`${styles.checkoutMethod} ${styles.checkoutMethodButton} ${
+                  paymentMethod === method ? styles.checkoutMethodActive : ""
+                }`}
+                onClick={() => setPaymentMethod(method)}
+              >
+                <div className={styles.checkoutTopRow}>
+                  <div>
+                    <div className={styles.historyValue}>
+                      {PAYMENT_COPY[method].label}
                     </div>
-                    <span className={styles.methodPill}>
-                      {paymentMethod === method ? "Selected" : "Tap to choose"}
-                    </span>
+                    <div className={styles.checkoutHint}>
+                      {PAYMENT_COPY[method].hint}
+                    </div>
                   </div>
-                </button>
-              ),
-            )}
+                  <span className={styles.methodPill}>
+                    {paymentMethod === method ? "Selected" : "Tap to choose"}
+                  </span>
+                </div>
+              </button>
+            ))}
           </div>
 
           {paymentMethod === "card" ? (
@@ -207,7 +217,9 @@ export function CheckoutDemo() {
                 <input
                   className={styles.fieldInput}
                   value={card.holder}
-                  onChange={(event) => handleCardChange("holder", event.target.value)}
+                  onChange={(event) =>
+                    handleCardChange("holder", event.target.value)
+                  }
                 />
               </label>
 
@@ -217,7 +229,9 @@ export function CheckoutDemo() {
                   className={styles.fieldInput}
                   inputMode="numeric"
                   value={card.number}
-                  onChange={(event) => handleCardChange("number", event.target.value)}
+                  onChange={(event) =>
+                    handleCardChange("number", event.target.value)
+                  }
                 />
               </label>
 
@@ -228,7 +242,9 @@ export function CheckoutDemo() {
                     className={styles.fieldInput}
                     placeholder="MM/YY"
                     value={card.expiry}
-                    onChange={(event) => handleCardChange("expiry", event.target.value)}
+                    onChange={(event) =>
+                      handleCardChange("expiry", event.target.value)
+                    }
                   />
                 </label>
 
@@ -238,7 +254,9 @@ export function CheckoutDemo() {
                     className={styles.fieldInput}
                     inputMode="numeric"
                     value={card.cvv}
-                    onChange={(event) => handleCardChange("cvv", event.target.value)}
+                    onChange={(event) =>
+                      handleCardChange("cvv", event.target.value)
+                    }
                   />
                 </label>
               </div>
@@ -250,8 +268,8 @@ export function CheckoutDemo() {
           </button>
 
           <p className={styles.smallPrint}>
-            Demo rule: payment method is stored, but card data is not. After submit,
-            card inputs are cleared immediately in the UI.
+            Demo rule: payment method is stored, but card data is not. After
+            submit, card inputs are cleared immediately in the UI.
           </p>
         </form>
 
@@ -274,8 +292,12 @@ export function CheckoutDemo() {
 
           <div className={styles.heroStat}>
             <span className={styles.metaLabel}>Method</span>
-            <div className={styles.heroValue}>{PAYMENT_COPY[paymentMethod].label}</div>
-            <div className={styles.metaText}>{PAYMENT_COPY[paymentMethod].hint}</div>
+            <div className={styles.heroValue}>
+              {PAYMENT_COPY[paymentMethod].label}
+            </div>
+            <div className={styles.metaText}>
+              {PAYMENT_COPY[paymentMethod].hint}
+            </div>
           </div>
         </aside>
       </div>

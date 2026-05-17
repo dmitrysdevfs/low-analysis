@@ -71,7 +71,9 @@ export function AdminControlCenter() {
 
     return snapshot.registryAccounts.filter((account) => {
       const matchesRole =
-        registryFilter === "all" ? true : account.accountType === registryFilter;
+        registryFilter === "all"
+          ? true
+          : account.accountType === registryFilter;
       const matchesQuery =
         normalizedQuery.length === 0
           ? true
@@ -233,19 +235,25 @@ export function AdminControlCenter() {
       <div className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>Центр керування</span>
-          <h1 className={styles.title}>Операційний огляд для управління платформою</h1>
+          <h1 className={styles.title}>
+            Операційний огляд для управління платформою
+          </h1>
           <p className={styles.description}>
-            Адмін-панель зберігає свою структуру, але отримує більшу операційну глибину:
-            інструменти реєстру користувачів, історія lifecycle-кодів, моніторинг
-            навантаження гостей і видимий журнал аудиту.
+            Адмін-панель зберігає свою структуру, але отримує більшу операційну
+            глибину: інструменти реєстру користувачів, історія lifecycle-кодів,
+            моніторинг навантаження гостей і видимий журнал аудиту.
           </p>
         </div>
 
         <div className={styles.heroPanel}>
           <div className={styles.heroPanelLabel}>Активний адміністратор</div>
-          <div className={styles.heroPanelValue}>{user?.displayName ?? "Admin"}</div>
+          <div className={styles.heroPanelValue}>
+            {user?.displayName ?? "Admin"}
+          </div>
           <div className={styles.heroPanelMeta}>{user?.email}</div>
-          <div className={styles.heroPill}>Роль: {snapshot.activeSessionRole}</div>
+          <div className={styles.heroPill}>
+            Роль: {snapshot.activeSessionRole}
+          </div>
         </div>
       </div>
 
@@ -276,32 +284,53 @@ export function AdminControlCenter() {
               <div className={styles.panelHeader}>
                 <div>
                   <span className={styles.panelEyebrow}>Метрики</span>
-                  <h2 className={styles.panelTitle}>Загальний огляд платформи</h2>
+                  <h2 className={styles.panelTitle}>
+                    Загальний огляд платформи
+                  </h2>
                 </div>
               </div>
               <div className={styles.metricsInline}>
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Всього акаунтів</span>
-                  <strong className={styles.metricValue}>{snapshot.totalAccounts}</strong>
-                  <p className={styles.metricNote}>Збережені та вбудовані frontend-ідентичності, доступні платформі.</p>
+                  <strong className={styles.metricValue}>
+                    {snapshot.totalAccounts}
+                  </strong>
+                  <p className={styles.metricNote}>
+                    Збережені та вбудовані frontend-ідентичності, доступні
+                    платформі.
+                  </p>
                 </article>
 
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Клієнтські акаунти</span>
-                  <strong className={styles.metricValue}>{snapshot.clientAccounts}</strong>
-                  <p className={styles.metricNote}>Звичайні користувачі з доступом до клієнтського простору.</p>
+                  <strong className={styles.metricValue}>
+                    {snapshot.clientAccounts}
+                  </strong>
+                  <p className={styles.metricNote}>
+                    Звичайні користувачі з доступом до клієнтського простору.
+                  </p>
                 </article>
 
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Адмін акаунти</span>
-                  <strong className={styles.metricValue}>{snapshot.adminAccounts}</strong>
-                  <p className={styles.metricNote}>Адміністративні ідентичності, що можуть розблоковувати захищені операції.</p>
+                  <strong className={styles.metricValue}>
+                    {snapshot.adminAccounts}
+                  </strong>
+                  <p className={styles.metricNote}>
+                    Адміністративні ідентичності, що можуть розблоковувати
+                    захищені операції.
+                  </p>
                 </article>
 
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Події аудиту</span>
-                  <strong className={styles.metricValue}>{snapshot.auditLog.length}</strong>
-                  <p className={styles.metricNote}>Нещодавні операційні події, зафіксовані фронтенд адмін-шаром.</p>
+                  <strong className={styles.metricValue}>
+                    {snapshot.auditLog.length}
+                  </strong>
+                  <p className={styles.metricNote}>
+                    Нещодавні операційні події, зафіксовані фронтенд
+                    адмін-шаром.
+                  </p>
                 </article>
               </div>
             </article>
@@ -309,8 +338,12 @@ export function AdminControlCenter() {
             <article className={styles.panel}>
               <div className={styles.panelHeader}>
                 <div>
-                  <span className={styles.panelEyebrow}>Навантаження гостей</span>
-                  <h2 className={styles.panelTitle}>Поточне навантаження від гостей</h2>
+                  <span className={styles.panelEyebrow}>
+                    Навантаження гостей
+                  </span>
+                  <h2 className={styles.panelTitle}>
+                    Поточне навантаження від гостей
+                  </h2>
                 </div>
               </div>
 
@@ -318,7 +351,8 @@ export function AdminControlCenter() {
                 <div className={styles.pressureCard}>
                   <div className={styles.pressureTitle}>Пошукові запити</div>
                   <div className={styles.pressureValue}>
-                    {snapshot.guestPressure.searchUsed}/{snapshot.guestPressure.searchLimit}
+                    {snapshot.guestPressure.searchUsed}/
+                    {snapshot.guestPressure.searchLimit}
                   </div>
                   <div className={styles.pressureMeta}>
                     Залишилось: {snapshot.guestPressure.searchRemaining}
@@ -328,7 +362,8 @@ export function AdminControlCenter() {
                 <div className={styles.pressureCard}>
                   <div className={styles.pressureTitle}>Глибокі перегляди</div>
                   <div className={styles.pressureValue}>
-                    {snapshot.guestPressure.viewUsed}/{snapshot.guestPressure.viewLimit}
+                    {snapshot.guestPressure.viewUsed}/
+                    {snapshot.guestPressure.viewLimit}
                   </div>
                   <div className={styles.pressureMeta}>
                     Залишилось: {snapshot.guestPressure.viewRemaining}
@@ -344,8 +379,14 @@ export function AdminControlCenter() {
                       : "Норма"}
                   </div>
                   <div className={styles.pressureMeta}>
-                    Кулдаун пошуку: {snapshot.guestPressure.searchCooldownActive ? "увімк." : "вимк."} ·
-                    Кулдаун перегляду: {snapshot.guestPressure.viewCooldownActive ? "увімк." : "вимк."}
+                    Кулдаун пошуку:{" "}
+                    {snapshot.guestPressure.searchCooldownActive
+                      ? "увімк."
+                      : "вимк."}{" "}
+                    · Кулдаун перегляду:{" "}
+                    {snapshot.guestPressure.viewCooldownActive
+                      ? "увімк."
+                      : "вимк."}
                   </div>
                 </div>
               </div>
@@ -365,15 +406,28 @@ export function AdminControlCenter() {
               <div className={styles.panelHeader}>
                 <div>
                   <span className={styles.panelEyebrow}>Готовність</span>
-                  <h2 className={styles.panelTitle}>Покриття фронтенд адміну</h2>
+                  <h2 className={styles.panelTitle}>
+                    Покриття фронтенд адміну
+                  </h2>
                 </div>
               </div>
 
               <ul className={styles.checklist}>
-                <li>Рольовий процес реєстрації з онбордингом для клієнтів і адмінів.</li>
-                <li>Автоматичне визначення ролі входу на основі облікових даних.</li>
-                <li>Видимість навантаження гостей через лічильники пошуку та перегляду.</li>
-                <li>Видача супер-коду адміністратора, історія ротації та журнал аудиту.</li>
+                <li>
+                  Рольовий процес реєстрації з онбордингом для клієнтів і
+                  адмінів.
+                </li>
+                <li>
+                  Автоматичне визначення ролі входу на основі облікових даних.
+                </li>
+                <li>
+                  Видимість навантаження гостей через лічильники пошуку та
+                  перегляду.
+                </li>
+                <li>
+                  Видача супер-коду адміністратора, історія ротації та журнал
+                  аудиту.
+                </li>
                 <li>Фільтри реєстру поверх існуючого знімку акаунтів.</li>
               </ul>
             </article>
@@ -385,7 +439,9 @@ export function AdminControlCenter() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.panelEyebrow}>Реєстр</span>
-                <h2 className={styles.panelTitle}>Інструменти реєстру акаунтів</h2>
+                <h2 className={styles.panelTitle}>
+                  Інструменти реєстру акаунтів
+                </h2>
               </div>
 
               <button
@@ -431,42 +487,74 @@ export function AdminControlCenter() {
                 filteredAccounts.map((account) => (
                   <div key={account.id} className={styles.accountRow}>
                     <div>
-                      <div className={styles.accountName}>{account.displayName}</div>
+                      <div className={styles.accountName}>
+                        {account.displayName}
+                      </div>
                       <div className={styles.accountMeta}>{account.email}</div>
                     </div>
 
                     <div className={styles.accountBadges}>
-                      <span className={styles.accountBadge}>{account.accountType}</span>
-                      <span className={styles.accountBadge}>{account.source}</span>
+                      <span className={styles.accountBadge}>
+                        {account.accountType}
+                      </span>
+                      <span className={styles.accountBadge}>
+                        {account.source}
+                      </span>
                       {account.superCodeProtected ? (
-                        <span className={styles.accountBadgeAccent}>super code</span>
+                        <span className={styles.accountBadgeAccent}>
+                          super code
+                        </span>
                       ) : null}
                     </div>
 
                     <div className={styles.accountMetaBlock}>
-                      <span>Створено: {formatDateShort(account.createdAt)}</span>
-                      <span>Останній вхід: {formatDateShort(account.lastLoginAt)}</span>
+                      <span>
+                        Створено: {formatDateShort(account.createdAt)}
+                      </span>
+                      <span>
+                        Останній вхід: {formatDateShort(account.lastLoginAt)}
+                      </span>
                     </div>
 
                     <div className={styles.accountActions}>
                       <button
                         type="button"
                         className={styles.accountActionBtn}
-                        onClick={() => handleAccountAction("deactivate", account.id, account.displayName)}
+                        onClick={() =>
+                          handleAccountAction(
+                            "deactivate",
+                            account.id,
+                            account.displayName,
+                          )
+                        }
                       >
                         Деактивувати
                       </button>
                       <button
                         type="button"
                         className={styles.accountActionBtn}
-                        onClick={() => handleAccountAction("promote", account.id, account.displayName)}
+                        onClick={() =>
+                          handleAccountAction(
+                            "promote",
+                            account.id,
+                            account.displayName,
+                          )
+                        }
                       >
-                        {account.accountType === "admin" ? "Зняти права адміна" : "Підвищити до адміна"}
+                        {account.accountType === "admin"
+                          ? "Зняти права адміна"
+                          : "Підвищити до адміна"}
                       </button>
                       <button
                         type="button"
                         className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
-                        onClick={() => handleAccountAction("forceLogout", account.id, account.displayName)}
+                        onClick={() =>
+                          handleAccountAction(
+                            "forceLogout",
+                            account.id,
+                            account.displayName,
+                          )
+                        }
                       >
                         Примусовий вихід
                       </button>
@@ -474,7 +562,9 @@ export function AdminControlCenter() {
                   </div>
                 ))
               ) : (
-                <div className={styles.emptyState}>Жодного акаунту не знайдено за поточним фільтром реєстру.</div>
+                <div className={styles.emptyState}>
+                  Жодного акаунту не знайдено за поточним фільтром реєстру.
+                </div>
               )}
             </div>
           </article>
@@ -523,7 +613,9 @@ export function AdminControlCenter() {
             </div>
 
             <div className={styles.superCodeCard}>
-              <div className={styles.superCodeValue}>{snapshot.activeSuperCode}</div>
+              <div className={styles.superCodeValue}>
+                {snapshot.activeSuperCode}
+              </div>
               <div className={styles.superCodeMeta}>
                 {snapshot.superCodeRotatedAt
                   ? `Замінено ${formatDateShort(snapshot.superCodeRotatedAt)}`
@@ -570,14 +662,18 @@ export function AdminControlCenter() {
               <div className={styles.panelHeader}>
                 <div>
                   <span className={styles.panelEyebrow}>Billing</span>
-                  <h2 className={styles.panelTitle}>Розподіл планів клієнтів</h2>
+                  <h2 className={styles.panelTitle}>
+                    Розподіл планів клієнтів
+                  </h2>
                 </div>
               </div>
 
               <div className={styles.metricsInline}>
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Preview</span>
-                  <strong className={styles.metricValue}>{billingCounts.preview}</strong>
+                  <strong className={styles.metricValue}>
+                    {billingCounts.preview}
+                  </strong>
                   <p className={styles.metricNote}>
                     Акаунти без активного плану з локальними preview-квотами.
                   </p>
@@ -585,7 +681,9 @@ export function AdminControlCenter() {
 
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Trial</span>
-                  <strong className={styles.metricValue}>{billingCounts.trial}</strong>
+                  <strong className={styles.metricValue}>
+                    {billingCounts.trial}
+                  </strong>
                   <p className={styles.metricNote}>
                     Однотижневі starter-week доступи із безлімітною квотою.
                   </p>
@@ -594,16 +692,21 @@ export function AdminControlCenter() {
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Paid tiers</span>
                   <strong className={styles.metricValue}>
-                    {billingCounts.user + billingCounts.plus + billingCounts.pro}
+                    {billingCounts.user +
+                      billingCounts.plus +
+                      billingCounts.pro}
                   </strong>
                   <p className={styles.metricNote}>
-                    User {billingCounts.user} · Plus {billingCounts.plus} · Pro {billingCounts.pro}
+                    User {billingCounts.user} · Plus {billingCounts.plus} · Pro{" "}
+                    {billingCounts.pro}
                   </p>
                 </article>
 
                 <article className={styles.metricCard}>
                   <span className={styles.metricLabel}>Admin access</span>
-                  <strong className={styles.metricValue}>{billingCounts.admin}</strong>
+                  <strong className={styles.metricValue}>
+                    {billingCounts.admin}
+                  </strong>
                   <p className={styles.metricNote}>
                     Адміністратори не підпадають під клієнтські billing-плани.
                   </p>
@@ -615,7 +718,9 @@ export function AdminControlCenter() {
               <div className={styles.panelHeader}>
                 <div>
                   <span className={styles.panelEyebrow}>Plan registry</span>
-                  <h2 className={styles.panelTitle}>Поточний план кожного користувача</h2>
+                  <h2 className={styles.panelTitle}>
+                    Поточний план кожного користувача
+                  </h2>
                 </div>
               </div>
 
@@ -624,12 +729,18 @@ export function AdminControlCenter() {
                   billingRegistry.map((account) => (
                     <div key={account.id} className={styles.accountRow}>
                       <div>
-                        <div className={styles.accountName}>{account.displayName}</div>
-                        <div className={styles.accountMeta}>{account.email}</div>
+                        <div className={styles.accountName}>
+                          {account.displayName}
+                        </div>
+                        <div className={styles.accountMeta}>
+                          {account.email}
+                        </div>
                       </div>
 
                       <div className={styles.accountBadges}>
-                        <span className={styles.accountBadge}>{account.accountType}</span>
+                        <span className={styles.accountBadge}>
+                          {account.accountType}
+                        </span>
                         <span className={styles.accountBadge}>
                           {account.subscription.plan?.label ?? "Preview"}
                         </span>
@@ -660,22 +771,30 @@ export function AdminControlCenter() {
 
                       {account.accountType === "client" ? (
                         <div className={styles.accountActions}>
-                          {(["trial", "user", "plus", "pro"] as const).map((planId) => (
-                            <button
-                              key={planId}
-                              type="button"
-                              className={styles.accountActionBtn}
-                              onClick={() =>
-                                handleAssignPlan(account.id, account.displayName, planId)
-                              }
-                            >
-                              {planId}
-                            </button>
-                          ))}
+                          {(["trial", "user", "plus", "pro"] as const).map(
+                            (planId) => (
+                              <button
+                                key={planId}
+                                type="button"
+                                className={styles.accountActionBtn}
+                                onClick={() =>
+                                  handleAssignPlan(
+                                    account.id,
+                                    account.displayName,
+                                    planId,
+                                  )
+                                }
+                              >
+                                {planId}
+                              </button>
+                            ),
+                          )}
                         </div>
                       ) : (
                         <div className={styles.accountActions}>
-                          <span className={styles.accountBadgeAccent}>admin-managed</span>
+                          <span className={styles.accountBadgeAccent}>
+                            admin-managed
+                          </span>
                         </div>
                       )}
                     </div>
@@ -700,19 +819,25 @@ export function AdminControlCenter() {
             </div>
 
             <p className={styles.panelDescription}>
-              Відкрийте окремий екран аналітики для перегляду законів, предметів, розділів,
-              статей і покриття метаданими з поточних frontend API-запитів.
+              Відкрийте окремий екран аналітики для перегляду законів,
+              предметів, розділів, статей і покриття метаданими з поточних
+              frontend API-запитів.
             </p>
 
             <div className={styles.actionStack}>
-              <Link href={ROUTES.adminAnalytics} className={styles.primaryAction}>
+              <Link
+                href={ROUTES.adminAnalytics}
+                className={styles.primaryAction}
+              >
                 Відкрити аналітику
               </Link>
               <button
                 type="button"
                 className={styles.secondaryAction}
                 onClick={() =>
-                  notify.info("Метрики бекенду відображаються через фронтенд-аналітику.")
+                  notify.info(
+                    "Метрики бекенду відображаються через фронтенд-аналітику.",
+                  )
                 }
               >
                 Пояснити поточні метрики
@@ -754,7 +879,9 @@ export function AdminControlCenter() {
                   </div>
                 ))
               ) : (
-                <div className={styles.emptyState}>Події аудиту з'являться тут зі зростанням адмін-активності.</div>
+                <div className={styles.emptyState}>
+                  Події аудиту з'являться тут зі зростанням адмін-активності.
+                </div>
               )}
             </div>
           </article>

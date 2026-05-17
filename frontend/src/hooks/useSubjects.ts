@@ -24,8 +24,15 @@ export function useSubjects() {
   useEffect(() => {
     const controller = new AbortController();
 
-    if (subjectsCacheEntry && Date.now() - subjectsCacheEntry.ts < SUBJECTS_CACHE_TTL) {
-      setState({ fetched: true, subjects: subjectsCacheEntry.data, error: null });
+    if (
+      subjectsCacheEntry &&
+      Date.now() - subjectsCacheEntry.ts < SUBJECTS_CACHE_TTL
+    ) {
+      setState({
+        fetched: true,
+        subjects: subjectsCacheEntry.data,
+        error: null,
+      });
       return;
     }
 

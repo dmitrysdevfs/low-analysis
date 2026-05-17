@@ -55,7 +55,9 @@ const GUEST_LIMIT_RULES = {
 } as const;
 
 function isBrowser() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  );
 }
 
 function getDefaultState(): GuestLimitState {
@@ -106,7 +108,8 @@ function pruneState(state: GuestLimitState, now = Date.now()) {
     ),
     searchCooldownUntil:
       state.searchCooldownUntil > now ? state.searchCooldownUntil : 0,
-    viewCooldownUntil: state.viewCooldownUntil > now ? state.viewCooldownUntil : 0,
+    viewCooldownUntil:
+      state.viewCooldownUntil > now ? state.viewCooldownUntil : 0,
   } satisfies GuestLimitState;
 }
 
@@ -115,7 +118,10 @@ function getSessionViewKey(resourceKey: string) {
 }
 
 function hasViewedResourceInTab(resourceKey: string) {
-  if (typeof window === "undefined" || typeof window.sessionStorage === "undefined") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.sessionStorage === "undefined"
+  ) {
     return false;
   }
 
@@ -123,7 +129,10 @@ function hasViewedResourceInTab(resourceKey: string) {
 }
 
 function markResourceViewedInTab(resourceKey: string) {
-  if (typeof window === "undefined" || typeof window.sessionStorage === "undefined") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.sessionStorage === "undefined"
+  ) {
     return;
   }
 
@@ -176,7 +185,11 @@ export function attemptGuestAction(
   const rule = GUEST_LIMIT_RULES[type];
   let state = pruneState(readState(), now);
 
-  if (type === "view" && options?.resourceKey && hasViewedResourceInTab(options.resourceKey)) {
+  if (
+    type === "view" &&
+    options?.resourceKey &&
+    hasViewedResourceInTab(options.resourceKey)
+  ) {
     return {
       allowed: true,
       snapshot: getGuestLimitSnapshot(now),

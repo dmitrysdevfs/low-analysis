@@ -15,8 +15,11 @@
   overflow: hidden;
   border: 1px solid rgba(200, 168, 67, 0.16);
   border-radius: 28px;
-  background:
-    linear-gradient(180deg, rgba(26, 42, 78, 0.92) 0%, rgba(13, 24, 50, 0.96) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(26, 42, 78, 0.92) 0%,
+    rgba(13, 24, 50, 0.96) 100%
+  );
   box-shadow: 0 28px 80px rgba(2, 8, 22, 0.4);
 }
 

@@ -98,7 +98,9 @@ export const BILLING_PLAN_CATALOG: BillingPlanDefinition[] = [
 ];
 
 function isBrowser() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  );
 }
 
 function readStorageItem<T>(key: string, fallback: T): T {
@@ -133,12 +135,17 @@ function readSubscriptionsStore() {
   );
 }
 
-function writeSubscriptionsStore(store: Record<string, StoredBillingSubscription>) {
+function writeSubscriptionsStore(
+  store: Record<string, StoredBillingSubscription>,
+) {
   writeStorageItem(BILLING_SUBSCRIPTIONS_STORAGE_KEY, store);
 }
 
 function readPaymentsStore() {
-  return readStorageItem<BillingPaymentRecord[]>(BILLING_PAYMENTS_STORAGE_KEY, []);
+  return readStorageItem<BillingPaymentRecord[]>(
+    BILLING_PAYMENTS_STORAGE_KEY,
+    [],
+  );
 }
 
 function writePaymentsStore(records: BillingPaymentRecord[]) {
@@ -314,7 +321,9 @@ export function getBillingSubscriptionSnapshot(
     searchUsed: record.usage.search,
     viewUsed: record.usage.view,
     searchRemaining:
-      searchLimit === null ? null : Math.max(0, searchLimit - record.usage.search),
+      searchLimit === null
+        ? null
+        : Math.max(0, searchLimit - record.usage.search),
     viewRemaining:
       viewLimit === null ? null : Math.max(0, viewLimit - record.usage.view),
     previewMode,
@@ -461,7 +470,10 @@ export function getBillingRegistrySnapshot(
 ) {
   return accounts.map((account) => ({
     ...account,
-    subscription: getBillingSubscriptionSnapshot(account.id, account.accountType),
+    subscription: getBillingSubscriptionSnapshot(
+      account.id,
+      account.accountType,
+    ),
     payments: getBillingPaymentsForUser(account.id),
   }));
 }
@@ -491,7 +503,10 @@ export function consumeBillingQuota(
 
     return {
       allowed: false,
-      reason: snapshot.previewMode || snapshot.status === "expired" ? "preview_limit" : "plan_limit",
+      reason:
+        snapshot.previewMode || snapshot.status === "expired"
+          ? "preview_limit"
+          : "plan_limit",
       message,
       snapshot,
     };

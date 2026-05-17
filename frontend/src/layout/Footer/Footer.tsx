@@ -32,11 +32,21 @@ const fadeUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-function StatCounter({ value, label, active }: { value: number; label: string; active: boolean }) {
+function StatCounter({
+  value,
+  label,
+  active,
+}: {
+  value: number;
+  label: string;
+  active: boolean;
+}) {
   const count = useCountUp(value, 1400, active);
   return (
     <div className={styles.statItem}>
-      <div className={`mono ${styles.statValue}`}>{count.toLocaleString("uk-UA")}</div>
+      <div className={`mono ${styles.statValue}`}>
+        {count.toLocaleString("uk-UA")}
+      </div>
       <div className={`mono ${styles.statLabel}`}>{label}</div>
     </div>
   );
@@ -88,7 +98,11 @@ export default function Footer() {
                 <motion.div
                   key={i}
                   animate={{ opacity: [0.2, 0.5, 0.2] }}
-                  transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.15 }}
+                  transition={{
+                    duration: 1.4,
+                    repeat: Infinity,
+                    delay: i * 0.15,
+                  }}
                   className={styles.statSkeleton}
                   style={{ width: w }}
                 />
@@ -108,7 +122,11 @@ export default function Footer() {
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: i * 0.1, duration: 0.4 }}
                 >
-                  <StatCounter value={s.value} label={s.label} active={inView} />
+                  <StatCounter
+                    value={s.value}
+                    label={s.label}
+                    active={inView}
+                  />
                 </motion.div>
               ))}
             </motion.div>
@@ -128,7 +146,8 @@ export default function Footer() {
         <motion.div className={styles.col} variants={fadeUp}>
           <div className={`display ${styles.brand}`}>Law Analysis</div>
           <p className={`mono ${styles.brandDesc}`}>
-            Реєстр суб&apos;єктів та норм<br />
+            Реєстр суб&apos;єктів та норм
+            <br />
             законодавства України
           </p>
           <div className={`mono ${styles.version}`}>v1.0.0 · 2026 · MIT</div>
@@ -147,7 +166,9 @@ export default function Footer() {
               </li>
             ))}
           </ul>
-          <div className={`mono ${styles.colLabel} ${styles.colLabelGap}`}>Акаунт</div>
+          <div className={`mono ${styles.colLabel} ${styles.colLabelGap}`}>
+            Акаунт
+          </div>
           <ul className={styles.navList}>
             {ACCOUNT.map((item) => (
               <li key={item.href}>
@@ -170,9 +191,13 @@ export default function Footer() {
               { label: "Build", status: "stable", color: "gold" },
             ].map((s) => (
               <li key={s.label} className={styles.statusItem}>
-                <span className={`${styles.dot} ${s.color === "green" ? styles.dotGreen : styles.dotGold}`} />
+                <span
+                  className={`${styles.dot} ${s.color === "green" ? styles.dotGreen : styles.dotGold}`}
+                />
                 <span className={`mono ${styles.statusLabel}`}>{s.label}</span>
-                <span className={`mono ${styles.statusValue} ${s.color === "green" ? styles.statusOnline : styles.statusStable}`}>
+                <span
+                  className={`mono ${styles.statusValue} ${s.color === "green" ? styles.statusOnline : styles.statusStable}`}
+                >
                   {s.status}
                 </span>
               </li>
@@ -182,7 +207,9 @@ export default function Footer() {
           <div className={`mono ${styles.terminal}`}>
             <span className={styles.prompt}>$</span>
             <span className={styles.cmd}>system ready</span>
-            <span className={`${styles.cursor} ${tick ? styles.cursorOn : ""}`}>▌</span>
+            <span className={`${styles.cursor} ${tick ? styles.cursorOn : ""}`}>
+              ▌
+            </span>
           </div>
 
           {isAdmin && (
@@ -212,7 +239,9 @@ export default function Footer() {
         <span className={styles.sep}>·</span>
         <span>Open Source</span>
         <span className={styles.sep}>·</span>
-        <Link href={ROUTES.legal} className={styles.legalLink}>Умови та конфіденційність</Link>
+        <Link href={ROUTES.legal} className={styles.legalLink}>
+          Умови та конфіденційність
+        </Link>
       </motion.div>
     </footer>
   );

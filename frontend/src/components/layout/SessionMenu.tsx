@@ -31,7 +31,10 @@ export function SessionMenu({
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
-  const [position, setPosition] = useState<{ top: number; right: number } | null>(null);
+  const [position, setPosition] = useState<{
+    top: number;
+    right: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -93,7 +96,9 @@ export function SessionMenu({
           </span>
           <span className={styles.authLabelBlock}>
             <span className={styles.authLabel}>{displayName}</span>
-            <span className={styles.authMeta}>{isAdmin ? "АДМІН" : "КЛІЄНТ"}</span>
+            <span className={styles.authMeta}>
+              {isAdmin ? "АДМІН" : "КЛІЄНТ"}
+            </span>
           </span>
           <span className={styles.chevronWrap}>
             <ChevronIcon open={open} />
@@ -121,7 +126,9 @@ export function SessionMenu({
                   onClick={() => setOpen(false)}
                 >
                   <span className={styles.sessionMenuLabel}>{item.label}</span>
-                  <span className={styles.sessionMenuCaption}>{item.caption}</span>
+                  <span className={styles.sessionMenuCaption}>
+                    {item.caption}
+                  </span>
                 </Link>
               ))}
             </motion.div>

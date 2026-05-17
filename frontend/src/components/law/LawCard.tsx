@@ -120,7 +120,8 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
               </span>
               {subjectCount > 0 && (
                 <span className={`mono ${styles.backSubtitle}`}>
-                  {" · "}{subjectCount} {"суб'єктів"}
+                  {" · "}
+                  {subjectCount} {"суб'єктів"}
                 </span>
               )}
             </div>

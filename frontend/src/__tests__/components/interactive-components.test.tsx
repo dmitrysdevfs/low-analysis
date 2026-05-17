@@ -60,11 +60,18 @@ describe("interactive frontend components", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Панель адміна" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: "Панель адміна" }),
+      ).toBeInTheDocument();
     });
 
-    expect(screen.getByRole("link", { name: "Сайт" })).toHaveAttribute("href", "/");
-    expect(screen.getByRole("button", { name: "Вийти з акаунту" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Сайт" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(
+      screen.getByRole("button", { name: "Вийти з акаунту" }),
+    ).toBeInTheDocument();
   });
 
   it("renders skeleton card shell", () => {

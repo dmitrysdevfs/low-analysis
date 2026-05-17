@@ -24,7 +24,11 @@ function formatPlanStatus(status: string) {
   return "Preview";
 }
 
-function formatUsageValue(limit: number | null, used: number, remaining: number | null) {
+function formatUsageValue(
+  limit: number | null,
+  used: number,
+  remaining: number | null,
+) {
   if (limit === null || remaining === null) {
     return "Unlimited";
   }
@@ -46,8 +50,7 @@ export function ClientBillingOverview() {
 
   const currentPlan = subscription?.plan;
   const upsellPlans = useMemo(
-    () =>
-      planCatalog.filter((plan) => plan.id !== subscription?.planId),
+    () => planCatalog.filter((plan) => plan.id !== subscription?.planId),
     [planCatalog, subscription?.planId],
   );
 
@@ -62,12 +65,15 @@ export function ClientBillingOverview() {
           <span className={styles.eyebrow}>Client billing</span>
           <h1 className={styles.title}>Plan, quota, and demo checkout</h1>
           <p className={styles.description}>
-            This local billing layer lives only in the browser. It lets the client
-            activate a weekly trial, renew a monthly plan, and track current request
-            quotas without storing card data on the backend.
+            This local billing layer lives only in the browser. It lets the
+            client activate a weekly trial, renew a monthly plan, and track
+            current request quotas without storing card data on the backend.
           </p>
           <div className={styles.actions}>
-            <Link href={ROUTES.accountCheckout} className={styles.primaryAction}>
+            <Link
+              href={ROUTES.accountCheckout}
+              className={styles.primaryAction}
+            >
               Open checkout
             </Link>
             <Link href={ROUTES.account} className={styles.secondaryAction}>
@@ -86,7 +92,9 @@ export function ClientBillingOverview() {
           <div className={styles.heroMeta}>
             <span
               className={`${styles.statusPill} ${
-                subscription.previewMode ? styles.statusPillPreview : styles.statusPillActive
+                subscription.previewMode
+                  ? styles.statusPillPreview
+                  : styles.statusPillActive
               }`}
             >
               {formatPlanStatus(subscription.status)}
@@ -174,7 +182,9 @@ export function ClientBillingOverview() {
                   )}
                 </span>
               </div>
-              <div className={styles.usageValue}>{subscription.searchUsed} used</div>
+              <div className={styles.usageValue}>
+                {subscription.searchUsed} used
+              </div>
               <div className={styles.progressTrack}>
                 <span
                   className={styles.progressFill}
@@ -187,7 +197,8 @@ export function ClientBillingOverview() {
                 />
               </div>
               <div className={styles.usageMeta}>
-                Search runs through the same frontend limit gates as the live app.
+                Search runs through the same frontend limit gates as the live
+                app.
               </div>
             </div>
 
@@ -202,7 +213,9 @@ export function ClientBillingOverview() {
                   )}
                 </span>
               </div>
-              <div className={styles.usageValue}>{subscription.viewUsed} used</div>
+              <div className={styles.usageValue}>
+                {subscription.viewUsed} used
+              </div>
               <div className={styles.progressTrack}>
                 <span
                   className={styles.progressFill}
@@ -215,7 +228,8 @@ export function ClientBillingOverview() {
                 />
               </div>
               <div className={styles.usageMeta}>
-                Detailed law trees, articles, and subject pages spend this quota.
+                Detailed law trees, articles, and subject pages spend this
+                quota.
               </div>
             </div>
           </div>
@@ -277,7 +291,9 @@ export function ClientBillingOverview() {
                 <div key={payment.id} className={styles.historyRow}>
                   <div className={styles.historyTopRow}>
                     <div>
-                      <div className={styles.historyValue}>{payment.summary}</div>
+                      <div className={styles.historyValue}>
+                        {payment.summary}
+                      </div>
                       <div className={styles.historyMeta}>
                         {formatDateFull(payment.paidAt)} · actor {payment.actor}
                       </div>
@@ -291,8 +307,8 @@ export function ClientBillingOverview() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              No local payment events yet. Once a client activates a trial or monthly
-              plan, the demo checkout log appears here.
+              No local payment events yet. Once a client activates a trial or
+              monthly plan, the demo checkout log appears here.
             </div>
           )}
         </article>

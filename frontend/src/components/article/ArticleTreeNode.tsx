@@ -60,7 +60,10 @@ interface NestedNodeProps {
   lawId?: string;
 }
 
-function hasTermsMatch(text: string | undefined | null, terms: string[]): boolean {
+function hasTermsMatch(
+  text: string | undefined | null,
+  terms: string[],
+): boolean {
   if (!text || !terms.length) return false;
   const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   return new RegExp(`(${escaped.join("|")})`, "i").test(text);
@@ -115,13 +118,18 @@ function NestedNode({
     allTerms.length > 0 &&
     (hasTermsMatch(node.text, allTerms) || hasTermsMatch(node.title, allTerms));
 
-  const isDimmed = activeSubjectId != null && !hasActiveSubject && !hasTextMatch;
+  const isDimmed =
+    activeSubjectId != null && !hasActiveSubject && !hasTextMatch;
   const activeTerms = hasActiveSubject || hasTextMatch ? allTerms : [];
 
   const displayText =
-    activeTerms.length > 0 && node.text ? highlightMatch(node.text, activeTerms, color) : node.text;
+    activeTerms.length > 0 && node.text
+      ? highlightMatch(node.text, activeTerms, color)
+      : node.text;
   const displayTitle =
-    activeTerms.length > 0 && node.title ? highlightMatch(node.title, activeTerms, color) : node.title;
+    activeTerms.length > 0 && node.title
+      ? highlightMatch(node.title, activeTerms, color)
+      : node.title;
 
   const charCount = node.text?.length ?? 0;
 
@@ -130,8 +138,8 @@ function NestedNode({
       (node.subjects ?? [])
         .map((s) => subjectsMap?.get(s.subject_id))
         .filter(Boolean)
-        .map((s) => [s!._id, s!])
-    ).values()
+        .map((s) => [s!._id, s!]),
+    ).values(),
   );
 
   const handleCopy = async () => {
@@ -174,9 +182,7 @@ function NestedNode({
       }}
     >
       <span className={`mono ${styles.childBadge}`}>{getNodeBadge(node)}</span>
-      {charCount > 0 && (
-        <span className={styles.charCount}>({charCount})</span>
-      )}
+      {charCount > 0 && <span className={styles.charCount}>({charCount})</span>}
 
       <div className={styles.childContent}>
         {displayTitle ? (

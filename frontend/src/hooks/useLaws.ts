@@ -29,7 +29,8 @@ export function useLaws(q = "", refreshKey = 0) {
 
     const timer = setTimeout(
       () => {
-        const cacheKey = refreshKey > 0 ? `${q || "__all__"}:r${refreshKey}` : (q || "__all__");
+        const cacheKey =
+          refreshKey > 0 ? `${q || "__all__"}:r${refreshKey}` : q || "__all__";
         const cached = lawsCache.get(cacheKey);
         if (cached && Date.now() - cached.ts < CACHE_TTL) {
           setState({ fetchedQ: q, laws: cached.data, error: null });

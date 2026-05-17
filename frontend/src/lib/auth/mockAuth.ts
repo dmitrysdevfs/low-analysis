@@ -13,12 +13,14 @@ import type {
 export const AUTH_ACCOUNTS_STORAGE_KEY = "low-analysis.auth.accounts";
 export const AUTH_SESSION_STORAGE_KEY = "low-analysis.auth.session";
 export const AUTH_DEV_OVERRIDES_STORAGE_KEY = "low-analysis.auth.dev-overrides";
-export const AUTH_ADMIN_SUPER_CODE_STORAGE_KEY = "low-analysis.auth.admin-super-code";
+export const AUTH_ADMIN_SUPER_CODE_STORAGE_KEY =
+  "low-analysis.auth.admin-super-code";
 export const AUTH_ADMIN_SUPER_CODE_ROTATED_AT_STORAGE_KEY =
   "low-analysis.auth.admin-super-code-rotated-at";
 export const AUTH_ADMIN_SUPER_CODE_HISTORY_STORAGE_KEY =
   "low-analysis.auth.admin-super-code-history";
-export const AUTH_ADMIN_AUDIT_LOG_STORAGE_KEY = "low-analysis.auth.admin-audit-log";
+export const AUTH_ADMIN_AUDIT_LOG_STORAGE_KEY =
+  "low-analysis.auth.admin-audit-log";
 
 type AuthActionResult = {
   ok: boolean;
@@ -140,7 +142,9 @@ const DEV_ACCOUNTS: DevAuthAccount[] = [
 ];
 
 function isBrowser() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  );
 }
 
 function readStorageItem<T>(key: string, fallback: T): T {
@@ -170,7 +174,10 @@ function writeStorageItem(key: string, value: unknown) {
 }
 
 function readAuditLog() {
-  return readStorageItem<AdminAuditLogEntry[]>(AUTH_ADMIN_AUDIT_LOG_STORAGE_KEY, []);
+  return readStorageItem<AdminAuditLogEntry[]>(
+    AUTH_ADMIN_AUDIT_LOG_STORAGE_KEY,
+    [],
+  );
 }
 
 function writeAuditLog(entries: AdminAuditLogEntry[]) {
@@ -230,12 +237,18 @@ function readEffectiveDevAccounts() {
   }));
 }
 
-function matchesAccountIdentifier(identifier: string, account: StoredAuthAccount) {
+function matchesAccountIdentifier(
+  identifier: string,
+  account: StoredAuthAccount,
+) {
   return normalizeIdentifier(account.email) === identifier;
 }
 
 function matchesDevIdentifier(identifier: string, account: DevAuthAccount) {
-  return normalizeIdentifier(account.login) === identifier || matchesAccountIdentifier(identifier, account);
+  return (
+    normalizeIdentifier(account.login) === identifier ||
+    matchesAccountIdentifier(identifier, account)
+  );
 }
 
 function findAccountByUserId(userId: string) {
@@ -384,7 +397,9 @@ export function regenerateAdminSuperCode() {
   };
 }
 
-export function updateMockProfile(payload: ProfileUpdatePayload): AuthActionResult {
+export function updateMockProfile(
+  payload: ProfileUpdatePayload,
+): AuthActionResult {
   const target = findAccountByUserId(payload.userId);
 
   if (!target) {
@@ -432,7 +447,9 @@ export function updateMockProfile(payload: ProfileUpdatePayload): AuthActionResu
   };
 }
 
-export function changeMockPassword(payload: AccountChangePayload): AuthActionResult {
+export function changeMockPassword(
+  payload: AccountChangePayload,
+): AuthActionResult {
   const target = findAccountByUserId(payload.userId);
 
   if (!target) {
@@ -478,7 +495,9 @@ export function changeMockPassword(payload: AccountChangePayload): AuthActionRes
   };
 }
 
-export function registerMockAccount(payload: RegisterPayload): AuthActionResult {
+export function registerMockAccount(
+  payload: RegisterPayload,
+): AuthActionResult {
   const storedAccounts = readStoredAccounts();
   const devAccounts = readEffectiveDevAccounts();
   const email = normalizeIdentifier(payload.email);
@@ -518,13 +537,17 @@ export function registerMockAccount(payload: RegisterPayload): AuthActionResult 
     password: payload.password,
     accountType: payload.accountType,
     roles: createRoles(payload.accountType),
-    superCode: payload.accountType === "admin" ? payload.superCode?.trim() : undefined,
+    superCode:
+      payload.accountType === "admin" ? payload.superCode?.trim() : undefined,
     createdAt: new Date().toISOString(),
   };
 
   writeStorageItem(AUTH_ACCOUNTS_STORAGE_KEY, [account, ...storedAccounts]);
   appendAuditLogEntry({
-    action: payload.accountType === "admin" ? "Admin registered" : "Client registered",
+    action:
+      payload.accountType === "admin"
+        ? "Admin registered"
+        : "Client registered",
     detail: `${account.displayName} (${account.email}) created a ${payload.accountType} account.`,
     actor: account.displayName,
     severity: payload.accountType === "admin" ? "security" : "info",
@@ -554,7 +577,8 @@ export function loginMockAccount(payload: LoginPayload): AuthActionResult {
   if (exactMatches.length > 1 && !payload.accountType) {
     return {
       ok: false,
-      error: "Multiple accounts matched this login. Use a dedicated email for each role.",
+      error:
+        "Multiple accounts matched this login. Use a dedicated email for each role.",
     };
   }
 
@@ -586,7 +610,8 @@ export function loginMockAccount(payload: LoginPayload): AuthActionResult {
 
   const session = buildUpdatedSession(sessionAccount);
   appendAuditLogEntry({
-    action: session.accountType === "admin" ? "Administrator login" : "Client login",
+    action:
+      session.accountType === "admin" ? "Administrator login" : "Client login",
     detail: `${session.displayName} authenticated successfully.`,
     actor: session.displayName,
     severity: session.accountType === "admin" ? "security" : "info",
@@ -605,20 +630,28 @@ export function appendAdminAuditLog(
   return appendAuditLogEntry(payload);
 }
 
-export function deactivateMockAccount(userId: string): { ok: boolean; error?: string } {
+export function deactivateMockAccount(userId: string): {
+  ok: boolean;
+  error?: string;
+} {
   const storedAccounts = readStoredAccounts();
   const idx = storedAccounts.findIndex((a) => a.id === userId);
   if (idx === -1) {
-    return { ok: false, error: "Акаунт є dev-акаунтом і не може бути змінений." };
+    return {
+      ok: false,
+      error: "Акаунт є dev-акаунтом і не може бути змінений.",
+    };
   }
   const account = storedAccounts[idx];
-  const nextStatus: "active" | "inactive" = account?.status === "inactive" ? "active" : "inactive";
+  const nextStatus: "active" | "inactive" =
+    account?.status === "inactive" ? "active" : "inactive";
   const next = storedAccounts.map((a) =>
     a.id === userId ? { ...a, status: nextStatus } : a,
   );
   writeStorageItem(AUTH_ACCOUNTS_STORAGE_KEY, next);
   appendAuditLogEntry({
-    action: nextStatus === "inactive" ? "Account deactivated" : "Account reactivated",
+    action:
+      nextStatus === "inactive" ? "Account deactivated" : "Account reactivated",
     detail: `Account ${userId} status set to ${nextStatus}.`,
     actor: "admin",
     severity: "warning",
@@ -626,22 +659,32 @@ export function deactivateMockAccount(userId: string): { ok: boolean; error?: st
   return { ok: true };
 }
 
-export function promoteMockAccount(userId: string): { ok: boolean; error?: string } {
+export function promoteMockAccount(userId: string): {
+  ok: boolean;
+  error?: string;
+} {
   const storedAccounts = readStoredAccounts();
   const idx = storedAccounts.findIndex((a) => a.id === userId);
   if (idx === -1) {
-    return { ok: false, error: "Акаунт є dev-акаунтом і не може бути змінений." };
+    return {
+      ok: false,
+      error: "Акаунт є dev-акаунтом і не може бути змінений.",
+    };
   }
   const account = storedAccounts[idx];
   if (!account) return { ok: false, error: "Акаунт не знайдено." };
-  const nextType: AuthAccountType = account.accountType === "admin" ? "client" : "admin";
+  const nextType: AuthAccountType =
+    account.accountType === "admin" ? "client" : "admin";
   const nextRoles = nextType === "admin" ? ["admin", "client"] : ["client"];
   const next = storedAccounts.map((a) =>
     a.id === userId ? { ...a, accountType: nextType, roles: nextRoles } : a,
   );
   writeStorageItem(AUTH_ACCOUNTS_STORAGE_KEY, next);
   appendAuditLogEntry({
-    action: nextType === "admin" ? "Account promoted to admin" : "Admin rights removed",
+    action:
+      nextType === "admin"
+        ? "Account promoted to admin"
+        : "Admin rights removed",
     detail: `Account ${userId} role changed to ${nextType}.`,
     actor: "admin",
     severity: "security",
@@ -679,15 +722,21 @@ export function getAdminDashboardSnapshot() {
       createdAt: account.createdAt,
       lastLoginAt: account.lastLoginAt,
       superCodeProtected: Boolean(account.superCode),
-      source: DEV_ACCOUNTS.some((devAccount) => devAccount.id === account.id) ? "dev" : "stored",
+      source: DEV_ACCOUNTS.some((devAccount) => devAccount.id === account.id)
+        ? "dev"
+        : "stored",
     }));
   const latestAccounts = registryAccounts.slice(0, 8);
   const guestSnapshot = getGuestLimitSnapshot();
 
   return {
     totalAccounts: allAccounts.length,
-    clientAccounts: allAccounts.filter((account) => account.accountType === "client").length,
-    adminAccounts: allAccounts.filter((account) => account.accountType === "admin").length,
+    clientAccounts: allAccounts.filter(
+      (account) => account.accountType === "client",
+    ).length,
+    adminAccounts: allAccounts.filter(
+      (account) => account.accountType === "admin",
+    ).length,
     protectedRoutes: 5,
     activeSessionRole: session?.accountType ?? "guest",
     latestAccounts,

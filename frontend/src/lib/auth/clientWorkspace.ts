@@ -75,7 +75,9 @@ export type ClientWorkspace = {
 type WorkspaceStore = Record<string, ClientWorkspace>;
 
 function isBrowser() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  );
 }
 
 function readStore() {
@@ -101,7 +103,10 @@ function writeStore(store: WorkspaceStore) {
     return;
   }
 
-  window.localStorage.setItem(CLIENT_WORKSPACE_STORAGE_KEY, JSON.stringify(store));
+  window.localStorage.setItem(
+    CLIENT_WORKSPACE_STORAGE_KEY,
+    JSON.stringify(store),
+  );
 }
 
 function createDefaultWorkspace(): ClientWorkspace {
@@ -130,7 +135,8 @@ function createDefaultWorkspace(): ClientWorkspace {
         id: "activity-workspace-ready",
         type: "workspace",
         title: "Workspace initialized",
-        detail: "Your personal research cabinet is ready for notes, saved laws, and tracked topics.",
+        detail:
+          "Your personal research cabinet is ready for notes, saved laws, and tracked topics.",
         createdAt: now,
       },
     ],
@@ -176,7 +182,10 @@ export function readClientWorkspace(userId: string) {
   };
 }
 
-export function writeClientWorkspace(userId: string, workspace: ClientWorkspace) {
+export function writeClientWorkspace(
+  userId: string,
+  workspace: ClientWorkspace,
+) {
   const store = readStore();
   writeStore({
     ...store,
@@ -191,7 +200,10 @@ export function updateWorkspacePreferences(
   const current = readClientWorkspace(userId);
   const changedKeys = Object.keys(patch).filter((key) => {
     const preferenceKey = key as WorkspacePreferenceKey;
-    return patch[preferenceKey] !== undefined && current.preferences[preferenceKey] !== patch[preferenceKey];
+    return (
+      patch[preferenceKey] !== undefined &&
+      current.preferences[preferenceKey] !== patch[preferenceKey]
+    );
   }) as WorkspacePreferenceKey[];
   const next = {
     ...current,
@@ -207,7 +219,10 @@ export function updateWorkspacePreferences(
           type: "preference",
           title: "Workspace preferences updated",
           detail: changedKeys
-            .map((key) => `${key}: ${next.preferences[key] ? "enabled" : "disabled"}`)
+            .map(
+              (key) =>
+                `${key}: ${next.preferences[key] ? "enabled" : "disabled"}`,
+            )
             .join(" · "),
         })
       : next;
@@ -301,7 +316,11 @@ export function addSavedArticle(
 ) {
   const current = readClientWorkspace(userId);
 
-  if (current.savedArticles.some((item) => item.lawId === payload.lawId && item.code === payload.code)) {
+  if (
+    current.savedArticles.some(
+      (item) => item.lawId === payload.lawId && item.code === payload.code,
+    )
+  ) {
     return current;
   }
 
@@ -331,10 +350,14 @@ export function removeSavedArticle(userId: string, articleId: string) {
   const current = readClientWorkspace(userId);
   const next = {
     ...current,
-    savedArticles: current.savedArticles.filter((item) => item.id !== articleId),
+    savedArticles: current.savedArticles.filter(
+      (item) => item.id !== articleId,
+    ),
   };
 
-  const removedItem = current.savedArticles.find((item) => item.id === articleId);
+  const removedItem = current.savedArticles.find(
+    (item) => item.id === articleId,
+  );
   const nextWithActivity = removedItem
     ? appendActivity(next, {
         type: "saved",
@@ -387,7 +410,9 @@ export function addWorkspaceFocusTopic(userId: string, label: string) {
 
 export function removeWorkspaceFocusTopic(userId: string, topicId: string) {
   const current = readClientWorkspace(userId);
-  const removedTopic = current.focusTopics.find((topic) => topic.id === topicId);
+  const removedTopic = current.focusTopics.find(
+    (topic) => topic.id === topicId,
+  );
   const next = {
     ...current,
     focusTopics: current.focusTopics.filter((topic) => topic.id !== topicId),

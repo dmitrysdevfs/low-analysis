@@ -108,7 +108,10 @@ export default function SubjectsPage() {
                         href={ROUTES.subject(subject._id)}
                         className={styles.cardLink}
                         style={
-                          { "--status-color": statusColor } as Record<string, string>
+                          { "--status-color": statusColor } as Record<
+                            string,
+                            string
+                          >
                         }
                       >
                         <div className={styles.cardTop}>
@@ -148,8 +151,8 @@ export default function SubjectsPage() {
                           </div>
                         ) : null}
 
-                        {(subject.laws_count != null ||
-                          subject.elements_count != null) ? (
+                        {subject.laws_count != null ||
+                        subject.elements_count != null ? (
                           <div className={`mono ${styles.cardFooter}`}>
                             {subject.laws_count != null ? (
                               <span>{subject.laws_count} законів</span>

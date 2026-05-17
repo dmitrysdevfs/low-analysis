@@ -92,8 +92,9 @@ export function SearchResults({
         <div className={styles.guestNotice}>
           <span className={styles.guestNoticeTitle}>Режим перегляду гостя</span>
           <span className={styles.guestNoticeText}>
-            Пошук доступний для гостей, але відображаються лише перші {guestResultLimit} результати.
-            Ліміти запитів спільні для всіх відкритих вкладок.
+            Пошук доступний для гостей, але відображаються лише перші{" "}
+            {guestResultLimit} результати. Ліміти запитів спільні для всіх
+            відкритих вкладок.
           </span>
         </div>
       ) : null}

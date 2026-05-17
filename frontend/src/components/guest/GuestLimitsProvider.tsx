@@ -305,8 +305,8 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
                 Гість бачить усі публічні сторінки
               </div>
               <div className={styles.summaryMeta}>
-                Закони, суб&apos;єкти та пошук уже відкриті, але інтенсивні запити
-                та глибокі перегляди працюють із м&apos;якими лімітами.
+                Закони, суб&apos;єкти та пошук уже відкриті, але інтенсивні
+                запити та глибокі перегляди працюють із м&apos;якими лімітами.
               </div>
             </div>
 
@@ -323,7 +323,10 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
             <Link href={ROUTES.authLogin} className={styles.primaryAction}>
               Увійти
             </Link>
-            <Link href={ROUTES.authRegister} className={styles.primaryActionAlt}>
+            <Link
+              href={ROUTES.authRegister}
+              className={styles.primaryActionAlt}
+            >
               Зареєструватися
             </Link>
             <button
@@ -415,10 +418,16 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
           <div className={styles.actions}>
             {isBillingModal ? (
               <>
-                <Link href={ROUTES.accountBilling} className={styles.primaryAction}>
+                <Link
+                  href={ROUTES.accountBilling}
+                  className={styles.primaryAction}
+                >
                   План та оплата
                 </Link>
-                <Link href={ROUTES.accountCheckout} className={styles.primaryActionAlt}>
+                <Link
+                  href={ROUTES.accountCheckout}
+                  className={styles.primaryActionAlt}
+                >
                   Перейти до checkout
                 </Link>
               </>
@@ -431,7 +440,9 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
               type="button"
               className={styles.secondaryAction}
               onClick={() =>
-                setModal((current) => (current ? { ...current, open: false } : null))
+                setModal((current) =>
+                  current ? { ...current, open: false } : null,
+                )
               }
             >
               Продовжити

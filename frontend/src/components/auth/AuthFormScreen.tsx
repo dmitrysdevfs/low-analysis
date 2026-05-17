@@ -97,12 +97,14 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
   const trimmedEmail = form.email.trim();
   const trimmedSuperCode = form.superCode.trim();
   const emailValid = EMAIL_RE.test(trimmedEmail);
-  const loginIdentifierValid = trimmedEmail.length >= LOGIN_IDENTIFIER_MIN_LENGTH;
+  const loginIdentifierValid =
+    trimmedEmail.length >= LOGIN_IDENTIFIER_MIN_LENGTH;
   const superCodeReady =
     !requiresSuperCode || trimmedSuperCode.length >= SUPER_CODE_MIN_LENGTH;
   const passwordsMatch = !isRegister || form.confirmPassword === form.password;
   const subtitle = isAdminAccount ? copy.adminSubtitle : copy.clientSubtitle;
-  const submitLabel = isRegister && isAdminAccount ? copy.adminSubmitLabel : copy.submitLabel;
+  const submitLabel =
+    isRegister && isAdminAccount ? copy.adminSubmitLabel : copy.submitLabel;
   const loginSubtitle = COPY.login.clientSubtitle;
 
   const loginPayload: LoginPayload = {
@@ -149,9 +151,10 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
     setAccountType(nextAccountType);
     setForm((current) => ({
       ...current,
-      superCode: nextAccountType === "admin" && currentMode === "register"
-        ? current.superCode
-        : "",
+      superCode:
+        nextAccountType === "admin" && currentMode === "register"
+          ? current.superCode
+          : "",
     }));
     updateRoleInUrl(nextAccountType);
   }
@@ -166,7 +169,9 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
     event.preventDefault();
 
     if (isRegister && !registerReady) {
-      notify.warning("Заповніть форму реєстрації, включаючи супер-код адміна за потреби.");
+      notify.warning(
+        "Заповніть форму реєстрації, включаючи супер-код адміна за потреби.",
+      );
       return;
     }
 
@@ -257,7 +262,11 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
                     <motion.span
                       layoutId="auth-mode-toggle-pill"
                       className={styles.modeToggleHighlight}
-                      transition={{ type: "spring", stiffness: 360, damping: 32 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 360,
+                        damping: 32,
+                      }}
                     />
                   ) : null}
                   <span className={styles.modeToggleLabel}>
@@ -270,7 +279,9 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
         </div>
 
         <h1 className={styles.title}>{copy.title}</h1>
-        <p className={styles.subtitle}>{isRegister ? subtitle : loginSubtitle}</p>
+        <p className={styles.subtitle}>
+          {isRegister ? subtitle : loginSubtitle}
+        </p>
 
         {isRegister ? (
           <div className={styles.accessPanel}>
@@ -281,7 +292,11 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
               </span>
             </div>
 
-            <div className={styles.accessToggle} role="group" aria-label="Account type">
+            <div
+              className={styles.accessToggle}
+              role="group"
+              aria-label="Account type"
+            >
               {(["client", "admin"] as const).map((toggleAccountType) => {
                 const isActive = accountType === toggleAccountType;
 
@@ -382,7 +397,9 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
                   value={form.confirmPassword}
                   autoComplete="new-password"
                   placeholder=" "
-                  onChange={(event) => setField("confirmPassword", event.target.value)}
+                  onChange={(event) =>
+                    setField("confirmPassword", event.target.value)
+                  }
                 />
                 <label htmlFor="auth-confirm-password" className={styles.label}>
                   Підтвердіть пароль
@@ -402,7 +419,10 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
               </div>
 
               {requiresSuperCode ? (
-                <div className={styles.field} data-filled={trimmedSuperCode.length > 0}>
+                <div
+                  className={styles.field}
+                  data-filled={trimmedSuperCode.length > 0}
+                >
                   <input
                     id="auth-super-code"
                     className={styles.input}
@@ -410,7 +430,9 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
                     value={form.superCode}
                     autoComplete="one-time-code"
                     placeholder=" "
-                    onChange={(event) => setField("superCode", event.target.value)}
+                    onChange={(event) =>
+                      setField("superCode", event.target.value)
+                    }
                   />
                   <label htmlFor="auth-super-code" className={styles.label}>
                     Супер-код
@@ -470,13 +492,29 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
                 <input
                   type="checkbox"
                   checked={form.acceptTerms}
-                  onChange={(event) => setField("acceptTerms", event.target.checked)}
+                  onChange={(event) =>
+                    setField("acceptTerms", event.target.checked)
+                  }
                 />
                 <span>
                   Я погоджуюся з{" "}
-                  <a href={ROUTES.legal} target="_blank" rel="noopener noreferrer" className={styles.termsLink}>умовами використання</a>
-                  {" "}та{" "}
-                  <a href={ROUTES.legal + "#privacy"} target="_blank" rel="noopener noreferrer" className={styles.termsLink}>політикою конфіденційності</a>
+                  <a
+                    href={ROUTES.legal}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.termsLink}
+                  >
+                    умовами використання
+                  </a>{" "}
+                  та{" "}
+                  <a
+                    href={ROUTES.legal + "#privacy"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.termsLink}
+                  >
+                    політикою конфіденційності
+                  </a>
                 </span>
               </label>
             ) : (
@@ -485,7 +523,9 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
                   <input
                     type="checkbox"
                     checked={form.rememberMe}
-                    onChange={(event) => setField("rememberMe", event.target.checked)}
+                    onChange={(event) =>
+                      setField("rememberMe", event.target.checked)
+                    }
                   />
                   <span>Запам'ятати мене</span>
                 </label>
@@ -494,7 +534,9 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
                   type="button"
                   className={styles.inlineLink}
                   onClick={() =>
-                    notify.info("Відновлення паролю буде доступне найближчим часом.")
+                    notify.info(
+                      "Відновлення паролю буде доступне найближчим часом.",
+                    )
                   }
                 >
                   Забули пароль?

@@ -97,15 +97,20 @@ export function ClientWorkspaceNotes() {
           <span className={styles.eyebrow}>Нотатки кабінету</span>
           <h1 className={styles.title}>Особистий дослідницький блокнот</h1>
           <p className={styles.description}>
-            Фіксуйте інтерпретації, відкриті питання та завдання під час роботи з Low Analysis.
+            Фіксуйте інтерпретації, відкриті питання та завдання під час роботи
+            з Low Analysis.
           </p>
         </div>
 
         <div className={styles.heroMeta}>
           <div className={styles.heroIdentity}>
             <span className={styles.rolePill}>Дошка нотаток</span>
-            <div className={styles.identityName}>{workspace.notes.length} активних нотаток</div>
-            <div className={styles.identityEmail}>Організовано для {user.displayName}</div>
+            <div className={styles.identityName}>
+              {workspace.notes.length} активних нотаток
+            </div>
+            <div className={styles.identityEmail}>
+              Організовано для {user.displayName}
+            </div>
           </div>
 
           <div className={styles.heroActions}>
@@ -156,22 +161,31 @@ export function ClientWorkspaceNotes() {
           <div className={styles.panelHeader}>
             <div>
               <span className={styles.panelEyebrow}>Підказки</span>
-              <h2 className={styles.panelTitle}>Рекомендована структура нотатки</h2>
+              <h2 className={styles.panelTitle}>
+                Рекомендована структура нотатки
+              </h2>
             </div>
           </div>
 
           <div className={styles.statusList}>
             <div className={styles.statusRow}>
               <div className={styles.statusLabel}>Питання</div>
-              <div className={styles.statusMeta}>Яку правову неоднозначність або граничний випадок ви досліджуєте?</div>
+              <div className={styles.statusMeta}>
+                Яку правову неоднозначність або граничний випадок ви
+                досліджуєте?
+              </div>
             </div>
             <div className={styles.statusRow}>
               <div className={styles.statusLabel}>Посилання</div>
-              <div className={styles.statusMeta}>Який закон, стаття або суб'єкт спричинили цю нотатку?</div>
+              <div className={styles.statusMeta}>
+                Який закон, стаття або суб'єкт спричинили цю нотатку?
+              </div>
             </div>
             <div className={styles.statusRow}>
               <div className={styles.statusLabel}>Дія</div>
-              <div className={styles.statusMeta}>Що потрібно перевірити, порівняти або зберегти далі?</div>
+              <div className={styles.statusMeta}>
+                Що потрібно перевірити, порівняти або зберегти далі?
+              </div>
             </div>
           </div>
         </article>
@@ -191,7 +205,9 @@ export function ClientWorkspaceNotes() {
                   <div className={styles.noteTopRow}>
                     <div>
                       <div className={styles.noteTitle}>{note.title}</div>
-                      <div className={styles.noteMeta}>Оновлено {formatDateShort(note.updatedAt)}</div>
+                      <div className={styles.noteMeta}>
+                        Оновлено {formatDateShort(note.updatedAt)}
+                      </div>
                     </div>
 
                     {note.pinned ? (
@@ -224,7 +240,8 @@ export function ClientWorkspaceNotes() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              Блокнот порожній. Створіть першу нотатку для фіксації правового дослідження.
+              Блокнот порожній. Створіть першу нотатку для фіксації правового
+              дослідження.
             </div>
           )}
         </article>

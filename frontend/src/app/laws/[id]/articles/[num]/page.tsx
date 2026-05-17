@@ -75,7 +75,9 @@ export default function ArticlePage() {
   useEffect(() => {
     if (!activeSubjectId) return;
     const timer = setTimeout(() => {
-      const marks = Array.from(articleTreeRef.current?.querySelectorAll("mark") ?? []);
+      const marks = Array.from(
+        articleTreeRef.current?.querySelectorAll("mark") ?? [],
+      );
       if (!marks.length) return;
       marks[matchIndex % marks.length]?.scrollIntoView({
         behavior: "smooth",
@@ -98,7 +100,9 @@ export default function ArticlePage() {
   // Терміни та колір для highlight: canonical_name + aliases + role color активного суб'єкта
   const highlightTerms = useMemo(() => {
     if (!activeSubjectId) return [];
-    const active = articleSubjects.find((s) => s.subject_id === activeSubjectId);
+    const active = articleSubjects.find(
+      (s) => s.subject_id === activeSubjectId,
+    );
     if (!active) return [];
     return [
       active.subject.canonical_name,
@@ -108,7 +112,9 @@ export default function ArticlePage() {
 
   const highlightColor = useMemo(() => {
     if (!activeSubjectId) return "#c8a843";
-    const active = articleSubjects.find((s) => s.subject_id === activeSubjectId);
+    const active = articleSubjects.find(
+      (s) => s.subject_id === activeSubjectId,
+    );
     return active ? getRoleColor(active.role) : "#c8a843";
   }, [activeSubjectId, articleSubjects]);
 

@@ -132,7 +132,13 @@
 /* ── divider ── */
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, #1c3260 40%, #1c3260 60%, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #1c3260 40%,
+    #1c3260 60%,
+    transparent
+  );
   margin: 12px 0 52px;
 }
 

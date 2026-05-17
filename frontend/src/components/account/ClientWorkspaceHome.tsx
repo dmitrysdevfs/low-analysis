@@ -96,7 +96,9 @@ export function ClientWorkspaceHome() {
       {
         label: "Поточний план",
         value: subscription?.plan?.label ?? "Preview",
-        note: subscription?.description ?? "Local billing preview is active for this account.",
+        note:
+          subscription?.description ??
+          "Local billing preview is active for this account.",
       },
     ];
   }, [subscription?.description, subscription?.plan?.label, user, workspace]);
@@ -247,8 +249,8 @@ export function ClientWorkspaceHome() {
           <span className={styles.eyebrow}>Клієнтський простір</span>
           <h1 className={styles.title}>Особистий юридичний центр роботи</h1>
           <p className={styles.description}>
-            Тримайте профіль, нотатки, збережені закони та активні теми досліджень в одному
-            кабінеті, не змінюючи решту потоку платформи.
+            Тримайте профіль, нотатки, збережені закони та активні теми
+            досліджень в одному кабінеті, не змінюючи решту потоку платформи.
           </p>
         </div>
 
@@ -266,7 +268,10 @@ export function ClientWorkspaceHome() {
             <Link href={ROUTES.accountNotes} className={styles.secondaryButton}>
               Відкрити нотатки
             </Link>
-            <Link href={ROUTES.accountBilling} className={styles.secondaryButton}>
+            <Link
+              href={ROUTES.accountBilling}
+              className={styles.secondaryButton}
+            >
               План та оплата
             </Link>
             <button
@@ -282,10 +287,15 @@ export function ClientWorkspaceHome() {
 
       {(workspace.lastViewedLawId || workspace.lastSearchQuery) && (
         <div className={styles.continuePanel}>
-          <span className={`mono ${styles.continueEyebrow}`}>Продовжити роботу</span>
+          <span className={`mono ${styles.continueEyebrow}`}>
+            Продовжити роботу
+          </span>
 
           {workspace.lastViewedLawId && (
-            <Link href={`/laws/${workspace.lastViewedLawId}`} className={styles.continueItem}>
+            <Link
+              href={`/laws/${workspace.lastViewedLawId}`}
+              className={styles.continueItem}
+            >
               <span className={styles.continueIcon}>§</span>
               <span className={styles.continueText}>
                 {workspace.lastViewedLawTitle ?? "Закон"}
@@ -304,7 +314,9 @@ export function ClientWorkspaceHome() {
               className={styles.continueItem}
             >
               <span className={styles.continueIcon}>⌕</span>
-              <span className={styles.continueText}>"{workspace.lastSearchQuery}"</span>
+              <span className={styles.continueText}>
+                "{workspace.lastSearchQuery}"
+              </span>
             </Link>
           )}
         </div>
@@ -389,7 +401,9 @@ export function ClientWorkspaceHome() {
           <div className={styles.workspaceList}>
             <div className={styles.workspaceCard}>
               <div>
-                <div className={styles.workspaceTitle}>Останній збережений закон</div>
+                <div className={styles.workspaceTitle}>
+                  Останній збережений закон
+                </div>
                 <div className={styles.workspaceHint}>
                   {latestSaved
                     ? `${latestSaved.code} готовий для швидкого доступу з вашої полиці.`
@@ -400,7 +414,10 @@ export function ClientWorkspaceHome() {
                 {latestSaved ? (
                   <>
                     <span className={styles.badge}>збережено</span>
-                    <Link href={ROUTES.law(latestSaved.lawId)} className={styles.linkText}>
+                    <Link
+                      href={ROUTES.law(latestSaved.lawId)}
+                      className={styles.linkText}
+                    >
                       Відкрити закон
                     </Link>
                   </>
@@ -454,7 +471,8 @@ export function ClientWorkspaceHome() {
             </label>
 
             <p className={styles.subtleNote}>
-              Це ім'я відображається у чіпі заголовка та в клієнтському просторі.
+              Це ім'я відображається у чіпі заголовка та в клієнтському
+              просторі.
             </p>
 
             <div className={styles.actionRow}>
@@ -505,7 +523,8 @@ export function ClientWorkspaceHome() {
             </label>
 
             <p className={styles.subtleNote}>
-              Зміни пароля залишаються лише на фронтенді в цьому попередньому перегляді та зберігаються в локальному сховищі браузера.
+              Зміни пароля залишаються лише на фронтенді в цьому попередньому
+              перегляді та зберігаються в локальному сховищі браузера.
             </p>
 
             <div className={styles.actionRow}>
@@ -560,7 +579,9 @@ export function ClientWorkspaceHome() {
             </div>
           ) : (
             <p className={styles.subtleNote}>
-              Додайте свої поточні юридичні теми тут, щоб робочий простір став справжньою дослідницькою дошкою, а не просто статичною сторінкою профілю.
+              Додайте свої поточні юридичні теми тут, щоб робочий простір став
+              справжньою дослідницькою дошкою, а не просто статичною сторінкою
+              профілю.
             </p>
           )}
         </article>
@@ -609,7 +630,9 @@ export function ClientWorkspaceHome() {
                   <div className={styles.activityContent}>
                     <div className={styles.activityTopRow}>
                       <span className={styles.activityTitle}>{item.title}</span>
-                      <span className={styles.activityTime}>{formatDateFull(item.createdAt)}</span>
+                      <span className={styles.activityTime}>
+                        {formatDateFull(item.createdAt)}
+                      </span>
                     </div>
                     <div className={styles.activityDetail}>{item.detail}</div>
                   </div>
@@ -618,7 +641,9 @@ export function ClientWorkspaceHome() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              Дії в робочому просторі з'являться тут, коли ви зберігатимете закони, редагуватимете нотатки, оновлюватимете налаштування та формуватимете свій дослідницький процес.
+              Дії в робочому просторі з'являться тут, коли ви зберігатимете
+              закони, редагуватимете нотатки, оновлюватимете налаштування та
+              формуватимете свій дослідницький процес.
             </div>
           )}
         </article>
@@ -636,11 +661,14 @@ export function ClientWorkspaceHome() {
               <div>
                 <div className={styles.workspaceTitle}>Збережені статті</div>
                 <div className={styles.workspaceHint}>
-                  Тримайте стратегічні закони та часто використовувані документи на відстані одного кліку.
+                  Тримайте стратегічні закони та часто використовувані документи
+                  на відстані одного кліку.
                 </div>
               </div>
               <div className={styles.workspaceActions}>
-                <span className={styles.badge}>{workspace.savedArticles.length} елем.</span>
+                <span className={styles.badge}>
+                  {workspace.savedArticles.length} елем.
+                </span>
                 <Link href={ROUTES.accountSaved} className={styles.linkText}>
                   Відкрити список
                 </Link>
@@ -651,11 +679,14 @@ export function ClientWorkspaceHome() {
               <div>
                 <div className={styles.workspaceTitle}>Особисті нотатки</div>
                 <div className={styles.workspaceHint}>
-                  Фіксуйте юридичні спостереження, дослідницькі запитання та завдання для подальшого опрацювання.
+                  Фіксуйте юридичні спостереження, дослідницькі запитання та
+                  завдання для подальшого опрацювання.
                 </div>
               </div>
               <div className={styles.workspaceActions}>
-                <span className={styles.badgeAccent}>{workspace.notes.length} нотат.</span>
+                <span className={styles.badgeAccent}>
+                  {workspace.notes.length} нотат.
+                </span>
                 <Link href={ROUTES.accountNotes} className={styles.linkText}>
                   Відкрити нотатник
                 </Link>

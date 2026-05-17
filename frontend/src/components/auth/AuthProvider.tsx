@@ -34,7 +34,10 @@ type AuthContextValue = {
   login: (payload: LoginPayload) => AuthActionResult;
   register: (payload: RegisterPayload) => AuthActionResult;
   updateProfile: (displayName: string) => AuthActionResult;
-  changePassword: (currentPassword: string, nextPassword: string) => AuthActionResult;
+  changePassword: (
+    currentPassword: string,
+    nextPassword: string,
+  ) => AuthActionResult;
   logout: () => void;
 };
 
@@ -53,7 +56,9 @@ const AUTH_CONTEXT_DEFAULT: AuthContextValue = {
 const AuthContext = createContext<AuthContextValue>(AUTH_CONTEXT_DEFAULT);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthSession | null>(() => readStoredSession());
+  const [user, setUser] = useState<AuthSession | null>(() =>
+    readStoredSession(),
+  );
   const [isHydrated, setIsHydrated] = useState(typeof window !== "undefined");
 
   useEffect(() => {
@@ -77,62 +82,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return registerMockAccount(payload);
   }, []);
 
-  const updateProfile = useCallback((displayName: string) => {
-    if (!user) {
-      return { ok: false, error: "No active session found." };
-    }
+  const updateProfile = useCallback(
+    (displayName: string) => {
+      if (!user) {
+        return { ok: false, error: "No active session found." };
+      }
 
-    const result = updateMockProfile({
-      userId: user.id,
-      displayName,
-    });
+      const result = updateMockProfile({
+        userId: user.id,
+        displayName,
+      });
 
-    if (result.ok && result.session) {
-      setUser(result.session);
-    }
+      if (result.ok && result.session) {
+        setUser(result.session);
+      }
 
-    return result;
-  }, [user]);
+      return result;
+    },
+    [user],
+  );
 
-  const changePassword = useCallback((currentPassword: string, nextPassword: string) => {
-    if (!user) {
-      return { ok: false, error: "No active session found." };
-    }
+  const changePassword = useCallback(
+    (currentPassword: string, nextPassword: string) => {
+      if (!user) {
+        return { ok: false, error: "No active session found." };
+      }
 
-    const result = changeMockPassword({
-      userId: user.id,
-      currentPassword,
-      nextPassword,
-    });
+      const result = changeMockPassword({
+        userId: user.id,
+        currentPassword,
+        nextPassword,
+      });
 
-    if (result.ok && result.session) {
-      setUser(result.session);
-    }
+      if (result.ok && result.session) {
+        setUser(result.session);
+      }
 
-    return result;
-  }, [user]);
+      return result;
+    },
+    [user],
+  );
 
   const logout = useCallback(() => {
     clearStoredSession();
     setUser(null);
   }, []);
 
-  const contextValue = useMemo(() => ({
-    isHydrated,
-    isAuthenticated: !!user,
-    isAdmin: user?.accountType === "admin",
-    user,
-    login,
-    register,
-    updateProfile,
-    changePassword,
-    logout,
-  }), [changePassword, isHydrated, login, logout, register, updateProfile, user]);
+  const contextValue = useMemo(
+    () => ({
+      isHydrated,
+      isAuthenticated: !!user,
+      isAdmin: user?.accountType === "admin",
+      user,
+      login,
+      register,
+      updateProfile,
+      changePassword,
+      logout,
+    }),
+    [changePassword, isHydrated, login, logout, register, updateProfile, user],
+  );
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 

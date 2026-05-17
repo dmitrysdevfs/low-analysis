@@ -36,8 +36,15 @@ type BillingContextValue = {
   payments: ReturnType<typeof getBillingPaymentsForUser>;
   planCatalog: typeof BILLING_PLAN_CATALOG;
   refreshBilling: () => void;
-  purchasePlan: (planId: BillingPlanId, method: BillingPaymentMethod) => BillingActionResult;
-  assignPlan: (userId: string, planId: BillingPlanId, actor?: string) => BillingActionResult;
+  purchasePlan: (
+    planId: BillingPlanId,
+    method: BillingPaymentMethod,
+  ) => BillingActionResult;
+  assignPlan: (
+    userId: string,
+    planId: BillingPlanId,
+    actor?: string,
+  ) => BillingActionResult;
   consumeQuota: (type: BillingQuotaType) => BillingQuotaAttemptResult;
   getPlanSnapshotForUser: (
     userId: string,
@@ -96,12 +103,17 @@ const EMPTY_BILLING_CONTEXT: BillingContextValue = {
   getBillingRegistry: () => [],
 };
 
-const BillingContext = createContext<BillingContextValue>(EMPTY_BILLING_CONTEXT);
+const BillingContext = createContext<BillingContextValue>(
+  EMPTY_BILLING_CONTEXT,
+);
 
 export function BillingProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [subscription, setSubscription] = useState<BillingSubscriptionSnapshot | null>(null);
-  const [payments, setPayments] = useState<ReturnType<typeof getBillingPaymentsForUser>>([]);
+  const [subscription, setSubscription] =
+    useState<BillingSubscriptionSnapshot | null>(null);
+  const [payments, setPayments] = useState<
+    ReturnType<typeof getBillingPaymentsForUser>
+  >([]);
   const [isHydrated, setIsHydrated] = useState(false);
 
   const refreshBilling = useCallback(() => {
@@ -144,7 +156,12 @@ export function BillingProvider({ children }: { children: ReactNode }) {
         };
       }
 
-      const result = purchaseDemoPlan(user.id, planId, method, user.displayName);
+      const result = purchaseDemoPlan(
+        user.id,
+        planId,
+        method,
+        user.displayName,
+      );
       refreshBilling();
       return result;
     },
@@ -190,7 +207,15 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       getPlanSnapshotForUser: getBillingSubscriptionSnapshot,
       getBillingRegistry: getBillingRegistrySnapshot,
     }),
-    [consumeQuota, isHydrated, payments, purchasePlan, refreshBilling, subscription, assignPlan],
+    [
+      consumeQuota,
+      isHydrated,
+      payments,
+      purchasePlan,
+      refreshBilling,
+      subscription,
+      assignPlan,
+    ],
   );
 
   return (
