@@ -58,7 +58,9 @@ const run = async () => {
       });
 
       if (elements.length === 0) {
-        console.log(`⚠️  No Article 1 elements found for law: ${law.title} (${law.code})`);
+        console.log(
+          `⚠️  No Article 1 elements found for law: ${law.title} (${law.code})`,
+        );
         continue;
       }
 
@@ -67,7 +69,7 @@ const run = async () => {
       if (definitions.length > 0) {
         // Keep existing preamble if it exists
         const currentContext = law.global_context || {};
-        
+
         await Law.updateOne(
           { _id: law._id },
           {
@@ -77,12 +79,16 @@ const run = async () => {
                 definitions,
               },
             },
-          }
+          },
         );
-        console.log(`✅ Extracted ${definitions.length} definitions for law: ${law.title} (${law.code})`);
+        console.log(
+          `✅ Extracted ${definitions.length} definitions for law: ${law.title} (${law.code})`,
+        );
         updatedCount++;
       } else {
-        console.log(`ℹ️  No definitions extracted for law: ${law.title} (${law.code})`);
+        console.log(
+          `ℹ️  No definitions extracted for law: ${law.title} (${law.code})`,
+        );
       }
     }
 

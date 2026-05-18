@@ -70,7 +70,8 @@ export const queryLLM = async (systemPrompt, userPrompt) => {
         console.error(rawText);
         console.error('[llmService] Cleaned response was:');
         console.error(cleaned);
-        const finishReason = response.candidates?.[0]?.finishReason || 'UNKNOWN';
+        const finishReason =
+          response.candidates?.[0]?.finishReason || 'UNKNOWN';
         console.error(`[llmService] Finish Reason: ${finishReason}`);
         throw parseError;
       }
