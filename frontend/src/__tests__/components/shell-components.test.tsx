@@ -1,10 +1,12 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { LawCard } from "@/components/LawCard";
 import { Layout } from "@/components/Layout";
 import layoutStyles from "@/components/Layout.module.scss";
 import Footer from "@/layout/Footer/Footer";
 import { LAW_FIXTURE } from "@/test/fixtures";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
 
 describe("shell components", () => {
   it("renders breadcrumb items with links and a current item", () => {
@@ -58,12 +60,34 @@ describe("shell components", () => {
     ).toBe(true);
   });
 
-  it("renders footer branding and docs link", () => {
+  it("renders footer branding", () => {
     render(<Footer />);
+    expect(screen.getAllByText(/law\s+analysis/i).length).toBeGreaterThan(0);
+  });
 
-    expect(screen.getByText(/Low Analysis/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /Документація API/i }),
-    ).toHaveAttribute("href", "/api-docs");
+  it("renders API Docs link inside Footer for administrator session", async () => {
+    window.localStorage.setItem(
+      AUTH_SESSION_STORAGE_KEY,
+      JSON.stringify({
+        id: "admin-1",
+        displayName: "Root Admin",
+        email: "admin@low.test",
+        roles: ["admin", "client"],
+        accountType: "admin",
+        lastLoginAt: "2026-05-17T10:00:00.000Z",
+      }),
+    );
+
+    render(
+      <AuthProvider>
+        <Footer />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("link", { name: /Документація API/i }),
+      ).toHaveAttribute("href", "https://low-analysis.onrender.com/api-docs");
+    });
   });
 });

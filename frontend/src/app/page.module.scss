@@ -363,6 +363,16 @@
   gap: 14px;
   padding: 12px 16px;
   border-radius: 6px;
+  border: 1px solid transparent;
+}
+
+.roadmapItemDone {
+  background: rgba(200, 168, 67, 0.04);
+  border-color: rgba(200, 168, 67, 0.12);
+}
+
+.roadmapItemPending {
+  background: transparent;
 }
 
 .roadmapCheckmark {
@@ -371,9 +381,25 @@
   margin-top: 1px;
 }
 
+.roadmapCheckmarkDone {
+  color: #c8a843;
+}
+
+.roadmapCheckmarkPending {
+  color: #1c3260;
+}
+
 .roadmapItemText {
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+.roadmapItemTextDone {
+  color: #d6e0f0;
+}
+
+.roadmapItemTextPending {
+  color: #7a98c0;
 }
 
 // ─── Roadmap Footer ──────────────────────────────────────────────────────────

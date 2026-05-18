@@ -1,6 +1,7 @@
 import { useSubjects } from "@/hooks/useSubjects";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { highlightMatch } from "@/lib/utils/highlightMatch";
 
 export interface SidebarSubject {
   _id: string;
@@ -53,23 +54,6 @@ export default function Sidebar({
       : showAll
         ? sortedSubjects
         : sortedSubjects.slice(0, 10);
-
-  const highlightMatch = (text: string, query: string) => {
-    if (!query.trim()) return text;
-
-    const regex = new RegExp(`(${query})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} className="font-semibold text-[#c8a843]">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
 
   if (loading) {
     return (
@@ -149,7 +133,7 @@ export default function Sidebar({
                     : "text-[#7a98c0] hover:text-[#c8a843] hover:bg-[#1c3260]"
                 }`}
               >
-                {highlightMatch(subject.canonical_name, search)}
+                {highlightMatch(subject.canonical_name, search ? [search] : [])}
               </li>
             ))}
           </ul>

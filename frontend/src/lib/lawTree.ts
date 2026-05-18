@@ -19,6 +19,12 @@ export {
   getNodeContent,
   getNodeBadge,
   getRoleLabel,
+  getRoleColor,
+  ROLE_COLORS,
   getTypeLabel,
   parseElementCode,
+  getLegalStatusLabel,
+  getLegalStatusColor,
+  LEGAL_STATUS_LABELS,
+  LEGAL_STATUS_COLORS,
 } from "./tree";

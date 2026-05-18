@@ -30,7 +30,7 @@ export function HeroSection({ w }: { w: number }) {
             variants={childFade}
             className={`display ${styles.heroH1}`}
           >
-            Low Analysis
+            Law Analysis
           </motion.h1>
 
           <motion.p
@@ -41,7 +41,7 @@ export function HeroSection({ w }: { w: number }) {
           </motion.p>
 
           <motion.p variants={childFade} className={styles.heroDesc}>
-            Закони України існують як неструктуровані текстові полотна. Low
+            Закони України існують як неструктуровані текстові полотна. Law
             Analysis розбиває кожен закон на атомарні одиниці — розділ → стаття
             → абзац — де кожен елемент має унікальний ієрархічний код і
             зв&apos;язок із батьківським елементом.

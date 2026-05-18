@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useGuestLimits } from "@/components/guest/GuestLimitsProvider";
 import { getLawTree } from "@/lib/api";
 import { parseApiError } from "@/lib/utils";
 import type { Law, TreeNode } from "@/types";
@@ -13,6 +14,7 @@ interface State {
 }
 
 export function useLawTree(id?: string) {
+  const { consumeView } = useGuestLimits();
   const [state, setState] = useState<State>({
     fetchedId: null,
     law: null,
@@ -26,6 +28,17 @@ export function useLawTree(id?: string) {
     if (!id) return;
 
     const controller = new AbortController();
+    const guestAttempt = consumeView(`law-tree:${id}`);
+
+    if (!guestAttempt.allowed) {
+      setState({
+        fetchedId: id,
+        law: null,
+        tree: [],
+        error: guestAttempt.message ?? "Guest deep-view limit reached.",
+      });
+      return;
+    }
 
     getLawTree(id, { signal: controller.signal })
       .then((response) =>
@@ -48,7 +61,7 @@ export function useLawTree(id?: string) {
       });
 
     return () => controller.abort();
-  }, [id]);
+  }, [consumeView, id]);
 
   return { ...state, loading };
 }

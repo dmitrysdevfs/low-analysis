@@ -9,7 +9,7 @@ export default {
   ],
   "frontend/src/**/*.{ts,tsx}": () => [
     'npx prettier --write "frontend/src/**/*.{ts,tsx}"',
-    'npx eslint --fix --config frontend/eslint.config.mjs "frontend/src"',
+    'npm --prefix frontend run lint -- --fix "src"',
   ],
   "frontend/src/**/*.{css,scss,json}": () =>
     'npx prettier --write "frontend/src/**/*.{css,scss,json}"',

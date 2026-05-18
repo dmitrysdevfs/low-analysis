@@ -40,23 +40,15 @@ export function RoadmapSection({
               initial={{ opacity: 0, x: -16 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: index * 0.08, duration: 0.35 }}
-              className={styles.roadmapItem}
-              style={{
-                background: item.done ? "rgba(200,168,67,0.04)" : "transparent",
-                border: item.done
-                  ? "1px solid rgba(200,168,67,0.12)"
-                  : "1px solid transparent",
-              }}
+              className={`${styles.roadmapItem} ${item.done ? styles.roadmapItemDone : styles.roadmapItemPending}`}
             >
               <span
-                className={`mono ${styles.roadmapCheckmark}`}
-                style={{ color: item.done ? "#C8A843" : "#1C3260" }}
+                className={`mono ${styles.roadmapCheckmark} ${item.done ? styles.roadmapCheckmarkDone : styles.roadmapCheckmarkPending}`}
               >
                 {item.done ? "✓" : "○"}
               </span>
               <span
-                className={styles.roadmapItemText}
-                style={{ color: item.done ? "#D6E0F0" : "#7A98C0" }}
+                className={`${styles.roadmapItemText} ${item.done ? styles.roadmapItemTextDone : styles.roadmapItemTextPending}`}
               >
                 {item.text}
               </span>

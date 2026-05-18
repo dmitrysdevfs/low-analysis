@@ -18,7 +18,7 @@ describe("Home page", () => {
 
     render(<HomePage />);
 
-    expect(screen.getByText("Low Analysis")).toBeInTheDocument();
+    expect(screen.getByText("Law Analysis")).toBeInTheDocument();
     expect(
       screen.getByText(/Перетворення текстів законів на структуру/i),
     ).toBeInTheDocument();

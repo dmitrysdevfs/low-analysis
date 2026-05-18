@@ -70,6 +70,7 @@ if (!window.matchMedia) {
 
 afterEach(() => {
   cleanup();
+  window.localStorage.clear();
   resetNavigationMocks();
   vi.clearAllMocks();
 });

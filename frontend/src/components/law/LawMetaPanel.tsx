@@ -2,12 +2,11 @@
 
 import { motion } from "framer-motion";
 import type { Law } from "@/types";
-
 import {
   ARTICLE_LIMIT_OPTIONS,
+  getNextLimitValue,
   parseLimitValue,
   toLimitParam,
-  getNextLimitValue,
 } from "@/lib/pageLimits";
 import styles from "./LawMetaPanel.module.scss";
 
@@ -20,6 +19,11 @@ interface LawMetaPanelProps {
   canLoadMore: boolean;
   selectedLimit: number | "all";
   onLimitChange: (value: number | "all") => void;
+  lawSubjects: Array<{ subject_id: string; name: string; status: string }>;
+  selectedSubjectId: string | null;
+  onSubjectSelect: (value: string | null) => void;
+  isSidebarOpen: boolean;
+  onSidebarToggle: () => void;
 }
 
 export function LawMetaPanel({
@@ -31,6 +35,11 @@ export function LawMetaPanel({
   canLoadMore,
   selectedLimit,
   onLimitChange,
+  lawSubjects,
+  selectedSubjectId,
+  onSubjectSelect,
+  isSidebarOpen,
+  onSidebarToggle,
 }: LawMetaPanelProps) {
   return (
     <motion.section
@@ -56,6 +65,42 @@ export function LawMetaPanel({
         <div className={styles.lawStatus}>
           {law.status.charAt(0).toUpperCase() +
             law.status.slice(1).toLowerCase()}
+        </div>
+      )}
+      {lawSubjects.length > 0 && (
+        <div className={styles.subjectsBlock}>
+          <div className={styles.subjectsHeader}>
+            <div className={`eyebrow ${styles.subjectsLabel}`}>
+              {"Суб'єкти (актори)"} · {lawSubjects.length}
+            </div>
+            <button
+              type="button"
+              className={`btn btn-ghost ${styles.subjectsToggle}`}
+              onClick={onSidebarToggle}
+            >
+              {isSidebarOpen ? "Сховати список" : "Розгорнути список"}
+            </button>
+          </div>
+          <div className={styles.subjectsList}>
+            {lawSubjects.map(({ subject_id, name }) => (
+              <button
+                key={subject_id}
+                type="button"
+                className={`directory-chip mono ${styles.subjectChip} ${
+                  selectedSubjectId === subject_id
+                    ? styles.subjectChipActive
+                    : ""
+                }`}
+                onClick={() =>
+                  onSubjectSelect(
+                    selectedSubjectId === subject_id ? null : subject_id,
+                  )
+                }
+              >
+                {name}
+              </button>
+            ))}
+          </div>
         </div>
       )}
       <p className={styles.lawDesc}>

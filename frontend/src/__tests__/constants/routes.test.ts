@@ -8,6 +8,16 @@ describe("frontend route and config constants", () => {
     expect(ROUTES.laws).toBe("/laws");
     expect(ROUTES.subjects).toBe("/subjects");
     expect(ROUTES.search).toBe("/search");
+    expect(ROUTES.admin).toBe("/admin");
+    expect(ROUTES.adminAnalytics).toBe("/admin/analytics");
+    expect(ROUTES.auth).toBe("/auth");
+    expect(ROUTES.authLogin).toBe("/auth/login");
+    expect(ROUTES.authRegister).toBe("/auth/register");
+    expect(ROUTES.account).toBe("/account");
+    expect(ROUTES.accountBilling).toBe("/account/billing");
+    expect(ROUTES.accountCheckout).toBe("/account/billing/checkout");
+    expect(ROUTES.accountSaved).toBe("/account/saved");
+    expect(ROUTES.accountNotes).toBe("/account/notes");
     expect(ROUTES.law("law-42")).toBe("/laws/law-42");
     expect(ROUTES.article("law-42", "12")).toBe("/laws/law-42/articles/12");
     expect(ROUTES.subject("subject-1")).toBe("/subjects/subject-1");
