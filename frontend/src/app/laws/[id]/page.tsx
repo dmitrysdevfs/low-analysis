@@ -156,11 +156,14 @@ export default function LawTreePage() {
       scroll: false,
     });
   };
+  console.log("lawSubjects", lawSubjects);
+  console.log(subjectsMap.size);
+  console.log(tree[0]?.subjects);
 
   return (
     <Layout fullHeight>
       <div className={styles.contentFlex}>
-        <div className="sm:flex sm:gap-8 max-w-[1400px] mx-auto w-full">
+        <div className="sm:flex">
           <Sidebar
             subjectsList={lawSubjects.map((s) => ({
               _id: s.subject_id,

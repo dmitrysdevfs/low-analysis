@@ -33,7 +33,7 @@ function SearchResultsContent() {
   }, [q, docType, dateFrom, dateTo, number, status, search]);
 
   return (
-    <div className="mx-auto w-full max-w-[1100px] px-[clamp(14px,4vw,24px)] pt-5 pb-20 sm:pb-12">
+    <div className="section-pad max-w-[960px] w-full mx-auto">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
