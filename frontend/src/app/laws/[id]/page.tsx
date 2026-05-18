@@ -157,6 +157,9 @@ export default function LawTreePage() {
       scroll: false,
     });
   };
+  console.log("lawSubjects", lawSubjects);
+  console.log(subjectsMap.size);
+  console.log(tree[0]?.subjects);
 
   return (
     <Layout fullHeight>
