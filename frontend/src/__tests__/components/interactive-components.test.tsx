@@ -139,7 +139,7 @@ describe("interactive frontend components", () => {
 
     await user.click(screen.getByRole("button", { name: /Очистити/i }));
     expect(onReset).toHaveBeenCalledTimes(1);
-  }, 12000);
+  });
 
   it("renders loading, empty, error and results states in SearchResults", () => {
     const { rerender } = render(

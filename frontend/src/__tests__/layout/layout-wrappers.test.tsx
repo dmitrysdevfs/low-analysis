@@ -19,7 +19,7 @@ describe("frontend layout wrappers", () => {
 
     const tree = RootLayout({
       children: <span>Дитина</span>,
-    }) as React.ReactElement;
+    }) as React.ReactElement<{ lang: string; children: React.ReactElement }>;
 
     expect(tree.type).toBe("html");
     expect(tree.props.lang).toBe("uk");

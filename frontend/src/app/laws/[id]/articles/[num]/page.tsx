@@ -83,7 +83,7 @@ export default function ArticlePage() {
         behavior: "smooth",
         block: "center",
       });
-    }, 60);
+    }, 100);
     return () => clearTimeout(timer);
   }, [activeSubjectId, matchIndex]);
 
