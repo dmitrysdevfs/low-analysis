@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import RootLayout, { metadata } from "@/app/layout";
 import Header from "@/layout/Header/Header";
 
-vi.mock("@/components/AppHeader", () => ({
+vi.mock("@/components/layout/AppHeader", () => ({
   AppHeader: () => <div>Mock AppHeader</div>,
 }));
 

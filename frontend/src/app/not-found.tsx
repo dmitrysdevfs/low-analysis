@@ -5,8 +5,8 @@ import { useRef, useCallback } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ROUTES } from "@/constants/routes";
 import styles from "./not-found.module.scss";
-import { FloatingFragment } from "@/components/FloatingFragment";
-import { GridBackground } from "@/components/GridBackground";
+import { FloatingFragment } from "@/components/ui/FloatingFragment";
+import { GridBackground } from "@/components/ui/GridBackground";
 
 const LEGAL_FRAGMENTS = [
   { text: "Ст. 1", x: "8%", y: "18%", delay: 0 },

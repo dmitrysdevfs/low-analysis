@@ -1,4 +1,4 @@
-import { Layout } from "@/components/Layout";
+﻿import { Layout } from "@/components/layout/Layout";
 import { AdminControlCenter } from "@/components/admin/AdminControlCenter";
 import styles from "./page.module.scss";
 

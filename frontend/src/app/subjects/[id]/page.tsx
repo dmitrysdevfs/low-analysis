@@ -4,12 +4,12 @@ import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Breadcrumb } from "@/components/Breadcrumb";
-import { Layout } from "@/components/Layout";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
 import { useLaws } from "@/hooks/useLaws";
-import { parseElementCode, getRoleLabel, getTypeLabel } from "@/lib/lawTree";
+import { parseElementCode, getRoleLabel, getTypeLabel } from "@/lib/tree";
 import styles from "./page.module.scss";
 
 export default function SubjectDetailPage() {

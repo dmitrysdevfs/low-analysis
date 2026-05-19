@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjects } from "@/hooks/useSubjects";
-import { getLegalStatusLabel, getLegalStatusColor } from "@/lib/lawTree";
+import { getLegalStatusLabel, getLegalStatusColor } from "@/lib/tree";
 import styles from "./page.module.scss";
 
 export default function SubjectsPage() {

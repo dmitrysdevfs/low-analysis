@@ -6,7 +6,7 @@ import { getLaws } from "@/lib/api";
 import { parseApiError } from "@/lib/utils";
 import type { Law } from "@/types";
 import type { SearchParams } from "@/types/search.types";
-import { applySearchFilters, sortLaws } from "@/lib/searchFilters";
+import { applySearchFilters, sortLaws } from "@/lib/search/filters";
 
 export type { SearchParams };
 

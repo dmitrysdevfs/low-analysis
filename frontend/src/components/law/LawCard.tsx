@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 import { ROUTES } from "@/constants/routes";
 import { getLawTree } from "@/lib/api";
-import { getSortedArticles } from "@/lib/lawTree";
+import { getSortedArticles } from "@/lib/tree";
 import { notify } from "@/lib/toast";
 import type { Law, TreeNode } from "@/types";
 import styles from "./LawCard.module.scss";

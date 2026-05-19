@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { type TreeBranch } from "@/lib/lawTree";
+import { type TreeBranch } from "@/lib/tree";
 import styles from "./LawStructureList.module.scss";
 import { ArticleEntry } from "./LawStructureListArticle";
 

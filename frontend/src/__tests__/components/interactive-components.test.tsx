@@ -1,15 +1,15 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { AppHeader } from "@/components/AppHeader";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { AuthProvider } from "@/components/auth/AuthProvider";
-import { Dialog } from "@/components/Dialog";
-import { LawStructureList } from "@/components/LawStructureList";
-import { SearchForm } from "@/components/SearchForm";
-import { SearchResults } from "@/components/SearchResults";
-import { SkeletonCard } from "@/components/SkeletonCard";
-import { TreeNode } from "@/components/TreeNode";
+import { Dialog } from "@/components/ui/Dialog";
+import { LawStructureList } from "@/components/law/LawStructureList";
+import { SearchForm } from "@/components/search/SearchForm";
+import { SearchResults } from "@/components/search/SearchResults";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { TreeNode } from "@/components/article/TreeNode";
 import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
-import { buildLawSections } from "@/lib/lawTree";
+import { buildLawSections } from "@/lib/tree";
 import {
   ARTICLE_NODE,
   LAW_FIXTURE,

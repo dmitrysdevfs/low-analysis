@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Layout } from "@/components/Layout";
-import { LawCard } from "@/components/LawCard";
-import { LawParseForm } from "@/components/LawParseForm";
-import { SkeletonCard } from "@/components/SkeletonCard";
+import { Layout } from "@/components/layout/Layout";
+import { LawCard } from "@/components/law/LawCard";
+import { LawParseForm } from "@/components/parse/LawParseForm";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { useLaws } from "@/hooks/useLaws";
 import styles from "./page.module.scss";
 

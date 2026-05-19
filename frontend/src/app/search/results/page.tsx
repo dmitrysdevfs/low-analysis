@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Layout } from "@/components/Layout";
-import { SearchResults } from "@/components/SearchResults";
+import { Layout } from "@/components/layout/Layout";
+import { SearchResults } from "@/components/search/SearchResults";
 import { useGuestLimits } from "@/components/guest/GuestLimitsProvider";
 import { GUEST_VISIBLE_RESULTS_LIMIT, useSearch } from "@/hooks/useSearch";
 import { useAuth } from "@/components/auth/AuthProvider";

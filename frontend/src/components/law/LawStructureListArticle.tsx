@@ -9,7 +9,7 @@ import {
   getArticleRouteNumber,
   getArticleTitle,
   type TreeBranch,
-} from "@/lib/lawTree";
+} from "@/lib/tree";
 import { ROUTES } from "@/constants/routes";
 import { NestedNodeList } from "./LawStructureListNodes";
 

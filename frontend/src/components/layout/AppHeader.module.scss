@@ -468,6 +468,10 @@
 }
 
 @media (max-width: 639px) {
+  .desktopNav {
+    display: none;
+  }
+
   .topBar {
     padding: 10px 14px;
     gap: 10px;

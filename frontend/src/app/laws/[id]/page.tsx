@@ -8,12 +8,12 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { motion } from "framer-motion";
-import { Breadcrumb } from "@/components/Breadcrumb";
-import { LawMetaPanel } from "@/components/LawMetaPanel";
-import { LawStructureList } from "@/components/LawStructureList";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { LawMetaPanel } from "@/components/law/LawMetaPanel";
+import { LawStructureList } from "@/components/law/LawStructureList";
 import Sidebar from "@/components/Sidebar";
 import type { TreeNode } from "@/types";
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useLawTree } from "@/hooks/useLawTree";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
@@ -21,14 +21,14 @@ import {
   buildLawSections,
   countArticlesInSections,
   limitLawSections,
-} from "@/lib/lawTree";
+} from "@/lib/tree";
 import styles from "./page.module.scss";
 import {
   DEFAULT_ARTICLE_LIMIT,
   ARTICLE_LIMIT_OPTIONS,
   parseLimitValue,
   toLimitParam,
-} from "@/lib/pageLimits";
+} from "@/lib/utils/pageLimits";
 
 function filterTreeBySubject(
   tree: TreeNode[],

@@ -7,7 +7,7 @@ import {
   getNextLimitValue,
   parseLimitValue,
   toLimitParam,
-} from "@/lib/pageLimits";
+} from "@/lib/utils/pageLimits";
 import styles from "./LawMetaPanel.module.scss";
 
 interface LawMetaPanelProps {

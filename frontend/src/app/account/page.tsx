@@ -1,4 +1,4 @@
-import { Layout } from "@/components/Layout";
+﻿import { Layout } from "@/components/layout/Layout";
 import { ClientWorkspaceHome } from "@/components/account/ClientWorkspaceHome";
 
 export default function AccountPage() {

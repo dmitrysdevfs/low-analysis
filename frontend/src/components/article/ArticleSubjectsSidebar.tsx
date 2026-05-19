@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { getRoleLabel, getRoleColor } from "@/lib/lawTree";
+import { getRoleLabel, getRoleColor } from "@/lib/tree";
 import styles from "./ArticleSubjectsSidebar.module.scss";
 
 interface Subject {

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { getNodeBadge } from "@/lib/lawTree";
-import type { TreeBranch } from "@/lib/lawTree";
+import { getNodeBadge } from "@/lib/tree";
+import type { TreeBranch } from "@/lib/tree";
 import { highlightMatch } from "@/lib/utils/highlightMatch";
 import { notify } from "@/lib/toast";
 import type { Subject } from "@/types";

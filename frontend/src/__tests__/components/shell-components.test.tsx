@@ -1,7 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { Breadcrumb } from "@/components/Breadcrumb";
-import { LawCard } from "@/components/LawCard";
-import { Layout } from "@/components/Layout";
+﻿import { render, screen, waitFor } from "@testing-library/react";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { LawCard } from "@/components/law/LawCard";
+import { Layout } from "@/components/layout/Layout";
 import layoutStyles from "@/components/Layout.module.scss";
 import Footer from "@/layout/Footer/Footer";
 import { LAW_FIXTURE } from "@/test/fixtures";

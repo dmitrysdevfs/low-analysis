@@ -7,17 +7,17 @@ import { useState, useMemo, useEffect, useRef } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { recordWorkspaceView } from "@/lib/auth/clientWorkspace";
-import { Breadcrumb } from "@/components/Breadcrumb";
-import { Layout } from "@/components/Layout";
-import { ArticleLawCard } from "@/components/ArticleLawCard";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Layout } from "@/components/layout/Layout";
+import { ArticleLawCard } from "@/components/article/ArticleLawCard";
 import { ArticleSubjectsSidebar } from "@/components/article/ArticleSubjectsSidebar";
 import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import { useArticle } from "@/hooks/useArticle";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
-import { buildTreeBranches, getRoleColor } from "@/lib/lawTree";
+import { buildTreeBranches, getRoleColor } from "@/lib/tree";
 import styles from "./page.module.scss";
-import { NestedNodeList } from "@/components/ArticleTreeNode";
+import { NestedNodeList } from "@/components/article/ArticleTreeNode";
 import type { Subject } from "@/types";
 
 export default function ArticlePage() {

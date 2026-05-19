@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { NAV_ITEMS } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { TryzubMark } from "@/components/TryzubMark";
+import { TryzubMark } from "@/components/ui/TryzubMark";
 import { AuthUserIcon } from "@/components/ui/AuthUserIcon";
 import { BurgerIcon } from "./BurgerIcon";
 import { SessionMenu } from "./SessionMenu";

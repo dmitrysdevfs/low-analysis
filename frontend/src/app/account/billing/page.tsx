@@ -1,4 +1,4 @@
-import { Layout } from "@/components/Layout";
+﻿import { Layout } from "@/components/layout/Layout";
 import { ClientBillingOverview } from "@/components/account/ClientBillingOverview";
 
 export default function AccountBillingPage() {

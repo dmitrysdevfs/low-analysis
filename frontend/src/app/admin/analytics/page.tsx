@@ -1,4 +1,4 @@
-import { Layout } from "@/components/Layout";
+﻿import { Layout } from "@/components/layout/Layout";
 import { AdminAnalyticsView } from "@/components/admin/AdminAnalyticsView";
 import styles from "../page.module.scss";
 

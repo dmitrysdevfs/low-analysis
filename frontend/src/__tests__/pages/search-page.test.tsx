@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import SearchPage from "@/app/search/page";
 
-vi.mock("@/components/SearchForm", () => ({
+vi.mock("@/components/search/SearchForm", () => ({
   SearchForm: ({
     loading,
     onSearch,

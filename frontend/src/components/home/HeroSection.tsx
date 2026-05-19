@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { HerbFlipCard } from "@/components/HerbFlipCard";
+import { HerbFlipCard } from "@/components/home/HerbFlipCard";
 import { ROUTES } from "@/constants/routes";
 import { fadeUp, stagger, childFade } from "@/constants/animations";
 import styles from "@/app/page.module.scss";

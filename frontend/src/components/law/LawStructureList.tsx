@@ -1,6 +1,6 @@
 "use client";
 
-import { type TreeBranch } from "@/lib/lawTree";
+import { type TreeBranch } from "@/lib/tree";
 import { SectionBlock } from "./LawStructureListSection";
 import { AnimatePresence, motion } from "framer-motion";
 

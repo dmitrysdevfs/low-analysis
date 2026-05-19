@@ -11,7 +11,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Dialog } from "@/components/Dialog";
+import { Dialog } from "@/components/ui/Dialog";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useBilling } from "@/components/billing/BillingProvider";
 import { ROUTES } from "@/constants/routes";

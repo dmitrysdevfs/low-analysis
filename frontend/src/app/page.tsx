@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import { useLaws } from "@/hooks/useLaws";
-import { HeroSection } from "@/components/HeroSection";
-import { StepsSection } from "@/components/StepsSection";
-import { RoadmapSection } from "@/components/RoadmapSection";
+import { HeroSection } from "@/components/home/HeroSection";
+import { StepsSection } from "@/components/home/StepsSection";
+import { RoadmapSection } from "@/components/home/RoadmapSection";
 
 export default function HomePage() {
   const w = useWindowWidth();
