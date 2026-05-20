@@ -49,15 +49,31 @@ export const getAllLaws = async (req, res, next) => {
       }
     }
 
-    const laws = await lawService.getAllLaws({
+    const page = parseInt(req.query.page ?? '1', 10);
+    const limit = parseInt(req.query.limit ?? '20', 10);
+
+    if (!Number.isInteger(page) || page < 1) {
+      return res.status(400).json({
+        message: 'Invalid page value. Must be a positive integer',
+      });
+    }
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+      return res.status(400).json({
+        message: 'Invalid limit value. Must be between 1 and 100',
+      });
+    }
+
+    const result = await lawService.getAllLaws({
       q,
       sortBy,
       sortOrder,
       status,
       dateFrom,
       dateTo,
+      page,
+      limit,
     });
-    res.json(laws);
+    res.json(result);
   } catch (error) {
     next(error);
   }

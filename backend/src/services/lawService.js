@@ -11,6 +11,8 @@ export const getAllLaws = async ({
   status,
   dateFrom,
   dateTo,
+  page = 1,
+  limit = 10,
 } = {}) => {
   const filter = {};
 
@@ -41,10 +43,31 @@ export const getAllLaws = async ({
 
   const sortField = sortBy === 'title' ? 'title' : 'adoptedDate';
   const sortDirection = sortOrder === 'asc' ? 1 : -1;
+  const skip = (page - 1) * limit;
 
-  return await Law.find(filter)
-    .select('-__v')
-    .sort({ [sortField]: sortDirection });
+  const [data, total] = await Promise.all([
+    Law.find(filter)
+      .select('-__v')
+      .sort({ [sortField]: sortDirection })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Law.countDocuments(filter),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
 };
 
 export const getLawById = async (id) => {

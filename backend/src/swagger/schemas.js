@@ -141,6 +141,28 @@ export const schemas = {
     },
   },
 
+  PaginatedLaws: {
+    type: 'object',
+    description: 'Пагінований список законів',
+    properties: {
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/Law' },
+      },
+      pagination: {
+        type: 'object',
+        properties: {
+          page: { type: 'integer', example: 1 },
+          limit: { type: 'integer', example: 20 },
+          total: { type: 'integer', example: 150 },
+          totalPages: { type: 'integer', example: 8 },
+          hasNextPage: { type: 'boolean', example: true },
+          hasPrevPage: { type: 'boolean', example: false },
+        },
+      },
+    },
+  },
+
   LawTree: {
     type: 'object',
     description: 'Закон із повним плоским деревом елементів',

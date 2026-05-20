@@ -62,15 +62,32 @@ const router = express.Router();
  *           type: string
  *           enum: [asc, desc]
  *           default: desc
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         description: Номер сторінки (починаючи з 1)
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         description: Кількість результатів на сторінку (максимум 100)
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *           example: 20
  *     responses:
  *       200:
- *         description: Масив законів
+ *         description: Пагінований список законів
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Law'
+ *               $ref: '#/components/schemas/PaginatedLaws'
  *       400:
  *         description: Невалідні параметри запиту
  *         content:

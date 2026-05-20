@@ -33,39 +33,56 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+const MOCK_PAGINATED = {
+  data: [MOCK_LAW],
+  pagination: {
+    page: 1,
+    limit: 20,
+    total: 1,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  },
+};
+
 describe('GET /api/laws', () => {
-  it('returns 200 with array of laws', async () => {
-    lawService.getAllLaws.mockResolvedValue([MOCK_LAW]);
+  it('returns 200 with paginated response', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 
     const res = await request(app).get('/api/laws');
 
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body[0]._id).toBe(MOCK_LAW._id);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data[0]._id).toBe(MOCK_LAW._id);
+    expect(res.body.pagination).toBeDefined();
   });
 
   it('passes the q query to the service', async () => {
-    lawService.getAllLaws.mockResolvedValue([]);
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 
     await request(app).get('/api/laws?q=constitution');
 
-    expect(lawService.getAllLaws).toHaveBeenCalledWith({
-      q: 'constitution',
-      sortBy: 'date',
-      sortOrder: 'desc',
-    });
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({
+        q: 'constitution',
+        sortBy: 'date',
+        sortOrder: 'desc',
+      }),
+    );
   });
 
   it('passes sortBy and sortOrder to the service', async () => {
-    lawService.getAllLaws.mockResolvedValue([]);
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 
     await request(app).get('/api/laws?sortBy=title&sortOrder=asc');
 
-    expect(lawService.getAllLaws).toHaveBeenCalledWith({
-      q: '',
-      sortBy: 'title',
-      sortOrder: 'asc',
-    });
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({
+        q: '',
+        sortBy: 'title',
+        sortOrder: 'asc',
+      }),
+    );
   });
 
   it('returns 400 for invalid sortBy', async () => {
@@ -83,7 +100,7 @@ describe('GET /api/laws', () => {
   });
 
   it('passes status filter to the service', async () => {
-    lawService.getAllLaws.mockResolvedValue([]);
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 
     await request(app).get('/api/laws?status=Чинний');
 
@@ -93,7 +110,7 @@ describe('GET /api/laws', () => {
   });
 
   it('passes dateFrom and dateTo to the service as Date objects', async () => {
-    lawService.getAllLaws.mockResolvedValue([]);
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 
     await request(app).get('/api/laws?dateFrom=2020-01-01&dateTo=2020-12-31');
 
@@ -117,6 +134,44 @@ describe('GET /api/laws', () => {
 
     expect(res.status).toBe(400);
     expect(res.body.message).toMatch(/dateTo/);
+  });
+
+  it('passes page and limit to the service', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    await request(app).get('/api/laws?page=2&limit=5');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 2, limit: 5 }),
+    );
+  });
+
+  it('returns 400 for page=0', async () => {
+    const res = await request(app).get('/api/laws?page=0');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/page/);
+  });
+
+  it('returns 400 for page=abc', async () => {
+    const res = await request(app).get('/api/laws?page=abc');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/page/);
+  });
+
+  it('returns 400 for limit=0', async () => {
+    const res = await request(app).get('/api/laws?limit=0');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/limit/);
+  });
+
+  it('returns 400 for limit=101', async () => {
+    const res = await request(app).get('/api/laws?limit=101');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/limit/);
   });
 });
 
