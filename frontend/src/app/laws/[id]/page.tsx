@@ -29,6 +29,7 @@ import {
   parseLimitValue,
   toLimitParam,
 } from "@/lib/utils/pageLimits";
+import { useSidebarData } from "@/components/layout/SidebarDataContext";
 
 function filterTreeBySubject(
   tree: TreeNode[],
@@ -69,9 +70,14 @@ export default function LawTreePage() {
   const lawId = params?.id;
   const { law, tree, loading, error } = useLawTree(lawId);
   const { subjectsMap } = useSubjectsMap();
-  const [selectedLimit, setSelectedLimit] = useState<number | "all">(() =>
+  const { setSubjects } = useSidebarData();
+  const [selectedLimit, setSelectedLimit] = useState(() =>
     parseLimitValue(searchParams.get("limit")),
   );
+  // Sync state when URL changes (back/forward navigation)
+  useEffect(() => {
+    setSelectedLimit(parseLimitValue(searchParams.get("limit")));
+  }, [searchParams]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const selectedSubjectId = searchParams.get("subject");
 
@@ -114,6 +120,14 @@ export default function LawTreePage() {
     return result;
   }, [tree, subjectsMap]);
 
+  useEffect(() => {
+    if (lawSubjects.length === 0) return;
+    setSubjects(
+      lawSubjects.map((s) => ({ id: s.subject_id, name: s.name })),
+    );
+    return () => setSubjects([]);
+  }, [lawSubjects, setSubjects]);
+
   const filteredTree = useMemo(
     () => filterTreeBySubject(tree, selectedSubjectId),
     [tree, selectedSubjectId],
@@ -148,7 +162,6 @@ export default function LawTreePage() {
 
   const updateLimit = (nextValue: number | "all") => {
     setSelectedLimit(nextValue);
-
     const nextSearchParams = new URLSearchParams(searchParams.toString());
     const nextParam = toLimitParam(nextValue);
 
@@ -286,6 +299,7 @@ export default function LawTreePage() {
               <LawStructureList
                 sections={visibleSections}
                 lawId={lawId}
+                lawTitle={law?.title}
                 highlightSubjectId={selectedSubjectId}
               />
             ) : null}

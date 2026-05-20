@@ -12,6 +12,7 @@ import { RouteAccessGate } from "@/components/auth/RouteAccessGate";
 import { BillingProvider } from "@/components/billing/BillingProvider";
 import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
@@ -89,6 +90,7 @@ export default function RootLayout({
           <AuthProvider>
             <BillingProvider>
               <GuestLimitsProvider>
+                <SidebarDataProvider>
                 <div className="site-shell">
                   <BackendWarmup />
                   <ScrollRestore />
@@ -98,6 +100,7 @@ export default function RootLayout({
                   </div>
                   <Footer />
                 </div>
+                </SidebarDataProvider>
               </GuestLimitsProvider>
             </BillingProvider>
           </AuthProvider>

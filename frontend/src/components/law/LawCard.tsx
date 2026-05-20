@@ -64,6 +64,7 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
             setSubjectCount(uniqueSubjectIds.size);
           })
           .catch(() => {
+            fetched.current = false;
             notify.error("Не вдалося завантажити статті закону");
           })
           .finally(() => setLoadingArticles(false));

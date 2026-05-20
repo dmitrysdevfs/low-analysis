@@ -9,13 +9,13 @@ import { RoadmapSection } from "@/components/home/RoadmapSection";
 
 export default function HomePage() {
   const w = useWindowWidth();
-  const { laws, loading } = useLaws();
+  const { laws, loading, error } = useLaws();
 
   return (
     <Layout>
       <HeroSection w={w} />
       <StepsSection />
-      <RoadmapSection laws={laws} loading={loading} />
+      <RoadmapSection laws={laws} loading={loading} error={error} />
     </Layout>
   );
 }

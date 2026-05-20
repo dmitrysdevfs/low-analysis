@@ -11,16 +11,22 @@ import { TryzubMark } from "@/components/ui/TryzubMark";
 import { AuthUserIcon } from "@/components/ui/AuthUserIcon";
 import { BurgerIcon } from "./BurgerIcon";
 import { SessionMenu } from "./SessionMenu";
+import { AppSidebar } from "./AppSidebar";
 import styles from "./AppHeader.module.scss";
 
 export function AppHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [headerScrolledAway, setHeaderScrolledAway] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const isAuthPage = pathname.startsWith(ROUTES.auth);
   const isAdminPage = pathname.startsWith(ROUTES.admin);
+  const isHome = pathname === "/";
   const visibleNavItems = NAV_ITEMS;
 
   const sessionMenuItems = useMemo(
@@ -72,9 +78,53 @@ export function AppHeader() {
       : []),
   ];
 
+  useEffect(() => { setMounted(true); }, []);
+
   useEffect(() => {
     setMobileOpen(false);
+    setSidebarOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el || isHome) {
+      setHeaderScrolledAway(false);
+      setSidebarOpen(false);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const away = !entry.isIntersecting;
+        setHeaderScrolledAway(away);
+        if (!away) setSidebarOpen(false);
+      },
+      { threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [isHome]);
+
+  // Close sidebar on scroll — capture:true catches scrolls inside overflow containers too
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    function onScroll() { setSidebarOpen(false); }
+    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => document.removeEventListener("scroll", onScroll, { capture: true });
+  }, [sidebarOpen]);
+
+  // Track global drag for drag-strip visibility
+  useEffect(() => {
+    function onDragStart() { setIsDragging(true); }
+    function onDragEnd() { setIsDragging(false); }
+    window.addEventListener("dragstart", onDragStart);
+    window.addEventListener("dragend", onDragEnd);
+    window.addEventListener("drop", onDragEnd);
+    return () => {
+      window.removeEventListener("dragstart", onDragStart);
+      window.removeEventListener("dragend", onDragEnd);
+      window.removeEventListener("drop", onDragEnd);
+    };
+  }, []);
 
   function handleLogout() {
     logout();
@@ -83,9 +133,10 @@ export function AppHeader() {
   }
 
   return (
+    <>
     <motion.header
       ref={headerRef}
-      className={styles.header}
+      className={`${styles.header} ${!isHome ? styles.headerStatic : ""}`}
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
@@ -104,7 +155,7 @@ export function AppHeader() {
         </div>
 
         <div className={styles.topBarActions}>
-          {isAdmin ? (
+          {mounted && isAdmin ? (
             <div className={styles.modeSwitch}>
               <Link
                 href={ROUTES.home}
@@ -121,7 +172,7 @@ export function AppHeader() {
             </div>
           ) : null}
 
-          {isAuthenticated ? (
+          {mounted && isAuthenticated ? (
             <SessionMenu
               displayName={user?.displayName ?? "Акаунт"}
               email={user?.email}
@@ -130,7 +181,7 @@ export function AppHeader() {
               headerRef={headerRef}
               onLogout={handleLogout}
             />
-          ) : (
+          ) : mounted ? (
             <Link
               href={ROUTES.auth}
               className={`${styles.authLink} ${isAuthPage ? styles.authLinkActive : ""}`}
@@ -140,8 +191,7 @@ export function AppHeader() {
               </span>
               <span className={styles.authLabel}>Вхід</span>
             </Link>
-          )}
-
+          ) : null}
 
           <button
             type="button"
@@ -174,7 +224,7 @@ export function AppHeader() {
       </nav>
 
       <AnimatePresence>
-        {mobileOpen ? (
+        {mounted && mobileOpen ? (
           <motion.nav
             key="mobile-nav"
             className={styles.mobileNav}
@@ -203,5 +253,27 @@ export function AppHeader() {
         ) : null}
       </AnimatePresence>
     </motion.header>
+    {/* Sidebar tab — appears when header is off-screen */}
+    {headerScrolledAway && (
+      <button
+        type="button"
+        className={`${styles.sidebarTab} ${sidebarOpen ? styles.sidebarTabOpen : ""}`}
+        onClick={() => setSidebarOpen((v) => !v)}
+        aria-label={sidebarOpen ? "Закрити бічну панель" : "Відкрити бічну панель"}
+      >
+        {sidebarOpen ? "×" : "§"}
+      </button>
+    )}
+
+    {/* Drag strip — thin left-edge zone that opens sidebar when dragging */}
+    {headerScrolledAway && !sidebarOpen && (
+      <div
+        className={`${styles.sidebarDragStrip} ${isDragging ? styles.sidebarDragStripActive : ""}`}
+        onDragEnter={() => setSidebarOpen(true)}
+      />
+    )}
+
+    <AppSidebar visible={sidebarOpen} />
+    </>
   );
 }

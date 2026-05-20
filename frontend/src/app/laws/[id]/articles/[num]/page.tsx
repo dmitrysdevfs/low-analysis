@@ -19,6 +19,10 @@ import { buildTreeBranches, getRoleColor } from "@/lib/tree";
 import styles from "./page.module.scss";
 import { NestedNodeList } from "@/components/article/ArticleTreeNode";
 import type { Subject } from "@/types";
+import { NoteModal } from "@/components/notes/NoteModal";
+import SelectionTooltip from "@/components/notes/SelectionTooltip";
+import type { NoteDraft } from "@/lib/notes/types";
+import { useSidebarData } from "@/components/layout/SidebarDataContext";
 
 export default function ArticlePage() {
   const { user } = useAuth();
@@ -37,7 +41,7 @@ export default function ArticlePage() {
 
   const childTree = useMemo(() => buildTreeBranches(children), [children]);
 
-  const { subjectsMap, loading: subjectsLoading } = useSubjectsMap();
+  const { subjectsMap, loading: subjectsLoading, error: subjectsError } = useSubjectsMap();
 
   const articleSubjects = useMemo(() => {
     const seen = new Set<string>();
@@ -54,7 +58,23 @@ export default function ArticlePage() {
     return result;
   }, [article, children, subjectsMap]);
 
+  const { setSubjects } = useSidebarData();
+
+  useEffect(() => {
+    if (articleSubjects.length === 0) return;
+    setSubjects(
+      articleSubjects.map((s) => ({
+        id: s.subject_id,
+        name: s.subject.canonical_name,
+        role: s.role,
+      })),
+    );
+    return () => setSubjects([]);
+  }, [articleSubjects, setSubjects]);
+
   const articleTreeRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
 
   // State для активного суб'єкта (для highlight і dimming)
   const [activeSubjectId, setActiveSubjectId] = useState<string | null>(null);
@@ -148,16 +168,22 @@ export default function ArticlePage() {
           <div className={styles.articleLayout}>
             {/* Лівий сайдбар суб'єктів (показуємо тільки якщо є стаття) */}
             {!loading && !error && article && (
-              <ArticleSubjectsSidebar
-                subjects={articleSubjects}
-                activeSubjectId={activeSubjectId}
-                onSelect={handleSubjectSelect}
-                loading={subjectsLoading}
-              />
+              subjectsError ? (
+                <aside style={{ padding: "12px 16px", fontSize: "0.75rem", color: "rgba(200,100,100,0.8)", fontFamily: "var(--font-mono)" }}>
+                  Суб&apos;єкти не завантажились
+                </aside>
+              ) : (
+                <ArticleSubjectsSidebar
+                  subjects={articleSubjects}
+                  activeSubjectId={activeSubjectId}
+                  onSelect={handleSubjectSelect}
+                  loading={subjectsLoading}
+                />
+              )
             )}
 
             {/* Правий контент */}
-            <div className={styles.articleMain}>
+            <div className={styles.articleMain} ref={containerRef}>
               <AnimatePresence mode="wait">
                 {/* Loading skeleton */}
                 {loading ? (
@@ -286,10 +312,26 @@ export default function ArticlePage() {
                   </motion.div>
                 ) : null}
               </AnimatePresence>
+
+              <SelectionTooltip
+                containerRef={containerRef}
+                lawId={lawId ?? ""}
+                lawTitle={law?.title ?? ""}
+                articleNum={articleNumber ?? ""}
+                articleTitle={article?.title ?? ""}
+                onRequestNote={(draft: NoteDraft) => setNoteDraft(draft)}
+              />
             </div>
           </div>
         </div>
       </main>
+
+      <NoteModal
+        open={noteDraft !== null}
+        draft={noteDraft}
+        onClose={() => setNoteDraft(null)}
+        onSaved={() => setNoteDraft(null)}
+      />
     </Layout>
   );
 }

@@ -10,9 +10,11 @@ import styles from "@/app/page.module.scss";
 export function RoadmapSection({
   laws,
   loading,
+  error,
 }: {
   laws: Law[];
   loading: boolean;
+  error?: string | null;
 }) {
   return (
     <section className={styles.roadmapSection}>
@@ -65,10 +67,12 @@ export function RoadmapSection({
             <p className={`display ${styles.roadmapFooterTitle}`}>
               {loading
                 ? "Завантаження…"
-                : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
+                : error
+                  ? "Не вдалося завантажити"
+                  : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
             </p>
             <p className={`mono ${styles.roadmapFooterMono}`}>
-              {loading ? "…" : laws.map((law) => law.code).join(" · ")}
+              {loading ? "…" : error ? "—" : laws.map((law) => law.code).join(" · ")}
             </p>
           </div>
           <Link href={ROUTES.laws} className={styles.roadmapFooterLink}>

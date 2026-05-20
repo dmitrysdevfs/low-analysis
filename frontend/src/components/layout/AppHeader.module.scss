@@ -4,6 +4,10 @@
   z-index: 20;
 }
 
+.headerStatic {
+  position: static;
+}
+
 .topBar {
   background: linear-gradient(135deg, #1a3e8a 0%, #0d2460 100%);
   border-bottom: 1px solid rgba(200, 168, 67, 0.3);
@@ -328,6 +332,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(18px);
   z-index: 60;
+  overflow-y: auto;
 }
 
 .sessionMenuItem {
@@ -585,6 +590,60 @@
   &:hover {
     color: #c8a843;
   }
+}
+
+/* ─── Sidebar tab toggle button ─── */
+.sidebarTab {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  width: 22px;
+  height: 52px;
+  background: linear-gradient(180deg, #0d2460 0%, #080f20 100%);
+  border: 1px solid rgba(200, 168, 67, 0.28);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 31;
+  color: rgba(200, 168, 67, 0.7);
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0;
+  transition:
+    left 0.26s cubic-bezier(0.25, 0.1, 0.25, 1),
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: linear-gradient(180deg, #1a3e8a 0%, #0d2460 100%);
+    color: #c8a843;
+    border-color: rgba(200, 168, 67, 0.5);
+  }
+}
+
+.sidebarTabOpen {
+  left: 210px;
+}
+
+/* ─── Drag strip – thin left-edge target ─── */
+.sidebarDragStrip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 100vh;
+  z-index: 28;
+  pointer-events: all;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.sidebarDragStripActive {
+  background: linear-gradient(90deg, rgba(200, 168, 67, 0.22), transparent);
+  border-right: 2px solid rgba(200, 168, 67, 0.45);
 }
 
 @media (max-width: 639px) {

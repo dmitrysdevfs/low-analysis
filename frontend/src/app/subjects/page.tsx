@@ -16,7 +16,9 @@ export default function SubjectsPage() {
   const [activeFilter, setActiveFilter] = useState<string>(ALL_FILTER);
 
   const filterTypes = useMemo(() => {
-    const unique = Array.from(new Set(subjects.map((s) => s.legal_status).filter(Boolean)));
+    const unique = Array.from(
+      new Set(subjects.map((s) => s.legal_status).filter(Boolean)),
+    );
     return [ALL_FILTER, ...unique];
   }, [subjects]);
 
@@ -60,7 +62,7 @@ export default function SubjectsPage() {
                 transition={{ duration: 0.2 }}
                 className={`mono ${styles.countLine}`}
               >
-                {filteredSubjects.length}{" "}суб&apos;єктів у базі
+                {filteredSubjects.length} суб&apos;єктів у базі
               </motion.div>
             ) : null}
           </AnimatePresence>

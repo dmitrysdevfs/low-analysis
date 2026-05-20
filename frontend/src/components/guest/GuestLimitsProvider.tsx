@@ -8,6 +8,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -123,6 +124,12 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
   const isGuest = !isAuthenticated;
   const userId = user?.id ?? "admin-session";
 
+  // Ref-обёртка чтобы consumeSearch/consumeView не получали новую ссылку
+  // при каждом обновлении subscription — иначе search useEffect в page.tsx
+  // перезапускается и снова декрементирует quota (quota-loop).
+  const subscriptionRef = useRef<BillingSubscriptionSnapshot | null>(subscription);
+  useEffect(() => { subscriptionRef.current = subscription; }, [subscription]);
+
   const refreshSnapshot = useCallback(() => {
     setSnapshot(getGuestLimitSnapshot());
   }, []);
@@ -210,7 +217,7 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
       if (user?.accountType === "admin") {
         return {
           allowed: true,
-          snapshot: buildAdminQuotaSnapshot(userId, subscription),
+          snapshot: buildAdminQuotaSnapshot(userId, subscriptionRef.current),
         };
       }
 
@@ -227,7 +234,6 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
     consumeQuota,
     isGuest,
     openModalFromAttempt,
-    subscription,
     user?.accountType,
     userId,
   ]);
@@ -238,7 +244,7 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
         if (user?.accountType === "admin") {
           return {
             allowed: true,
-            snapshot: buildAdminQuotaSnapshot(userId, subscription),
+            snapshot: buildAdminQuotaSnapshot(userId, subscriptionRef.current),
           };
         }
 
@@ -256,7 +262,6 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
       consumeQuota,
       isGuest,
       openModalFromAttempt,
-      subscription,
       user?.accountType,
       userId,
     ],

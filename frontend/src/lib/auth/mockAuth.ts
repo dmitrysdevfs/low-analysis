@@ -173,6 +173,14 @@ function writeStorageItem(key: string, value: unknown) {
   window.localStorage.setItem(key, JSON.stringify(value));
 }
 
+function writeSessionStorageItem(key: string, value: unknown) {
+  if (!isBrowser()) {
+    return;
+  }
+
+  window.sessionStorage.setItem(key, JSON.stringify(value));
+}
+
 function readAuditLog() {
   return readStorageItem<AdminAuditLogEntry[]>(
     AUTH_ADMIN_AUDIT_LOG_STORAGE_KEY,
@@ -319,11 +327,23 @@ export function readStoredAccounts() {
 }
 
 export function readStoredSession() {
-  return readStorageItem<AuthSession | null>(AUTH_SESSION_STORAGE_KEY, null);
+  if (!isBrowser()) return null;
+  const raw =
+    window.sessionStorage.getItem(AUTH_SESSION_STORAGE_KEY) ??
+    window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as AuthSession;
+  } catch {
+    return null;
+  }
 }
 
 export function clearStoredSession() {
   updateStoredSession(null);
+  if (isBrowser()) {
+    window.sessionStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
+  }
 }
 
 export function readActiveAdminSuperCode() {
@@ -619,6 +639,10 @@ export function loginMockAccount(payload: LoginPayload): AuthActionResult {
   }
 
   const session = buildUpdatedSession(sessionAccount);
+  if (payload.rememberMe === false) {
+    window.localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
+    writeSessionStorageItem(AUTH_SESSION_STORAGE_KEY, session);
+  }
   appendAuditLogEntry({
     action:
       session.accountType === "admin" ? "Administrator login" : "Client login",

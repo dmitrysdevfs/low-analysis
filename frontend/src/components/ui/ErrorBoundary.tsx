@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, Fragment, type ErrorInfo, type ReactNode } from "react";
 import styles from "./ErrorBoundary.module.scss";
 
 interface Props {
@@ -11,15 +11,16 @@ interface Props {
 interface State {
   hasError: boolean;
   message: string;
+  resetKey: number;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, message: "" };
+    this.state = { hasError: false, message: "", resetKey: 0 };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, message: error.message || "Невідома помилка" };
   }
 
@@ -28,7 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, message: "" });
+    this.setState((s) => ({ hasError: false, message: "", resetKey: s.resetKey + 1 }));
   };
 
   render() {
@@ -46,6 +47,8 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    return (
+      <Fragment key={this.state.resetKey}>{this.props.children}</Fragment>
+    );
   }
 }
