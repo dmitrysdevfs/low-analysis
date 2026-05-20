@@ -40,11 +40,35 @@ export function AppSidebar({ visible }: { visible: boolean }) {
 
   const sessionMenuItems = useMemo(
     () => [
-      { href: ROUTES.account, label: "Мій кабінет", caption: "Профіль та налаштування" },
-      { href: ROUTES.accountSaved, label: "Збережені статті", caption: "Важливі документи" },
-      { href: ROUTES.accountNotes, label: "Нотатки", caption: "Правові чернетки" },
-      { href: ROUTES.accountBilling, label: "План та оплата", caption: "Рівень доступу" },
-      ...(isAdmin ? [{ href: ROUTES.adminAnalytics, label: "Аналітика", caption: "Метрики та огляд" }] : []),
+      {
+        href: ROUTES.account,
+        label: "Мій кабінет",
+        caption: "Профіль та налаштування",
+      },
+      {
+        href: ROUTES.accountSaved,
+        label: "Збережені статті",
+        caption: "Важливі документи",
+      },
+      {
+        href: ROUTES.accountNotes,
+        label: "Нотатки",
+        caption: "Правові чернетки",
+      },
+      {
+        href: ROUTES.accountBilling,
+        label: "План та оплата",
+        caption: "Рівень доступу",
+      },
+      ...(isAdmin
+        ? [
+            {
+              href: ROUTES.adminAnalytics,
+              label: "Аналітика",
+              caption: "Метрики та огляд",
+            },
+          ]
+        : []),
     ],
     [isAdmin],
   );
@@ -92,7 +116,12 @@ export function AppSidebar({ visible }: { visible: boolean }) {
       const raw = e.dataTransfer?.getData("application/law-article");
       if (!raw) return;
       try {
-        const data = JSON.parse(raw) as { lawId: string; lawTitle: string; articleNum: string; articleTitle: string };
+        const data = JSON.parse(raw) as {
+          lawId: string;
+          lawTitle: string;
+          articleNum: string;
+          articleTitle: string;
+        };
         setNoteDraft({
           type: "article",
           color: "gold",
@@ -102,7 +131,9 @@ export function AppSidebar({ visible }: { visible: boolean }) {
           articleNum: data.articleNum,
           articleTitle: data.articleTitle,
         });
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
     function onDragEnd() {
       dragCounter.current = 0;
@@ -140,7 +171,9 @@ export function AppSidebar({ visible }: { visible: boolean }) {
             {/* Logo */}
             <div className={styles.logoRow}>
               <TryzubMark size={24} variant="header" />
-              <Link href={ROUTES.home} className={styles.logoLink}>Law Analysis</Link>
+              <Link href={ROUTES.home} className={styles.logoLink}>
+                Law Analysis
+              </Link>
             </div>
 
             <div className={styles.divider} />
@@ -148,10 +181,15 @@ export function AppSidebar({ visible }: { visible: boolean }) {
             {/* Nav links */}
             <nav className={styles.nav}>
               {NAV_ITEMS.map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/" && pathname.startsWith(item.href));
                 return (
-                  <Link key={item.href} href={item.href}
-                    className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}>
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
+                  >
                     {item.label}
                   </Link>
                 );
@@ -168,7 +206,9 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                   onClick={() => setSubjectsOpen((v) => !v)}
                 >
                   <span>СУБ&apos;ЄКТИ · {subjects.length}</span>
-                  <span className={styles.notesChevron}>{subjectsOpen ? "▾" : "▸"}</span>
+                  <span className={styles.notesChevron}>
+                    {subjectsOpen ? "▾" : "▸"}
+                  </span>
                 </button>
                 <AnimatePresence initial={false}>
                   {subjectsOpen && (
@@ -181,15 +221,23 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                     >
                       <div className={styles.subjectsList}>
                         {subjects.map((s) => {
-                          const color = s.role ? getRoleColor(s.role) : "#7a98c0";
+                          const color = s.role
+                            ? getRoleColor(s.role)
+                            : "#7a98c0";
                           const rgb = hexToRgb(color);
                           return (
                             <div key={s.id} className={styles.subjectItem}>
-                              <span className={styles.subjectName}>{s.name}</span>
+                              <span className={styles.subjectName}>
+                                {s.name}
+                              </span>
                               {s.role && (
                                 <span
                                   className={styles.subjectBadge}
-                                  style={{ color, background: `rgba(${rgb},0.12)`, border: `1px solid rgba(${rgb},0.25)` }}
+                                  style={{
+                                    color,
+                                    background: `rgba(${rgb},0.12)`,
+                                    border: `1px solid rgba(${rgb},0.25)`,
+                                  }}
                                 >
                                   {s.role}
                                 </span>
@@ -217,7 +265,9 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                 <span>НОТАТКИ</span>
                 <span className={styles.notesMeta}>
                   {recentNotes.length > 0 ? recentNotes.length : ""}
-                  <span className={styles.notesChevron}>{notesOpen ? "▾" : "▸"}</span>
+                  <span className={styles.notesChevron}>
+                    {notesOpen ? "▾" : "▸"}
+                  </span>
                 </span>
               </button>
 
@@ -231,7 +281,9 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                     className={styles.notesBody}
                   >
                     {/* Drop zone — visual indicator only, drop is handled at sidebar level */}
-                    <div className={`${styles.dropZone} ${isDragOver ? styles.dropZoneActive : ""}`}>
+                    <div
+                      className={`${styles.dropZone} ${isDragOver ? styles.dropZoneActive : ""}`}
+                    >
                       {isDragOver ? "↓ Відпусти сюди" : "+ Перетягни статтю"}
                     </div>
 
@@ -245,24 +297,35 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                             <span className={styles.notesItemTitle}>
                               {note.type === "article"
                                 ? `Ст. ${note.articleNum}${note.articleTitle ? ` — ${note.articleTitle}` : ""}`
-                                : (note.selectedText?.slice(0, 40) ?? "Виділення")}
+                                : (note.selectedText?.slice(0, 40) ??
+                                  "Виділення")}
                             </span>
                             {(note.lawId && note.articleNum) || note.pageUrl ? (
                               <a
-                                href={note.lawId && note.articleNum
-                                  ? ROUTES.article(note.lawId, note.articleNum)
-                                  : (note.pageUrl ?? "#")}
+                                href={
+                                  note.lawId && note.articleNum
+                                    ? ROUTES.article(
+                                        note.lawId,
+                                        note.articleNum,
+                                      )
+                                    : (note.pageUrl ?? "#")
+                                }
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={styles.notesItemLink}
-                              >↗</a>
+                              >
+                                ↗
+                              </a>
                             ) : null}
                           </li>
                         ))}
                       </ul>
                     )}
 
-                    <Link href={ROUTES.accountNotes} className={styles.notesAll}>
+                    <Link
+                      href={ROUTES.accountNotes}
+                      className={styles.notesAll}
+                    >
                       Всі нотатки →
                     </Link>
                   </motion.div>
@@ -285,7 +348,9 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                   sidebarMode
                 />
               ) : (
-                <Link href={ROUTES.auth} className={styles.loginLink}>Увійти</Link>
+                <Link href={ROUTES.auth} className={styles.loginLink}>
+                  Увійти
+                </Link>
               )}
             </div>
           </motion.div>

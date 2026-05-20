@@ -29,7 +29,11 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    this.setState((s) => ({ hasError: false, message: "", resetKey: s.resetKey + 1 }));
+    this.setState((s) => ({
+      hasError: false,
+      message: "",
+      resetKey: s.resetKey + 1,
+    }));
   };
 
   render() {
@@ -47,8 +51,6 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return (
-      <Fragment key={this.state.resetKey}>{this.props.children}</Fragment>
-    );
+    return <Fragment key={this.state.resetKey}>{this.props.children}</Fragment>;
   }
 }

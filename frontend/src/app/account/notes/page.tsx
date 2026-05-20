@@ -50,7 +50,9 @@ export default function AccountNotesPage() {
     setDeleteId(null);
   }
 
-  const noteColor = expandedNote ? (COLOR_MAP[expandedNote.color] ?? "#C8A843") : "#C8A843";
+  const noteColor = expandedNote
+    ? (COLOR_MAP[expandedNote.color] ?? "#C8A843")
+    : "#C8A843";
 
   return (
     <div className={styles.wrapper}>
@@ -90,8 +92,8 @@ export default function AccountNotesPage() {
             <div className={styles.emptyState}>
               <span className={styles.emptyIcon}>§</span>
               <p className={styles.emptyText}>
-                Нотаток ще немає. Виділіть текст у статті або перетягніть
-                статтю на свій аватар, щоб додати першу нотатку.
+                Нотаток ще немає. Виділіть текст у статті або перетягніть статтю
+                на свій аватар, щоб додати першу нотатку.
               </p>
             </div>
           ) : (
@@ -99,8 +101,10 @@ export default function AccountNotesPage() {
               <AnimatePresence initial={false}>
                 {filtered.map((note, index) => {
                   const color = COLOR_MAP[note.color] ?? "#C8A843";
-                  const textTruncated = note.noteText && note.noteText.length > TEXT_LIMIT;
-                  const quoteTruncated = note.selectedText && note.selectedText.length > QUOTE_LIMIT;
+                  const textTruncated =
+                    note.noteText && note.noteText.length > TEXT_LIMIT;
+                  const quoteTruncated =
+                    note.selectedText && note.selectedText.length > QUOTE_LIMIT;
                   const hasMore = textTruncated || quoteTruncated;
 
                   return (
@@ -148,7 +152,9 @@ export default function AccountNotesPage() {
 
                         {(note.lawId || note.lawTitle) && (
                           <p className={styles.noteSource}>
-                            <span className={styles.noteSourceLabel}>Джерело</span>
+                            <span className={styles.noteSourceLabel}>
+                              Джерело
+                            </span>
                             {note.lawTitle || note.lawId}
                             {note.articleNum ? ` · ст. ${note.articleNum}` : ""}
                           </p>
@@ -279,9 +285,7 @@ export default function AccountNotesPage() {
                     : `Ст. ${expandedNote.articleNum}`}
                 </p>
               ) : expandedNote.selectedText ? (
-                <blockquote
-                  className={styles.expandModalBlockquote}
-                >
+                <blockquote className={styles.expandModalBlockquote}>
                   {expandedNote.selectedText}
                 </blockquote>
               ) : null}
@@ -290,23 +294,34 @@ export default function AccountNotesPage() {
                 <p className={styles.noteSource} style={{ marginTop: 8 }}>
                   <span className={styles.noteSourceLabel}>Джерело</span>
                   {expandedNote.lawTitle || expandedNote.lawId}
-                  {expandedNote.articleNum ? ` · ст. ${expandedNote.articleNum}` : ""}
+                  {expandedNote.articleNum
+                    ? ` · ст. ${expandedNote.articleNum}`
+                    : ""}
                 </p>
               )}
 
               {expandedNote.noteText && (
-                <p className={styles.expandModalText}>{expandedNote.noteText}</p>
+                <p className={styles.expandModalText}>
+                  {expandedNote.noteText}
+                </p>
               )}
 
-              <div className={styles.noteFooter} style={{ marginTop: 20, paddingTop: 0 }}>
+              <div
+                className={styles.noteFooter}
+                style={{ marginTop: 20, paddingTop: 0 }}
+              >
                 <span className={styles.noteDate}>
                   {dateFormatter.format(new Date(expandedNote.createdAt))}
                 </span>
-                {(expandedNote.lawId && expandedNote.articleNum) || expandedNote.pageUrl ? (
+                {(expandedNote.lawId && expandedNote.articleNum) ||
+                expandedNote.pageUrl ? (
                   <a
                     href={
                       expandedNote.lawId && expandedNote.articleNum
-                        ? ROUTES.article(expandedNote.lawId, expandedNote.articleNum)
+                        ? ROUTES.article(
+                            expandedNote.lawId,
+                            expandedNote.articleNum,
+                          )
                         : (expandedNote.pageUrl ?? "#")
                     }
                     target="_blank"

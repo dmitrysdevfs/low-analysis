@@ -127,8 +127,12 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
   // Ref-обёртка чтобы consumeSearch/consumeView не получали новую ссылку
   // при каждом обновлении subscription — иначе search useEffect в page.tsx
   // перезапускается и снова декрементирует quota (quota-loop).
-  const subscriptionRef = useRef<BillingSubscriptionSnapshot | null>(subscription);
-  useEffect(() => { subscriptionRef.current = subscription; }, [subscription]);
+  const subscriptionRef = useRef<BillingSubscriptionSnapshot | null>(
+    subscription,
+  );
+  useEffect(() => {
+    subscriptionRef.current = subscription;
+  }, [subscription]);
 
   const refreshSnapshot = useCallback(() => {
     setSnapshot(getGuestLimitSnapshot());
@@ -230,13 +234,7 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
     setSnapshot(result.snapshot);
     openModalFromAttempt(result, "search");
     return result;
-  }, [
-    consumeQuota,
-    isGuest,
-    openModalFromAttempt,
-    user?.accountType,
-    userId,
-  ]);
+  }, [consumeQuota, isGuest, openModalFromAttempt, user?.accountType, userId]);
 
   const consumeView = useCallback(
     (resourceKey: string) => {
@@ -258,13 +256,7 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
       openModalFromAttempt(result, "view");
       return result;
     },
-    [
-      consumeQuota,
-      isGuest,
-      openModalFromAttempt,
-      user?.accountType,
-      userId,
-    ],
+    [consumeQuota, isGuest, openModalFromAttempt, user?.accountType, userId],
   );
 
   const contextValue = useMemo(

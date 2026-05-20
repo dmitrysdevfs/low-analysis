@@ -40,7 +40,12 @@ export default function SubjectDetailPage() {
         />
       </motion.div>
 
-      <div className={styles.scrollArea} ref={(el) => { containerRef.current = el; }}>
+      <div
+        className={styles.scrollArea}
+        ref={(el) => {
+          containerRef.current = el;
+        }}
+      >
         <div className={styles.inner}>
           {loading ? (
             <div className={styles.skeletonList}>

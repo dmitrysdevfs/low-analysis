@@ -89,7 +89,9 @@
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: border-color 0.15s, transform 0.15s;
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
   padding: 0;
 
   &:hover {
@@ -142,7 +144,9 @@
   font-size: 0.875rem;
   font-family: var(--font-display, sans-serif);
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 
   &:hover {
     color: #fff;

@@ -91,15 +91,15 @@ export default function RootLayout({
             <BillingProvider>
               <GuestLimitsProvider>
                 <SidebarDataProvider>
-                <div className="site-shell">
-                  <BackendWarmup />
-                  <ScrollRestore />
-                  <Header />
-                  <div className="site-content">
-                    <RouteAccessGate>{children}</RouteAccessGate>
+                  <div className="site-shell">
+                    <BackendWarmup />
+                    <ScrollRestore />
+                    <Header />
+                    <div className="site-content">
+                      <RouteAccessGate>{children}</RouteAccessGate>
+                    </div>
+                    <Footer />
                   </div>
-                  <Footer />
-                </div>
                 </SidebarDataProvider>
               </GuestLimitsProvider>
             </BillingProvider>

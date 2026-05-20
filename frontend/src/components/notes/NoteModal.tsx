@@ -21,7 +21,9 @@ const COLOR_OPTIONS: { value: "gold" | "blue" | "green"; hex: string }[] = [
 
 export function NoteModal({ open, draft, onClose, onSaved }: NoteModalProps) {
   const { addNote } = useNotes();
-  const [selectedColor, setSelectedColor] = useState<"gold" | "blue" | "green">("gold");
+  const [selectedColor, setSelectedColor] = useState<"gold" | "blue" | "green">(
+    "gold",
+  );
   const [noteText, setNoteText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -104,9 +106,7 @@ export function NoteModal({ open, draft, onClose, onSaved }: NoteModalProps) {
             {draft.type === "article" && (
               <div className={styles.infoRow}>
                 {draft.lawTitle && <span>{draft.lawTitle}</span>}
-                {draft.articleNum && (
-                  <span> · Стаття {draft.articleNum}</span>
-                )}
+                {draft.articleNum && <span> · Стаття {draft.articleNum}</span>}
               </div>
             )}
 

@@ -122,9 +122,7 @@ export default function LawTreePage() {
 
   useEffect(() => {
     if (lawSubjects.length === 0) return;
-    setSubjects(
-      lawSubjects.map((s) => ({ id: s.subject_id, name: s.name })),
-    );
+    setSubjects(lawSubjects.map((s) => ({ id: s.subject_id, name: s.name })));
     return () => setSubjects([]);
   }, [lawSubjects, setSubjects]);
 

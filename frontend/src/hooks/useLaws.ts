@@ -49,7 +49,8 @@ export function useLaws(q = "", refreshKey = 0) {
         }
 
         const inFlight = pendingMap.get(cacheKey);
-        const fetchPromise = inFlight ?? getLaws(q, { signal: controller.signal });
+        const fetchPromise =
+          inFlight ?? getLaws(q, { signal: controller.signal });
         if (!inFlight) pendingMap.set(cacheKey, fetchPromise);
 
         fetchPromise

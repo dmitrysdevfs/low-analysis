@@ -72,7 +72,11 @@ export function RoadmapSection({
                   : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
             </p>
             <p className={`mono ${styles.roadmapFooterMono}`}>
-              {loading ? "…" : error ? "—" : laws.map((law) => law.code).join(" · ")}
+              {loading
+                ? "…"
+                : error
+                  ? "—"
+                  : laws.map((law) => law.code).join(" · ")}
             </p>
           </div>
           <Link href={ROUTES.laws} className={styles.roadmapFooterLink}>

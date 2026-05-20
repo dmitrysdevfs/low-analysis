@@ -135,7 +135,12 @@ export function SessionMenu({
       const raw = e.dataTransfer?.getData("application/law-article");
       if (!raw) return;
       try {
-        const data = JSON.parse(raw) as { lawId: string; lawTitle: string; articleNum: string; articleTitle: string };
+        const data = JSON.parse(raw) as {
+          lawId: string;
+          lawTitle: string;
+          articleNum: string;
+          articleTitle: string;
+        };
         setNoteDraft({
           type: "article",
           color: "gold",
@@ -145,7 +150,9 @@ export function SessionMenu({
           articleNum: data.articleNum,
           articleTitle: data.articleTitle,
         });
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
 
     el.addEventListener("dragover", handleDragOver);
@@ -173,7 +180,11 @@ export function SessionMenu({
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
-        style={isDragOver ? { boxShadow: "0 0 0 3px #C8A843, 0 0 20px rgba(200,168,67,0.4)" } : undefined}
+        style={
+          isDragOver
+            ? { boxShadow: "0 0 0 3px #C8A843, 0 0 20px rgba(200,168,67,0.4)" }
+            : undefined
+        }
       >
         <span className={styles.sessionAvatar}>{initials}</span>
         <span className={styles.authLabelBlock}>

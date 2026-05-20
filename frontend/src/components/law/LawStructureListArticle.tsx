@@ -87,12 +87,26 @@ export function ArticleEntry({
               href={ROUTES.article(lawId, routeNumber)}
             >
               {getArticleTitle(article)}
-              {hasNote ? <span title="Є нотатка" style={{ marginLeft: 6, fontSize: "0.75rem" }}>📝</span> : null}
+              {hasNote ? (
+                <span
+                  title="Є нотатка"
+                  style={{ marginLeft: 6, fontSize: "0.75rem" }}
+                >
+                  📝
+                </span>
+              ) : null}
             </Link>
           ) : (
             <div className="law-structure-article-link display">
               {getArticleTitle(article)}
-              {hasNote ? <span title="Є нотатка" style={{ marginLeft: 6, fontSize: "0.75rem" }}>📝</span> : null}
+              {hasNote ? (
+                <span
+                  title="Є нотатка"
+                  style={{ marginLeft: 6, fontSize: "0.75rem" }}
+                >
+                  📝
+                </span>
+              ) : null}
             </div>
           )}
         </div>

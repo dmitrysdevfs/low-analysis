@@ -21,7 +21,10 @@ const SidebarDataContext = createContext<SidebarDataContextValue>({
 
 export function SidebarDataProvider({ children }: { children: ReactNode }) {
   const [subjects, setSubjectsState] = useState<SidebarSubjectItem[]>([]);
-  const setSubjects = useCallback((s: SidebarSubjectItem[]) => setSubjectsState(s), []);
+  const setSubjects = useCallback(
+    (s: SidebarSubjectItem[]) => setSubjectsState(s),
+    [],
+  );
   return (
     <SidebarDataContext.Provider value={{ subjects, setSubjects }}>
       {children}

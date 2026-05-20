@@ -45,7 +45,7 @@ export default function SelectionTooltip({
 
       const range = selection.getRangeAt(0);
       const isInsideContainer = containerRef.current.contains(
-        range.commonAncestorContainer
+        range.commonAncestorContainer,
       );
 
       if (!isInsideContainer) {
@@ -57,9 +57,8 @@ export default function SelectionTooltip({
       const tooltipHeight = 44;
       const mouseY = e.clientY;
       const mouseX = e.clientX;
-      const top = mouseY > tooltipHeight + 8
-        ? mouseY - tooltipHeight - 8
-        : mouseY + 16;
+      const top =
+        mouseY > tooltipHeight + 8 ? mouseY - tooltipHeight - 8 : mouseY + 16;
       const left = Math.min(Math.max(mouseX, 80), window.innerWidth - 80);
 
       setState({

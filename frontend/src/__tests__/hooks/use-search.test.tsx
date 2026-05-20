@@ -11,8 +11,10 @@ vi.mock("@/lib/api", () => ({
 vi.mock("@/components/guest/GuestLimitsProvider", () => ({
   useGuestLimits: vi.fn(() => ({
     isGuest: false,
-    consumeSearch: () => ({ allowed: true }) as unknown as GuestLimitAttemptResult,
-    consumeView: () => ({ allowed: true }) as unknown as GuestLimitAttemptResult,
+    consumeSearch: () =>
+      ({ allowed: true }) as unknown as GuestLimitAttemptResult,
+    consumeView: () =>
+      ({ allowed: true }) as unknown as GuestLimitAttemptResult,
   })),
 }));
 
@@ -124,13 +126,17 @@ describe("useSearch", () => {
   });
 
   it("blocks search and returns error when quota is exceeded", async () => {
-    const { useGuestLimits } = await import(
-      "@/components/guest/GuestLimitsProvider"
-    );
+    const { useGuestLimits } =
+      await import("@/components/guest/GuestLimitsProvider");
     vi.mocked(useGuestLimits).mockReturnValueOnce({
       isGuest: true,
-      consumeSearch: () => ({ allowed: false, message: "Ліміт пошуку вичерпано" }) as unknown as GuestLimitAttemptResult,
-      consumeView: () => ({ allowed: true }) as unknown as GuestLimitAttemptResult,
+      consumeSearch: () =>
+        ({
+          allowed: false,
+          message: "Ліміт пошуку вичерпано",
+        }) as unknown as GuestLimitAttemptResult,
+      consumeView: () =>
+        ({ allowed: true }) as unknown as GuestLimitAttemptResult,
       snapshot: {} as never,
     });
 

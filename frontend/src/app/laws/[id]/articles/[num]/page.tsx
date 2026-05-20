@@ -41,7 +41,11 @@ export default function ArticlePage() {
 
   const childTree = useMemo(() => buildTreeBranches(children), [children]);
 
-  const { subjectsMap, loading: subjectsLoading, error: subjectsError } = useSubjectsMap();
+  const {
+    subjectsMap,
+    loading: subjectsLoading,
+    error: subjectsError,
+  } = useSubjectsMap();
 
   const articleSubjects = useMemo(() => {
     const seen = new Set<string>();
@@ -57,6 +61,25 @@ export default function ArticlePage() {
     });
     return result;
   }, [article, children, subjectsMap]);
+
+  const totalBindings = useMemo(
+    () =>
+      (article ? [article, ...children] : children).reduce(
+        (sum, n) => sum + (n.subjects?.length ?? 0),
+        0,
+      ),
+    [article, children],
+  );
+
+  const nodesWithSubjects = useMemo(
+    () =>
+      (article ? [article, ...children] : children).filter(
+        (n) => (n.subjects?.length ?? 0) > 0,
+      ).length,
+    [article, children],
+  );
+
+  const totalNodes = children.length + (article ? 1 : 0);
 
   const { setSubjects } = useSidebarData();
 
@@ -166,20 +189,29 @@ export default function ArticlePage() {
             </Link>
           )}
           <div className={styles.articleLayout}>
-            {/* Лівий сайдбар суб'єктів (показуємо тільки якщо є стаття) */}
+            {/* Сайдбар суб'єктів: ліворуч на desktop, горизонтальна смуга на mobile */}
             {!loading && !error && article && (
-              subjectsError ? (
-                <aside style={{ padding: "12px 16px", fontSize: "0.75rem", color: "rgba(200,100,100,0.8)", fontFamily: "var(--font-mono)" }}>
-                  Суб&apos;єкти не завантажились
-                </aside>
-              ) : (
-                <ArticleSubjectsSidebar
-                  subjects={articleSubjects}
-                  activeSubjectId={activeSubjectId}
-                  onSelect={handleSubjectSelect}
-                  loading={subjectsLoading}
-                />
-              )
+              <div className={styles.subjectsStrip}>
+                {subjectsError ? (
+                  <aside
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "0.75rem",
+                      color: "rgba(200,100,100,0.8)",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
+                    Суб&apos;єкти не завантажились
+                  </aside>
+                ) : (
+                  <ArticleSubjectsSidebar
+                    subjects={articleSubjects}
+                    activeSubjectId={activeSubjectId}
+                    onSelect={handleSubjectSelect}
+                    loading={subjectsLoading}
+                  />
+                )}
+              </div>
             )}
 
             {/* Правий контент */}
@@ -274,8 +306,55 @@ export default function ArticlePage() {
                         </h1>
                       )}
 
+                      {/* FE-T62: Article-level subjects summary */}
+                      {articleSubjects.length > 0 && (
+                        <div className={styles.articleSubjectsSummary}>
+                          <span className={`mono ${styles.summaryLabel}`}>
+                            Суб&apos;єкти статті
+                          </span>
+                          <span className={`mono ${styles.summaryStats}`}>
+                            {articleSubjects.length}{" "}
+                            {articleSubjects.length === 1
+                              ? "суб'єкт"
+                              : articleSubjects.length < 5
+                                ? "суб'єкти"
+                                : "суб'єктів"}
+                            {" · "}
+                            {totalBindings} прив&apos;язок
+                            {" · "}
+                            {nodesWithSubjects}/{totalNodes} елементів
+                          </span>
+                          <div className={styles.summaryChips}>
+                            {articleSubjects.slice(0, 4).map((s) => (
+                              <button
+                                key={s.subject_id}
+                                type="button"
+                                className={styles.summaryChip}
+                                style={{
+                                  color: getRoleColor(s.role),
+                                  borderColor: `${getRoleColor(s.role)}40`,
+                                }}
+                                onClick={() => handleSubjectSelect(s.subject_id)}
+                              >
+                                {s.subject.canonical_name}
+                              </button>
+                            ))}
+                            {articleSubjects.length > 4 && (
+                              <span className={`mono ${styles.summaryChipMore}`}>
+                                +{articleSubjects.length - 4}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                       {article.text ? (
-                        <p className={styles.articleBody}>{article.text}</p>
+                        <div className={styles.articleBodyWrap}>
+                          <p className={styles.articleBody}>{article.text}</p>
+                          <span className={`mono ${styles.articleBodyCount}`}>
+                            {article.text.length}
+                          </span>
+                        </div>
                       ) : null}
 
                       {/* Children / paragraphs */}

@@ -32,7 +32,13 @@ const fadeUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-function CursorBlink({ className, onClass }: { className: string; onClass: string }) {
+function CursorBlink({
+  className,
+  onClass,
+}: {
+  className: string;
+  onClass: string;
+}) {
   const [tick, setTick] = useState(true);
   useEffect(() => {
     const t = setInterval(() => setTick((v) => !v), 700);
@@ -64,7 +70,9 @@ function StatCounter({
 export default function Footer() {
   const { isAdmin } = useAuth();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const { laws, loading, error: lawsError } = useLaws();
   const statsRef = useRef<HTMLDivElement>(null);
   const inView = useInView(statsRef, { once: true, amount: 0.4 });
@@ -98,7 +106,10 @@ export default function Footer() {
       <div ref={statsRef} className={styles.statsBand}>
         <div className={styles.statsInner}>
           {lawsError ? (
-            <div className={`mono ${styles.statsLoading}`} style={{ color: "rgba(200,100,100,0.7)", fontSize: "0.75rem" }}>
+            <div
+              className={`mono ${styles.statsLoading}`}
+              style={{ color: "rgba(200,100,100,0.7)", fontSize: "0.75rem" }}
+            >
               Не вдалося завантажити статистику
             </div>
           ) : loading ? (
