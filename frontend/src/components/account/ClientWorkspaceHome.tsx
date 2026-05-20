@@ -310,7 +310,7 @@ export function ClientWorkspaceHome() {
 
           {workspace.lastSearchQuery && (
             <Link
-              href={`/search?q=${encodeURIComponent(workspace.lastSearchQuery)}`}
+              href={`/search/results?q=${encodeURIComponent(workspace.lastSearchQuery)}`}
               className={styles.continueItem}
             >
               <span className={styles.continueIcon}>⌕</span>

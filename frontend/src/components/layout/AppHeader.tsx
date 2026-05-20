@@ -124,6 +124,7 @@ export function AppHeader() {
           {isAuthenticated ? (
             <SessionMenu
               displayName={user?.displayName ?? "Акаунт"}
+              email={user?.email}
               isAdmin={isAdmin}
               items={sessionMenuItems}
               headerRef={headerRef}
@@ -140,6 +141,7 @@ export function AppHeader() {
               <span className={styles.authLabel}>Вхід</span>
             </Link>
           )}
+
 
           <button
             type="button"

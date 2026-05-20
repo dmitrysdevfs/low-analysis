@@ -591,6 +591,16 @@ export function loginMockAccount(payload: LoginPayload): AuthActionResult {
     };
   }
 
+  if (
+    matchingAccount.account.status !== undefined &&
+    matchingAccount.account.status !== "active"
+  ) {
+    return {
+      ok: false,
+      error: "Акаунт деактивовано",
+    };
+  }
+
   const lastLoginAt = new Date().toISOString();
   const sessionAccount: StoredAuthAccount = {
     ...matchingAccount.account,

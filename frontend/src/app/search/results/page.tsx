@@ -22,6 +22,9 @@ function SearchResultsContent() {
   const dateTo = urlParams.get("dateTo") || "";
   const number = urlParams.get("number") || "";
   const status = urlParams.get("status") || "";
+  const wordField = (urlParams.get("wordField") || "title") as "title" | "text" | "code";
+  const numberType = (urlParams.get("numberType") || "starts") as "starts" | "contains" | "exact";
+  const sort = (urlParams.get("sort") || "date") as "date" | "title" | "relevance";
 
   useEffect(() => {
     if (!user?.id || !q || !searched) return;
@@ -36,11 +39,11 @@ function SearchResultsContent() {
       dateTo,
       number,
       status,
-      wordField: "title",
-      numberType: "starts",
-      sort: "date",
+      wordField,
+      numberType,
+      sort,
     });
-  }, [q, docType, dateFrom, dateTo, number, status, search]);
+  }, [q, docType, dateFrom, dateTo, number, status, wordField, numberType, sort, search]);
 
   return (
     <div className="section-pad max-w-[960px] w-full mx-auto">

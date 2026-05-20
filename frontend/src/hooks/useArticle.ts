@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGuestLimits } from "@/components/guest/GuestLimitsProvider";
 import { getArticle } from "@/lib/api";
 import { parseApiError } from "@/lib/utils";
@@ -15,6 +15,8 @@ interface State {
 
 export function useArticle(lawId?: string, num?: string) {
   const { consumeView } = useGuestLimits();
+  const consumeViewRef = useRef(consumeView);
+  consumeViewRef.current = consumeView;
   const [state, setState] = useState<State>({
     fetchedKey: null,
     article: null,
@@ -30,7 +32,7 @@ export function useArticle(lawId?: string, num?: string) {
 
     const key = `${lawId}:${num}`;
     const controller = new AbortController();
-    const guestAttempt = consumeView(`article:${key}`);
+    const guestAttempt = consumeViewRef.current(`article:${key}`);
 
     if (!guestAttempt.allowed) {
       setState({
@@ -63,7 +65,7 @@ export function useArticle(lawId?: string, num?: string) {
       });
 
     return () => controller.abort();
-  }, [consumeView, lawId, num]);
+  }, [lawId, num]);
 
   return { ...state, loading };
 }

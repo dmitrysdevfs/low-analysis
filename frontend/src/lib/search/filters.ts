@@ -31,7 +31,7 @@ export function applySearchFilters(laws: Law[], params: SearchParams): Law[] {
   }
 
   if (params.dateTo) {
-    const to = new Date(params.dateTo).getTime();
+    const to = new Date(params.dateTo + "T23:59:59.999").getTime();
     filtered = filtered.filter(
       (law) => new Date(law.createdAt).getTime() <= to,
     );

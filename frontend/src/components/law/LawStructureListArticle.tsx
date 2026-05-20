@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   countNestedNodes,
@@ -23,14 +23,13 @@ export function ArticleEntry({
   highlightSubjectId?: string | null;
 }) {
   const [open, setOpen] = useState(!!highlightSubjectId);
-  const [prevHighlightId, setPrevHighlightId] = useState(highlightSubjectId);
 
-  if (highlightSubjectId !== prevHighlightId) {
-    setPrevHighlightId(highlightSubjectId);
+  useEffect(() => {
     if (highlightSubjectId) {
       setOpen(true);
     }
-  }
+  }, [highlightSubjectId]);
+
   const nestedCount = countNestedNodes(article);
   const routeNumber = getArticleRouteNumber(article);
 

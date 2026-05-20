@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   useParams,
   usePathname,
@@ -74,6 +74,25 @@ export default function LawTreePage() {
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const selectedSubjectId = searchParams.get("subject");
+
+  // Save to recently viewed in localStorage
+  useEffect(() => {
+    if (!law || typeof window === "undefined") return;
+    const RECENTLY_VIEWED_KEY = "law-analysis.recently-viewed";
+    const MAX_RECENT = 5;
+    try {
+      const raw = localStorage.getItem(RECENTLY_VIEWED_KEY);
+      const current: Array<{ _id: string; title: string; code: string }> = raw
+        ? JSON.parse(raw)
+        : [];
+      const entry = { _id: law._id, title: law.title, code: law.code };
+      const filtered = current.filter((item) => item._id !== law._id);
+      const updated = [entry, ...filtered].slice(0, MAX_RECENT);
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
+    } catch {
+      // localStorage unavailable — skip silently
+    }
+  }, [law]);
 
   const lawSubjects = useMemo(() => {
     const seen = new Set<string>();
@@ -157,10 +176,6 @@ export default function LawTreePage() {
       scroll: false,
     });
   };
-  console.log("lawSubjects", lawSubjects);
-  console.log(subjectsMap.size);
-  console.log(tree[0]?.subjects);
-
   return (
     <Layout fullHeight>
       <div className={styles.contentFlex}>

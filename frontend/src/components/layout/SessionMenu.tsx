@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { AuthUserIcon } from "@/components/ui/AuthUserIcon";
 import { ChevronIcon } from "./LayoutIcons";
 import styles from "./AppHeader.module.scss";
 
@@ -15,14 +14,25 @@ interface SessionMenuItem {
 
 interface Props {
   displayName: string;
+  email?: string;
   isAdmin: boolean;
   items: SessionMenuItem[];
   headerRef: React.RefObject<HTMLElement | null>;
   onLogout: () => void;
 }
 
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  return parts
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase() || "?";
+}
+
 export function SessionMenu({
   displayName,
+  email,
   isAdmin,
   items,
   headerRef,
@@ -35,6 +45,9 @@ export function SessionMenu({
     top: number;
     right: number;
   } | null>(null);
+
+  const initials = getInitials(displayName);
+  const planLabel = isAdmin ? "Адміністратор" : "Базовий план";
 
   useEffect(() => {
     if (!open) return;
@@ -79,71 +92,95 @@ export function SessionMenu({
     };
   }, [open]);
 
+  function handleLogout() {
+    setOpen(false);
+    onLogout();
+  }
+
   return (
-    <div className={styles.sessionCluster}>
-      <div className={styles.sessionMenuWrap} ref={menuRef}>
-        <button
-          type="button"
-          ref={buttonRef}
-          className={`${styles.sessionChip} ${open ? styles.sessionChipOpen : ""}`}
-          aria-label="Відкрити меню акаунту"
-          aria-expanded={open}
-          aria-haspopup="menu"
-          onClick={() => setOpen((value) => !value)}
-        >
-          <span className={styles.authIconWrap}>
-            <AuthUserIcon size={18} />
-          </span>
-          <span className={styles.authLabelBlock}>
-            <span className={styles.authLabel}>{displayName}</span>
-            <span className={styles.authMeta}>
-              {isAdmin ? "АДМІН" : "КЛІЄНТ"}
-            </span>
-          </span>
-          <span className={styles.chevronWrap}>
-            <ChevronIcon open={open} />
-          </span>
-        </button>
-
-        <AnimatePresence>
-          {open ? (
-            <motion.div
-              key="session-menu"
-              className={styles.sessionMenu}
-              style={position ?? undefined}
-              role="menu"
-              initial={{ opacity: 0, y: 10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.98 }}
-              transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              {items.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  role="menuitem"
-                  className={styles.sessionMenuItem}
-                  onClick={() => setOpen(false)}
-                >
-                  <span className={styles.sessionMenuLabel}>{item.label}</span>
-                  <span className={styles.sessionMenuCaption}>
-                    {item.caption}
-                  </span>
-                </Link>
-              ))}
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </div>
-
+    <div className={styles.sessionMenuWrap} ref={menuRef}>
       <button
         type="button"
-        className={styles.logoutButton}
-        onClick={onLogout}
-        aria-label="Вийти з акаунту"
+        ref={buttonRef}
+        className={`${styles.sessionChip} ${open ? styles.sessionChipOpen : ""}`}
+        aria-label="Відкрити меню акаунту"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        onClick={() => setOpen((v) => !v)}
       >
-        Вийти
+        <span className={styles.sessionAvatar}>{initials}</span>
+        <span className={styles.authLabelBlock}>
+          <span className={styles.authLabel}>{displayName}</span>
+          <span className={styles.authMeta}>{isAdmin ? "АДМІН" : "КЛІЄНТ"}</span>
+        </span>
+        <span className={styles.chevronWrap}>
+          <ChevronIcon open={open} />
+        </span>
       </button>
+
+      <AnimatePresence>
+        {open ? (
+          <motion.div
+            key="session-menu"
+            className={styles.sessionMenu}
+            style={position ?? undefined}
+            role="menu"
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <div className={styles.sessionMenuHead}>
+              <span className={styles.sessionMenuAvatar}>{initials}</span>
+              <div className={styles.sessionMenuHeadInfo}>
+                <span className={styles.sessionMenuHeadName}>{displayName}</span>
+                {email ? (
+                  <span className={styles.sessionMenuHeadEmail}>{email}</span>
+                ) : null}
+              </div>
+            </div>
+
+            <div className={styles.sessionDivider} />
+
+            {items.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                role="menuitem"
+                className={styles.sessionMenuItem}
+                onClick={() => setOpen(false)}
+              >
+                <span className={styles.sessionMenuLabel}>{item.label}</span>
+                <span className={styles.sessionMenuCaption}>{item.caption}</span>
+              </Link>
+            ))}
+
+            <div className={styles.sessionDivider} />
+
+            <div className={styles.sessionPlanRow}>
+              <span className={styles.sessionPlanLabel}>{planLabel}</span>
+              <Link
+                href="/account/billing"
+                className={styles.sessionPlanLink}
+                onClick={() => setOpen(false)}
+              >
+                Деталі
+              </Link>
+            </div>
+
+            <div className={styles.sessionDivider} />
+
+            <button
+              type="button"
+              role="menuitem"
+              className={styles.sessionLogoutBtn}
+              onClick={handleLogout}
+            >
+              Вийти з акаунту
+            </button>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
