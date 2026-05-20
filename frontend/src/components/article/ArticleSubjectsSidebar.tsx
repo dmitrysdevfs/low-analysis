@@ -49,7 +49,9 @@ export function ArticleSubjectsSidebar({
 
   const filteredSubjects = searchQuery
     ? subjects.filter((s) =>
-        s.subject.canonical_name.toLowerCase().includes(searchQuery.toLowerCase())
+        s.subject.canonical_name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()),
       )
     : subjects;
 

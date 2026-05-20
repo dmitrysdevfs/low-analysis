@@ -39,11 +39,14 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
     ((id: string | null) => void) | null
   >(null);
   const setOnSubjectSelect = useCallback(
-    (fn: ((id: string | null) => void) | null) => setOnSubjectSelectState(() => fn),
+    (fn: ((id: string | null) => void) | null) =>
+      setOnSubjectSelectState(() => fn),
     [],
   );
 
-  const [activeSubjectId, setActiveSubjectIdState] = useState<string | null>(null);
+  const [activeSubjectId, setActiveSubjectIdState] = useState<string | null>(
+    null,
+  );
   const setActiveSubjectId = useCallback(
     (id: string | null) => setActiveSubjectIdState(id),
     [],
@@ -51,7 +54,14 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
   return (
     <SidebarDataContext.Provider
-      value={{ subjects, setSubjects, onSubjectSelect, setOnSubjectSelect, activeSubjectId, setActiveSubjectId }}
+      value={{
+        subjects,
+        setSubjects,
+        onSubjectSelect,
+        setOnSubjectSelect,
+        activeSubjectId,
+        setActiveSubjectId,
+      }}
     >
       {children}
     </SidebarDataContext.Provider>

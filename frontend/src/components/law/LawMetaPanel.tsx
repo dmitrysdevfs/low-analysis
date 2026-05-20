@@ -21,7 +21,12 @@ interface LawMetaPanelProps {
   canLoadMore: boolean;
   selectedLimit: number | "all";
   onLimitChange: (value: number | "all") => void;
-  lawSubjects: Array<{ subject_id: string; name: string; role: string; count: number }>;
+  lawSubjects: Array<{
+    subject_id: string;
+    name: string;
+    role: string;
+    count: number;
+  }>;
   selectedSubjectId: string | null;
   onSubjectSelect: (value: string | null) => void;
 }
@@ -79,7 +84,9 @@ export function LawMetaPanel({
                 className={styles.showAllSubjectsBtn}
                 onClick={() => setShowAllSubjects((v) => !v)}
               >
-                {showAllSubjects ? "Скасувати" : `Показати всі · ${lawSubjects.length}`}
+                {showAllSubjects
+                  ? "Скасувати"
+                  : `Показати всі · ${lawSubjects.length}`}
               </button>
               <div className={styles.subjectsSearchPill}>
                 <span className={styles.subjectsSearchIcon}>⌕</span>
@@ -106,11 +113,13 @@ export function LawMetaPanel({
             const DEFAULT_N = 8;
             const filtered = subjectsQuery
               ? lawSubjects.filter((s) =>
-                  s.name.toLowerCase().includes(subjectsQuery.toLowerCase())
+                  s.name.toLowerCase().includes(subjectsQuery.toLowerCase()),
                 )
               : lawSubjects;
             const visible =
-              !showAllSubjects && !subjectsQuery ? filtered.slice(0, DEFAULT_N) : filtered;
+              !showAllSubjects && !subjectsQuery
+                ? filtered.slice(0, DEFAULT_N)
+                : filtered;
             return (
               <>
                 <div className={styles.subjectsGrid}>
@@ -128,7 +137,11 @@ export function LawMetaPanel({
                           borderColor: isActive ? `${c}c0` : `${c}40`,
                         }}
                         onClick={() =>
-                          onSubjectSelect(selectedSubjectId === subject_id ? null : subject_id)
+                          onSubjectSelect(
+                            selectedSubjectId === subject_id
+                              ? null
+                              : subject_id,
+                          )
                         }
                       >
                         {name}
@@ -145,8 +158,14 @@ export function LawMetaPanel({
                       type="button"
                       className={styles.scrollToArticlesBtn}
                       onClick={() => {
-                        const el = document.querySelector(".law-structure-list");
-                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                        const el = document.querySelector(
+                          ".law-structure-list",
+                        );
+                        if (el)
+                          el.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
                       }}
                     >
                       Перейти ↓

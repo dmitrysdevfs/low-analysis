@@ -208,7 +208,11 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                           title="Перейти до виділення"
                           onClick={() => {
                             const mark = document.querySelector("mark");
-                            if (mark) mark.scrollIntoView({ behavior: "smooth", block: "center" });
+                            if (mark)
+                              mark.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
                           }}
                         >
                           ↓
@@ -246,7 +250,9 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                   <div className={styles.subjectsList}>
                     {(subjectsQuery
                       ? subjects.filter((s) =>
-                          s.name.toLowerCase().includes(subjectsQuery.toLowerCase())
+                          s.name
+                            .toLowerCase()
+                            .includes(subjectsQuery.toLowerCase()),
                         )
                       : subjects.slice(0, 3)
                     ).map((s) => {
@@ -258,8 +264,14 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                           className={styles.subjectItem}
                           style={{
                             cursor: onSubjectSelect ? "pointer" : "default",
-                            borderColor: activeSubjectId === s.id ? `rgba(${rgb},0.6)` : `rgba(${rgb},0.25)`,
-                            background: activeSubjectId === s.id ? `rgba(${rgb},0.08)` : undefined,
+                            borderColor:
+                              activeSubjectId === s.id
+                                ? `rgba(${rgb},0.6)`
+                                : `rgba(${rgb},0.25)`,
+                            background:
+                              activeSubjectId === s.id
+                                ? `rgba(${rgb},0.08)`
+                                : undefined,
                           }}
                           onClick={() => {
                             if (onSubjectSelect) {

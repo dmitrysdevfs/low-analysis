@@ -164,8 +164,9 @@
   border-radius: 20px;
   border: 1px solid rgba(200, 168, 67, 0.18);
   background: rgba(255, 255, 255, 0.03);
-  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.2s ease;
+  transition:
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s ease;
   flex-shrink: 0;
   text-transform: none;
   letter-spacing: 0;

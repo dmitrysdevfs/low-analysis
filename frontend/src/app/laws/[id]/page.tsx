@@ -106,7 +106,12 @@ export default function LawTreePage() {
         countMap.set(s.subject_id, (countMap.get(s.subject_id) ?? 0) + 1);
       });
     });
-    const result: Array<{ subject_id: string; name: string; role: string; count: number }> = [];
+    const result: Array<{
+      subject_id: string;
+      name: string;
+      role: string;
+      count: number;
+    }> = [];
     tree.forEach((el) => {
       el.subjects?.forEach((s) => {
         const subj = subjectsMap.get(s.subject_id);
@@ -126,7 +131,14 @@ export default function LawTreePage() {
 
   useEffect(() => {
     if (lawSubjects.length === 0) return;
-    setSubjects(lawSubjects.map((s) => ({ id: s.subject_id, name: s.name, role: s.role, count: s.count })));
+    setSubjects(
+      lawSubjects.map((s) => ({
+        id: s.subject_id,
+        name: s.name,
+        role: s.role,
+        count: s.count,
+      })),
+    );
     return () => setSubjects([]);
   }, [lawSubjects, setSubjects]);
 
@@ -179,18 +191,21 @@ export default function LawTreePage() {
     });
   };
 
-  const updateSubject = useCallback((nextValue: string | null) => {
-    const nextSearchParams = new URLSearchParams(searchParams.toString());
-    if (nextValue) {
-      nextSearchParams.set("subject", nextValue);
-    } else {
-      nextSearchParams.delete("subject");
-    }
-    const nextQuery = nextSearchParams.toString();
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
-      scroll: false,
-    });
-  }, [searchParams, pathname, router]);
+  const updateSubject = useCallback(
+    (nextValue: string | null) => {
+      const nextSearchParams = new URLSearchParams(searchParams.toString());
+      if (nextValue) {
+        nextSearchParams.set("subject", nextValue);
+      } else {
+        nextSearchParams.delete("subject");
+      }
+      const nextQuery = nextSearchParams.toString();
+      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+        scroll: false,
+      });
+    },
+    [searchParams, pathname, router],
+  );
 
   useEffect(() => {
     setOnSubjectSelect(updateSubject);
@@ -201,7 +216,7 @@ export default function LawTreePage() {
     <Layout fullHeight>
       <div className={styles.contentFlex}>
         <div className="sm:flex sm:gap-8 max-w-[1400px] mx-auto w-full">
-<div className={`section-pad page-frame ${styles.pageInner} flex-1`}>
+          <div className={`section-pad page-frame ${styles.pageInner} flex-1`}>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
