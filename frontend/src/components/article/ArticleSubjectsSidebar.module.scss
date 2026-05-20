@@ -10,6 +10,10 @@
 }
 
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-size: 0.6rem;
   color: #7a98c0;
   text-transform: uppercase;
@@ -150,6 +154,75 @@
   }
 }
 
+/* ── Search pill ── */
+.searchPill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 26px;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(200, 168, 67, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s ease;
+  flex-shrink: 0;
+  text-transform: none;
+  letter-spacing: 0;
+
+  &:hover,
+  &:focus-within {
+    width: 130px;
+    border-color: rgba(200, 168, 67, 0.4);
+  }
+}
+
+.searchIcon {
+  flex-shrink: 0;
+  width: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: rgba(122, 152, 192, 0.55);
+  pointer-events: none;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.searchInput {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 4px 4px 4px 0;
+  font-size: 0.72rem;
+  color: #d6e0f0;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0;
+  text-transform: none;
+  min-width: 0;
+
+  &::placeholder {
+    color: rgba(122, 152, 192, 0.4);
+  }
+}
+
+.searchClear {
+  background: none;
+  border: none;
+  color: rgba(122, 152, 192, 0.5);
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 0 4px 0 0;
+  line-height: 1;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #c8a843;
+  }
+}
+
 /* ── Mobile/tablet: grid of equal cards ── */
 @media (max-width: 840px) {
   .sidebar {
@@ -164,6 +237,13 @@
     margin-bottom: 10px;
     padding-bottom: 8px;
     border-bottom: 1px solid #1c3260;
+  }
+
+  .searchPill {
+    &:hover,
+    &:focus-within {
+      width: 110px;
+    }
   }
 
   .skeletonList {

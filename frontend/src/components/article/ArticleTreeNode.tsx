@@ -83,8 +83,7 @@ function formatCitation(opts: {
   lawTitle: string;
   code: string;
 }): string {
-  const origin =
-    typeof window !== "undefined" ? window.location.origin : "";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
   const anchor = sanitizeAnchor(opts.code);
   const url = `${origin}/laws/${opts.lawId}/articles/${opts.articleNum}#${anchor}`;
 
@@ -151,7 +150,9 @@ function NestedNode({
           const subject = subjectsMap?.get(s.subject_id);
           return subject ? { subject, role: s.role } : null;
         })
-        .filter((item): item is { subject: Subject; role: string } => item !== null)
+        .filter(
+          (item): item is { subject: Subject; role: string } => item !== null,
+        )
         .map((item) => [item.subject._id, item]),
     ).values(),
   );
@@ -201,8 +202,12 @@ function NestedNode({
       }}
     >
       <div className={styles.leftMeta}>
-        <span className={`mono ${styles.childBadge}`}>{getNodeBadge(node)}</span>
-        {charCount > 0 && <span className={`mono ${styles.charCount}`}>{charCount}</span>}
+        <span className={`mono ${styles.childBadge}`}>
+          {getNodeBadge(node)}
+        </span>
+        {charCount > 0 && (
+          <span className={`mono ${styles.charCount}`}>{charCount}</span>
+        )}
         {/* FE-T63: Copy button */}
         <button
           type="button"
@@ -226,7 +231,9 @@ function NestedNode({
         {/* FE-T62: Subjects for this element */}
         {nodeSubjects.length > 0 && (
           <div className={styles.nodeSubjects}>
-            <span className={`mono ${styles.subjectsLabel}`}>Суб&apos;єкти:</span>
+            <span className={`mono ${styles.subjectsLabel}`}>
+              Суб&apos;єкти:
+            </span>
             {nodeSubjects.map(({ subject, role }) => (
               <Link
                 key={subject._id}

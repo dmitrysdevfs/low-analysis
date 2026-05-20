@@ -28,12 +28,12 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const sidebarAsHeaderRef = useRef<HTMLElement | null>(null);
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
-  const { subjects } = useSidebarData();
+  const { subjects, onSubjectSelect, activeSubjectId } = useSidebarData();
   const { notes } = useNotes();
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
-  const [subjectsOpen, setSubjectsOpen] = useState(true);
+  const [subjectsQuery, setSubjectsQuery] = useState("");
   const dragCounter = useRef(0);
 
   const recentNotes = useMemo(() => notes.slice(0, 5), [notes]);
@@ -82,11 +82,6 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   useEffect(() => {
     if (!visible) setNotesOpen(false);
   }, [visible]);
-
-  // Reset subjectsOpen when subjects list changes (new page)
-  useEffect(() => {
-    if (subjects.length > 0) setSubjectsOpen(true);
-  }, [subjects]);
 
   // Sidebar drag detection + drop handling (all at sidebar level so drop zone doesn't need to be mounted)
   useEffect(() => {
@@ -196,59 +191,114 @@ export function AppSidebar({ visible }: { visible: boolean }) {
               })}
             </nav>
 
-            {/* Subjects section with toggle */}
+            {/* Subjects section */}
             {subjects.length > 0 && (
               <>
                 <div className={styles.divider} />
-                <button
-                  type="button"
-                  className={styles.notesSectionHeader}
-                  onClick={() => setSubjectsOpen((v) => !v)}
-                >
-                  <span>СУБ&apos;ЄКТИ · {subjects.length}</span>
-                  <span className={styles.notesChevron}>
-                    {subjectsOpen ? "▾" : "▸"}
-                  </span>
-                </button>
-                <AnimatePresence initial={false}>
-                  {subjectsOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      style={{ overflow: "hidden" }}
-                    >
-                      <div className={styles.subjectsList}>
-                        {subjects.map((s) => {
-                          const color = s.role
-                            ? getRoleColor(s.role)
-                            : "#7a98c0";
-                          const rgb = hexToRgb(color);
-                          return (
-                            <div key={s.id} className={styles.subjectItem}>
-                              <span className={styles.subjectName}>
-                                {s.name}
-                              </span>
-                              {s.role && (
-                                <span
-                                  className={styles.subjectBadge}
-                                  style={{
-                                    color,
-                                    background: `rgba(${rgb},0.12)`,
-                                    border: `1px solid rgba(${rgb},0.25)`,
-                                  }}
-                                >
-                                  {s.role}
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })}
+                <div className={styles.subjectsSection}>
+                  <div className={styles.subjectsSectionHeader}>
+                    <span className={styles.subjectsSectionLabel}>
+                      СУБ&apos;ЄКТИ · {subjects.length}
+                    </span>
+                    {activeSubjectId && (
+                      <div className={styles.subjectsActions}>
+                        <button
+                          type="button"
+                          className={styles.subjectsActionBtn}
+                          title="Перейти до виділення"
+                          onClick={() => {
+                            const mark = document.querySelector("mark");
+                            if (mark) mark.scrollIntoView({ behavior: "smooth", block: "center" });
+                          }}
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.subjectsActionBtn}
+                          title="Скинути вибір"
+                          onClick={() => onSubjectSelect?.(null)}
+                        >
+                          ✕
+                        </button>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    )}
+                  </div>
+                  <div className={styles.subjectsSearch}>
+                    <span className={styles.subjectsSearchIcon}>⌕</span>
+                    <input
+                      type="text"
+                      className={styles.subjectsSearchInput}
+                      placeholder="Пошук суб'єкта..."
+                      value={subjectsQuery}
+                      onChange={(e) => setSubjectsQuery(e.target.value)}
+                    />
+                    {subjectsQuery && (
+                      <button
+                        type="button"
+                        className={styles.subjectsSearchClear}
+                        onClick={() => setSubjectsQuery("")}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  <div className={styles.subjectsList}>
+                    {(subjectsQuery
+                      ? subjects.filter((s) =>
+                          s.name.toLowerCase().includes(subjectsQuery.toLowerCase())
+                        )
+                      : subjects.slice(0, 3)
+                    ).map((s) => {
+                      const color = s.role ? getRoleColor(s.role) : "#7a98c0";
+                      const rgb = hexToRgb(color);
+                      return (
+                        <div
+                          key={s.id}
+                          className={styles.subjectItem}
+                          style={{
+                            cursor: onSubjectSelect ? "pointer" : "default",
+                            borderColor: activeSubjectId === s.id ? `rgba(${rgb},0.6)` : `rgba(${rgb},0.25)`,
+                            background: activeSubjectId === s.id ? `rgba(${rgb},0.08)` : undefined,
+                          }}
+                          onClick={() => {
+                            if (onSubjectSelect) {
+                              onSubjectSelect(s.id);
+                              setSubjectsQuery("");
+                            }
+                          }}
+                          role={onSubjectSelect ? "button" : undefined}
+                          tabIndex={onSubjectSelect ? 0 : undefined}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && onSubjectSelect) {
+                              onSubjectSelect(s.id);
+                              setSubjectsQuery("");
+                            }
+                          }}
+                        >
+                          <span
+                            className={styles.subjectName}
+                            style={{ color }}
+                          >
+                            {s.name}
+                          </span>
+                          {s.role && (
+                            <span
+                              className={styles.subjectBadge}
+                              style={{
+                                color,
+                                background: `rgba(${rgb},0.12)`,
+                                border: `1px solid rgba(${rgb},0.25)`,
+                              }}
+                            >
+                              {s.role}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </>
             )}
 

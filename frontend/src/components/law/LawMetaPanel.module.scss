@@ -116,8 +116,172 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 8px;
+}
+
+.subjectsHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.subjectsCollapseBtn {
+  background: none;
+  border: 1px solid rgba(28, 50, 96, 0.7);
+  border-radius: 4px;
+  color: #7a98c0;
+  font-size: 0.7rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.4);
+    color: #c8a843;
+  }
+}
+
+/* ── Subjects search — always open ── */
+.subjectsSearchPill {
+  display: flex;
+  align-items: center;
+  width: 180px;
+  border-radius: 6px;
+  border: 1px solid rgba(200, 168, 67, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s ease;
+  flex-shrink: 0;
+
+  &:focus-within {
+    border-color: rgba(200, 168, 67, 0.4);
+  }
+}
+
+.subjectsSearchIcon {
+  flex-shrink: 0;
+  width: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: rgba(122, 152, 192, 0.5);
+  pointer-events: none;
+}
+
+.subjectsSearchInput {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 5px 4px 5px 0;
+  font-size: 0.8rem;
+  color: #d6e0f0;
+  font-family: inherit;
+  min-width: 0;
+
+  &::placeholder {
+    color: rgba(122, 152, 192, 0.4);
+    font-size: 0.75rem;
+  }
+}
+
+.subjectsSearchClear {
+  background: none;
+  border: none;
+  color: rgba(122, 152, 192, 0.5);
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 0 6px 0 0;
+  line-height: 1;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #c8a843;
+  }
+}
+
+/* ── Subjects grid ── */
+.subjectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.showAllSubjectsBtn {
+  background: transparent;
+  border: 1px solid rgba(200, 168, 67, 0.2);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.68rem;
+  color: rgba(200, 168, 67, 0.7);
+  cursor: pointer;
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+  transition: all 0.18s;
+
+  &:hover {
+    border-color: #c8a843;
+    color: #c8a843;
+    background: rgba(200, 168, 67, 0.05);
+  }
+}
+
+.resetSubjectBtn {
+  margin-top: 8px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #1c3260;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 0.72rem;
+  color: #7a98c0;
+  cursor: pointer;
+  font-family: var(--font-mono, monospace);
+  transition: all 0.18s;
+
+  &:hover {
+    border-color: #4a80d4;
+    color: #d6e0f0;
+  }
+}
+
+.subjectsEmpty {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+}
+
+.subjectsActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.scrollToArticlesBtn {
+  background: rgba(200, 168, 67, 0.1);
+  border: 1px solid rgba(200, 168, 67, 0.35);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.72rem;
+  color: #c8a843;
+  cursor: pointer;
+  font-family: var(--font-mono, monospace);
+  transition: all 0.18s;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.18);
+    border-color: #c8a843;
+  }
 }
 
 .subjectsLabel {
@@ -138,6 +302,9 @@
   text-decoration: none;
   background: transparent;
   cursor: pointer;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
 }
 
 .subjectChipActive {
@@ -148,10 +315,31 @@
 
 @media (max-width: 640px) {
   .subjectsHeader {
+    flex-direction: column;
     align-items: stretch;
+  }
+
+  .subjectsHeaderActions {
+    flex-wrap: wrap;
+  }
+
+  .subjectsSearchPill {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+
+  .showAllSubjectsBtn {
+    flex: 1;
   }
 
   .subjectsToggle {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .subjectsGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

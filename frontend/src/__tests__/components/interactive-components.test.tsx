@@ -99,7 +99,9 @@ describe("interactive frontend components", () => {
 
     render(<NestedNodeList nodes={[branch]} />);
 
-    expect(screen.getByText(String(PART_NODE.text!.length))).toBeInTheDocument();
+    expect(
+      screen.getByText(String(PART_NODE.text!.length)),
+    ).toBeInTheDocument();
   });
 
   it("NestedNodeList does not render charCount when node.text is absent", () => {

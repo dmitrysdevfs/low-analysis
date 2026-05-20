@@ -45,18 +45,44 @@ export function ArticleSubjectsSidebar({
   loading,
 }: Props) {
   const [showAll, setShowAll] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredSubjects = searchQuery
+    ? subjects.filter((s) =>
+        s.subject.canonical_name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : subjects;
 
   const visibleSubjects =
-    !showAll && subjects.length > MOBILE_PREVIEW
-      ? subjects.slice(0, MOBILE_PREVIEW)
-      : subjects;
+    !showAll && !searchQuery && filteredSubjects.length > MOBILE_PREVIEW
+      ? filteredSubjects.slice(0, MOBILE_PREVIEW)
+      : filteredSubjects;
 
-  const hasMore = subjects.length > MOBILE_PREVIEW;
+  const hasMore = !searchQuery && subjects.length > MOBILE_PREVIEW;
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
-        Суб&apos;єкти · {loading ? "…" : subjects.length}
+        <span>Суб&apos;єкти · {loading ? "…" : subjects.length}</span>
+        <div className={styles.searchPill}>
+          <span className={styles.searchIcon}>⌕</span>
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="Пошук..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              className={styles.searchClear}
+              onClick={() => setSearchQuery("")}
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
       {loading && (
@@ -139,6 +165,12 @@ export function ArticleSubjectsSidebar({
               })}
             </AnimatePresence>
           </ul>
+
+          {searchQuery && filteredSubjects.length === 0 && (
+            <p className={styles.emptyText} style={{ padding: "8px 0" }}>
+              Нічого не знайдено
+            </p>
+          )}
 
           <div className={styles.footer}>
             {hasMore && !showAll && (

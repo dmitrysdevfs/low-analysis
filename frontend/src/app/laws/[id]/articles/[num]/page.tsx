@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { recordWorkspaceView } from "@/lib/auth/clientWorkspace";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleLawCard } from "@/components/article/ArticleLawCard";
-import { ArticleSubjectsSidebar } from "@/components/article/ArticleSubjectsSidebar";
 import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import { useArticle } from "@/hooks/useArticle";
@@ -41,25 +40,27 @@ export default function ArticlePage() {
 
   const childTree = useMemo(() => buildTreeBranches(children), [children]);
 
-  const {
-    subjectsMap,
-    loading: subjectsLoading,
-    error: subjectsError,
-  } = useSubjectsMap();
+  const { subjectsMap } = useSubjectsMap();
 
   const articleSubjects = useMemo(() => {
     const seen = new Set<string>();
-    const result: { subject_id: string; role: string; subject: Subject }[] = [];
+    const result: { subject_id: string; role: string; subject: Subject; count: number }[] = [];
     const allNodes = article ? [article, ...children] : children;
+    const countMap = new Map<string, number>();
+    allNodes.forEach((node) => {
+      node.subjects?.forEach((s) => {
+        countMap.set(s.subject_id, (countMap.get(s.subject_id) ?? 0) + 1);
+      });
+    });
     allNodes.forEach((node) => {
       node.subjects?.forEach((s) => {
         if (!seen.has(s.subject_id) && subjectsMap.get(s.subject_id)) {
           seen.add(s.subject_id);
-          result.push({ ...s, subject: subjectsMap.get(s.subject_id)! });
+          result.push({ ...s, subject: subjectsMap.get(s.subject_id)!, count: countMap.get(s.subject_id) ?? 1 });
         }
       });
     });
-    return result;
+    return result.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   }, [article, children, subjectsMap]);
 
   const totalBindings = useMemo(
@@ -81,7 +82,7 @@ export default function ArticlePage() {
 
   const totalNodes = children.length + (article ? 1 : 0);
 
-  const { setSubjects } = useSidebarData();
+  const { setSubjects, setOnSubjectSelect, setActiveSubjectId: setSidebarActiveSubjectId } = useSidebarData();
 
   useEffect(() => {
     if (articleSubjects.length === 0) return;
@@ -90,6 +91,7 @@ export default function ArticlePage() {
         id: s.subject_id,
         name: s.subject.canonical_name,
         role: s.role,
+        count: s.count,
       })),
     );
     return () => setSubjects([]);
@@ -98,12 +100,14 @@ export default function ArticlePage() {
   const articleTreeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
+  const [showAllSubjects, setShowAllSubjects] = useState(false);
+  const [subjectsQuery, setSubjectsQuery] = useState("");
 
   // State для активного суб'єкта (для highlight і dimming)
   const [activeSubjectId, setActiveSubjectId] = useState<string | null>(null);
   const [matchIndex, setMatchIndex] = useState(0);
 
-  const handleSubjectSelect = (id: string | null) => {
+  const handleSubjectSelect = useCallback((id: string | null) => {
     if (id === null) {
       setActiveSubjectId(null);
       setMatchIndex(0);
@@ -113,7 +117,16 @@ export default function ArticlePage() {
       setActiveSubjectId(id);
       setMatchIndex(0);
     }
-  };
+  }, [activeSubjectId]);
+
+  useEffect(() => {
+    setOnSubjectSelect(handleSubjectSelect);
+    return () => setOnSubjectSelect(null);
+  }, [handleSubjectSelect, setOnSubjectSelect]);
+
+  useEffect(() => {
+    setSidebarActiveSubjectId(activeSubjectId);
+  }, [activeSubjectId, setSidebarActiveSubjectId]);
 
   useEffect(() => {
     if (!activeSubjectId) return;
@@ -182,40 +195,14 @@ export default function ArticlePage() {
       </motion.div>
 
       <main className={styles.page}>
-        <div className={styles.outerContainer}>
+        <div className={styles.container}>
           {lawId && (
             <Link href={ROUTES.law(lawId)} className={styles.backLink}>
               ← Структура закону
             </Link>
           )}
-          <div className={styles.articleLayout}>
-            {/* Сайдбар суб'єктів: ліворуч на desktop, горизонтальна смуга на mobile */}
-            {!loading && !error && article && (
-              <div className={styles.subjectsStrip}>
-                {subjectsError ? (
-                  <aside
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: "0.75rem",
-                      color: "rgba(200,100,100,0.8)",
-                      fontFamily: "var(--font-mono)",
-                    }}
-                  >
-                    Суб&apos;єкти не завантажились
-                  </aside>
-                ) : (
-                  <ArticleSubjectsSidebar
-                    subjects={articleSubjects}
-                    activeSubjectId={activeSubjectId}
-                    onSelect={handleSubjectSelect}
-                    loading={subjectsLoading}
-                  />
-                )}
-              </div>
-            )}
-
-            {/* Правий контент */}
-            <div className={styles.articleMain} ref={containerRef}>
+            {/* Контент */}
+            <div ref={containerRef}>
               <AnimatePresence mode="wait">
                 {/* Loading skeleton */}
                 {loading ? (
@@ -306,44 +293,86 @@ export default function ArticlePage() {
                         </h1>
                       )}
 
-                      {/* FE-T62: Article-level subjects summary */}
+                      {/* Compact subjects block */}
                       {articleSubjects.length > 0 && (
-                        <div className={styles.articleSubjectsSummary}>
-                          <span className={`mono ${styles.summaryLabel}`}>
-                            Суб&apos;єкти статті
-                          </span>
-                          <span className={`mono ${styles.summaryStats}`}>
-                            {articleSubjects.length}{" "}
-                            {articleSubjects.length === 1
-                              ? "суб'єкт"
-                              : articleSubjects.length < 5
-                                ? "суб'єкти"
-                                : "суб'єктів"}
-                            {" · "}
-                            {totalBindings} прив&apos;язок
-                            {" · "}
-                            {nodesWithSubjects}/{totalNodes} елементів
-                          </span>
-                          <div className={styles.summaryChips}>
-                            {articleSubjects.slice(0, 4).map((s) => (
+                        <div className={styles.articleSubjectsBlock}>
+                          <div className={styles.articleSubjectsHeader}>
+                            <span className={styles.articleSubjectsLabel}>
+                              СУБ&apos;ЄКТИ · {articleSubjects.length}
+                            </span>
+                            <div className={styles.articleSubjectsSearch}>
+                              <span className={styles.articleSubjectsSearchIcon}>⌕</span>
+                              <input
+                                type="text"
+                                className={styles.articleSubjectsSearchInput}
+                                placeholder="Пошук..."
+                                value={subjectsQuery}
+                                onChange={(e) => setSubjectsQuery(e.target.value)}
+                              />
+                              {subjectsQuery && (
+                                <button
+                                  type="button"
+                                  className={styles.articleSubjectsSearchClear}
+                                  onClick={() => setSubjectsQuery("")}
+                                >✕</button>
+                              )}
+                            </div>
+                            {!subjectsQuery && (
                               <button
-                                key={s.subject_id}
                                 type="button"
-                                className={styles.summaryChip}
-                                style={{
-                                  color: getRoleColor(s.role),
-                                  borderColor: `${getRoleColor(s.role)}40`,
-                                }}
-                                onClick={() => handleSubjectSelect(s.subject_id)}
+                                className={styles.articleSubjectsToggleBtn}
+                                onClick={() => setShowAllSubjects((v) => !v)}
                               >
-                                {s.subject.canonical_name}
+                                {showAllSubjects ? "Скасувати" : `Показати всі · ${articleSubjects.length}`}
                               </button>
-                            ))}
-                            {articleSubjects.length > 4 && (
-                              <span className={`mono ${styles.summaryChipMore}`}>
-                                +{articleSubjects.length - 4}
-                              </span>
                             )}
+                          </div>
+
+                          {activeSubjectId && (
+                            <div className={styles.articleSubjectsActions}>
+                              <button
+                                type="button"
+                                className={styles.articleSubjectsActionBtn}
+                                onClick={() => {
+                                  const marks = Array.from(articleTreeRef.current?.querySelectorAll("mark") ?? []);
+                                  if (marks.length) marks[matchIndex % marks.length]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                                }}
+                              >↓ Перейти</button>
+                              <button
+                                type="button"
+                                className={styles.articleSubjectsActionBtn}
+                                onClick={() => { handleSubjectSelect(null); setSubjectsQuery(""); }}
+                              >✕ скинути фільтр</button>
+                            </div>
+                          )}
+
+                          <div className={styles.articleSubjectsChips}>
+                            {(subjectsQuery
+                              ? articleSubjects.filter((s) =>
+                                  s.subject.canonical_name.toLowerCase().includes(subjectsQuery.toLowerCase())
+                                )
+                              : showAllSubjects
+                                ? articleSubjects
+                                : articleSubjects.slice(0, 4)
+                            ).map((s) => {
+                              const c = getRoleColor(s.role);
+                              const isActive = activeSubjectId === s.subject_id;
+                              return (
+                                <button
+                                  key={s.subject_id}
+                                  type="button"
+                                  className={`directory-chip mono ${isActive ? styles.articleSubjectsChipActive : ""}`}
+                                  style={{
+                                    color: c,
+                                    background: isActive ? `${c}20` : `${c}0d`,
+                                    borderColor: isActive ? `${c}c0` : `${c}40`,
+                                  }}
+                                  onClick={() => { handleSubjectSelect(s.subject_id); setSubjectsQuery(""); }}
+                                >
+                                  {s.subject.canonical_name}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -401,7 +430,6 @@ export default function ArticlePage() {
                 onRequestNote={(draft: NoteDraft) => setNoteDraft(draft)}
               />
             </div>
-          </div>
         </div>
       </main>
 
