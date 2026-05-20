@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import type { Law } from "@/types";
 import {
@@ -22,8 +23,6 @@ interface LawMetaPanelProps {
   lawSubjects: Array<{ subject_id: string; name: string; status: string }>;
   selectedSubjectId: string | null;
   onSubjectSelect: (value: string | null) => void;
-  isSidebarOpen: boolean;
-  onSidebarToggle: () => void;
 }
 
 export function LawMetaPanel({
@@ -38,9 +37,11 @@ export function LawMetaPanel({
   lawSubjects,
   selectedSubjectId,
   onSubjectSelect,
-  isSidebarOpen,
-  onSidebarToggle,
 }: LawMetaPanelProps) {
+  const [chipsOpen, setChipsOpen] = useState(false);
+
+  const visibleSubjects = chipsOpen ? lawSubjects : lawSubjects.slice(0, 5);
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 14 }}
@@ -76,13 +77,13 @@ export function LawMetaPanel({
             <button
               type="button"
               className={`btn btn-ghost ${styles.subjectsToggle}`}
-              onClick={onSidebarToggle}
+              onClick={() => setChipsOpen(!chipsOpen)}
             >
-              {isSidebarOpen ? "Сховати список" : "Розгорнути список"}
+              {chipsOpen ? "Сховати" : "Показати всі"}
             </button>
           </div>
           <div className={styles.subjectsList}>
-            {lawSubjects.map(({ subject_id, name }) => (
+            {visibleSubjects.map(({ subject_id, name }) => (
               <button
                 key={subject_id}
                 type="button"
@@ -100,6 +101,16 @@ export function LawMetaPanel({
                 {name}
               </button>
             ))}
+
+            {!chipsOpen && lawSubjects.length > 5 && (
+              <button
+                type="button"
+                onClick={() => setChipsOpen(true)}
+                className={styles.moreSubjects}
+              >
+                + ще {lawSubjects.length - visibleSubjects.length}
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -72,7 +72,7 @@ export default function LawTreePage() {
   const [selectedLimit, setSelectedLimit] = useState<number | "all">(() =>
     parseLimitValue(searchParams.get("limit")),
   );
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const selectedSubjectId = searchParams.get("subject");
 
   const lawSubjects = useMemo(() => {
@@ -165,16 +165,15 @@ export default function LawTreePage() {
     <Layout fullHeight>
       <div className={styles.contentFlex}>
         <div className="sm:flex sm:gap-8 max-w-[1400px] mx-auto w-full">
-          {sidebarOpen ? (
-            <Sidebar
-              subjectsList={lawSubjects.map((s) => ({
-                _id: s.subject_id,
-                canonical_name: s.name,
-              }))}
-              selectedId={selectedSubjectId}
-              onSelect={updateSubject}
-            />
-          ) : null}
+          <Sidebar
+            subjectsList={lawSubjects.map((s) => ({
+              _id: s.subject_id,
+              canonical_name: s.name,
+            }))}
+            selectedId={selectedSubjectId}
+            onSelect={updateSubject}
+          />
+
           <div className={`section-pad page-frame ${styles.pageInner} flex-1`}>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -201,8 +200,6 @@ export default function LawTreePage() {
               lawSubjects={lawSubjects}
               selectedSubjectId={selectedSubjectId}
               onSubjectSelect={updateSubject}
-              isSidebarOpen={sidebarOpen}
-              onSidebarToggle={() => setSidebarOpen((current) => !current)}
             />
 
             {loading ? (
