@@ -81,6 +81,43 @@ describe('GET /api/laws', () => {
     expect(res.status).toBe(400);
     expect(res.body.message).toMatch(/sortOrder/);
   });
+
+  it('passes status filter to the service', async () => {
+    lawService.getAllLaws.mockResolvedValue([]);
+
+    await request(app).get('/api/laws?status=Чинний');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'Чинний' }),
+    );
+  });
+
+  it('passes dateFrom and dateTo to the service as Date objects', async () => {
+    lawService.getAllLaws.mockResolvedValue([]);
+
+    await request(app).get('/api/laws?dateFrom=2020-01-01&dateTo=2020-12-31');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dateFrom: expect.any(Date),
+        dateTo: expect.any(Date),
+      }),
+    );
+  });
+
+  it('returns 400 for invalid dateFrom', async () => {
+    const res = await request(app).get('/api/laws?dateFrom=not-a-date');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/dateFrom/);
+  });
+
+  it('returns 400 for invalid dateTo', async () => {
+    const res = await request(app).get('/api/laws?dateTo=not-a-date');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/dateTo/);
+  });
 });
 
 describe('GET /api/laws/:id/tree', () => {

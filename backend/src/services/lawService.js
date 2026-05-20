@@ -4,19 +4,47 @@ import Element from '../models/Element.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
-export const getAllLaws = async ({ q = '', sortBy = 'date', sortOrder = 'desc' } = {}) => {
-  const filter = q
-    ? {
-        title: {
-          $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
-        },
-      }
-    : {};
+export const getAllLaws = async ({
+  q = '',
+  sortBy = 'date',
+  sortOrder = 'desc',
+  status,
+  dateFrom,
+  dateTo,
+} = {}) => {
+  const filter = {};
+
+  if (q) {
+    filter.title = {
+      $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
+    };
+  }
+
+  if (status) {
+    filter.status = {
+      $regex: new RegExp(
+        `^${status.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+        'i',
+      ),
+    };
+  }
+
+  if (dateFrom || dateTo) {
+    filter.adoptedDate = {};
+    if (dateFrom) filter.adoptedDate.$gte = dateFrom;
+    if (dateTo) {
+      const endOfDay = new Date(dateTo);
+      endOfDay.setHours(23, 59, 59, 999);
+      filter.adoptedDate.$lte = endOfDay;
+    }
+  }
 
   const sortField = sortBy === 'title' ? 'title' : 'adoptedDate';
   const sortDirection = sortOrder === 'asc' ? 1 : -1;
 
-  return await Law.find(filter).select('-__v').sort({ [sortField]: sortDirection });
+  return await Law.find(filter)
+    .select('-__v')
+    .sort({ [sortField]: sortDirection });
 };
 
 export const getLawById = async (id) => {
@@ -68,7 +96,8 @@ export const getArticle = async (lawId, articleNumber) => {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export const upsertLaw = async (lawData) => {
-  const { code, title, source, status, preamble, signatory, adoptedDate } = lawData;
+  const { code, title, source, status, preamble, signatory, adoptedDate } =
+    lawData;
   const update = { title, source, status, preamble, signatory };
   if (adoptedDate != null) update.adoptedDate = adoptedDate;
   const law = await Law.findOneAndUpdate(

@@ -23,7 +23,30 @@ export const getAllLaws = async (req, res, next) => {
       });
     }
 
-    const laws = await lawService.getAllLaws({ q, sortBy, sortOrder });
+    const status =
+      typeof req.query.status === 'string' ? req.query.status.trim() : undefined;
+
+    let dateFrom;
+    if (req.query.dateFrom !== undefined) {
+      dateFrom = new Date(req.query.dateFrom);
+      if (isNaN(dateFrom.getTime())) {
+        return res.status(400).json({
+          message: 'Invalid dateFrom value. Expected ISO date (e.g. 2020-01-01)',
+        });
+      }
+    }
+
+    let dateTo;
+    if (req.query.dateTo !== undefined) {
+      dateTo = new Date(req.query.dateTo);
+      if (isNaN(dateTo.getTime())) {
+        return res.status(400).json({
+          message: 'Invalid dateTo value. Expected ISO date (e.g. 2020-12-31)',
+        });
+      }
+    }
+
+    const laws = await lawService.getAllLaws({ q, sortBy, sortOrder, status, dateFrom, dateTo });
     res.json(laws);
   } catch (error) {
     next(error);

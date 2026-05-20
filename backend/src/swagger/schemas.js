@@ -16,6 +16,23 @@ export const schemas = {
         example: '1996-06-28T00:00:00.000Z',
         nullable: true,
       },
+      status: {
+        type: 'string',
+        example: 'Чинний',
+        nullable: true,
+        description:
+          'Стан документа (наприклад: Чинний, Втратив чинність, Не набрав чинності)',
+      },
+      preamble: {
+        type: 'string',
+        example: 'Верховна Рада України, виражаючи суверенну волю народу...',
+        nullable: true,
+      },
+      signatory: {
+        type: 'string',
+        example: 'Президент України Л.КУЧМА',
+        nullable: true,
+      },
       source: {
         type: 'string',
         example: 'https://zakon.rada.gov.ua/laws/show/254к/96-вр',
