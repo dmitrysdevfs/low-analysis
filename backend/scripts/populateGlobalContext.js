@@ -2,43 +2,9 @@ import dotenv from 'dotenv';
 import connectDB from '../src/config/db.js';
 import Law from '../src/models/Law.js';
 import Element from '../src/models/Element.js';
+import { extractDefinitions } from '../src/utils/definitionExtractor.js';
 
 dotenv.config();
-
-/**
- * Extracts definitions from Article 1 elements (same logic as parserService).
- */
-const extractDefinitions = (elements) => {
-  const definitions = [];
-  const st1Elements = elements.filter(
-    (el) => el.code && el.code.includes('.st1.') && el.text,
-  );
-
-  for (const el of st1Elements) {
-    const text = el.text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
-
-    // 1. Try matching with quotes: 1) "term" - def or термін "term" - def
-    let match = text.match(
-      /^(?:\d+\)\s*)?(?:термін\s+)?["']([^"']+)["']\s*[-–—]\s*(.+)$/i,
-    );
-
-    // 2. Try without quotes: 1) term - def
-    if (!match) {
-      match = text.match(
-        /^(?:\d+\)\s*)?(?:терміни?\s+)?([^-–—]+?)\s*[-–—]\s*(.+)$/i,
-      );
-    }
-
-    if (match) {
-      let term = match[1].trim();
-      let definition = match[2].trim();
-      if (term && definition && term.length < 150) {
-        definitions.push({ term, definition });
-      }
-    }
-  }
-  return definitions;
-};
 
 const run = async () => {
   await connectDB();
