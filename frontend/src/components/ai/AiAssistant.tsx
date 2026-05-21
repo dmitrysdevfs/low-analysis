@@ -7,7 +7,7 @@ import { IconArrow } from "./IconArrow";
 
 // Структура повідомлення
 interface Message {
-  id: number;
+  id: string;
   text: string;
   isUser: boolean;
 }
@@ -19,7 +19,7 @@ export function AiAssistant() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: 1,
+      id: "welcome-message",
       text: "Вітаю! Я ваш AI Аналітик. Чим можу допомогти?",
       isUser: false,
     },
@@ -68,7 +68,7 @@ export function AiAssistant() {
 
     setMessages((prev) => [
       ...prev,
-      { id: Date.now(), text: inputValue.trim(), isUser: true },
+      { id: crypto.randomUUID(), text: inputValue.trim(), isUser: true },
     ]);
     setInputValue("");
   };
