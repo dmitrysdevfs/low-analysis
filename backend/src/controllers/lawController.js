@@ -108,7 +108,13 @@ export const parseLawFromUrl = async (req, res, next) => {
     await law.save();
 
     // 6. Calculate statistical metrics
-    await performStatisticalAnalysis(law._id);
+    try {
+      await performStatisticalAnalysis(law._id);
+    } catch (statsError) {
+      console.warn(
+        `[WARN] Failed to calculate statistics for law ${law._id}: ${statsError.message}`,
+      );
+    }
 
     res.json({
       message: 'Law successfully parsed and saved',
