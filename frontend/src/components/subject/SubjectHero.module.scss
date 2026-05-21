@@ -1,0 +1,95 @@
+.hero {
+  margin-bottom: 32px;
+}
+
+.statusBadge {
+  display: inline-block;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  color: var(--sc);
+  background: color-mix(in srgb, var(--sc) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sc) 25%, transparent);
+}
+
+.heading {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  text-transform: capitalize;
+  margin: 8px 0 16px;
+  color: var(--color-ink);
+}
+
+.description {
+  font-size: 0.88rem;
+  color: var(--color-ink-soft);
+  line-height: 1.65;
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.statsRow {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.statBox {
+  background: var(--color-raised);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  padding: 10px 20px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.statNum {
+  font-size: 1.4rem;
+  color: var(--color-gold);
+  font-family: var(--font-display);
+  display: block;
+}
+
+.statLabel {
+  font-size: 0.62rem;
+  color: var(--color-smoke);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.aliasesLabel {
+  font-size: 0.62rem;
+  color: var(--color-smoke);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.aliasesFlex {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aliasBadge {
+  font-size: 0.72rem;
+  color: var(--color-gold);
+  background: rgba(200, 168, 67, 0.08);
+  border: 1px solid rgba(200, 168, 67, 0.25);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-family: var(--font-mono);
+}
+
+.aliasesEmpty {
+  font-size: 0.82rem;
+  color: var(--color-smoke);
+  font-style: italic;
+}
