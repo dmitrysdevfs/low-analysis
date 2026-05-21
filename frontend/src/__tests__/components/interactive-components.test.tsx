@@ -52,7 +52,7 @@ describe("interactive frontend components", () => {
         lastLoginAt: "2026-05-17T10:00:00.000Z",
       }),
     );
-    setMockPathname("/admin");
+    setMockPathname("/laws");
 
     render(
       <AuthProvider>
