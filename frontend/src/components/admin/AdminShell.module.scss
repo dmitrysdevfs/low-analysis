@@ -1,7 +1,7 @@
 .shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 268px minmax(0, 1fr);
   background:
     radial-gradient(circle at 12% 12%, rgba(74, 128, 212, 0.16), transparent 24%),
     radial-gradient(circle at 88% 10%, rgba(200, 168, 67, 0.12), transparent 20%),
@@ -11,11 +11,12 @@
 .sidebar {
   position: sticky;
   top: 0;
-  height: 100vh;
-  padding: 24px 18px;
+  height: 100dvh;
+  min-height: 100dvh;
+  padding: 18px 16px;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 20px;
+  gap: 14px;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%),
@@ -25,18 +26,18 @@
 
 .brandBlock,
 .topbarCard {
-  border-radius: 24px;
+  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
     rgba(9, 18, 38, 0.84);
   box-shadow:
-    0 18px 36px rgba(0, 0, 0, 0.24),
+    0 16px 30px rgba(0, 0, 0, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .brandBlock {
-  padding: 22px 20px;
+  padding: 18px 16px;
 }
 
 .brandEyebrow,
@@ -51,30 +52,38 @@
 }
 
 .brandTitle {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   color: #ffffff;
-  font-size: 1.85rem;
-  line-height: 1.05;
+  font-size: 1.55rem;
+  line-height: 1.04;
 }
 
 .brandNote {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   color: #c7d5ea;
-  font-size: 0.92rem;
-  line-height: 1.7;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.navViewport {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-right: -4px;
+  scrollbar-width: thin;
 }
 
 .nav {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   align-content: start;
 }
 
 .navLink {
   display: grid;
   gap: 4px;
-  padding: 14px 16px;
-  border-radius: 20px;
+  padding: 12px 14px;
+  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
   color: inherit;
@@ -103,22 +112,24 @@
 
 .navNote {
   color: #9eb5d9;
-  font-size: 0.82rem;
-  line-height: 1.5;
+  font-size: 0.78rem;
+  line-height: 1.42;
 }
 
 .sidebarFooter {
   display: grid;
-  gap: 10px;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .secondaryLink {
   display: inline-flex;
   width: fit-content;
-  min-height: 42px;
+  min-height: 38px;
   align-items: center;
   justify-content: center;
-  padding: 0 14px;
+  padding: 0 13px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
@@ -145,45 +156,85 @@
   display: flex;
   align-items: start;
   justify-content: space-between;
-  gap: 16px;
-  padding: 24px 28px 0;
+  gap: 14px;
+  padding: 18px 22px 0;
 }
 
 .topbarTitle {
-  margin-top: 12px;
+  margin-top: 10px;
   color: #ffffff;
-  font-size: clamp(2rem, 3.3vw, 3rem);
+  font-size: clamp(1.55rem, 2.6vw, 2.35rem);
   line-height: 0.98;
 }
 
 .topbarSubtitle {
-  max-width: 62ch;
-  margin: 12px 0 0;
+  max-width: 58ch;
+  margin: 10px 0 0;
   color: #c7d5ea;
-  line-height: 1.7;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.topbarActions {
+  display: flex;
+  align-items: start;
+  gap: 10px;
 }
 
 .topbarCard {
-  min-width: 240px;
-  padding: 18px;
+  min-width: 220px;
+  padding: 14px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
+}
+
+.siteSwitch {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 168, 67, 0.28);
+  background: rgba(200, 168, 67, 0.12);
+  color: #fff1bf;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.siteSwitch:hover {
+  transform: translateY(-1px);
+  border-color: rgba(200, 168, 67, 0.42);
+  background: rgba(200, 168, 67, 0.18);
 }
 
 .topbarCardValue {
   color: #ffffff;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .topbarCardMeta {
   color: #c7d5ea;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .main {
   min-width: 0;
-  padding: 24px 28px 36px;
+  padding: 16px 22px 28px;
+}
+
+.main > * {
+  width: min(100%, 1180px);
+  margin-inline: auto;
 }
 
 @media (max-width: 1180px) {
@@ -194,9 +245,16 @@
   .sidebar {
     position: static;
     height: auto;
+    min-height: 0;
     grid-template-rows: auto auto auto;
     border-right: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .navViewport {
+    overflow: visible;
+    padding-right: 0;
+    margin-right: 0;
   }
 
   .nav {
@@ -210,6 +268,11 @@
     flex-direction: column;
   }
 
+  .topbarActions {
+    width: 100%;
+    flex-direction: column;
+  }
+
   .main {
     padding: 18px;
   }
@@ -220,6 +283,10 @@
 
   .topbarCard {
     min-width: 0;
+    width: 100%;
+  }
+
+  .siteSwitch {
     width: 100%;
   }
 }

@@ -1,0 +1,113 @@
+.mobileToggle {
+  display: none;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.72rem;
+  color: var(--color-smoke);
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: color 0.18s, border-color 0.18s;
+
+  &:hover {
+    color: var(--color-gold);
+    border-color: rgba(200, 168, 67, 0.35);
+  }
+}
+
+.mobileToggleArrow {
+  font-size: 0.55rem;
+  color: var(--color-smoke);
+}
+
+.toc {
+  position: sticky;
+  top: 56px;
+  width: 200px;
+  flex-shrink: 0;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+  padding-bottom: 40px;
+}
+
+.tocHeading {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: var(--color-smoke);
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--color-line);
+  margin-bottom: 6px;
+}
+
+.tocList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tocItem {
+  min-width: 0;
+}
+
+.tocLink {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--color-smoke);
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 3px;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    color: var(--color-ink-soft);
+    background: rgba(122, 152, 192, 0.08);
+  }
+}
+
+.tocLinkActive {
+  color: var(--color-gold) !important;
+  background: rgba(200, 168, 67, 0.07) !important;
+}
+
+/* Mobile: hidden by default, toggle shows it */
+@media (max-width: 900px) {
+  .mobileToggle {
+    display: flex;
+  }
+
+  .toc {
+    position: static;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    padding-bottom: 0;
+    transition: max-height 0.3s ease;
+  }
+
+  .tocOpen {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-bottom: 12px;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+}

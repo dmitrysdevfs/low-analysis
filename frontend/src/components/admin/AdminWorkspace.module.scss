@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  gap: 18px;
+  gap: 14px;
 }
 
 .hero,
@@ -10,13 +10,13 @@
 .quickCard,
 .donutCard,
 .insightCard {
-  border-radius: 26px;
+  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
     rgba(9, 18, 38, 0.84);
   box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.24),
+    0 18px 34px rgba(0, 0, 0, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(18px);
 }
@@ -24,13 +24,13 @@
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
-  gap: 16px;
-  padding: clamp(22px, 3.2vw, 32px);
+  gap: 14px;
+  padding: clamp(18px, 2.4vw, 24px);
 }
 
 .heroCopy {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .eyebrow,
@@ -50,8 +50,8 @@
 .title {
   margin: 0;
   color: #ffffff;
-  font-size: clamp(2rem, 4vw, 3.6rem);
-  line-height: 0.98;
+  font-size: clamp(1.65rem, 3vw, 2.55rem);
+  line-height: 1;
 }
 
 .description,
@@ -62,25 +62,25 @@
 .progressMeta,
 .helperText {
   color: #c7d5ea;
-  line-height: 1.7;
+  line-height: 1.58;
 }
 
 .heroAside {
-  padding: 20px;
+  padding: 16px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
   align-content: start;
 }
 
 .heroValue {
   color: #ffffff;
-  font-size: clamp(1.3rem, 2vw, 2rem);
+  font-size: clamp(1.15rem, 1.7vw, 1.7rem);
   font-weight: 700;
   line-height: 1.15;
 }
 
 .heroMeta {
-  font-size: 0.92rem;
+  font-size: 0.84rem;
 }
 
 .heroLink,
@@ -88,10 +88,10 @@
 .secondaryAction {
   display: inline-flex;
   width: fit-content;
-  min-height: 42px;
+  min-height: 38px;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
+  padding: 0 14px;
   border-radius: 999px;
   text-decoration: none;
   font-weight: 700;
@@ -125,24 +125,25 @@
 .metricsGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .metricCard {
-  padding: 18px;
+  padding: 14px;
 }
 
 .metricValue {
   display: block;
-  margin-top: 14px;
+  margin-top: 10px;
   color: #ffffff;
-  font-size: clamp(1.7rem, 2.6vw, 2.35rem);
+  font-size: clamp(1.4rem, 2vw, 2rem);
   line-height: 1;
 }
 
 .metricNote {
-  margin: 12px 0 0;
-  font-size: 0.88rem;
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.52;
 }
 
 .contentGrid,
@@ -151,7 +152,7 @@
 .quickGrid,
 .insightGrid {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .contentGrid {
@@ -172,7 +173,7 @@
 .quickCard,
 .donutCard,
 .insightCard {
-  padding: 20px;
+  padding: 16px;
 }
 
 .panelWide {
@@ -184,13 +185,13 @@
   align-items: start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .panelTitle {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   color: #ffffff;
-  font-size: 1.28rem;
+  font-size: 1.08rem;
   line-height: 1.2;
 }
 
@@ -212,13 +213,13 @@
 }
 
 .quickLabel {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .quickNote {
   color: #c7d5ea;
-  font-size: 0.9rem;
-  line-height: 1.7;
+  font-size: 0.84rem;
+  line-height: 1.55;
 }
 
 .progressList,
@@ -227,15 +228,15 @@
 .historyList,
 .accountList {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .progressRow,
 .listRow,
 .auditRow,
 .historyRow {
-  padding: 14px 16px;
-  border-radius: 20px;
+  padding: 12px 14px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -276,8 +277,8 @@
 }
 
 .progressTrack {
-  height: 10px;
-  margin-top: 10px;
+  height: 8px;
+  margin-top: 8px;
   overflow: hidden;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
@@ -292,17 +293,17 @@
 
 .progressMeta {
   margin-top: 8px;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
 .donutCard {
   display: grid;
-  gap: 16px;
+  gap: 12px;
   align-content: start;
 }
 
 .donutChart {
-  width: min(188px, 100%);
+  width: min(168px, 100%);
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 50%;
@@ -325,7 +326,7 @@
 
 .donutHole strong {
   display: block;
-  font-size: 1.3rem;
+  font-size: 1.15rem;
 }
 
 .donutHole span {
@@ -338,7 +339,7 @@
 
 .legend {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .legendRow {
@@ -367,22 +368,22 @@
 
 .listMeta {
   margin-top: 6px;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
 }
 
 .toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .toolbarInput {
   width: 100%;
-  min-height: 46px;
-  padding: 0 16px;
+  min-height: 42px;
+  padding: 0 14px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 18px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.04);
   color: #ffffff;
   outline: none;
@@ -400,8 +401,8 @@
 }
 
 .filterTab {
-  min-height: 42px;
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 0 12px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
@@ -418,11 +419,11 @@
 
 .accountRow {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) auto minmax(210px, 0.95fr) auto;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1.25fr) auto minmax(180px, 0.9fr) auto;
+  gap: 10px;
   align-items: center;
-  padding: 14px 16px;
-  border-radius: 20px;
+  padding: 12px 14px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -434,7 +435,7 @@
 .accountMeta,
 .accountMetaBlock {
   color: #c7d5ea;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
 }
 
 .accountMeta {
@@ -457,7 +458,7 @@
 .accountBadge,
 .accountBadgeAccent,
 .accountBadgeDanger {
-  padding: 7px 10px;
+  padding: 6px 9px;
   border-radius: 999px;
   font-size: 0.66rem;
 }
@@ -485,13 +486,13 @@
 }
 
 .accountActionBtn {
-  padding: 6px 10px;
+  padding: 6px 9px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
   color: #c7d5ea;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
@@ -514,8 +515,8 @@
 }
 
 .emptyState {
-  padding: 18px;
-  border-radius: 18px;
+  padding: 14px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.04);
   color: #d6e0f0;
 }
@@ -542,8 +543,8 @@
 }
 
 .matrixRow {
-  padding: 12px 14px;
-  border-radius: 18px;
+  padding: 10px 12px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.04);
   color: #eef3fb;
 }
@@ -629,14 +630,25 @@
 
 .insightValue {
   color: #ffffff;
-  font-size: 1.8rem;
+  font-size: 1.55rem;
   font-weight: 700;
 }
 
 .insightMeta {
   color: #c7d5ea;
-  font-size: 0.86rem;
+  font-size: 0.8rem;
   line-height: 1.6;
+}
+
+.registryViewport,
+.feedViewport {
+  display: grid;
+  gap: 10px;
+  max-height: 640px;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-right: -4px;
+  scrollbar-width: thin;
 }
 
 @media (max-width: 1200px) {
@@ -691,5 +703,13 @@
   .listTopRow {
     flex-direction: column;
     align-items: start;
+  }
+
+  .registryViewport,
+  .feedViewport {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+    margin-right: 0;
   }
 }

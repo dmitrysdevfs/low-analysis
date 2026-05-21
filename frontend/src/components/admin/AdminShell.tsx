@@ -117,27 +117,29 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </p>
         </div>
 
-        <nav className={styles.nav}>
-          {ADMIN_NAV.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
+        <div className={styles.navViewport}>
+          <nav className={styles.nav}>
+            {ADMIN_NAV.map((item) => {
+              const isActive =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
-              >
-                <span className={styles.navLabel}>{item.label}</span>
-                <span className={styles.navNote}>{item.note}</span>
-              </Link>
-            );
-          })}
-        </nav>
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
+                >
+                  <span className={styles.navLabel}>{item.label}</span>
+                  <span className={styles.navNote}>{item.note}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
         <div className={styles.sidebarFooter}>
           <Link href={ROUTES.home} className={styles.secondaryLink}>
-            Return to public site
+            Public site
           </Link>
           <div className={styles.sidebarMeta}>
             Active admin: {user?.displayName ?? "Administrator"}
@@ -153,14 +155,20 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <p className={styles.topbarSubtitle}>{pageCopy.subtitle}</p>
           </div>
 
-          <div className={styles.topbarCard}>
-            <span className={styles.topbarCardLabel}>Session</span>
-            <strong className={styles.topbarCardValue}>
-              {user?.displayName ?? "Admin"}
-            </strong>
-            <span className={styles.topbarCardMeta}>
-              {user?.email ?? "admin@low-analysis.dev"}
-            </span>
+          <div className={styles.topbarActions}>
+            <Link href={ROUTES.home} className={styles.siteSwitch}>
+              Open public site
+            </Link>
+
+            <div className={styles.topbarCard}>
+              <span className={styles.topbarCardLabel}>Session</span>
+              <strong className={styles.topbarCardValue}>
+                {user?.displayName ?? "Admin"}
+              </strong>
+              <span className={styles.topbarCardMeta}>
+                {user?.email ?? "admin@low-analysis.dev"}
+              </span>
+            </div>
           </div>
         </header>
 

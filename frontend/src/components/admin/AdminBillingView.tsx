@@ -302,72 +302,74 @@ export function AdminBillingView() {
           </div>
         </div>
 
-        <div className={styles.accountList}>
-          {filteredRegistry.length > 0 ? (
-            filteredRegistry.map((account) => (
-              <div key={account.id} className={styles.accountRow}>
-                <div>
-                  <div className={styles.accountName}>{account.displayName}</div>
-                  <div className={styles.accountMeta}>{account.email}</div>
-                </div>
-
-                <div className={styles.accountBadges}>
-                  <span className={styles.accountBadge}>{account.accountType}</span>
-                  <span className={styles.accountBadge}>
-                    {account.subscription.plan?.label ?? "Preview"}
-                  </span>
-                  <span className={styles.accountBadgeAccent}>
-                    {account.subscription.status}
-                  </span>
-                </div>
-
-                <div className={styles.accountMetaBlock}>
-                  <span>
-                    Search:{" "}
-                    {account.subscription.searchRemaining === null
-                      ? "unlimited"
-                      : `${account.subscription.searchRemaining} / ${account.subscription.searchLimit}`}
-                  </span>
-                  <span>
-                    Views:{" "}
-                    {account.subscription.viewRemaining === null
-                      ? "unlimited"
-                      : `${account.subscription.viewRemaining} / ${account.subscription.viewLimit}`}
-                  </span>
-                  <span>
-                    {account.subscription.endsAt
-                      ? `Ends ${formatDateShort(account.subscription.endsAt)}`
-                      : "No active billing cycle"}
-                  </span>
-                </div>
-
-                {account.accountType === "client" ? (
-                  <div className={styles.accountActions}>
-                    {clientPlanIds.map((planId) => (
-                      <button
-                        key={planId}
-                        type="button"
-                        className={styles.accountActionBtn}
-                        onClick={() =>
-                          handleAssignPlan(account.id, account.displayName, planId)
-                        }
-                      >
-                        {planId}
-                      </button>
-                    ))}
+        <div className={styles.registryViewport}>
+          <div className={styles.accountList}>
+            {filteredRegistry.length > 0 ? (
+              filteredRegistry.map((account) => (
+                <div key={account.id} className={styles.accountRow}>
+                  <div>
+                    <div className={styles.accountName}>{account.displayName}</div>
+                    <div className={styles.accountMeta}>{account.email}</div>
                   </div>
-                ) : (
-                  <div className={styles.accountActions}>
-                    <span className={styles.accountBadgeAccent}>admin-managed</span>
+
+                  <div className={styles.accountBadges}>
+                    <span className={styles.accountBadge}>{account.accountType}</span>
+                    <span className={styles.accountBadge}>
+                      {account.subscription.plan?.label ?? "Preview"}
+                    </span>
+                    <span className={styles.accountBadgeAccent}>
+                      {account.subscription.status}
+                    </span>
                   </div>
-                )}
+
+                  <div className={styles.accountMetaBlock}>
+                    <span>
+                      Search:{" "}
+                      {account.subscription.searchRemaining === null
+                        ? "unlimited"
+                        : `${account.subscription.searchRemaining} / ${account.subscription.searchLimit}`}
+                    </span>
+                    <span>
+                      Views:{" "}
+                      {account.subscription.viewRemaining === null
+                        ? "unlimited"
+                        : `${account.subscription.viewRemaining} / ${account.subscription.viewLimit}`}
+                    </span>
+                    <span>
+                      {account.subscription.endsAt
+                        ? `Ends ${formatDateShort(account.subscription.endsAt)}`
+                        : "No active billing cycle"}
+                    </span>
+                  </div>
+
+                  {account.accountType === "client" ? (
+                    <div className={styles.accountActions}>
+                      {clientPlanIds.map((planId) => (
+                        <button
+                          key={planId}
+                          type="button"
+                          className={styles.accountActionBtn}
+                          onClick={() =>
+                            handleAssignPlan(account.id, account.displayName, planId)
+                          }
+                        >
+                          {planId}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className={styles.accountActions}>
+                      <span className={styles.accountBadgeAccent}>admin-managed</span>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className={styles.emptyState}>
+                No billing entries match the current filter.
               </div>
-            ))
-          ) : (
-            <div className={styles.emptyState}>
-              No billing entries match the current filter.
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </section>
     </section>

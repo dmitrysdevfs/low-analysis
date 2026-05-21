@@ -157,8 +157,8 @@ function NestedNode({
       id={sanitizeAnchor(node.code)}
       className={styles.childItem}
       style={{
-        opacity: isDimmed ? 0.3 : 1,
-        transition: "opacity 0.08s ease",
+        color: isDimmed ? "var(--color-smoke)" : undefined,
+        transition: "color 0.12s ease",
         outline: hasActiveSubject ? `1px solid ${color}33` : "none",
         borderRadius: hasActiveSubject ? "4px" : undefined,
         background: hasActiveSubject ? `${color}0a` : undefined,

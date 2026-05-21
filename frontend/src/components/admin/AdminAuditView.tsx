@@ -138,34 +138,36 @@ export function AdminAuditView() {
           </div>
         </div>
 
-        <div className={styles.auditList}>
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((item) => (
-              <div key={item.id} className={styles.auditRow}>
-                <div className={styles.auditMeta}>
-                  <span
-                    className={`${styles.auditBadge} ${
-                      item.severity === "security"
-                        ? styles.auditBadgeSecurity
-                        : item.severity === "warning"
-                          ? styles.auditBadgeWarning
-                          : ""
-                    }`}
-                  >
-                    {formatSeverityLabel(item.severity)}
-                  </span>
-                  <span>{formatDateShort(item.createdAt)}</span>
-                  <span>{item.actor}</span>
+        <div className={styles.feedViewport}>
+          <div className={styles.auditList}>
+            {filteredEvents.length > 0 ? (
+              filteredEvents.map((item) => (
+                <div key={item.id} className={styles.auditRow}>
+                  <div className={styles.auditMeta}>
+                    <span
+                      className={`${styles.auditBadge} ${
+                        item.severity === "security"
+                          ? styles.auditBadgeSecurity
+                          : item.severity === "warning"
+                            ? styles.auditBadgeWarning
+                            : ""
+                      }`}
+                    >
+                      {formatSeverityLabel(item.severity)}
+                    </span>
+                    <span>{formatDateShort(item.createdAt)}</span>
+                    <span>{item.actor}</span>
+                  </div>
+                  <div className={styles.auditTitle}>{item.action}</div>
+                  <div className={styles.auditDetail}>{item.detail}</div>
                 </div>
-                <div className={styles.auditTitle}>{item.action}</div>
-                <div className={styles.auditDetail}>{item.detail}</div>
+              ))
+            ) : (
+              <div className={styles.emptyState}>
+                No audit records match the current filters.
               </div>
-            ))
-          ) : (
-            <div className={styles.emptyState}>
-              No audit records match the current filters.
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </section>
     </section>

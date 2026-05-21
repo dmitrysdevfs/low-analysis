@@ -213,97 +213,99 @@ export function AdminUsersView() {
             </div>
           </div>
 
-          <div className={styles.accountList}>
-            {filteredAccounts.length > 0 ? (
-              filteredAccounts.map((account) => {
-                const isDev = account.source === "dev";
-                const isInactive = account.status === "inactive";
+          <div className={styles.registryViewport}>
+            <div className={styles.accountList}>
+              {filteredAccounts.length > 0 ? (
+                filteredAccounts.map((account) => {
+                  const isDev = account.source === "dev";
+                  const isInactive = account.status === "inactive";
 
-                return (
-                  <div key={account.id} className={styles.accountRow}>
-                    <div>
-                      <div className={styles.accountName}>{account.displayName}</div>
-                      <div className={styles.accountMeta}>{account.email}</div>
-                    </div>
+                  return (
+                    <div key={account.id} className={styles.accountRow}>
+                      <div>
+                        <div className={styles.accountName}>{account.displayName}</div>
+                        <div className={styles.accountMeta}>{account.email}</div>
+                      </div>
 
-                    <div className={styles.accountBadges}>
-                      <span className={styles.accountBadge}>{account.accountType}</span>
-                      <span className={styles.accountBadge}>{account.source}</span>
-                      <span
-                        className={
-                          isInactive
-                            ? styles.accountBadgeDanger
-                            : styles.accountBadgeAccent
-                        }
-                      >
-                        {account.status}
-                      </span>
-                      {account.superCodeProtected ? (
-                        <span className={styles.accountBadgeAccent}>super code</span>
-                      ) : null}
-                    </div>
+                      <div className={styles.accountBadges}>
+                        <span className={styles.accountBadge}>{account.accountType}</span>
+                        <span className={styles.accountBadge}>{account.source}</span>
+                        <span
+                          className={
+                            isInactive
+                              ? styles.accountBadgeDanger
+                              : styles.accountBadgeAccent
+                          }
+                        >
+                          {account.status}
+                        </span>
+                        {account.superCodeProtected ? (
+                          <span className={styles.accountBadgeAccent}>super code</span>
+                        ) : null}
+                      </div>
 
-                    <div className={styles.accountMetaBlock}>
-                      <span>Created: {formatDateShort(account.createdAt)}</span>
-                      <span>
-                        Last login:{" "}
-                        {account.lastLoginAt
-                          ? formatDateShort(account.lastLoginAt)
-                          : "never"}
-                      </span>
-                    </div>
+                      <div className={styles.accountMetaBlock}>
+                        <span>Created: {formatDateShort(account.createdAt)}</span>
+                        <span>
+                          Last login:{" "}
+                          {account.lastLoginAt
+                            ? formatDateShort(account.lastLoginAt)
+                            : "never"}
+                        </span>
+                      </div>
 
-                    <div className={styles.accountActions}>
-                      <button
-                        type="button"
-                        className={styles.accountActionBtn}
-                        disabled={isDev}
-                        onClick={() =>
-                          handleAccountAction(
-                            "deactivate",
-                            account.id,
-                            account.displayName,
-                          )
-                        }
-                      >
-                        {isInactive ? "Reactivate" : "Deactivate"}
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.accountActionBtn}
-                        disabled={isDev}
-                        onClick={() =>
-                          handleAccountAction(
-                            "promote",
-                            account.id,
-                            account.displayName,
-                          )
-                        }
-                      >
-                        {account.accountType === "admin" ? "Demote" : "Promote"}
-                      </button>
-                      <button
-                        type="button"
-                        className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
-                        onClick={() =>
-                          handleAccountAction(
-                            "forceLogout",
-                            account.id,
-                            account.displayName,
-                          )
-                        }
-                      >
-                        Force logout
-                      </button>
+                      <div className={styles.accountActions}>
+                        <button
+                          type="button"
+                          className={styles.accountActionBtn}
+                          disabled={isDev}
+                          onClick={() =>
+                            handleAccountAction(
+                              "deactivate",
+                              account.id,
+                              account.displayName,
+                            )
+                          }
+                        >
+                          {isInactive ? "Reactivate" : "Deactivate"}
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.accountActionBtn}
+                          disabled={isDev}
+                          onClick={() =>
+                            handleAccountAction(
+                              "promote",
+                              account.id,
+                              account.displayName,
+                            )
+                          }
+                        >
+                          {account.accountType === "admin" ? "Demote" : "Promote"}
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
+                          onClick={() =>
+                            handleAccountAction(
+                              "forceLogout",
+                              account.id,
+                              account.displayName,
+                            )
+                          }
+                        >
+                          Force logout
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className={styles.emptyState}>
-                No accounts match the current registry filter.
-              </div>
-            )}
+                  );
+                })
+              ) : (
+                <div className={styles.emptyState}>
+                  No accounts match the current registry filter.
+                </div>
+              )}
+            </div>
           </div>
         </article>
       </section>
