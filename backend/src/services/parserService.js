@@ -76,29 +76,46 @@ export const parseLawHtml = (html, mainHtml = null) => {
     const anchor = $p.find('a[data-tree]').first();
     const text = $p.text().trim();
 
-    if (!anchor.length) {
-      if (text && text.length > 0 && !text.startsWith('{')) {
-        if (!hasHitFirstDataTree) {
-          // It's before the first structured element, might be preamble
-          preambleText.push(text);
-        } else {
-          // It's after the first structured element but has no data-tree.
-          // We keep a rolling buffer of the last few elements for the signatory block.
-          // If a new valid element comes, we clear this buffer.
-          signatoryText.push(text);
-        }
-      }
-      return;
+    const dataTree = anchor.length ? (anchor.attr('data-tree') || '') : '';
+    const anchorName = anchor.length ? (anchor.attr('name') || '') : '';
+
+    // A real body element (section, article, or sub-element) signals the end of the preamble zone
+    const isBodyElement =
+      dataTree.startsWith('rz') ||
+      dataTree.startsWith('st') ||
+      dataTree.includes(':st');
+
+    if (isBodyElement) {
+      hasHitFirstDataTree = true;
+      signatoryText = []; // Clear signatory buffer because we found a real body element
     }
 
-    const dataTree = anchor.attr('data-tree') || '';
-    const anchorName = anchor.attr('name') || '';
+    if (!hasHitFirstDataTree) {
+      // In the preamble zone, we collect descriptive text paragraphs.
+      // We skip editorial remarks, law title, and law type header.
+      const isEditorial = text.startsWith('{') || dataTree.startsWith('cm_');
+      const isLawTitleOrType =
+        dataTree.startsWith('ty') || dataTree.startsWith('nz');
 
-    // Skip editorial comments (cm_N:...)
-    if (dataTree.startsWith('cm_') || dataTree.startsWith('nz_')) return;
+      if (text && text.length > 0 && !isEditorial && !isLawTitleOrType) {
+        preambleText.push(text);
+      }
+      // Non-body elements in this zone (like headers, comments, or actual preamble text)
+      // are not part of the structured sections/articles list.
+      if (!isBodyElement) {
+        return;
+      }
+    } else {
+      // Once we are in the body zone:
+      if (!anchor.length) {
+        if (text && text.length > 0 && !text.startsWith('{')) {
+          signatoryText.push(text);
+        }
+        return;
+      }
 
-    hasHitFirstDataTree = true;
-    signatoryText = []; // Clear signatory buffer because we found a real element
+      if (dataTree.startsWith('cm_') || dataTree.startsWith('nz_')) return;
+    }
 
     const pClass = $p.attr('class') || '';
 
