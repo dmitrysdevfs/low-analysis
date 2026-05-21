@@ -1,28 +1,18 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import * as cheerio from 'cheerio';
-import { extractDefinitions } from '../utils/definitionExtractor.js';
 
-// ─── CSS class → element type mapping ────────────────────────────────────────
-// Based on analysis of zakon.rada.gov.ua HTML structure:
-//   data-tree="rzN"       → section  (Розділ)
-//   data-tree="stN"       → article  (Стаття)
-//   data-tree="ch_N:stM"  → part     (Частина/абзац)
-//   data-tree="cm_N:..."  → comment  (editorial note — skipped)
-//   data-tree="nz_N"      → law title node — used for law-level metadata
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const SECTION_CLASS = 'rvps7'; // <p class="rvps7"> — Розділ header
-const ARTICLE_CLASS = 'rvps2'; // <p class="rvps2"> — Стаття + частини
-const TITLE_SPAN = 'rvts78'; // <span class="rvts78"> — law title
-const SECTION_SPAN = 'rvts15'; // <span class="rvts15"> — section text
-const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
+const SECTION_CLASS = 'rvps7';
+const ARTICLE_CLASS = 'rvps2';
+const TITLE_SPAN = 'rvts78';
+const SECTION_SPAN = 'rvts15';
+const ARTICLE_SPAN = 'rvts9';
 
-/**
- * Parses the .frame HTML from zakon.rada.gov.ua into a structured law object.
- *
- * @param {string} html - Raw HTML content of the .frame page
- * @param {string} [mainHtml] - Raw HTML content of the main page (optional)
- * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null }} parsed data
- */
-export const parseLawHtml = (html, mainHtml = null) => {
+// Modified parser function to test fixes
+const parsedLawHtmlModified = (html, mainHtml = null) => {
   const $ = cheerio.load(html);
 
   let status = null;
@@ -35,7 +25,6 @@ export const parseLawHtml = (html, mainHtml = null) => {
       null;
   }
 
-  // ── 1. Extract law title ──────────────────────────────────────────────────
   let title = '';
   const titleAnchor = $('a[data-tree^="nz_"]').first();
   if (titleAnchor.length) {
@@ -48,21 +37,17 @@ export const parseLawHtml = (html, mainHtml = null) => {
       '';
   }
 
-  // ── 2. Extract law code from the selected <option> in the edition selector ─
-  // e.g. href="...show/254%D0%BA/96-%D0%92%D0%A0/ed..."
   let code = '';
   $('#edition option[selected]').each((_, el) => {
     const href = $(el).attr('value') || '';
-    // Extract the path segment between /show/ and /ed. Works for "1953-20" and "254к/96-ВР"
     const match = href.match(/\/laws\/show\/(.+?)\/ed/);
     if (match) {
       code = decodeURIComponent(match[1]);
     }
   });
 
-  // ── 3. Parse elements & Extract metadata ──────────────────────────────────
   const elements = [];
-  let order = 0;
+  let order = 0; // global order counter
   let currentSectionId = null;
   let currentArticleId = null;
 
@@ -70,7 +55,6 @@ export const parseLawHtml = (html, mainHtml = null) => {
   let signatoryText = [];
   let hasHitFirstDataTree = false;
 
-  // We iterate over all <p> tags inside #article
   $('#article p').each((_, el) => {
     const $p = $(el);
     const anchor = $p.find('a[data-tree]').first();
@@ -79,14 +63,15 @@ export const parseLawHtml = (html, mainHtml = null) => {
     const dataTree = anchor.length ? anchor.attr('data-tree') || '' : '';
     const anchorName = anchor.length ? anchor.attr('name') || '' : '';
 
-    // A real body element (section, article, or sub-element) signals the end of the preamble zone
     const isBodyElement =
       dataTree.startsWith('rz') ||
       dataTree.startsWith('st') ||
       dataTree.startsWith('kg') ||
-      dataTree.startsWith('kn') || // Book structures like kn_1 or knpersha_1
+      dataTree.startsWith('kn') ||
       dataTree.startsWith('gl') ||
       dataTree.includes(':st') ||
+      dataTree.includes(':rz') || // Added for sections hierarchy support
+      dataTree.includes(':pu') || // Added for points hierarchy support
       text.toLowerCase().startsWith('книга ') ||
       text.toLowerCase().startsWith('глава ') ||
       text.toLowerCase().startsWith('розділ ') ||
@@ -95,17 +80,14 @@ export const parseLawHtml = (html, mainHtml = null) => {
 
     if (isBodyElement) {
       hasHitFirstDataTree = true;
-      signatoryText = []; // Clear signatory buffer because we found a real body element
+      signatoryText = [];
     }
 
     if (!hasHitFirstDataTree) {
-      // In the preamble zone, we collect descriptive text paragraphs.
-      // We skip editorial remarks, law title, and law type header.
       const isEditorial = text.startsWith('{') || dataTree.startsWith('cm_');
       const isLawTitleOrType =
         dataTree.startsWith('ty') || dataTree.startsWith('nz');
 
-      // Skip generic document type headers, law titles, and publication metadata
       const lowerText = text.toLowerCase().trim();
       const cleanTitle = title ? title.toLowerCase().trim() : '';
       const normalizedText = lowerText.replace(/\s+/g, ' ');
@@ -138,13 +120,10 @@ export const parseLawHtml = (html, mainHtml = null) => {
       ) {
         preambleText.push(text);
       }
-      // Non-body elements in this zone (like headers, comments, or actual preamble text)
-      // are not part of the structured sections/articles list.
       if (!isBodyElement) {
         return;
       }
     } else {
-      // Once we are in the body zone:
       if (!anchor.length) {
         if (text && text.length > 0 && !text.startsWith('{')) {
           signatoryText.push(text);
@@ -164,11 +143,10 @@ export const parseLawHtml = (html, mainHtml = null) => {
         ? sectionSpan.text().trim()
         : $p.text().trim();
 
-      // Extract section number from data-tree ("rz3" → "3")
       const number = dataTree.replace('rz', '');
       const sectionCode = code ? `${code}.rz${number}` : `rz${number}`;
 
-      order++;
+      order++; // BE-1: Increment order
       const elem = {
         type: 'section',
         code: sectionCode,
@@ -181,7 +159,7 @@ export const parseLawHtml = (html, mainHtml = null) => {
         anchorName,
       };
       elements.push(elem);
-      currentSectionId = elem; // will be resolved to _id after DB insert
+      currentSectionId = elem;
       currentArticleId = null;
       return;
     }
@@ -189,18 +167,26 @@ export const parseLawHtml = (html, mainHtml = null) => {
     // ── Article (Стаття) ──────────────────────────────────────────────────
     if (pClass === ARTICLE_CLASS && dataTree.match(/^st[\d]/)) {
       const articleSpan = $p.find(`.${ARTICLE_SPAN}`);
-      if (!articleSpan.length) return; // part/paragraph without article span
+      if (!articleSpan.length) return;
 
-      // data-tree is authoritative: "st129-1" → "129-1"
-      // .rvts9 span text only shows the base: "Стаття 129." — unreliable for sub-articles
       const number = dataTree.replace(/^st/, '');
-
-      // Title: try to use span but fall back to constructed title
       const spanText = articleSpan.text().trim();
       const title = `Стаття ${number}.`;
-
-      // Body text = full paragraph text minus the article label
       const bodyText = $p.text().trim().replace(spanText, '').trim();
+
+      // BE-4: Skip excluded articles
+      const isExcluded =
+        (bodyText.startsWith('{') &&
+          (bodyText.toLowerCase().includes('виключено') ||
+            bodyText.toLowerCase().includes('вилучено'))) ||
+        bodyText.toLowerCase().startsWith('виключена на підставі') ||
+        (bodyText.toLowerCase().startsWith('{статтю') &&
+          bodyText.toLowerCase().includes('виключено'));
+
+      if (isExcluded) {
+        currentArticleId = null; // Do not attach subsequent children to excluded article
+        return;
+      }
 
       const sectionCode = currentSectionId ? currentSectionId.code : null;
       const articleCode = sectionCode
@@ -209,7 +195,7 @@ export const parseLawHtml = (html, mainHtml = null) => {
           ? `${code}.st${number}`
           : `st${number}`;
 
-      order++;
+      order++; // BE-1: Increment order
       const elem = {
         type: 'article',
         code: articleCode,
@@ -227,13 +213,11 @@ export const parseLawHtml = (html, mainHtml = null) => {
     }
 
     // ── Generic Child Element (Частини, Пункти, Підпункти, Абзаци) ───────────
-    // BE-3: Use dataTree.includes(':') instead of ':st' to also capture elements
-    // that belong directly to sections (e.g., Розділ XVII of the Market Law has
-    // data-tree like "pu1:rz17", "ch_1:pu1:rz17" — no ":st" prefix).
+    // BE-3: Changed dataTree.includes(':st') to dataTree.includes(':') to capture sections/points hierarchy
     if (pClass === ARTICLE_CLASS && dataTree.includes(':')) {
       const parts = dataTree.split(':');
-      const articleStr = parts.pop(); // last segment: 'st5', 'rz17', 'pu1', etc.
-      const childParts = parts.reverse(); // e.g. ['pu1', 'pp1'] or ['ch_1', 'pu1']
+      const articleStr = parts.pop();
+      const childParts = parts.reverse();
       const text = $p.text().trim();
       if (!text) return;
 
@@ -246,9 +230,8 @@ export const parseLawHtml = (html, mainHtml = null) => {
           : code
             ? code
             : '';
-        // BE-3: Avoid double-prefix when sectionBase already ends with articleStr
-        // e.g. sectionBase = '2019-19.rz17', articleStr = 'rz17' → keep sectionBase as-is
-        if (sectionBase && sectionBase.endsWith(`.${articleStr}`)) {
+        // BE-3: Avoid duplication like 2019-19.rz17.rz17
+        if (sectionBase && sectionBase.endsWith(articleStr)) {
           baseCode = sectionBase;
         } else {
           baseCode = sectionBase ? `${sectionBase}.${articleStr}` : articleStr;
@@ -259,7 +242,7 @@ export const parseLawHtml = (html, mainHtml = null) => {
       const parentCode = [baseCode, ...childParts.slice(0, -1)].join('.');
       const depth = 1 + childParts.length;
 
-      const leafNodeStr = childParts[childParts.length - 1]; // e.g. 'ch_1', 'pu1', 'ppa_1'
+      const leafNodeStr = childParts[childParts.length - 1];
 
       let elementType = 'paragraph';
       let partNumber = '';
@@ -287,13 +270,11 @@ export const parseLawHtml = (html, mainHtml = null) => {
         } else {
           elementType = 'paragraph';
         }
-        const numberMatch = leafNodeStr ? leafNodeStr.match(/\d+/) : null;
+        const numberMatch = leafNodeStr.match(/\d+/);
         partNumber = numberMatch ? numberMatch[0] : '';
       }
 
-      // BE-1: Increment global order counter for every child element so that
-      // each element in the law gets a unique, strictly-increasing sequence number.
-      order++;
+      order++; // BE-1: Increment order for child elements too
       elements.push({
         type: elementType,
         code: partCode,
@@ -311,11 +292,88 @@ export const parseLawHtml = (html, mainHtml = null) => {
   const preamble = preambleText.length > 0 ? preambleText.join('\n') : null;
   const signatory = signatoryText.length > 0 ? signatoryText.join('\n') : null;
 
-  const definitions = extractDefinitions(elements);
-  const global_context = {
-    preamble,
-    definitions,
-  };
-
-  return { title, code, elements, preamble, status, signatory, global_context };
+  return { title, code, elements, preamble, status, signatory };
 };
+
+function testMarketLaw() {
+  console.log('=== Testing Market Law (2019-19) ===');
+  const filePath = path.resolve(__dirname, '../data/raw/2019-19.frame.html');
+  const html = fs.readFileSync(filePath, 'utf-8');
+
+  const { elements } = parsedLawHtmlModified(html);
+  console.log(`Total elements parsed: ${elements.length}`);
+
+  // Find Section XVII
+  const rz17 = elements.find(
+    (el) => el.type === 'section' && el.code.endsWith('.rz17'),
+  );
+  if (rz17) {
+    console.log(
+      `Found Section XVII: ${rz17.code}, title: "${rz17.title}", order: ${rz17.order}`,
+    );
+    // Find children of rz17 (their parentCode should be rz17 code or start with it)
+    const children = elements.filter((el) => el.parentCode === rz17.code);
+    console.log(`Direct children of Section XVII count: ${children.length}`);
+    children.slice(0, 5).forEach((ch) => {
+      console.log(
+        `  - Code: ${ch.code}, parentCode: ${ch.parentCode}, type: ${ch.type}, order: ${ch.order}, Text: "${ch.text.substring(0, 60)}"`,
+      );
+    });
+
+    // Find sub-children (grandchildren)
+    const grandchildren = elements.filter(
+      (el) => el.parentCode && el.parentCode.startsWith(rz17.code + '.'),
+    );
+    console.log(`Grandchildren of Section XVII count: ${grandchildren.length}`);
+    grandchildren.slice(0, 5).forEach((gc) => {
+      console.log(
+        `  - Code: ${gc.code}, parentCode: ${gc.parentCode}, type: ${gc.type}, order: ${gc.order}, Text: "${gc.text.substring(0, 60)}"`,
+      );
+    });
+  } else {
+    console.log('Section XVII not found in parsed elements!');
+  }
+}
+
+function testConstitutionExcluded() {
+  console.log('\n=== Testing Constitution (254к/96-ВР) ===');
+  const filePath = path.resolve(__dirname, '../data/raw/254к_96-ВР_frame.html');
+  const html = fs.readFileSync(filePath, 'utf-8');
+
+  const { elements } = parsedLawHtmlModified(html);
+  const articles = elements.filter((el) => el.type === 'article');
+  console.log(`Total articles parsed: ${articles.length}`);
+
+  // Let's verify if order increases correctly (BE-1)
+  const policePath = path.resolve(__dirname, '../data/raw/1667-20.frame.html');
+  if (fs.existsSync(policePath)) {
+    console.log('\n=== Testing Law 1667-20 order uniqueness (BE-1) ===');
+    const phtml = fs.readFileSync(policePath, 'utf-8');
+    const pelements = parsedLawHtmlModified(phtml).elements;
+
+    const art100 = pelements.find(
+      (el) => el.type === 'article' && el.code.endsWith('.st100'),
+    );
+    if (art100) {
+      console.log(
+        `Found Article 100: code=${art100.code}, order=${art100.order}`,
+      );
+      const children = pelements.filter((el) => el.parentCode === art100.code);
+      console.log(`Children of Art 100 count: ${children.length}`);
+      children.forEach((ch) => {
+        console.log(
+          `  - Child Code: ${ch.code}, type: ${ch.type}, order: ${ch.order}`,
+        );
+      });
+
+      const orders = children.map((c) => c.order);
+      const uniqueOrders = new Set(orders);
+      console.log(
+        `Unique orders count among children: ${uniqueOrders.size} (Expected: ${children.length})`,
+      );
+    }
+  }
+}
+
+testMarketLaw();
+testConstitutionExcluded();
