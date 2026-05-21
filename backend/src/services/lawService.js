@@ -162,10 +162,7 @@ export const updateLawStatsFromDb = async (lawId) => {
     Element.countDocuments({
       lawId,
       type: 'article',
-      $nor: [
-        { text: /^\{[^}]*виключено/i },
-        { text: /^\{[^}]*вилучено/i },
-      ],
+      $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
     }),
     Element.countDocuments({ lawId, type: 'section' }),
   ]);

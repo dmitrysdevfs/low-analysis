@@ -20,15 +20,26 @@ const migrateStats = async () => {
   console.log(`Found ${laws.length} laws. Recalculating stats...\n`);
 
   for (const law of laws) {
-    const before = { totalArticles: law.totalArticles, totalSections: law.totalSections };
+    const before = {
+      totalArticles: law.totalArticles,
+      totalSections: law.totalSections,
+    };
     await updateLawStatsFromDb(law._id);
-    const updated = await Law.findById(law._id).select('totalArticles totalSections');
-    const changed = before.totalArticles !== updated.totalArticles || before.totalSections !== updated.totalSections;
+    const updated = await Law.findById(law._id).select(
+      'totalArticles totalSections',
+    );
+    const changed =
+      before.totalArticles !== updated.totalArticles ||
+      before.totalSections !== updated.totalSections;
     const icon = changed ? '🔄' : '✅';
     console.log(`${icon} ${law.code} (${law.title})`);
     if (changed) {
-      console.log(`   totalArticles: ${before.totalArticles} → ${updated.totalArticles}`);
-      console.log(`   totalSections: ${before.totalSections} → ${updated.totalSections}`);
+      console.log(
+        `   totalArticles: ${before.totalArticles} → ${updated.totalArticles}`,
+      );
+      console.log(
+        `   totalSections: ${before.totalSections} → ${updated.totalSections}`,
+      );
     }
   }
 
