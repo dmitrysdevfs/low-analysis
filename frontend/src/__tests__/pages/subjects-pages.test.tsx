@@ -28,10 +28,9 @@ describe("Subjects pages", () => {
     expect(screen.getByText("Суб'єкти")).toBeInTheDocument();
     expect(screen.getByText("регулювання")).toBeInTheDocument();
     expect(screen.getByText(/Топ 1/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Переглянути деталі/i })).toHaveAttribute(
-      "href",
-      `/subjects/${SUBJECT_FIXTURE._id}`,
-    );
+    expect(
+      screen.getByRole("link", { name: /Переглянути деталі/i }),
+    ).toHaveAttribute("href", `/subjects/${SUBJECT_FIXTURE._id}`);
     expect(screen.getByText("ФОП")).toBeInTheDocument();
   });
 
@@ -66,8 +65,6 @@ describe("Subjects pages", () => {
 
     render(<SubjectDetailPage />);
 
-    expect(
-      screen.getByText(/Елементів не знайдено/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Елементів не знайдено/i)).toBeInTheDocument();
   });
 });
