@@ -84,6 +84,7 @@ export const parseLawFromUrl = async (req, res, next) => {
       status: parsedData.status,
       preamble: parsedData.preamble,
       signatory: parsedData.signatory,
+      global_context: parsedData.global_context,
     });
 
     // 4. Attach lawId, generate _id, and link parentId
