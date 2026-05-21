@@ -117,8 +117,14 @@ const ingestLaw = async (filePath) => {
   await law.save();
 
   // Calculate statistical metrics
-  console.log('📊 Calculating statistical metrics...');
-  await performStatisticalAnalysis(law._id);
+  try {
+    console.log('📊 Calculating statistical metrics...');
+    await performStatisticalAnalysis(law._id);
+  } catch (statsError) {
+    console.warn(
+      `⚠️ Warning: Failed to calculate statistics for law ${law._id}: ${statsError.message}`,
+    );
+  }
 
   console.log(`✅ Ingested: lawId=${law._id}`);
   console.log(
