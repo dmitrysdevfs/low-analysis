@@ -146,6 +146,34 @@ export const deleteMissingElements = async (lawId, activeCodes) => {
 };
 
 /**
+ * BE-2 + BE-4: Recalculates law statistics from the actual DB state and
+ * updates the Law document. Excludes articles with "{...виключено...}" placeholder
+ * texts so that totalArticles reflects only currently active provisions.
+ *
+ * Must be called AFTER bulkUpsertElements + deleteMissingElements are complete.
+ *
+ * @param {string|mongoose.Types.ObjectId} lawId
+ * @returns {Promise<void>}
+ */
+export const updateLawStatsFromDb = async (lawId) => {
+  // Count only active articles — exclude records whose text is a "{...виключено...}"
+  // or "{...вилучено...}" placeholder left by the official amendment process.
+  const [totalArticles, totalSections] = await Promise.all([
+    Element.countDocuments({
+      lawId,
+      type: 'article',
+      $nor: [
+        { text: /^\{[^}]*виключено/i },
+        { text: /^\{[^}]*вилучено/i },
+      ],
+    }),
+    Element.countDocuments({ lawId, type: 'section' }),
+  ]);
+
+  await Law.findByIdAndUpdate(lawId, { totalArticles, totalSections });
+};
+
+/**
  * Resolves the ObjectIds and parentIds for parsed elements to preserve database links.
  * @param {string|mongoose.Types.ObjectId} lawId
  * @param {Array} rawElements - elements returned by parserService

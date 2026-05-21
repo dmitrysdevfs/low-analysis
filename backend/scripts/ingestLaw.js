@@ -10,9 +10,9 @@ import {
   bulkUpsertElements,
   deleteMissingElements,
   resolveElementHierarchy,
+  updateLawStatsFromDb,
 } from '../src/services/lawService.js';
 import { performStatisticalAnalysis } from '../src/services/statisticalAnalysisService.js';
-import Element from '../src/models/Element.js';
 
 dotenv.config();
 
@@ -102,19 +102,14 @@ const ingestLaw = async (filePath) => {
     await deleteMissingElements(law._id, []);
   }
 
-  // Update law stats
-  let articleCount = 0;
-  let sectionCount = 0;
-  for (const el of elements) {
-    if (el.type === 'article') {
-      articleCount++;
-    } else if (el.type === 'section') {
-      sectionCount++;
-    }
-  }
-  law.totalArticles = articleCount;
-  law.totalSections = sectionCount;
-  await law.save();
+  // Update law stats from the actual DB state (BE-2).
+  // Runs AFTER bulk write + delete; filters "{...виключено...}" placeholders (BE-4 Option B).
+  await updateLawStatsFromDb(law._id);
+
+  // Derive quick counts from the parsed array for the console summary only
+  // (DB-persisted counts may differ due to exclusion filtering — that's intentional).
+  const sectionCount = elements.filter((el) => el.type === 'section').length;
+  const articleCount = elements.filter((el) => el.type === 'article').length;
 
   // Calculate statistical metrics
   try {

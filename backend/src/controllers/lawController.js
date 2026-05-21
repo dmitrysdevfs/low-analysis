@@ -94,19 +94,10 @@ export const parseLawFromUrl = async (req, res, next) => {
     await lawService.bulkUpsertElements(elementsToSave);
     await lawService.deleteMissingElements(law._id, activeCodes);
 
-    // 5. Update law stats
-    let articleCount = 0;
-    let sectionCount = 0;
-    for (const el of parsedData.elements) {
-      if (el.type === 'article') {
-        articleCount++;
-      } else if (el.type === 'section') {
-        sectionCount++;
-      }
-    }
-    law.totalArticles = articleCount;
-    law.totalSections = sectionCount;
-    await law.save();
+    // 5. Update law stats from the actual DB state (BE-2).
+    // This runs AFTER bulk write + delete so counts reflect reality,
+    // and filters out "{...виключено...}" placeholders (BE-4 Option B).
+    await lawService.updateLawStatsFromDb(law._id);
 
     // 6. Calculate statistical metrics
     try {

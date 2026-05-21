@@ -227,10 +227,13 @@ export const parseLawHtml = (html, mainHtml = null) => {
     }
 
     // ── Generic Child Element (Частини, Пункти, Підпункти, Абзаци) ───────────
-    if (pClass === ARTICLE_CLASS && dataTree.includes(':st')) {
+    // BE-3: Use dataTree.includes(':') instead of ':st' to also capture elements
+    // that belong directly to sections (e.g., Розділ XVII of the Market Law has
+    // data-tree like "pu1:rz17", "ch_1:pu1:rz17" — no ":st" prefix).
+    if (pClass === ARTICLE_CLASS && dataTree.includes(':')) {
       const parts = dataTree.split(':');
-      const articleStr = parts.pop(); // typically 'st5' or 'st129'
-      const childParts = parts.reverse(); // e.g. ['pu1', 'pp1']
+      const articleStr = parts.pop(); // last segment: 'st5', 'rz17', 'pu1', etc.
+      const childParts = parts.reverse(); // e.g. ['pu1', 'pp1'] or ['ch_1', 'pu1']
       const text = $p.text().trim();
       if (!text) return;
 
@@ -243,7 +246,13 @@ export const parseLawHtml = (html, mainHtml = null) => {
           : code
             ? code
             : '';
-        baseCode = sectionBase ? `${sectionBase}.${articleStr}` : articleStr;
+        // BE-3: Avoid double-prefix when sectionBase already ends with articleStr
+        // e.g. sectionBase = '2019-19.rz17', articleStr = 'rz17' → keep sectionBase as-is
+        if (sectionBase && sectionBase.endsWith(`.${articleStr}`)) {
+          baseCode = sectionBase;
+        } else {
+          baseCode = sectionBase ? `${sectionBase}.${articleStr}` : articleStr;
+        }
       }
 
       const partCode = [baseCode, ...childParts].join('.');
@@ -278,9 +287,13 @@ export const parseLawHtml = (html, mainHtml = null) => {
         } else {
           elementType = 'paragraph';
         }
-        const numberMatch = leafNodeStr.match(/\d+/);
+        const numberMatch = leafNodeStr ? leafNodeStr.match(/\d+/) : null;
         partNumber = numberMatch ? numberMatch[0] : '';
       }
+
+      // BE-1: Increment global order counter for every child element so that
+      // each element in the law gets a unique, strictly-increasing sequence number.
+      order++;
       elements.push({
         type: elementType,
         code: partCode,

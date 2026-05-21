@@ -8,6 +8,7 @@ vi.mock('../services/lawService.js', () => ({
   getLawTree: vi.fn(),
   getArticle: vi.fn(),
   getLawStats: vi.fn(),
+  updateLawStatsFromDb: vi.fn(),
 }));
 
 import * as lawService from '../services/lawService.js';
