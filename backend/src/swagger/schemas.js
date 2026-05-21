@@ -16,6 +16,24 @@ export const schemas = {
         example: '1996-06-28T00:00:00.000Z',
         nullable: true,
       },
+      preamble: {
+        type: 'string',
+        example: 'Верховна Рада України від імені Українського народу...',
+        nullable: true,
+        description: 'Преамбула закону',
+      },
+      signatory: {
+        type: 'string',
+        example: 'Президент України Л.КУЧМА',
+        nullable: true,
+        description: 'Підписант закону',
+      },
+      status: {
+        type: 'string',
+        example: 'Чинний',
+        nullable: true,
+        description: 'Поточний статус документа',
+      },
       source: {
         type: 'string',
         example: 'https://zakon.rada.gov.ua/laws/show/254к/96-вр',
@@ -23,6 +41,30 @@ export const schemas = {
       },
       totalArticles: { type: 'integer', example: 166 },
       totalSections: { type: 'integer', example: 14 },
+      global_context: {
+        type: 'object',
+        description: 'Глобальний контекст закону (преамбула та визначення)',
+        properties: {
+          preamble: {
+            type: 'string',
+            example: 'Цей Закон визначає правові засади...',
+            nullable: true,
+          },
+          definitions: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                term: { type: 'string', example: 'фінансова послуга' },
+                definition: {
+                  type: 'string',
+                  example: 'операція з фінансовими активами...',
+                },
+              },
+            },
+          },
+        },
+      },
       createdAt: {
         type: 'string',
         format: 'date-time',
@@ -105,8 +147,30 @@ export const schemas = {
       },
       subjects: {
         type: 'array',
-        items: { type: 'string' },
-        example: [],
+        items: {
+          type: 'object',
+          properties: {
+            subject_id: {
+              type: 'string',
+              example: '507f1f77bcf86cd799439022',
+              description: 'ID суб’єкта з глобального реєстру',
+            },
+            role: {
+              type: 'string',
+              enum: [
+                'actor',
+                'target_of_control',
+                'recipient',
+                'regulator',
+                'protected_party',
+                'issuer_of_regulations',
+                'other',
+              ],
+              example: 'actor',
+              description: 'Роль суб’єкта в контексті даного елемента',
+            },
+          },
+        },
       },
       createdAt: {
         type: 'string',
@@ -126,24 +190,46 @@ export const schemas = {
     description: "Суб'єкт регулювання (студент, лікар, підприємець тощо)",
     properties: {
       _id: { type: 'string', example: '507f1f77bcf86cd799439022' },
-      name: { type: 'string', example: 'Підприємець' },
+      canonical_name: {
+        type: 'string',
+        example: 'підприємець',
+        description: 'Канонічна назва суб’єкта в називному відмінку однини',
+      },
+      legal_status: {
+        type: 'string',
+        enum: [
+          'executive_body',
+          'official',
+          'legal_entity',
+          'individual',
+          'self_regulatory_org',
+          'other',
+        ],
+        example: 'individual',
+        description: 'Юридичний статус суб’єкта регулювання',
+      },
       aliases: {
         type: 'array',
         items: { type: 'string' },
-        example: ['ФОП', "суб'єкт підприємницької діяльності"],
+        example: ['фоп', "суб'єкт підприємницької діяльності"],
+        description: 'Альтернативні назви та синоніми суб’єкта',
       },
-      elementIds: {
-        type: 'array',
-        items: { type: 'string' },
-        description: "ID елементів, що регулюють цього суб'єкта",
+      description: {
+        type: 'string',
+        example: 'Фізична особа, яка здійснює підприємницьку діяльність...',
+        nullable: true,
+        description: 'Короткий опис суб’єкта або його функцій',
       },
-      lawIds: {
-        type: 'array',
-        items: { type: 'string' },
-        description: "ID законів, що стосуються суб'єкта",
+      createdAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2026-05-13T02:30:00.000Z',
       },
-      createdAt: { type: 'string', format: 'date-time' },
-      updatedAt: { type: 'string', format: 'date-time' },
+      updatedAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2026-05-13T02:30:00.000Z',
+      },
     },
   },
 
