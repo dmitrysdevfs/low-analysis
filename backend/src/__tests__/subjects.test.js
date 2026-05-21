@@ -11,10 +11,10 @@ import * as subjectService from '../services/subjectService.js';
 
 const MOCK_SUBJECT = {
   _id: '507f1f77bcf86cd799439022',
-  name: 'Entrepreneur',
+  canonical_name: 'Entrepreneur',
+  legal_status: 'individual',
   aliases: ['FOP'],
-  elementIds: [],
-  lawIds: [],
+  description: 'Self-employed entrepreneur',
 };
 
 const MOCK_ELEMENT = {

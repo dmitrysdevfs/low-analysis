@@ -11,6 +11,7 @@ import {
   deleteMissingElements,
   resolveElementHierarchy,
 } from '../src/services/lawService.js';
+import { performStatisticalAnalysis } from '../src/services/statisticalAnalysisService.js';
 import Element from '../src/models/Element.js';
 
 dotenv.config();
@@ -114,6 +115,10 @@ const ingestLaw = async (filePath) => {
   law.totalArticles = articleCount;
   law.totalSections = sectionCount;
   await law.save();
+
+  // Calculate statistical metrics
+  console.log('📊 Calculating statistical metrics...');
+  await performStatisticalAnalysis(law._id);
 
   console.log(`✅ Ingested: lawId=${law._id}`);
   console.log(
