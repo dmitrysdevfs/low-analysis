@@ -17,10 +17,10 @@ const run = async () => {
     let updatedCount = 0;
 
     for (const law of laws) {
-      // Find elements for this law that belong to Article 1
+      // Find elements for this law that belong to Article 1 or Article 2
       const elements = await Element.find({
         lawId: law._id,
-        code: { $regex: /\.st1\./ },
+        code: { $regex: /\.(st1|st2)\./ },
       });
 
       if (elements.length === 0) {
