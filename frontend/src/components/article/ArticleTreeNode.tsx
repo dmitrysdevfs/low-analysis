@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { getNodeBadge, getRoleColor } from "@/lib/tree";
+import {
+  getNodeBadge,
+  getRoleColor,
+  sanitizeAnchor,
+  formatCitation,
+} from "@/lib/tree";
 import type { TreeBranch } from "@/lib/tree";
 import { highlightMatch } from "@/lib/utils/highlightMatch";
 import { notify } from "@/lib/toast";
@@ -67,44 +72,6 @@ function hasTermsMatch(
   if (!text || !terms.length) return false;
   const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   return new RegExp(`(${escaped.join("|")})`, "i").test(text);
-}
-
-function sanitizeAnchor(code: string): string {
-  return code.replace(/[.:]/g, "-");
-}
-
-function formatCitation(opts: {
-  badge: string;
-  text: string;
-  charCount: number;
-  subjectLinks: { name: string; id: string }[];
-  lawId: string;
-  articleNum: string;
-  lawTitle: string;
-  code: string;
-}): string {
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
-  const anchor = sanitizeAnchor(opts.code);
-  const url = `${origin}/laws/${opts.lawId}/articles/${opts.articleNum}#${anchor}`;
-
-  const subjectsLine = opts.subjectLinks.length
-    ? `Суб'єкти: ${opts.subjectLinks.map((s) => s.name).join(", ")}`
-    : "Суб'єктів не знайдено";
-
-  const lines = [
-    `§ ${opts.badge} — ${opts.text}`,
-    `Символів: ${opts.charCount}`,
-    subjectsLine,
-  ];
-
-  if (opts.subjectLinks.length) {
-    lines.push(
-      `Профілі: ${opts.subjectLinks.map((s) => `${origin}/subjects/${s.id}`).join(", ")}`,
-    );
-  }
-
-  lines.push(`Посилання: ${url}`, `Закон: ${opts.lawTitle}`);
-  return lines.join("\n");
 }
 
 function NestedNode({
@@ -194,8 +161,8 @@ function NestedNode({
       id={sanitizeAnchor(node.code)}
       className={styles.childItem}
       style={{
-        opacity: isDimmed ? 0.3 : 1,
-        transition: "opacity 0.08s ease",
+        color: isDimmed ? "var(--color-smoke)" : undefined,
+        transition: "color 0.12s ease",
         outline: hasActiveSubject ? `1px solid ${color}33` : "none",
         borderRadius: hasActiveSubject ? "4px" : undefined,
         background: hasActiveSubject ? `${color}0a` : undefined,

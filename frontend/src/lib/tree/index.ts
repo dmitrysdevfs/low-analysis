@@ -27,4 +27,6 @@ export {
   getLegalStatusColor,
   LEGAL_STATUS_LABELS,
   LEGAL_STATUS_COLORS,
+  sanitizeAnchor,
+  formatCitation,
 } from "./labels";

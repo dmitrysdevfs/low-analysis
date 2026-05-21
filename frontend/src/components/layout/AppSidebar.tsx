@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useMemo, useState, useEffect } from "react";
+import { useRef, useMemo, useState, useEffect, Suspense } from "react";
 import { NAV_ITEMS } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -14,6 +14,7 @@ import type { NoteDraft } from "@/lib/notes/types";
 import { getRoleColor } from "@/lib/tree";
 import { SessionMenu } from "./SessionMenu";
 import { useSidebarData } from "./SidebarDataContext";
+import { SubjectMentionsModal } from "@/components/subject/SubjectMentionsModal";
 import styles from "./AppSidebar.module.scss";
 
 function hexToRgb(hex: string): string {
@@ -274,16 +275,18 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                                 : undefined,
                           }}
                           onClick={() => {
-                            if (onSubjectSelect) {
-                              onSubjectSelect(s.id);
-                              setSubjectsQuery("");
-                            }
+                            router.push(
+                              `${pathname}?subjectModal=${s.id}&mentionIdx=0`,
+                            );
+                            setSubjectsQuery("");
                           }}
-                          role={onSubjectSelect ? "button" : undefined}
-                          tabIndex={onSubjectSelect ? 0 : undefined}
+                          role="button"
+                          tabIndex={0}
                           onKeyDown={(e) => {
-                            if (e.key === "Enter" && onSubjectSelect) {
-                              onSubjectSelect(s.id);
+                            if (e.key === "Enter") {
+                              router.push(
+                                `${pathname}?subjectModal=${s.id}&mentionIdx=0`,
+                              );
                               setSubjectsQuery("");
                             }
                           }}
@@ -425,6 +428,10 @@ export function AppSidebar({ visible }: { visible: boolean }) {
         onClose={() => setNoteDraft(null)}
         onSaved={() => setNoteDraft(null)}
       />
+
+      <Suspense fallback={null}>
+        <SubjectMentionsModal />
+      </Suspense>
     </>
   );
 }

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { ROUTES } from "@/constants/routes";
+import { formatDateMedium, groupCounts } from "@/lib/utils";
 import { useLaws } from "@/hooks/useLaws";
 import { useSubjects } from "@/hooks/useSubjects";
-import { groupCounts, formatDateMedium } from "@/lib/utils";
 import styles from "./AdminAnalyticsView.module.scss";
 
 export function AdminAnalyticsView() {
@@ -26,7 +26,7 @@ export function AdminAnalyticsView() {
     const averageArticles =
       laws.length > 0 ? (totalArticles / laws.length).toFixed(1) : "0";
     const statusDistribution = groupCounts(
-      laws.map((law) => law.status ?? "Unknown"),
+      laws.map((law) => law.status ?? "Невідомо"),
     );
     const subjectStatusDistribution = groupCounts(
       subjects.map((subject) => subject.legal_status),
@@ -62,22 +62,22 @@ export function AdminAnalyticsView() {
           </h1>
           <p className={styles.description}>
             Цей огляд агрегує відповіді `/api/laws` та `/api/subjects` для
-            швидкого операційного огляду правового покриття та розподілу
-            суб'єктів.
+            швидкого операційного зрізу правового покриття, глибини структури та
+            розподілу суб'єктів.
           </p>
         </div>
 
         <div className={styles.heroAside}>
-          <span className={styles.tag}>Тільки фронтенд</span>
+          <span className={styles.tag}>Лише клієнтський рівень</span>
           <div className={styles.heroValue}>
             {laws.length + subjects.length} відстежуваних об'єктів
           </div>
           <div className={styles.heroMeta}>
-            Закони, суб'єкти, глибина статей та метадані обчислюються на
-            фронтенді з наявних API-запитів.
+            Закони, суб'єкти, глибина статей і метадані обчислюються у
+            клієнтському застосунку з наявних API-запитів.
           </div>
           <Link href={ROUTES.admin} className={styles.heroLink}>
-            Повернутися до панелі адміна
+            Повернутися до адмін-панелі
           </Link>
         </div>
       </div>
@@ -87,7 +87,7 @@ export function AdminAnalyticsView() {
           <span className={styles.metricLabel}>Закони</span>
           <strong className={styles.metricValue}>{laws.length}</strong>
           <p className={styles.metricNote}>
-            Всього правових документів з `/api/laws`.
+            Усього правових документів з поточного запиту законів.
           </p>
         </article>
 
@@ -95,7 +95,7 @@ export function AdminAnalyticsView() {
           <span className={styles.metricLabel}>Суб'єкти</span>
           <strong className={styles.metricValue}>{subjects.length}</strong>
           <p className={styles.metricNote}>
-            Визначених правових суб'єктів з `/api/subjects`.
+            Визначених правових суб'єктів з поточного запиту суб'єктів.
           </p>
         </article>
 
@@ -125,7 +125,7 @@ export function AdminAnalyticsView() {
             {metrics.totalParagraphs}
           </strong>
           <p className={styles.metricNote}>
-            Глибина абзаців в метаданих законів.
+            Глибина абзаців у метаданих законів.
           </p>
         </article>
 
@@ -135,7 +135,7 @@ export function AdminAnalyticsView() {
             {metrics.averageArticles}
           </strong>
           <p className={styles.metricNote}>
-            Середня кількість статей на закон.
+            Середня кількість статей на один закон.
           </p>
         </article>
       </div>
@@ -244,9 +244,8 @@ export function AdminAnalyticsView() {
                       <span className={styles.listCode}>{law.code}</span>
                       <div className={styles.listTitle}>{law.title}</div>
                       <div className={styles.listMeta}>
-                        Created {formatDateMedium(law.createdAt)} ·{" "}
-                        {law.totalArticles} articles · {law.totalSections}{" "}
-                        sections
+                        Створено {formatDateMedium(law.createdAt)},{" "}
+                        {law.totalArticles} статей, {law.totalSections} розділів
                       </div>
                     </div>
                     <Link
@@ -261,7 +260,7 @@ export function AdminAnalyticsView() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              Законів у поточній відповіді немає.
+              У поточній відповіді немає жодного закону.
             </div>
           )}
         </article>
@@ -313,7 +312,7 @@ export function AdminAnalyticsView() {
                 />
               </div>
               <div className={styles.distributionMeta}>
-                Закони де текст преамбули доступний для аналізу.
+                Закони, де текст преамбули доступний для аналізу.
               </div>
             </div>
           </div>

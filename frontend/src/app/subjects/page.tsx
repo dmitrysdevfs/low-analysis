@@ -1,19 +1,22 @@
-﻿"use client";
+"use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
-import { ROUTES } from "@/constants/routes";
 import { useSubjects } from "@/hooks/useSubjects";
-import { getLegalStatusLabel, getLegalStatusColor } from "@/lib/tree";
+import { getLegalStatusLabel } from "@/lib/tree";
+import { SubjectCard } from "@/components/subject/SubjectCard";
+import { ExpandingSearch } from "@/components/ui/ExpandingSearch";
 import styles from "./page.module.scss";
 
 const ALL_FILTER = "Всі";
+const TOP_LIMIT = 10;
 
 export default function SubjectsPage() {
   const { subjects, loading, error } = useSubjects();
   const [activeFilter, setActiveFilter] = useState<string>(ALL_FILTER);
+  const [query, setQuery] = useState("");
+  const [showAll, setShowAll] = useState(false);
 
   const filterTypes = useMemo(() => {
     const unique = Array.from(
@@ -22,10 +25,42 @@ export default function SubjectsPage() {
     return [ALL_FILTER, ...unique];
   }, [subjects]);
 
+  const sortedByFrequency = useMemo(
+    () =>
+      [...subjects].sort(
+        (a, b) => (b.elements_count ?? 0) - (a.elements_count ?? 0),
+      ),
+    [subjects],
+  );
+
   const filteredSubjects = useMemo(() => {
-    if (activeFilter === ALL_FILTER) return subjects;
-    return subjects.filter((s) => s.legal_status === activeFilter);
-  }, [subjects, activeFilter]);
+    const base =
+      activeFilter === ALL_FILTER
+        ? sortedByFrequency
+        : sortedByFrequency.filter((s) => s.legal_status === activeFilter);
+    if (!query.trim()) return base;
+    const q = query.toLowerCase();
+    return base.filter((s) => s.canonical_name.toLowerCase().includes(q));
+  }, [sortedByFrequency, activeFilter, query]);
+
+  const isSearchActive = query.trim().length > 0;
+  const hasMore = !isSearchActive && filteredSubjects.length > TOP_LIMIT;
+  const displayedSubjects =
+    isSearchActive || showAll
+      ? filteredSubjects
+      : filteredSubjects.slice(0, TOP_LIMIT);
+
+  const countLabel = useMemo(() => {
+    if (isSearchActive) return `${filteredSubjects.length} результатів пошуку`;
+    if (showAll) return `${filteredSubjects.length} суб’єктів у базі`;
+    return `Топ ${Math.min(TOP_LIMIT, filteredSubjects.length)} · найчастіше зустрічаються`;
+  }, [isSearchActive, showAll, filteredSubjects.length]);
+
+  const handleFilterChange = (type: string) => {
+    setActiveFilter(type);
+    setShowAll(false);
+    setQuery("");
+  };
 
   return (
     <Layout>
@@ -45,7 +80,6 @@ export default function SubjectsPage() {
               <br />
               <span className={styles.headingAccent}>регулювання</span>
             </h1>
-
             <p className={styles.subtitle}>
               Фізичні та юридичні особи, права та обов&apos;язки яких
               регулюються законодавством України.
@@ -55,14 +89,14 @@ export default function SubjectsPage() {
           <AnimatePresence mode="wait">
             {!loading && !error ? (
               <motion.div
-                key={`count-${subjects.length}`}
+                key={countLabel}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 className={`mono ${styles.countLine}`}
               >
-                {filteredSubjects.length} суб&apos;єктів у базі
+                {countLabel}
               </motion.div>
             ) : null}
           </AnimatePresence>
@@ -73,12 +107,22 @@ export default function SubjectsPage() {
                 <button
                   key={type}
                   type="button"
-                  onClick={() => setActiveFilter(type)}
+                  onClick={() => handleFilterChange(type)}
                   className={`mono ${styles.chip} ${activeFilter === type ? styles.chipActive : ""}`}
                 >
                   {type === ALL_FILTER ? type : getLegalStatusLabel(type)}
                 </button>
               ))}
+            </div>
+          ) : null}
+
+          {!loading && !error ? (
+            <div className={styles.searchRow}>
+              <ExpandingSearch
+                value={query}
+                onChange={setQuery}
+                placeholder="Пошук суб'єкта..."
+              />
             </div>
           ) : null}
 
@@ -117,88 +161,54 @@ export default function SubjectsPage() {
               className={styles.emptyState}
             >
               <div className={styles.emptyIcon}>§</div>
-              Суб&apos;єктів ще немає в базі
+              {isSearchActive
+                ? "Нічого не знайдено"
+                : "Суб’єктів ще немає в базі"}
             </motion.div>
           ) : null}
 
-          {!loading && !error && filteredSubjects.length > 0 ? (
+          {!loading && !error && hasMore ? (
+            <div className={styles.showAllWrap}>
+              <div className={styles.showAllDivider} />
+              <button
+                className={`mono ${styles.showAllBtn}`}
+                onClick={() => setShowAll((v) => !v)}
+              >
+                {showAll
+                  ? "Сховати ↑"
+                  : `Показати всі ${filteredSubjects.length} суб’єктів ↓`}
+              </button>
+              <div className={styles.showAllDivider} />
+            </div>
+          ) : null}
+
+          {!loading && !error && displayedSubjects.length > 0 ? (
             <AnimatePresence>
               <div className={styles.cardList}>
-                {filteredSubjects.map((subject, index) => {
-                  const statusColor = getLegalStatusColor(subject.legal_status);
-                  const statusLabel = getLegalStatusLabel(subject.legal_status);
-                  return (
-                    <motion.div
-                      key={subject._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.07, duration: 0.4 }}
-                      whileHover={{ y: -2 }}
-                    >
-                      <Link
-                        href={ROUTES.subject(subject._id)}
-                        className={styles.cardLink}
-                        style={
-                          { "--status-color": statusColor } as Record<
-                            string,
-                            string
-                          >
-                        }
-                      >
-                        <div className={styles.cardTop}>
-                          <span
-                            className={`mono ${styles.statusBadge}`}
-                            style={{
-                              color: statusColor,
-                              background: `${statusColor}18`,
-                              borderColor: `${statusColor}40`,
-                            }}
-                          >
-                            {statusLabel}
-                          </span>
-                          <span className={styles.cardArrow}>→</span>
-                        </div>
-
-                        <h2 className={`display ${styles.cardTitle}`}>
-                          {subject.canonical_name}
-                        </h2>
-
-                        {subject.description ? (
-                          <p className={styles.cardDescription}>
-                            {subject.description}
-                          </p>
-                        ) : null}
-
-                        {subject.aliases.length > 0 ? (
-                          <div className={styles.aliasList}>
-                            {subject.aliases.map((alias) => (
-                              <span
-                                key={alias}
-                                className={`mono ${styles.aliasBadge}`}
-                              >
-                                {alias}
-                              </span>
-                            ))}
-                          </div>
-                        ) : null}
-
-                        {subject.laws_count != null ||
-                        subject.elements_count != null ? (
-                          <div className={`mono ${styles.cardFooter}`}>
-                            {subject.laws_count != null ? (
-                              <span>{subject.laws_count} законів</span>
-                            ) : null}
-                            {subject.elements_count != null ? (
-                              <span>{subject.elements_count} норм</span>
-                            ) : null}
-                          </div>
-                        ) : null}
-                      </Link>
-                    </motion.div>
-                  );
-                })}
+                {displayedSubjects.map((subject, index) => (
+                  <SubjectCard
+                    key={subject._id}
+                    subject={subject}
+                    index={index}
+                  />
+                ))}
               </div>
             </AnimatePresence>
+          ) : null}
+
+          {!loading && !error && hasMore ? (
+            <div className={styles.showAllWrap}>
+              <div className={styles.showAllDivider} />
+              <button
+                className={`mono ${styles.showAllBtn}`}
+                onClick={() => setShowAll((v) => !v)}
+              >
+                {showAll
+                  ? "Сховати ↑"
+                  : `Показати всі ${filteredSubjects.length} суб’єктів ↓`}
+              </button>
+              <div className={styles.showAllDivider} />
+            </div>
           ) : null}
         </div>
       </div>

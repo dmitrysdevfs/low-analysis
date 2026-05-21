@@ -13,17 +13,20 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { NestedNodeList } from "./LawStructureListNodes";
 import { useNotes } from "@/hooks/useNotes";
+import type { Subject } from "@/types";
 
 export function ArticleEntry({
   article,
   lawId,
   lawTitle,
   highlightSubjectId,
+  subjectsMap,
 }: {
   article: TreeBranch;
   lawId: string;
   lawTitle?: string;
   highlightSubjectId?: string | null;
+  subjectsMap?: Map<string, Subject>;
 }) {
   const [open, setOpen] = useState(!!highlightSubjectId);
   const articleRef = useRef<HTMLElement>(null);
@@ -136,6 +139,10 @@ export function ArticleEntry({
             <NestedNodeList
               nodes={article.children}
               highlightSubjectId={highlightSubjectId}
+              subjectsMap={subjectsMap}
+              lawId={lawId}
+              lawTitle={lawTitle}
+              articleNum={String(routeNumber ?? "")}
             />
           </motion.div>
         ) : null}

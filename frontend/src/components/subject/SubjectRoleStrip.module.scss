@@ -1,0 +1,35 @@
+.strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.label {
+  font-size: 0.62rem;
+  color: var(--color-smoke);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.chip {
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  border: 1px solid;
+  transition: all 0.15s;
+  color: var(--rc);
+  background: color-mix(in srgb, var(--rc) 8%, transparent);
+  border-color: color-mix(in srgb, var(--rc) 25%, transparent);
+}
+
+.chipActive {
+  background: color-mix(in srgb, var(--rc) 20%, transparent);
+  border-color: color-mix(in srgb, var(--rc) 60%, transparent);
+}

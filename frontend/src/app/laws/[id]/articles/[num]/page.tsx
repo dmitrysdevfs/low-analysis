@@ -1,9 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  useCallback,
+  Suspense,
+} from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { recordWorkspaceView } from "@/lib/auth/clientWorkspace";
@@ -22,12 +34,17 @@ import { NoteModal } from "@/components/notes/NoteModal";
 import SelectionTooltip from "@/components/notes/SelectionTooltip";
 import type { NoteDraft } from "@/lib/notes/types";
 import { useSidebarData } from "@/components/layout/SidebarDataContext";
+import { SubjectMentionsModal } from "@/components/subject/SubjectMentionsModal";
 
 export default function ArticlePage() {
   const { user } = useAuth();
   const params = useParams<{ id: string; num: string }>();
   const lawId = params?.id;
   const articleNumber = params?.num;
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const subjectModalId = searchParams.get("subjectModal");
   const { laws } = useLaws();
   const { article, children, loading, error } = useArticle(
     lawId,
@@ -71,25 +88,6 @@ export default function ArticlePage() {
     });
     return result.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   }, [article, children, subjectsMap]);
-
-  const totalBindings = useMemo(
-    () =>
-      (article ? [article, ...children] : children).reduce(
-        (sum, n) => sum + (n.subjects?.length ?? 0),
-        0,
-      ),
-    [article, children],
-  );
-
-  const nodesWithSubjects = useMemo(
-    () =>
-      (article ? [article, ...children] : children).filter(
-        (n) => (n.subjects?.length ?? 0) > 0,
-      ).length,
-    [article, children],
-  );
-
-  const totalNodes = children.length + (article ? 1 : 0);
 
   const {
     setSubjects,
@@ -143,6 +141,17 @@ export default function ArticlePage() {
   useEffect(() => {
     setSidebarActiveSubjectId(activeSubjectId);
   }, [activeSubjectId, setSidebarActiveSubjectId]);
+
+  // Sync activeSubjectId with URL param (from modal navigation)
+  useEffect(() => {
+    if (subjectModalId) {
+      setActiveSubjectId(subjectModalId);
+      setMatchIndex(0);
+    } else {
+      setActiveSubjectId(null);
+      setMatchIndex(0);
+    }
+  }, [subjectModalId]);
 
   useEffect(() => {
     if (!activeSubjectId) return;
@@ -311,7 +320,10 @@ export default function ArticlePage() {
 
                     {/* Compact subjects block */}
                     {articleSubjects.length > 0 && (
-                      <div className={styles.articleSubjectsBlock}>
+                      <div
+                        id="articleSubjectsBlock"
+                        className={styles.articleSubjectsBlock}
+                      >
                         <div className={styles.articleSubjectsHeader}>
                           <span className={styles.articleSubjectsLabel}>
                             СУБ&apos;ЄКТИ · {articleSubjects.length}
@@ -409,7 +421,9 @@ export default function ArticlePage() {
                                   borderColor: isActive ? `${c}c0` : `${c}40`,
                                 }}
                                 onClick={() => {
-                                  handleSubjectSelect(s.subject_id);
+                                  router.push(
+                                    `${pathname}?subjectModal=${s.subject_id}&mentionIdx=0`,
+                                  );
                                   setSubjectsQuery("");
                                 }}
                               >

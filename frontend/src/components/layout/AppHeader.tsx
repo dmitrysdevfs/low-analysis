@@ -15,8 +15,18 @@ import { AppSidebar } from "./AppSidebar";
 import styles from "./AppHeader.module.scss";
 
 export function AppHeader() {
-  const router = useRouter();
   const pathname = usePathname();
+  const isAdminPage = pathname.startsWith(ROUTES.admin);
+
+  if (isAdminPage) {
+    return null;
+  }
+
+  return <PublicAppHeader pathname={pathname} />;
+}
+
+function PublicAppHeader({ pathname }: { pathname: string }) {
+  const router = useRouter();
   const headerRef = useRef<HTMLElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -25,7 +35,7 @@ export function AppHeader() {
   const [isDragging, setIsDragging] = useState(false);
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const isAuthPage = pathname.startsWith(ROUTES.auth);
-  const isAdminPage = pathname.startsWith(ROUTES.admin);
+  const isAdminPage = false;
   const isHome = pathname === "/";
   const visibleNavItems = NAV_ITEMS;
 

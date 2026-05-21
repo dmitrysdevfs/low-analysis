@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { type TreeBranch } from "@/lib/tree";
 import styles from "./LawStructureList.module.scss";
 import { ArticleEntry } from "./LawStructureListArticle";
+import type { Subject } from "@/types";
 
 export function SectionBlock({
   section,
@@ -11,12 +12,14 @@ export function SectionBlock({
   lawTitle,
   index,
   highlightSubjectId,
+  subjectsMap,
 }: {
   section: TreeBranch;
   lawId: string;
   lawTitle?: string;
   index: number;
   highlightSubjectId?: string | null;
+  subjectsMap?: Map<string, Subject>;
 }) {
   const articles = section.children.filter((node) => node.type === "article");
 
@@ -53,6 +56,7 @@ export function SectionBlock({
                 lawId={lawId}
                 lawTitle={lawTitle}
                 highlightSubjectId={highlightSubjectId}
+                subjectsMap={subjectsMap}
               />
             ))}
           </AnimatePresence>

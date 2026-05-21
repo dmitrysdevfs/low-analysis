@@ -152,6 +152,44 @@ export function getTypeLabel(type: string): string {
   return TYPE_LABELS[type as TreeNode["type"]] ?? type;
 }
 
+export function sanitizeAnchor(code: string): string {
+  return code.replace(/[.:]/g, "-");
+}
+
+export function formatCitation(opts: {
+  badge: string;
+  text: string;
+  charCount: number;
+  subjectLinks: { name: string; id: string }[];
+  lawId: string;
+  articleNum: string;
+  lawTitle: string;
+  code: string;
+}): string {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const anchor = sanitizeAnchor(opts.code);
+  const url = `${origin}/laws/${opts.lawId}/articles/${opts.articleNum}#${anchor}`;
+
+  const subjectsLine = opts.subjectLinks.length
+    ? `Суб'єкти: ${opts.subjectLinks.map((s) => s.name).join(", ")}`
+    : "Суб'єктів не знайдено";
+
+  const lines = [
+    `§ ${opts.badge} — ${opts.text}`,
+    `Символів: ${opts.charCount}`,
+    subjectsLine,
+  ];
+
+  if (opts.subjectLinks.length) {
+    lines.push(
+      `Профілі: ${opts.subjectLinks.map((s) => `${origin}/subjects/${s.id}`).join(", ")}`,
+    );
+  }
+
+  lines.push(`Посилання: ${url}`, `Закон: ${opts.lawTitle}`);
+  return lines.join("\n");
+}
+
 export function parseElementCode(code: string): {
   lawCode: string;
   sectionLabel: string | null;

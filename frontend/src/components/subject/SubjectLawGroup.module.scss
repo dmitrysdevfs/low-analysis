@@ -1,0 +1,181 @@
+.group {
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: var(--color-surface);
+  user-select: none;
+
+  &:hover {
+    background: var(--color-raised);
+  }
+}
+
+.arrow {
+  font-size: 0.72rem;
+  color: var(--color-azure);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.arrowOpen {
+  transform: rotate(90deg);
+}
+
+.lawCode {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: var(--color-azure);
+  background: rgba(74, 128, 212, 0.1);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+  border-radius: 3px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+
+.lawTitle {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.counter {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--color-smoke);
+  flex-shrink: 0;
+}
+
+.lawLink {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-azure);
+  text-decoration: none;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #6fa3e8;
+  }
+}
+
+.body {
+  padding: 0 16px 4px;
+}
+
+.elementCard {
+  padding: 12px 0;
+  border-top: 1px solid var(--color-line);
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.sectionLabel {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--color-smoke);
+}
+
+.sep {
+  font-size: 0.68rem;
+  color: var(--color-azure);
+}
+
+.articleLink {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--color-azure);
+  text-decoration: none;
+
+  &:hover {
+    color: #6fa3e8;
+  }
+}
+
+.elementTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 4px;
+}
+
+.elementText {
+  font-size: 0.83rem;
+  color: var(--color-ink-soft);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.textClamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.expandBtn {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-azure);
+  cursor: pointer;
+  margin-top: 4px;
+
+  &:hover {
+    color: #6fa3e8;
+  }
+}
+
+.footerBadges {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.roleBadge {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid;
+  color: var(--rc);
+  background: color-mix(in srgb, var(--rc) 10%, transparent);
+  border-color: color-mix(in srgb, var(--rc) 30%, transparent);
+}
+
+.typeBadge {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  color: var(--color-smoke);
+  background: rgba(74, 128, 212, 0.06);
+  border: 1px solid rgba(74, 128, 212, 0.18);
+}

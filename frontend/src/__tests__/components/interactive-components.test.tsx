@@ -12,7 +12,6 @@ import type { TreeBranch } from "@/lib/tree";
 import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
 import { buildLawSections } from "@/lib/tree";
 import {
-  ARTICLE_NODE,
   LAW_FIXTURE,
   LAW_FIXTURE_2,
   PART_NODE,
@@ -53,7 +52,7 @@ describe("interactive frontend components", () => {
         lastLoginAt: "2026-05-17T10:00:00.000Z",
       }),
     );
-    setMockPathname("/admin");
+    setMockPathname("/laws");
 
     render(
       <AuthProvider>
