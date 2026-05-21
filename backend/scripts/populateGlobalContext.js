@@ -31,9 +31,18 @@ const run = async () => {
 
       // 1. Try to load HTML locally
       const cleanCode = law.code.replace('/', '_');
-      const localFramePath = path.resolve(__dirname, `../data/raw/${cleanCode}_frame.html`);
-      const localFramePathAlt = path.resolve(__dirname, `../data/raw/${cleanCode}.frame.html`);
-      const localMainPath = path.resolve(__dirname, `../data/raw/${cleanCode}.html`);
+      const localFramePath = path.resolve(
+        __dirname,
+        `../data/raw/${cleanCode}_frame.html`,
+      );
+      const localFramePathAlt = path.resolve(
+        __dirname,
+        `../data/raw/${cleanCode}.frame.html`,
+      );
+      const localMainPath = path.resolve(
+        __dirname,
+        `../data/raw/${cleanCode}.html`,
+      );
 
       try {
         html = await fs.readFile(localFramePath, 'utf-8');
@@ -57,7 +66,9 @@ const run = async () => {
       // 2. Fetch from remote if not found locally
       if (!html) {
         try {
-          console.log(`  Local files not found. Fetching online for code: ${law.code}...`);
+          console.log(
+            `  Local files not found. Fetching online for code: ${law.code}...`,
+          );
           const remoteData = await fetchLawData(law.code);
           html = remoteData.frameHtml;
           mainHtml = remoteData.mainHtml;
@@ -86,8 +97,8 @@ const run = async () => {
         definitions = extractDefinitions(elements);
       } else {
         // Fallback: extract definitions from parsed elements
-        const parsedDefElements = parsedData.elements.filter(el => 
-          el.code.includes('.st1.') || el.code.includes('.st2.')
+        const parsedDefElements = parsedData.elements.filter(
+          (el) => el.code.includes('.st1.') || el.code.includes('.st2.'),
         );
         definitions = extractDefinitions(parsedDefElements);
       }
@@ -108,7 +119,9 @@ const run = async () => {
         },
       );
 
-      console.log(`  ✅ Extracted preamble: ${parsedData.preamble ? (parsedData.preamble.substring(0, 60) + '...') : 'NULL'}`);
+      console.log(
+        `  ✅ Extracted preamble: ${parsedData.preamble ? parsedData.preamble.substring(0, 60) + '...' : 'NULL'}`,
+      );
       console.log(`  ✅ Extracted ${definitions.length} definitions`);
       updatedCount++;
     }

@@ -83,10 +83,66 @@ describe('parseLawHtml', () => {
     const result = parseLawHtml(html, html);
 
     expect(result.preamble).toBe(
-      'Цей Закон визначає правові засади...\nЦей Закон також регулює відносини у сфері...'
+      'Цей Закон визначає правові засади...\nЦей Закон також регулює відносини у сфері...',
     );
     expect(result.global_context.preamble).toBe(
-      'Цей Закон визначає правові засади...\nЦей Закон також регулює відносини у сфері...'
+      'Цей Закон визначає правові засади...\nЦей Закон також регулює відносини у сфері...',
     );
+  });
+
+  it('skips general document type headers like "ЗАКОН УКРАЇНИ" and title matches even without data-tree, and ignores publication meta-info', () => {
+    const html = `
+      <html>
+        <body>
+          <div id="edition">
+            <option selected value="https://zakon.rada.gov.ua/laws/show/1953-20/ed">Version</option>
+          </div>
+          <div id="article">
+            <p>ЗАКОН УКРАЇНИ</p>
+            <p>Про фінансові послуги та фінансові компанії</p>
+            <p>(Відомості Верховної Ради (ВВР), 2022, № 3, ст.11)</p>
+            <p>Цей Закон визначає правові засади діяльності...</p>
+            <p class="rvps2"><a data-tree="st1" name="n3"></a><span class="rvts9">Стаття 1.</span> Основні положення.</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    // Mock title resolution by injecting a title selector
+    const htmlWithTitle = html.replace(
+      '<body>',
+      '<body><p class="rvts78">Про фінансові послуги та фінансові компанії</p>',
+    );
+    const result = parseLawHtml(htmlWithTitle, htmlWithTitle);
+
+    expect(result.preamble).toBe(
+      'Цей Закон визначає правові засади діяльності...',
+    );
+  });
+
+  it('halts preamble extraction when encountering Books or Chapters (e.g. in Codes) even without data-tree', () => {
+    const html = `
+      <html>
+        <body>
+          <div id="edition">
+            <option selected value="https://zakon.rada.gov.ua/laws/show/435-15/ed">Version</option>
+          </div>
+          <div id="article">
+            <p>ЦИВІЛЬНИЙ КОДЕКС УКРАЇНИ</p>
+            <p>КНИГА ПЕРША</p>
+            <p>ЗАГАЛЬНІ ПОЛОЖЕННЯ</p>
+            <p class="rvps2"><a data-tree="st1" name="n3"></a><span class="rvts9">Стаття 1.</span> Відносини, що регулюються...</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const htmlWithTitle = html.replace(
+      '<body>',
+      '<body><p class="rvts78">Цивільний кодекс України</p>',
+    );
+    const result = parseLawHtml(htmlWithTitle, htmlWithTitle);
+
+    expect(result.preamble).toBeNull();
   });
 });

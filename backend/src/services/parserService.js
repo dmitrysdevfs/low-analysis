@@ -76,14 +76,20 @@ export const parseLawHtml = (html, mainHtml = null) => {
     const anchor = $p.find('a[data-tree]').first();
     const text = $p.text().trim();
 
-    const dataTree = anchor.length ? (anchor.attr('data-tree') || '') : '';
-    const anchorName = anchor.length ? (anchor.attr('name') || '') : '';
+    const dataTree = anchor.length ? anchor.attr('data-tree') || '' : '';
+    const anchorName = anchor.length ? anchor.attr('name') || '' : '';
 
     // A real body element (section, article, or sub-element) signals the end of the preamble zone
     const isBodyElement =
       dataTree.startsWith('rz') ||
       dataTree.startsWith('st') ||
-      dataTree.includes(':st');
+      dataTree.startsWith('kg') ||
+      dataTree.startsWith('gl') ||
+      dataTree.includes(':st') ||
+      (!dataTree &&
+        (text.toLowerCase().startsWith('книга ') ||
+          text.toLowerCase().startsWith('глава ') ||
+          text.toLowerCase().startsWith('розділ ')));
 
     if (isBodyElement) {
       hasHitFirstDataTree = true;
@@ -97,7 +103,37 @@ export const parseLawHtml = (html, mainHtml = null) => {
       const isLawTitleOrType =
         dataTree.startsWith('ty') || dataTree.startsWith('nz');
 
-      if (text && text.length > 0 && !isEditorial && !isLawTitleOrType) {
+      // Skip generic document type headers, law titles, and publication metadata
+      const lowerText = text.toLowerCase().trim();
+      const cleanTitle = title ? title.toLowerCase().trim() : '';
+      const normalizedText = lowerText.replace(/\s+/g, ' ');
+      const normalizedTitle = cleanTitle.replace(/\s+/g, ' ');
+
+      const isDocHeader =
+        normalizedText === 'закон україни' ||
+        normalizedText === 'конституція україни' ||
+        normalizedText === 'кодекс україни' ||
+        normalizedText.endsWith('кодекс україни') ||
+        normalizedText.startsWith('кодекс україни') ||
+        normalizedText === normalizedTitle ||
+        (normalizedTitle &&
+          normalizedText.replace('закон україни', '').trim() ===
+            normalizedTitle);
+
+      const isPublicationInfo =
+        text.startsWith('(') &&
+        (lowerText.includes('відомості верховної ради') ||
+          lowerText.includes('офіційний вісник') ||
+          lowerText.includes('урядовий кур'));
+
+      if (
+        text &&
+        text.length > 0 &&
+        !isEditorial &&
+        !isLawTitleOrType &&
+        !isDocHeader &&
+        !isPublicationInfo
+      ) {
         preambleText.push(text);
       }
       // Non-body elements in this zone (like headers, comments, or actual preamble text)
