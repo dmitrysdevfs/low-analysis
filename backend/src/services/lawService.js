@@ -20,6 +20,49 @@ export const getLawById = async (id) => {
 };
 
 /**
+ * Returns general statistics for a law based on its elements.
+ * @param {string} lawId
+ * @returns {Promise<object>}
+ */
+export const getLawStats = async (lawId) => {
+  const elements = await Element.find({ lawId });
+  if (!elements || elements.length === 0) return null;
+
+  const totalElements = elements.length;
+  const totalChars = elements.reduce(
+    (acc, el) => acc + (el.chars_count || 0),
+    0,
+  );
+  const meanChars = totalChars / totalElements;
+
+  const variance =
+    elements.reduce(
+      (acc, el) => acc + Math.pow((el.chars_count || 0) - meanChars, 2),
+      0,
+    ) / totalElements;
+  const standardDeviation = Math.sqrt(variance);
+
+  // Group by risk level
+  const riskLevels = {
+    green: 0,
+    yellow: 0,
+    red: 0,
+    null: 0,
+  };
+  elements.forEach((el) => {
+    const level = el.risk_level || 'null';
+    riskLevels[level] = (riskLevels[level] || 0) + 1;
+  });
+
+  return {
+    totalElements,
+    meanChars,
+    standardDeviation,
+    riskLevels,
+  };
+};
+
+/**
  * Returns all Elements for a given law, sorted by order.
  * The tree structure is flat here; callers can build hierarchy client-side
  * or via buildTree() helper if needed.

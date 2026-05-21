@@ -1,6 +1,7 @@
 import * as lawService from '../services/lawService.js';
 import * as fetchService from '../services/fetchService.js';
 import { parseLawHtml } from '../services/parserService.js';
+import { performStatisticalAnalysis } from '../services/statisticalAnalysisService.js';
 
 export const getAllLaws = async (req, res, next) => {
   try {
@@ -20,6 +21,19 @@ export const getLawTree = async (req, res, next) => {
 
     const elements = await lawService.getLawTree(id);
     res.json({ law, elements });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLawStats = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const stats = await lawService.getLawStats(id);
+    if (!stats)
+      return res.status(404).json({ message: 'Stats not found for this law' });
+
+    res.json(stats);
   } catch (error) {
     next(error);
   }
@@ -92,6 +106,9 @@ export const parseLawFromUrl = async (req, res, next) => {
     law.totalArticles = articleCount;
     law.totalSections = sectionCount;
     await law.save();
+
+    // 6. Calculate statistical metrics
+    await performStatisticalAnalysis(law._id);
 
     res.json({
       message: 'Law successfully parsed and saved',
