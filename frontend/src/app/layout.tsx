@@ -12,7 +12,7 @@ import { RouteAccessGate } from "@/components/auth/RouteAccessGate";
 import { BillingProvider } from "@/components/billing/BillingProvider";
 import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import AiAssistant from "@/components/AiAssistant";
+import { AiAssistant } from "@/components/AiAssistant";
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
