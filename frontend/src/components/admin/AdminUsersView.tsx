@@ -64,20 +64,26 @@ export function AdminUsersView() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>Користувачі</span>
-          <h2 className={styles.title}>Реєстр акаунтів із живими адмін-діями.</h2>
+          <h2 className={styles.title}>
+            Реєстр акаунтів із живими адмін-діями.
+          </h2>
           <p className={styles.description}>
-            Цей екран зберігає поточну демонстраційну логіку акаунтів, але подає її як
-            сфокусований реєстр із чіткішим відображенням статусів, безпечнішою
-            роботою з розробницькими акаунтами та швидкими рольовими фільтрами.
+            Цей екран зберігає поточну демонстраційну логіку акаунтів, але подає
+            її як сфокусований реєстр із чіткішим відображенням статусів,
+            безпечнішою роботою з розробницькими акаунтами та швидкими рольовими
+            фільтрами.
           </p>
         </div>
 
         <aside className={styles.heroAside}>
           <span className={styles.tag}>Поточний реєстр</span>
-          <div className={styles.heroValue}>{snapshot.totalAccounts} акаунтів</div>
+          <div className={styles.heroValue}>
+            {snapshot.totalAccounts} акаунтів
+          </div>
           <div className={styles.heroMeta}>
-            {snapshot.clientAccounts} клієнтів, {snapshot.adminAccounts} адмінів,{" "}
-            {statusCounts.inactive} неактивних, {statusCounts.dev} розробницьких ідентичностей
+            {snapshot.clientAccounts} клієнтів, {snapshot.adminAccounts}{" "}
+            адмінів, {statusCounts.inactive} неактивних, {statusCounts.dev}{" "}
+            розробницьких ідентичностей
           </div>
         </aside>
       </section>
@@ -85,29 +91,39 @@ export function AdminUsersView() {
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Усього</span>
-          <strong className={styles.metricValue}>{snapshot.totalAccounts}</strong>
+          <strong className={styles.metricValue}>
+            {snapshot.totalAccounts}
+          </strong>
           <p className={styles.metricNote}>
-            Усі збережені та вбудовані розробницькі ідентичності, які бачить адмін-простір.
+            Усі збережені та вбудовані розробницькі ідентичності, які бачить
+            адмін-простір.
           </p>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Клієнти</span>
-          <strong className={styles.metricValue}>{snapshot.clientAccounts}</strong>
+          <strong className={styles.metricValue}>
+            {snapshot.clientAccounts}
+          </strong>
           <p className={styles.metricNote}>
-            Клієнтські сесії зі стандартним доступом до законів, суб'єктів і пошуку.
+            Клієнтські сесії зі стандартним доступом до законів, суб'єктів і
+            пошуку.
           </p>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Адміни</span>
-          <strong className={styles.metricValue}>{snapshot.adminAccounts}</strong>
+          <strong className={styles.metricValue}>
+            {snapshot.adminAccounts}
+          </strong>
           <p className={styles.metricNote}>
-            Ідентичності, які можуть входити в адмін-простір і керувати захищеними
-            сценаріями.
+            Ідентичності, які можуть входити в адмін-простір і керувати
+            захищеними сценаріями.
           </p>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Неактивні</span>
-          <strong className={styles.metricValue}>{statusCounts.inactive}</strong>
+          <strong className={styles.metricValue}>
+            {statusCounts.inactive}
+          </strong>
           <p className={styles.metricNote}>
             Акаунти, які зараз вимкнені у локальному сховищі автентифікації.
           </p>
@@ -127,7 +143,9 @@ export function AdminUsersView() {
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
                 <span className={styles.progressLabel}>Активні акаунти</span>
-                <span className={styles.progressValue}>{statusCounts.active}</span>
+                <span className={styles.progressValue}>
+                  {statusCounts.active}
+                </span>
               </div>
               <div className={styles.progressTrack}>
                 <span
@@ -141,7 +159,9 @@ export function AdminUsersView() {
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
                 <span className={styles.progressLabel}>Неактивні акаунти</span>
-                <span className={styles.progressValue}>{statusCounts.inactive}</span>
+                <span className={styles.progressValue}>
+                  {statusCounts.inactive}
+                </span>
               </div>
               <div className={styles.progressTrack}>
                 <span
@@ -159,7 +179,9 @@ export function AdminUsersView() {
           <div className={styles.panelHeader}>
             <div>
               <span className={styles.panelEyebrow}>Мікс джерел</span>
-              <h3 className={styles.panelTitle}>Збережені та розробницькі ідентичності</h3>
+              <h3 className={styles.panelTitle}>
+                Збережені та розробницькі ідентичності
+              </h3>
             </div>
           </div>
 
@@ -167,7 +189,9 @@ export function AdminUsersView() {
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
                 <span className={styles.progressLabel}>Збережені акаунти</span>
-                <span className={styles.progressValue}>{statusCounts.stored}</span>
+                <span className={styles.progressValue}>
+                  {statusCounts.stored}
+                </span>
               </div>
               <div className={styles.progressTrack}>
                 <span
@@ -180,7 +204,9 @@ export function AdminUsersView() {
             </div>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Розробницькі акаунти</span>
+                <span className={styles.progressLabel}>
+                  Розробницькі акаунти
+                </span>
                 <span className={styles.progressValue}>{statusCounts.dev}</span>
               </div>
               <div className={styles.progressTrack}>
@@ -192,8 +218,9 @@ export function AdminUsersView() {
                 />
               </div>
               <div className={styles.progressMeta}>
-                Розробницькі ідентичності лишаються видимими для демонстраційних сценаріїв, але дії
-                над роллю та статусом для них навмисно вимкнені.
+                Розробницькі ідентичності лишаються видимими для демонстраційних
+                сценаріїв, але дії над роллю та статусом для них навмисно
+                вимкнені.
               </div>
             </div>
           </div>
@@ -238,8 +265,12 @@ export function AdminUsersView() {
                   return (
                     <div key={account.id} className={styles.accountRow}>
                       <div>
-                        <div className={styles.accountName}>{account.displayName}</div>
-                        <div className={styles.accountMeta}>{account.email}</div>
+                        <div className={styles.accountName}>
+                          {account.displayName}
+                        </div>
+                        <div className={styles.accountMeta}>
+                          {account.email}
+                        </div>
                       </div>
 
                       <div className={styles.accountBadges}>
@@ -259,12 +290,16 @@ export function AdminUsersView() {
                           {formatAccountStatusLabel(account.status)}
                         </span>
                         {account.superCodeProtected ? (
-                          <span className={styles.accountBadgeAccent}>супер-код</span>
+                          <span className={styles.accountBadgeAccent}>
+                            супер-код
+                          </span>
                         ) : null}
                       </div>
 
                       <div className={styles.accountMetaBlock}>
-                        <span>Створено: {formatDateShort(account.createdAt)}</span>
+                        <span>
+                          Створено: {formatDateShort(account.createdAt)}
+                        </span>
                         <span>
                           Останній вхід:{" "}
                           {account.lastLoginAt

@@ -54,11 +54,13 @@ const ADMIN_NAV: AdminNavItem[] = [
 const PAGE_COPY: Record<string, { title: string; subtitle: string }> = {
   [ROUTES.admin]: {
     title: "Адмін-дашборд",
-    subtitle: "Пульт керування акаунтами, білінгом, безпекою та активністю сайту.",
+    subtitle:
+      "Пульт керування акаунтами, білінгом, безпекою та активністю сайту.",
   },
   [ROUTES.adminUsers]: {
     title: "Реєстр користувачів",
-    subtitle: "Пошук акаунтів, зміна ролей, керування статусами та примусовий вихід.",
+    subtitle:
+      "Пошук акаунтів, зміна ролей, керування статусами та примусовий вихід.",
   },
   [ROUTES.adminBilling]: {
     title: "Білінг-простір",

@@ -26,7 +26,10 @@ interface PartMention {
   globalIdx: number;
 }
 
-function buildMentions(elements: TreeNode[], lawsMap: Map<string, Law>): ArticleMention[] {
+function buildMentions(
+  elements: TreeNode[],
+  lawsMap: Map<string, Law>,
+): ArticleMention[] {
   const map = new Map<string, Omit<ArticleMention, "globalIdx">>();
   for (const el of elements) {
     if (!el.lawId) continue;
@@ -74,7 +77,9 @@ export function SubjectMentionsModal() {
   const currentLawId = articleMatch?.[1] ?? null;
   const currentArticleNum = articleMatch?.[2] ?? null;
 
-  const { subject, elements, loading } = useSubjectDetail(subjectId ?? undefined);
+  const { subject, elements, loading } = useSubjectDetail(
+    subjectId ?? undefined,
+  );
   const { laws } = useLaws();
 
   const lawsMap = useMemo(() => new Map(laws.map((l) => [l._id, l])), [laws]);
@@ -82,11 +87,15 @@ export function SubjectMentionsModal() {
     () => buildMentions(elements, lawsMap),
     [elements, lawsMap],
   );
-  const articlePartsMap = useMemo(() => buildArticlePartsMap(elements), [elements]);
+  const articlePartsMap = useMemo(
+    () => buildArticlePartsMap(elements),
+    [elements],
+  );
 
   const partMentions = useMemo((): PartMention[] => {
     if (!currentLawId || !currentArticleNum) return [];
-    const parts = articlePartsMap.get(`${currentLawId}/${currentArticleNum}`) ?? [];
+    const parts =
+      articlePartsMap.get(`${currentLawId}/${currentArticleNum}`) ?? [];
     return parts.map((el, i) => ({
       code: el.code,
       badge: getNodeBadge(el),
@@ -112,15 +121,19 @@ export function SubjectMentionsModal() {
     if (!mention) return;
     const targetPath = ROUTES.article(mention.lawId, mention.articleNum);
     if (pathname !== targetPath) {
-      router.push(`${targetPath}?subjectModal=${subjectId}&mentionIdx=${safeIdx}`);
+      router.push(
+        `${targetPath}?subjectModal=${subjectId}&mentionIdx=${safeIdx}`,
+      );
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleMentions.length, safeIdx, subjectId, isPartsMode]);
 
   // Scroll list active item into view
   useEffect(() => {
     if (!listRef.current) return;
-    const active = listRef.current.querySelector(`[data-active="true"]`) as HTMLElement | null;
+    const active = listRef.current.querySelector(
+      `[data-active="true"]`,
+    ) as HTMLElement | null;
     active?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [safeIdx, safePartIdx, isPartsMode]);
 
@@ -178,7 +191,9 @@ export function SubjectMentionsModal() {
   };
 
   // collapsed = explicitly closed; default = all expanded
-  const [collapsedArticles, setCollapsedArticles] = useState<Set<string>>(new Set());
+  const [collapsedArticles, setCollapsedArticles] = useState<Set<string>>(
+    new Set(),
+  );
   const toggleArticle = useCallback((key: string) => {
     setCollapsedArticles((prev) => {
       const next = new Set(prev);
@@ -189,9 +204,13 @@ export function SubjectMentionsModal() {
   }, []);
 
   const groupedByLaw = useMemo(() => {
-    const map = new Map<string, { lawTitle: string; mentions: ArticleMention[] }>();
+    const map = new Map<
+      string,
+      { lawTitle: string; mentions: ArticleMention[] }
+    >();
     articleMentions.forEach((m) => {
-      if (!map.has(m.lawId)) map.set(m.lawId, { lawTitle: m.lawTitle, mentions: [] });
+      if (!map.has(m.lawId))
+        map.set(m.lawId, { lawTitle: m.lawTitle, mentions: [] });
       map.get(m.lawId)!.mentions.push(m);
     });
     return Array.from(map.values());
@@ -255,17 +274,23 @@ export function SubjectMentionsModal() {
             <div className={`mono ${styles.statusText}`}>Завантаження…</div>
           ) : isPartsMode ? (
             partMentions.length === 0 ? (
-              <div className={`mono ${styles.statusText}`}>Частин не знайдено</div>
+              <div className={`mono ${styles.statusText}`}>
+                Частин не знайдено
+              </div>
             ) : (
               partMentions.map((pm) => (
                 <button
                   key={pm.code}
                   type="button"
-                  data-active={pm.globalIdx === safePartIdx ? "true" : undefined}
+                  data-active={
+                    pm.globalIdx === safePartIdx ? "true" : undefined
+                  }
                   className={`${styles.mentionItem} ${pm.globalIdx === safePartIdx ? styles.mentionItemActive : ""}`}
                   onClick={() => handleNavPart(pm.globalIdx)}
                 >
-                  <span className={`mono ${styles.mentionArticle}`}>{pm.badge}</span>
+                  <span className={`mono ${styles.mentionArticle}`}>
+                    {pm.badge}
+                  </span>
                   {pm.snippet && (
                     <span className={styles.mentionSnippet}>
                       {pm.snippet}
@@ -276,14 +301,20 @@ export function SubjectMentionsModal() {
               ))
             )
           ) : groupedByLaw.length === 0 ? (
-            <div className={`mono ${styles.statusText}`}>Згадок не знайдено</div>
+            <div className={`mono ${styles.statusText}`}>
+              Згадок не знайдено
+            </div>
           ) : (
             groupedByLaw.map((group) => (
               <div key={group.mentions[0]?.lawId} className={styles.lawGroup}>
-                <div className={`mono ${styles.lawGroupTitle}`}>{group.lawTitle}</div>
+                <div className={`mono ${styles.lawGroupTitle}`}>
+                  {group.lawTitle}
+                </div>
                 {group.mentions.map((mention) => {
                   const parts =
-                    articlePartsMap.get(`${mention.lawId}/${mention.articleNum}`) ?? [];
+                    articlePartsMap.get(
+                      `${mention.lawId}/${mention.articleNum}`,
+                    ) ?? [];
                   const articleKey = `${mention.lawId}/${mention.articleNum}`;
                   const isExpanded = !collapsedArticles.has(articleKey);
                   return (
@@ -291,7 +322,9 @@ export function SubjectMentionsModal() {
                       <div className={styles.articleRow}>
                         <button
                           type="button"
-                          data-active={mention.globalIdx === safeIdx ? "true" : undefined}
+                          data-active={
+                            mention.globalIdx === safeIdx ? "true" : undefined
+                          }
                           className={`${styles.mentionItem} ${styles.mentionItemRow} ${mention.globalIdx === safeIdx ? styles.mentionItemActive : ""}`}
                           onClick={() => handleNav(mention.globalIdx)}
                         >
@@ -318,24 +351,25 @@ export function SubjectMentionsModal() {
                           </button>
                         )}
                       </div>
-                      {isExpanded && parts.map((part, i) => (
-                        <button
-                          key={part.code}
-                          type="button"
-                          className={styles.partItem}
-                          onClick={() => handleEnterPartsMode(mention, i)}
-                        >
-                          <span className={`mono ${styles.partBadge}`}>
-                            {getNodeBadge(part)}
-                          </span>
-                          {(part.text || part.title) && (
-                            <span className={styles.partSnippet}>
-                              {(part.text ?? part.title ?? "").slice(0, 60)}
-                              {((part.text ?? "").length > 60) ? "…" : ""}
+                      {isExpanded &&
+                        parts.map((part, i) => (
+                          <button
+                            key={part.code}
+                            type="button"
+                            className={styles.partItem}
+                            onClick={() => handleEnterPartsMode(mention, i)}
+                          >
+                            <span className={`mono ${styles.partBadge}`}>
+                              {getNodeBadge(part)}
                             </span>
-                          )}
-                        </button>
-                      ))}
+                            {(part.text || part.title) && (
+                              <span className={styles.partSnippet}>
+                                {(part.text ?? part.title ?? "").slice(0, 60)}
+                                {(part.text ?? "").length > 60 ? "…" : ""}
+                              </span>
+                            )}
+                          </button>
+                        ))}
                     </div>
                   );
                 })}
@@ -385,7 +419,11 @@ export function SubjectMentionsModal() {
               Наступна →
             </button>
           </div>
-          <button type="button" className={styles.resetBtn} onClick={handleReset}>
+          <button
+            type="button"
+            className={styles.resetBtn}
+            onClick={handleReset}
+          >
             Скинути фільтр
           </button>
         </div>

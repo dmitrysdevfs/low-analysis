@@ -1,10 +1,7 @@
 "use client";
 
 import { ROUTES } from "@/constants/routes";
-import {
-  formatAccessRoleLabel,
-  formatBooleanLabel,
-} from "./adminLabels";
+import { formatAccessRoleLabel, formatBooleanLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import styles from "./AdminWorkspace.module.scss";
 
@@ -32,18 +29,20 @@ export function AdminAccessView() {
           <span className={styles.eyebrow}>Доступ</span>
           <h2 className={styles.title}>Тримайте права доступу в полі зору.</h2>
           <p className={styles.description}>
-            Модуль доступу лишається сумісним із поточним маршрутним захистом, але подає
-            матрицю ролей як окрему контрольну сторінку з явним покриттям нового
-            адмін-простору.
+            Модуль доступу лишається сумісним із поточним маршрутним захистом,
+            але подає матрицю ролей як окрему контрольну сторінку з явним
+            покриттям нового адмін-простору.
           </p>
         </div>
 
         <aside className={styles.heroAside}>
           <span className={styles.tag}>Захищені зони</span>
-          <div className={styles.heroValue}>{snapshot.protectedRoutes} маршрутів</div>
+          <div className={styles.heroValue}>
+            {snapshot.protectedRoutes} маршрутів
+          </div>
           <div className={styles.heroMeta}>
-            Тепер усі адмінські поверхні зібрані під однією оболонкою і однією родиною
-            маршрутів.
+            Тепер усі адмінські поверхні зібрані під однією оболонкою і однією
+            родиною маршрутів.
           </div>
         </aside>
       </section>
@@ -72,9 +71,12 @@ export function AdminAccessView() {
         })}
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Адмін-оболонка</span>
-          <strong className={styles.metricValue}>{PROTECTED_SURFACES.length}</strong>
+          <strong className={styles.metricValue}>
+            {PROTECTED_SURFACES.length}
+          </strong>
           <p className={styles.metricNote}>
-            Окремі адмін-маршрути тепер ізольовані від оболонки публічного сайту.
+            Окремі адмін-маршрути тепер ізольовані від оболонки публічного
+            сайту.
           </p>
         </article>
       </section>
@@ -144,17 +146,20 @@ export function AdminAccessView() {
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressLabel}>
-                Головний бар'єр доступу до /admin/*, як і раніше, лишається чинним.
+                Головний бар'єр доступу до /admin/*, як і раніше, лишається
+                чинним.
               </div>
             </div>
             <div className={styles.progressRow}>
               <div className={styles.progressLabel}>
-                Публічні сторінки зберігають попередню поведінку автентифікації й не змінюються.
+                Публічні сторінки зберігають попередню поведінку автентифікації
+                й не змінюються.
               </div>
             </div>
             <div className={styles.progressRow}>
               <div className={styles.progressLabel}>
-                Редизайн ізолює адмінську оболонку, але не послаблює права доступу.
+                Редизайн ізолює адмінську оболонку, але не послаблює права
+                доступу.
               </div>
             </div>
           </div>

@@ -2,7 +2,11 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 import { formatDateShort } from "@/lib/utils";
-import { formatAccountTypeLabel, formatPlanFilterLabel, formatPlanLabel } from "./adminLabels";
+import {
+  formatAccountTypeLabel,
+  formatPlanFilterLabel,
+  formatPlanLabel,
+} from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import styles from "./AdminWorkspace.module.scss";
 
@@ -151,7 +155,9 @@ export function AdminBillingView() {
 
         <aside className={styles.heroAside}>
           <span className={styles.tag}>Призначені місця</span>
-          <div className={styles.heroValue}>{billingRegistry.length} рядків</div>
+          <div className={styles.heroValue}>
+            {billingRegistry.length} рядків
+          </div>
           <div className={styles.heroMeta}>
             {billingCounts.preview} прев'ю, {billingCounts.trial} тріал,{" "}
             {paidAccounts} платних, {billingCounts.admin} адмінських
@@ -162,7 +168,9 @@ export function AdminBillingView() {
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Прев'ю</span>
-          <strong className={styles.metricValue}>{billingCounts.preview}</strong>
+          <strong className={styles.metricValue}>
+            {billingCounts.preview}
+          </strong>
           <p className={styles.metricNote}>
             Акаунти без активного платного циклу, які все ще працюють на
             прев'ю-квотах.
@@ -172,7 +180,8 @@ export function AdminBillingView() {
           <span className={styles.metricLabel}>Тріал</span>
           <strong className={styles.metricValue}>{billingCounts.trial}</strong>
           <p className={styles.metricNote}>
-            Стартові місця з тимчасовим безлімітним доступом у демо-моделі білінгу.
+            Стартові місця з тимчасовим безлімітним доступом у демо-моделі
+            білінгу.
           </p>
         </article>
         <article className={styles.metricCard}>
@@ -237,8 +246,12 @@ export function AdminBillingView() {
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Середнє вигорання пошуку</span>
-                <span className={styles.progressValue}>{quotaHealth.search}%</span>
+                <span className={styles.progressLabel}>
+                  Середнє вигорання пошуку
+                </span>
+                <span className={styles.progressValue}>
+                  {quotaHealth.search}%
+                </span>
               </div>
               <div className={styles.progressTrack}>
                 <span
@@ -250,8 +263,12 @@ export function AdminBillingView() {
 
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Середнє вигорання переглядів</span>
-                <span className={styles.progressValue}>{quotaHealth.view}%</span>
+                <span className={styles.progressLabel}>
+                  Середнє вигорання переглядів
+                </span>
+                <span className={styles.progressValue}>
+                  {quotaHealth.view}%
+                </span>
               </div>
               <div className={styles.progressTrack}>
                 <span
@@ -264,7 +281,9 @@ export function AdminBillingView() {
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
                 <span className={styles.progressLabel}>Адмінські місця</span>
-                <span className={styles.progressValue}>{billingCounts.admin}</span>
+                <span className={styles.progressValue}>
+                  {billingCounts.admin}
+                </span>
               </div>
               <div className={styles.progressMeta}>
                 Адміни не входять у клієнтські тарифні лінійки та мають
@@ -279,7 +298,9 @@ export function AdminBillingView() {
         <div className={styles.panelHeader}>
           <div>
             <span className={styles.panelEyebrow}>Реєстр</span>
-            <h3 className={styles.panelTitle}>Призначення планів і перевірка квот</h3>
+            <h3 className={styles.panelTitle}>
+              Призначення планів і перевірка квот
+            </h3>
           </div>
         </div>
 
@@ -320,7 +341,9 @@ export function AdminBillingView() {
               filteredRegistry.map((account) => (
                 <div key={account.id} className={styles.accountRow}>
                   <div>
-                    <div className={styles.accountName}>{account.displayName}</div>
+                    <div className={styles.accountName}>
+                      {account.displayName}
+                    </div>
                     <div className={styles.accountMeta}>{account.email}</div>
                   </div>
 
@@ -370,7 +393,11 @@ export function AdminBillingView() {
                           type="button"
                           className={styles.accountActionBtn}
                           onClick={() =>
-                            handleAssignPlan(account.id, account.displayName, planId)
+                            handleAssignPlan(
+                              account.id,
+                              account.displayName,
+                              planId,
+                            )
                           }
                         >
                           {formatPlanLabel(planId)}
@@ -379,7 +406,9 @@ export function AdminBillingView() {
                     </div>
                   ) : (
                     <div className={styles.accountActions}>
-                      <span className={styles.accountBadgeAccent}>керується адміном</span>
+                      <span className={styles.accountBadgeAccent}>
+                        керується адміном
+                      </span>
                     </div>
                   )}
                 </div>

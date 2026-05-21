@@ -1,9 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from "react";
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  useCallback,
+  Suspense,
+} from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { recordWorkspaceView } from "@/lib/auth/clientWorkspace";
@@ -308,7 +320,10 @@ export default function ArticlePage() {
 
                     {/* Compact subjects block */}
                     {articleSubjects.length > 0 && (
-                      <div id="articleSubjectsBlock" className={styles.articleSubjectsBlock}>
+                      <div
+                        id="articleSubjectsBlock"
+                        className={styles.articleSubjectsBlock}
+                      >
                         <div className={styles.articleSubjectsHeader}>
                           <span className={styles.articleSubjectsLabel}>
                             СУБ&apos;ЄКТИ · {articleSubjects.length}

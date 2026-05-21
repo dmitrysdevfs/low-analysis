@@ -57,20 +57,24 @@ export function AdminAuditView() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>Аудит</span>
-          <h2 className={styles.title}>Читабельна стрічка подій замість прихованого логу.</h2>
+          <h2 className={styles.title}>
+            Читабельна стрічка подій замість прихованого логу.
+          </h2>
           <p className={styles.description}>
-            Модуль аудиту зберігає те саме фронтенд-джерело подій, але подає його
-            як окремий екран перевірки з фільтрами за критичністю, пошуком і
-            чіткішим сигналом навколо безпекових операцій.
+            Модуль аудиту зберігає те саме фронтенд-джерело подій, але подає
+            його як окремий екран перевірки з фільтрами за критичністю, пошуком
+            і чіткішим сигналом навколо безпекових операцій.
           </p>
         </div>
 
         <aside className={styles.heroAside}>
           <span className={styles.tag}>Поточна стрічка</span>
-          <div className={styles.heroValue}>{snapshot.auditLog.length} подій</div>
+          <div className={styles.heroValue}>
+            {snapshot.auditLog.length} подій
+          </div>
           <div className={styles.heroMeta}>
-            {severityCounts.security} безпекових, {severityCounts.warning} попереджень,{" "}
-            {severityCounts.info} інформаційних
+            {severityCounts.security} безпекових, {severityCounts.warning}{" "}
+            попереджень, {severityCounts.info} інформаційних
           </div>
         </aside>
       </section>
@@ -85,21 +89,27 @@ export function AdminAuditView() {
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Попередження</span>
-          <strong className={styles.metricValue}>{severityCounts.warning}</strong>
+          <strong className={styles.metricValue}>
+            {severityCounts.warning}
+          </strong>
           <p className={styles.metricNote}>
             Зміни статусів, примусові виходи та підвищені операційні сигнали.
           </p>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Безпека</span>
-          <strong className={styles.metricValue}>{severityCounts.security}</strong>
+          <strong className={styles.metricValue}>
+            {severityCounts.security}
+          </strong>
           <p className={styles.metricNote}>
             Входи адмінів, ротації коду та білінг/безпеково-чутливі зміни.
           </p>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Видимі</span>
-          <strong className={styles.metricValue}>{filteredEvents.length}</strong>
+          <strong className={styles.metricValue}>
+            {filteredEvents.length}
+          </strong>
           <p className={styles.metricNote}>
             Події, які зараз відповідають активному фільтру й пошуковому запиту.
           </p>
@@ -110,7 +120,9 @@ export function AdminAuditView() {
         <div className={styles.panelHeader}>
           <div>
             <span className={styles.panelEyebrow}>Стрічка подій</span>
-            <h3 className={styles.panelTitle}>Фільтрування та перегляд подій</h3>
+            <h3 className={styles.panelTitle}>
+              Фільтрування та перегляд подій
+            </h3>
           </div>
         </div>
 

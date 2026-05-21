@@ -47,15 +47,21 @@ const CODE_STATUS_LABELS = {
 } as const;
 
 export function formatAccountTypeLabel(value: string) {
-  return ACCOUNT_TYPE_LABELS[value as keyof typeof ACCOUNT_TYPE_LABELS] ?? value;
+  return (
+    ACCOUNT_TYPE_LABELS[value as keyof typeof ACCOUNT_TYPE_LABELS] ?? value
+  );
 }
 
 export function formatAccountSourceLabel(value: string) {
-  return ACCOUNT_SOURCE_LABELS[value as keyof typeof ACCOUNT_SOURCE_LABELS] ?? value;
+  return (
+    ACCOUNT_SOURCE_LABELS[value as keyof typeof ACCOUNT_SOURCE_LABELS] ?? value
+  );
 }
 
 export function formatAccountStatusLabel(value: string) {
-  return ACCOUNT_STATUS_LABELS[value as keyof typeof ACCOUNT_STATUS_LABELS] ?? value;
+  return (
+    ACCOUNT_STATUS_LABELS[value as keyof typeof ACCOUNT_STATUS_LABELS] ?? value
+  );
 }
 
 export function formatPlanLabel(value: string | null | undefined) {

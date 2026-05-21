@@ -182,7 +182,9 @@ function writeSessionStorageItem(key: string, value: unknown) {
   window.sessionStorage.setItem(key, JSON.stringify(value));
 }
 
-function normalizeLegacyAuditEntry(entry: AdminAuditLogEntry): AdminAuditLogEntry {
+function normalizeLegacyAuditEntry(
+  entry: AdminAuditLogEntry,
+): AdminAuditLogEntry {
   const actionMap: Record<string, string> = {
     "Super code regenerated": "Супер-код оновлено",
     "Profile updated": "Профіль оновлено",
@@ -205,11 +207,20 @@ function normalizeLegacyAuditEntry(entry: AdminAuditLogEntry): AdminAuditLogEntr
     ...entry,
     action: actionMap[entry.action] ?? entry.action,
     detail: entry.detail
-      .replace("A fresh administrator onboarding code was issued:", "Створено новий код для підключення адміністратора:")
+      .replace(
+        "A fresh administrator onboarding code was issued:",
+        "Створено новий код для підключення адміністратора:",
+      )
       .replace("Display name changed to", "Ім'я профілю змінено на")
-      .replace("The account password was changed in the frontend preview store.", "Пароль акаунта змінено у локальному сховищі попереднього режиму.")
+      .replace(
+        "The account password was changed in the frontend preview store.",
+        "Пароль акаунта змінено у локальному сховищі попереднього режиму.",
+      )
       .replace("authenticated successfully.", "успішно автентифікувався.")
-      .replace("Force logout applied to account", "Для акаунта застосовано примусовий вихід")
+      .replace(
+        "Force logout applied to account",
+        "Для акаунта застосовано примусовий вихід",
+      )
       .replace("Account ", "Акаунт ")
       .replace(" status set to inactive.", " переведено в статус неактивний.")
       .replace(" status set to active.", " переведено в статус активний.")
@@ -686,9 +697,7 @@ export function loginMockAccount(payload: LoginPayload): AuthActionResult {
   }
   appendAuditLogEntry({
     action:
-      session.accountType === "admin"
-        ? "Вхід адміністратора"
-        : "Вхід клієнта",
+      session.accountType === "admin" ? "Вхід адміністратора" : "Вхід клієнта",
     detail: `${session.displayName} успішно автентифікувався.`,
     actor: session.displayName,
     severity: session.accountType === "admin" ? "security" : "info",
@@ -728,9 +737,7 @@ export function deactivateMockAccount(userId: string): {
   writeStorageItem(AUTH_ACCOUNTS_STORAGE_KEY, next);
   appendAuditLogEntry({
     action:
-      nextStatus === "inactive"
-        ? "Акаунт деактивовано"
-        : "Акаунт реактивовано",
+      nextStatus === "inactive" ? "Акаунт деактивовано" : "Акаунт реактивовано",
     detail: `Для акаунта ${userId} встановлено статус ${nextStatus === "inactive" ? "неактивний" : "активний"}.`,
     actor: "admin",
     severity: "warning",

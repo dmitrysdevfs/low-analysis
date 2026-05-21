@@ -25,11 +25,13 @@ export function AdminCodesView() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>Коди</span>
-          <h2 className={styles.title}>Життєвий цикл супер-коду в одному місці.</h2>
+          <h2 className={styles.title}>
+            Життєвий цикл супер-коду в одному місці.
+          </h2>
           <p className={styles.description}>
-            Модуль кодів зберігає поточну логіку підключення адміністраторів, але подає її як
-            чіткіший безпековий екран з активним станом, історією ротацій і
-            контекстом навколо захищених адмін-акаунтів.
+            Модуль кодів зберігає поточну логіку підключення адміністраторів,
+            але подає її як чіткіший безпековий екран з активним станом,
+            історією ротацій і контекстом навколо захищених адмін-акаунтів.
           </p>
         </div>
 
@@ -49,12 +51,15 @@ export function AdminCodesView() {
           <span className={styles.metricLabel}>Активний код</span>
           <strong className={styles.metricValue}>1</strong>
           <p className={styles.metricNote}>
-            Одночасно для підключення адміністраторів може бути чинним лише один супер-код.
+            Одночасно для підключення адміністраторів може бути чинним лише один
+            супер-код.
           </p>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Записи історії</span>
-          <strong className={styles.metricValue}>{snapshot.superCodeHistory.length}</strong>
+          <strong className={styles.metricValue}>
+            {snapshot.superCodeHistory.length}
+          </strong>
           <p className={styles.metricNote}>
             Історія ротацій збережена у фронтенд-сховищі адмінки.
           </p>
@@ -87,7 +92,9 @@ export function AdminCodesView() {
           <div className={styles.insightGrid}>
             <div className={styles.insightCard}>
               <div className={styles.insightTitle}>Поточне значення</div>
-              <div className={styles.insightValue}>{snapshot.activeSuperCode}</div>
+              <div className={styles.insightValue}>
+                {snapshot.activeSuperCode}
+              </div>
               <div className={styles.insightMeta}>
                 Передавайте лише в межах сценарію підключення адміністратора.
               </div>
@@ -107,8 +114,8 @@ export function AdminCodesView() {
               <div className={styles.insightTitle}>Безпечна модель</div>
               <div className={styles.insightValue}>Один активний код</div>
               <div className={styles.insightMeta}>
-                Після перегенерації попередні коди лишаються в історії, але вже не
-                є активними.
+                Після перегенерації попередні коди лишаються в історії, але вже
+                не є активними.
               </div>
             </div>
           </div>
@@ -167,17 +174,20 @@ export function AdminCodesView() {
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressLabel}>
-                Для підключення адміністратора, як і раніше, потрібен саме поточний активний супер-код.
+                Для підключення адміністратора, як і раніше, потрібен саме
+                поточний активний супер-код.
               </div>
             </div>
             <div className={styles.progressRow}>
               <div className={styles.progressLabel}>
-                Історія лишається локальною для демо-адмінки й доступна для перегляду.
+                Історія лишається локальною для демо-адмінки й доступна для
+                перегляду.
               </div>
             </div>
             <div className={styles.progressRow}>
               <div className={styles.progressLabel}>
-                Кожна перегенерація лишає старий код видимим, але більше не активним.
+                Кожна перегенерація лишає старий код видимим, але більше не
+                активним.
               </div>
             </div>
           </div>
