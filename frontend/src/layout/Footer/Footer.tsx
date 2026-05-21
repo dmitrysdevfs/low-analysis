@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, useInView, type Variants } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useLaws } from "@/hooks/useLaws";
@@ -68,6 +69,17 @@ function StatCounter({
 }
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isAdminPage = pathname.startsWith(ROUTES.admin);
+
+  if (isAdminPage) {
+    return null;
+  }
+
+  return <PublicFooter />;
+}
+
+function PublicFooter() {
   const { isAdmin } = useAuth();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {

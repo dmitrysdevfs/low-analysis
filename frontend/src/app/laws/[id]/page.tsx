@@ -312,6 +312,7 @@ export default function LawTreePage() {
                 lawId={lawId}
                 lawTitle={law?.title}
                 highlightSubjectId={selectedSubjectId}
+                subjectsMap={subjectsMap}
               />
             ) : null}
           </div>

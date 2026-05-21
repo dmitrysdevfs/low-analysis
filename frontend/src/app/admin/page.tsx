@@ -1,13 +1,5 @@
-﻿import { Layout } from "@/components/layout/Layout";
-import { AdminControlCenter } from "@/components/admin/AdminControlCenter";
-import styles from "./page.module.scss";
+import { AdminDashboardView } from "@/components/admin/AdminDashboardView";
 
 export default function AdminPage() {
-  return (
-    <Layout fullHeight>
-      <div className={styles.wrap}>
-        <AdminControlCenter />
-      </div>
-    </Layout>
-  );
+  return <AdminDashboardView />;
 }

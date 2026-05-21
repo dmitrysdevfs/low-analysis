@@ -12,7 +12,6 @@ import type { TreeBranch } from "@/lib/tree";
 import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
 import { buildLawSections } from "@/lib/tree";
 import {
-  ARTICLE_NODE,
   LAW_FIXTURE,
   LAW_FIXTURE_2,
   PART_NODE,

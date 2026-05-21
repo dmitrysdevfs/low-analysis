@@ -1,0 +1,695 @@
+.page {
+  display: grid;
+  gap: 18px;
+}
+
+.hero,
+.heroAside,
+.metricCard,
+.panel,
+.quickCard,
+.donutCard,
+.insightCard {
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
+    rgba(9, 18, 38, 0.84);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+  gap: 16px;
+  padding: clamp(22px, 3.2vw, 32px);
+}
+
+.heroCopy {
+  display: grid;
+  gap: 14px;
+}
+
+.eyebrow,
+.panelEyebrow,
+.metricLabel,
+.tag,
+.quickLabel {
+  display: inline-flex;
+  width: fit-content;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 0.98;
+}
+
+.description,
+.panelDescription,
+.metricNote,
+.heroMeta,
+.listMeta,
+.progressMeta,
+.helperText {
+  color: #c7d5ea;
+  line-height: 1.7;
+}
+
+.heroAside {
+  padding: 20px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.heroValue {
+  color: #ffffff;
+  font-size: clamp(1.3rem, 2vw, 2rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.heroMeta {
+  font-size: 0.92rem;
+}
+
+.heroLink,
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.heroLink,
+.secondaryAction {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+}
+
+.primaryAction {
+  border: 0;
+  background: linear-gradient(135deg, #f7f6f2 0%, #d9d5c9 100%);
+  color: #081020;
+}
+
+.heroLink:hover,
+.primaryAction:hover,
+.secondaryAction:hover,
+.accountActionBtn:hover,
+.filterTab:hover {
+  transform: translateY(-1px);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricCard {
+  padding: 18px;
+}
+
+.metricValue {
+  display: block;
+  margin-top: 14px;
+  color: #ffffff;
+  font-size: clamp(1.7rem, 2.6vw, 2.35rem);
+  line-height: 1;
+}
+
+.metricNote {
+  margin: 12px 0 0;
+  font-size: 0.88rem;
+}
+
+.contentGrid,
+.splitGrid,
+.donutGrid,
+.quickGrid,
+.insightGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.contentGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.splitGrid {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+}
+
+.donutGrid,
+.quickGrid,
+.insightGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.panel,
+.quickCard,
+.donutCard,
+.insightCard {
+  padding: 20px;
+}
+
+.panelWide {
+  grid-column: span 2;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.panelTitle {
+  margin: 10px 0 0;
+  color: #ffffff;
+  font-size: 1.28rem;
+  line-height: 1.2;
+}
+
+.quickCard {
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.quickCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(200, 168, 67, 0.24);
+  background:
+    linear-gradient(180deg, rgba(200, 168, 67, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
+    rgba(9, 18, 38, 0.84);
+}
+
+.quickLabel {
+  margin-bottom: 10px;
+}
+
+.quickNote {
+  color: #c7d5ea;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.progressList,
+.list,
+.auditList,
+.historyList,
+.accountList {
+  display: grid;
+  gap: 12px;
+}
+
+.progressRow,
+.listRow,
+.auditRow,
+.historyRow {
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.progressTopRow,
+.listTopRow,
+.auditMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.progressLabel,
+.listTitle,
+.auditTitle,
+.historyCode,
+.insightTitle {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.progressValue,
+.legendValue,
+.listCode,
+.accountBadgeAccent,
+.historyStatus {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.progressValue,
+.listCode,
+.historyStatus {
+  color: #fff1bf;
+  font-size: 0.72rem;
+}
+
+.progressTrack {
+  height: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(74, 128, 212, 0.85), rgba(200, 168, 67, 0.88));
+}
+
+.progressMeta {
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.donutCard {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.donutChart {
+  width: min(188px, 100%);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: conic-gradient(var(--donut-stops));
+  display: grid;
+  place-items: center;
+}
+
+.donutHole {
+  width: 62%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(7, 15, 32, 0.94);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 12px;
+  color: #ffffff;
+}
+
+.donutHole strong {
+  display: block;
+  font-size: 1.3rem;
+}
+
+.donutHole span {
+  color: #9eb5d9;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.legend {
+  display: grid;
+  gap: 10px;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.legendLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #eef3fb;
+}
+
+.legendSwatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.listTitle {
+  font-size: 1rem;
+}
+
+.listMeta {
+  margin-top: 6px;
+  font-size: 0.86rem;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.toolbarInput {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  outline: none;
+}
+
+.toolbarInput:focus {
+  border-color: rgba(200, 168, 67, 0.45);
+  box-shadow: 0 0 0 4px rgba(200, 168, 67, 0.08);
+}
+
+.filterTabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filterTab {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+  cursor: pointer;
+  font: inherit;
+}
+
+.filterTabActive {
+  border-color: rgba(200, 168, 67, 0.36);
+  background: rgba(200, 168, 67, 0.12);
+  color: #fff1bf;
+}
+
+.accountRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) auto minmax(210px, 0.95fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.accountName {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.accountMeta,
+.accountMetaBlock {
+  color: #c7d5ea;
+  font-size: 0.88rem;
+}
+
+.accountMeta {
+  margin-top: 6px;
+}
+
+.accountMetaBlock {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.accountBadges {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.accountBadge,
+.accountBadgeAccent,
+.accountBadgeDanger {
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 0.66rem;
+}
+
+.accountBadge {
+  background: rgba(74, 128, 212, 0.14);
+  color: #b7cdf0;
+}
+
+.accountBadgeAccent {
+  background: rgba(200, 168, 67, 0.16);
+  color: #fff1bf;
+}
+
+.accountBadgeDanger {
+  background: rgba(233, 119, 75, 0.16);
+  color: #ffb39b;
+}
+
+.accountActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.accountActionBtn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #c7d5ea;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.accountActionBtnDanger {
+  border-color: rgba(233, 119, 75, 0.2);
+  color: #ffb39b;
+}
+
+.accountActionBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.emptyState {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #d6e0f0;
+}
+
+.matrix {
+  display: grid;
+  gap: 10px;
+}
+
+.matrixHead,
+.matrixRow {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(5, 0.65fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.matrixHead {
+  color: #9eb5d9;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.matrixRow {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+}
+
+.matrixRole {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.auditRow {
+  display: grid;
+  gap: 8px;
+}
+
+.auditMeta {
+  color: #9eb5d9;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.auditBadge,
+.historyStatus {
+  padding: 6px 9px;
+  border-radius: 999px;
+}
+
+.auditBadge {
+  background: rgba(74, 128, 212, 0.14);
+  color: #b7cdf0;
+}
+
+.auditBadgeWarning {
+  background: rgba(200, 168, 67, 0.16);
+  color: #fff1bf;
+}
+
+.auditBadgeSecurity {
+  background: rgba(233, 119, 75, 0.16);
+  color: #ffb39b;
+}
+
+.auditDetail,
+.historyMeta {
+  color: #d6e0f0;
+  line-height: 1.65;
+}
+
+.historyRow {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.historyCode {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.historyMeta {
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+
+.historyStatus {
+  background: rgba(200, 168, 67, 0.14);
+}
+
+.insightCard {
+  display: grid;
+  gap: 8px;
+}
+
+.insightValue {
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.insightMeta {
+  color: #c7d5ea;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 1200px) {
+  .metricsGrid,
+  .donutGrid,
+  .quickGrid,
+  .insightGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contentGrid,
+  .splitGrid,
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .panelWide {
+    grid-column: auto;
+  }
+
+  .accountRow {
+    grid-template-columns: 1fr;
+  }
+
+  .accountMetaBlock {
+    justify-items: start;
+  }
+}
+
+@media (max-width: 760px) {
+  .metricsGrid,
+  .donutGrid,
+  .quickGrid,
+  .insightGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .matrixHead {
+    display: none;
+  }
+
+  .matrixRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .historyRow,
+  .progressTopRow,
+  .listTopRow {
+    flex-direction: column;
+    align-items: start;
+  }
+}

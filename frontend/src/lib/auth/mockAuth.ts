@@ -60,6 +60,7 @@ export type AdminAccountSummary = {
   displayName: string;
   email: string;
   accountType: AuthAccountType;
+  status: "active" | "inactive";
   roles: string[];
   createdAt: string;
   lastLoginAt?: string;
@@ -729,7 +730,8 @@ export function promoteMockAccount(userId: string): {
 export function forceLogoutMockAccount(userId: string): { ok: boolean } {
   const session = readStoredSession();
   if (session?.id === userId && isBrowser()) {
-    localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
+    window.localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
+    window.sessionStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
   }
   appendAuditLogEntry({
     action: "Force logout executed",
@@ -752,6 +754,7 @@ export function getAdminDashboardSnapshot() {
       displayName: account.displayName,
       email: account.email,
       accountType: account.accountType,
+      status: account.status ?? "active",
       roles: account.roles,
       createdAt: account.createdAt,
       lastLoginAt: account.lastLoginAt,
@@ -771,7 +774,7 @@ export function getAdminDashboardSnapshot() {
     adminAccounts: allAccounts.filter(
       (account) => account.accountType === "admin",
     ).length,
-    protectedRoutes: 5,
+    protectedRoutes: 7,
     activeSessionRole: session?.accountType ?? "guest",
     latestAccounts,
     registryAccounts,

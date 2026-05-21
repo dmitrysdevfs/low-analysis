@@ -72,25 +72,6 @@ export default function ArticlePage() {
     return result.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   }, [article, children, subjectsMap]);
 
-  const totalBindings = useMemo(
-    () =>
-      (article ? [article, ...children] : children).reduce(
-        (sum, n) => sum + (n.subjects?.length ?? 0),
-        0,
-      ),
-    [article, children],
-  );
-
-  const nodesWithSubjects = useMemo(
-    () =>
-      (article ? [article, ...children] : children).filter(
-        (n) => (n.subjects?.length ?? 0) > 0,
-      ).length,
-    [article, children],
-  );
-
-  const totalNodes = children.length + (article ? 1 : 0);
-
   const {
     setSubjects,
     setOnSubjectSelect,
