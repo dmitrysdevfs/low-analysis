@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { extractDefinitions } from '../utils/definitionExtractor.js';
 
 // ─── CSS class → element type mapping ────────────────────────────────────────
 // Based on analysis of zakon.rada.gov.ua HTML structure:
@@ -242,5 +243,11 @@ export const parseLawHtml = (html, mainHtml = null) => {
   const preamble = preambleText.length > 0 ? preambleText.join('\n') : null;
   const signatory = signatoryText.length > 0 ? signatoryText.join('\n') : null;
 
-  return { title, code, elements, preamble, status, signatory };
+  const definitions = extractDefinitions(elements);
+  const global_context = {
+    preamble,
+    definitions,
+  };
+
+  return { title, code, elements, preamble, status, signatory, global_context };
 };
