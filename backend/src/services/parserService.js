@@ -84,12 +84,14 @@ export const parseLawHtml = (html, mainHtml = null) => {
       dataTree.startsWith('rz') ||
       dataTree.startsWith('st') ||
       dataTree.startsWith('kg') ||
+      dataTree.startsWith('kn') || // Book structures like kn_1 or knpersha_1
       dataTree.startsWith('gl') ||
       dataTree.includes(':st') ||
-      (!dataTree &&
-        (text.toLowerCase().startsWith('книга ') ||
-          text.toLowerCase().startsWith('глава ') ||
-          text.toLowerCase().startsWith('розділ ')));
+      text.toLowerCase().startsWith('книга ') ||
+      text.toLowerCase().startsWith('глава ') ||
+      text.toLowerCase().startsWith('розділ ') ||
+      text.toLowerCase().startsWith('загальна частина') ||
+      text.toLowerCase().startsWith('особлива частина');
 
     if (isBodyElement) {
       hasHitFirstDataTree = true;

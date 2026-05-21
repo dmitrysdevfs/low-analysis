@@ -120,8 +120,8 @@ describe('parseLawHtml', () => {
     );
   });
 
-  it('halts preamble extraction when encountering Books or Chapters (e.g. in Codes) even without data-tree', () => {
-    const html = `
+  it('halts preamble extraction when encountering Books or Chapters (e.g. in Codes) using kn data-tree and text markers', () => {
+    const htmlCivil = `
       <html>
         <body>
           <div id="edition">
@@ -129,20 +129,43 @@ describe('parseLawHtml', () => {
           </div>
           <div id="article">
             <p>ЦИВІЛЬНИЙ КОДЕКС УКРАЇНИ</p>
-            <p>КНИГА ПЕРША</p>
-            <p>ЗАГАЛЬНІ ПОЛОЖЕННЯ</p>
+            <p><a data-tree="knpersha_1"></a>КНИГА ПЕРША ЗАГАЛЬНІ ПОЛОЖЕННЯ</p>
             <p class="rvps2"><a data-tree="st1" name="n3"></a><span class="rvts9">Стаття 1.</span> Відносини, що регулюються...</p>
           </div>
         </body>
       </html>
     `;
 
-    const htmlWithTitle = html.replace(
+    const htmlCivilWithTitle = htmlCivil.replace(
       '<body>',
       '<body><p class="rvts78">Цивільний кодекс України</p>',
     );
-    const result = parseLawHtml(htmlWithTitle, htmlWithTitle);
+    const resultCivil = parseLawHtml(htmlCivilWithTitle, htmlCivilWithTitle);
+    expect(resultCivil.preamble).toBeNull();
 
-    expect(result.preamble).toBeNull();
+    const htmlCriminal = `
+      <html>
+        <body>
+          <div id="edition">
+            <option selected value="https://zakon.rada.gov.ua/laws/show/2341-14/ed">Version</option>
+          </div>
+          <div id="article">
+            <p>КРИМІНАЛЬНИЙ КОДЕКС УКРАЇНИ</p>
+            <p><a data-tree="kn_1"></a>ЗАГАЛЬНА ЧАСТИНА</p>
+            <p class="rvps2"><a data-tree="st1" name="n3"></a><span class="rvts9">Стаття 1.</span> Завдання...</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const htmlCriminalWithTitle = htmlCriminal.replace(
+      '<body>',
+      '<body><p class="rvts78">Кримінальний кодекс України</p>',
+    );
+    const resultCriminal = parseLawHtml(
+      htmlCriminalWithTitle,
+      htmlCriminalWithTitle,
+    );
+    expect(resultCriminal.preamble).toBeNull();
   });
 });
