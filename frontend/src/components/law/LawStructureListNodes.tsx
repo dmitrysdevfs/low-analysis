@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   formatCitation,
   getNodeBadge,
@@ -57,6 +58,15 @@ function NestedNode({
         )
       : [];
 
+  const router = useRouter();
+  const anchorId = node.code ? sanitizeAnchor(node.code) : "";
+
+  const handleAnchorClick = async () => {
+    if (!anchorId || !lawId || !articleNum) return;
+
+    router.push(`/laws/${lawId}/articles/${articleNum}#${anchorId}`);
+  };
+
   const handleCopy = async () => {
     if (!lawId || !articleNum) return;
     const copyText = node.text ?? node.title ?? "";
@@ -89,11 +99,17 @@ function NestedNode({
 
   return (
     <div
-      id={node.code ? sanitizeAnchor(node.code) : undefined}
+      id={anchorId || undefined}
       className={`law-structure-node ${isHighlighted ? styles.highlightedNode : ""}`}
     >
       <div className={styles.nodeHeader}>
-        <span className="law-structure-node-label">{getNodeLabel(node)}</span>
+        <button
+          type="button"
+          onClick={handleAnchorClick}
+          className="law-structure-node-label"
+        >
+          {getNodeLabel(node)}
+        </button>
         {charCount > 0 && (
           <span className={`mono ${styles.nodeCharCount}`}>{charCount}</span>
         )}
