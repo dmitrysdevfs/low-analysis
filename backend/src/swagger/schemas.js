@@ -80,6 +80,29 @@ export const schemas = {
         example: 2,
         description: 'Порядковий номер у межах батьківського елемента',
       },
+      chars_count: {
+        type: 'integer',
+        example: 120,
+        description: 'Кількість символів у тексті елемента',
+      },
+      subjects_count: {
+        type: 'integer',
+        example: 2,
+        description: 'Кількість визначених суб’єктів у цьому елементі',
+      },
+      z_score: {
+        type: 'number',
+        example: 1.25,
+        description:
+          'Z-score довжини елемента відносно середнього значення по закону',
+      },
+      risk_level: {
+        type: 'string',
+        enum: ['green', 'yellow', 'red'],
+        example: 'yellow',
+        nullable: true,
+        description: 'Рівень ризику перевантаженості абзацу',
+      },
       subjects: {
         type: 'array',
         items: { type: 'string' },
@@ -186,6 +209,38 @@ export const schemas = {
     properties: {
       message: { type: 'string', example: 'Low Analysis API is running' },
       version: { type: 'string', example: '0.1.0' },
+    },
+  },
+
+  LawStats: {
+    type: 'object',
+    description: 'Статистика закону та його елементів',
+    properties: {
+      totalElements: {
+        type: 'integer',
+        example: 994,
+        description: 'Загальна кількість елементів закону',
+      },
+      meanChars: {
+        type: 'number',
+        example: 160.45,
+        description: 'Середня довжина елементів у символах',
+      },
+      standardDeviation: {
+        type: 'number',
+        example: 140.12,
+        description: 'Стандартне відхилення довжини елементів',
+      },
+      riskLevels: {
+        type: 'object',
+        properties: {
+          green: { type: 'integer', example: 850 },
+          yellow: { type: 'integer', example: 110 },
+          red: { type: 'integer', example: 34 },
+          null: { type: 'integer', example: 0 },
+        },
+        description: 'Розподіл елементів за рівнями ризику',
+      },
     },
   },
 };

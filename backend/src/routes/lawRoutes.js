@@ -87,6 +87,10 @@ router.get('/:id/tree', getLawTree);
  *     responses:
  *       200:
  *         description: Статистика закону
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LawStats'
  *       404:
  *         description: Статистика не знайдена
  *       500:
