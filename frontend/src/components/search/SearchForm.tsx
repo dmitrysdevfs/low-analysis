@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import type { SearchParams } from "@/types/search.types";
 import styles from "./SearchForm.module.scss";
-import { toIsoDate } from "@/lib/dateUtils";
+import { toIsoDate } from "@/lib/utils/dateUtils";
 import { SearchFormFilters } from "./SearchFormFilters";
 
 interface SearchFormProps {

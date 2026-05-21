@@ -1,6 +1,7 @@
 "use client";
 
 import type { Law, LawTreeResponse, ArticleResponse } from "@/types";
+import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
 
 const API_BASE = "/api";
 
@@ -8,9 +9,7 @@ export async function getJson<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
-  const res = options
-    ? await fetch(`${API_BASE}${path}`, options)
-    : await fetch(`${API_BASE}${path}`);
+  const res = await fetchWithTimeout(`${API_BASE}${path}`, options);
 
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}: ${res.statusText}`);

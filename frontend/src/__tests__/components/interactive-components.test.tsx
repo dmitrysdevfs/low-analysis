@@ -1,15 +1,16 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { AppHeader } from "@/components/AppHeader";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { AuthProvider } from "@/components/auth/AuthProvider";
-import { Dialog } from "@/components/Dialog";
-import { LawStructureList } from "@/components/LawStructureList";
-import { SearchForm } from "@/components/SearchForm";
-import { SearchResults } from "@/components/SearchResults";
-import { SkeletonCard } from "@/components/SkeletonCard";
-import { TreeNode } from "@/components/TreeNode";
+import { Dialog } from "@/components/ui/Dialog";
+import { LawStructureList } from "@/components/law/LawStructureList";
+import { SearchForm } from "@/components/search/SearchForm";
+import { SearchResults } from "@/components/search/SearchResults";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { NestedNodeList } from "@/components/article/ArticleTreeNode";
+import type { TreeBranch } from "@/lib/tree";
 import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
-import { buildLawSections } from "@/lib/lawTree";
+import { buildLawSections } from "@/lib/tree";
 import {
   ARTICLE_NODE,
   LAW_FIXTURE,
@@ -40,6 +41,7 @@ describe("interactive frontend components", () => {
   });
 
   it("shows admin switch and logout controls for administrator session", async () => {
+    const user = userEvent.setup();
     window.localStorage.setItem(
       AUTH_SESSION_STORAGE_KEY,
       JSON.stringify({
@@ -65,13 +67,22 @@ describe("interactive frontend components", () => {
       ).toBeInTheDocument();
     });
 
-    expect(screen.getByRole("link", { name: "Сайт" })).toHaveAttribute(
-      "href",
-      "/",
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: "Сайт" })).toHaveAttribute(
+        "href",
+        "/",
+      );
+    });
+
+    await user.click(
+      screen.getByRole("button", { name: "Відкрити меню акаунту" }),
     );
-    expect(
-      screen.getByRole("button", { name: "Вийти з акаунту" }),
-    ).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("menuitem", { name: "Вийти з акаунту" }),
+      ).toBeInTheDocument();
+    });
   });
 
   it("renders skeleton card shell", () => {
@@ -79,25 +90,31 @@ describe("interactive frontend components", () => {
     expect(container.firstChild).toHaveClass("panel");
   });
 
-  it("toggles section children and selects leaf nodes in TreeNode", async () => {
-    const user = userEvent.setup();
-    const onSelect = vi.fn();
+  it("NestedNodeList renders charCount when node.text is non-empty", () => {
+    const branch: TreeBranch = {
+      ...PART_NODE,
+      key: PART_NODE.code ?? "part-1",
+      children: [],
+    };
 
-    render(
-      <TreeNode node={SECTION_NODE} activeCode={null} onSelect={onSelect}>
-        {[ARTICLE_NODE]}
-      </TreeNode>,
-    );
+    render(<NestedNodeList nodes={[branch]} />);
 
-    expect(screen.getByText(ARTICLE_NODE.title!)).toBeInTheDocument();
+    expect(
+      screen.getByText(String(PART_NODE.text!.length)),
+    ).toBeInTheDocument();
+  });
 
-    await user.click(screen.getByRole("button", { name: /Розділ I/i }));
-    expect(screen.queryByText(ARTICLE_NODE.title!)).not.toBeInTheDocument();
+  it("NestedNodeList does not render charCount when node.text is absent", () => {
+    const branch: TreeBranch = {
+      ...SECTION_NODE,
+      key: SECTION_NODE.code ?? "section-1",
+      children: [],
+    };
 
-    await user.click(screen.getByRole("button", { name: /Розділ I/i }));
-    await user.click(screen.getByRole("button", { name: /Стаття 1/i }));
+    const { container } = render(<NestedNodeList nodes={[branch]} />);
 
-    expect(onSelect).toHaveBeenCalledWith(ARTICLE_NODE);
+    // charCount span has mono class — should not appear for nodes without text
+    expect(container.querySelector(".charCount")).toBeNull();
   });
 
   it("submits and resets search form parameters", async () => {

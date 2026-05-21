@@ -32,6 +32,21 @@ const fadeUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+function CursorBlink({
+  className,
+  onClass,
+}: {
+  className: string;
+  onClass: string;
+}) {
+  const [tick, setTick] = useState(true);
+  useEffect(() => {
+    const t = setInterval(() => setTick((v) => !v), 700);
+    return () => clearInterval(t);
+  }, []);
+  return <span className={`${className} ${tick ? onClass : ""}`}>▌</span>;
+}
+
 function StatCounter({
   value,
   label,
@@ -54,8 +69,11 @@ function StatCounter({
 
 export default function Footer() {
   const { isAdmin } = useAuth();
-  const { laws, loading } = useLaws();
-  const [tick, setTick] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  const { laws, loading, error: lawsError } = useLaws();
   const statsRef = useRef<HTMLDivElement>(null);
   const inView = useInView(statsRef, { once: true, amount: 0.4 });
 
@@ -64,11 +82,6 @@ export default function Footer() {
     { value: laws.reduce((s, l) => s + l.totalSections, 0), label: "розділів" },
     { value: laws.reduce((s, l) => s + l.totalArticles, 0), label: "статей" },
   ];
-
-  useEffect(() => {
-    const t = setInterval(() => setTick((v) => !v), 700);
-    return () => clearInterval(t);
-  }, []);
 
   return (
     <footer className={styles.footer}>
@@ -92,7 +105,14 @@ export default function Footer() {
       {/* Stats band */}
       <div ref={statsRef} className={styles.statsBand}>
         <div className={styles.statsInner}>
-          {loading ? (
+          {lawsError ? (
+            <div
+              className={`mono ${styles.statsLoading}`}
+              style={{ color: "rgba(200,100,100,0.7)", fontSize: "0.75rem" }}
+            >
+              Не вдалося завантажити статистику
+            </div>
+          ) : loading ? (
             <div className={styles.statsLoading}>
               {[90, 60, 72].map((w, i) => (
                 <motion.div
@@ -207,12 +227,10 @@ export default function Footer() {
           <div className={`mono ${styles.terminal}`}>
             <span className={styles.prompt}>$</span>
             <span className={styles.cmd}>system ready</span>
-            <span className={`${styles.cursor} ${tick ? styles.cursorOn : ""}`}>
-              ▌
-            </span>
+            <CursorBlink className={styles.cursor} onClass={styles.cursorOn} />
           </div>
 
-          {isAdmin && (
+          {mounted && isAdmin && (
             <a
               href={API_DOCS_URL}
               target="_blank"

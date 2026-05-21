@@ -8,7 +8,8 @@ import {
   getNextLimitValue,
   parseLimitValue,
   toLimitParam,
-} from "@/lib/pageLimits";
+} from "@/lib/utils/pageLimits";
+import { getRoleColor } from "@/lib/tree";
 import styles from "./LawMetaPanel.module.scss";
 
 interface LawMetaPanelProps {
@@ -20,7 +21,12 @@ interface LawMetaPanelProps {
   canLoadMore: boolean;
   selectedLimit: number | "all";
   onLimitChange: (value: number | "all") => void;
-  lawSubjects: Array<{ subject_id: string; name: string; status: string }>;
+  lawSubjects: Array<{
+    subject_id: string;
+    name: string;
+    role: string;
+    count: number;
+  }>;
   selectedSubjectId: string | null;
   onSubjectSelect: (value: string | null) => void;
 }
@@ -38,10 +44,8 @@ export function LawMetaPanel({
   selectedSubjectId,
   onSubjectSelect,
 }: LawMetaPanelProps) {
-  const [chipsOpen, setChipsOpen] = useState(false);
-
-  const visibleSubjects = chipsOpen ? lawSubjects : lawSubjects.slice(0, 5);
-
+  const [subjectsQuery, setSubjectsQuery] = useState("");
+  const [showAllSubjects, setShowAllSubjects] = useState(false);
   return (
     <motion.section
       initial={{ opacity: 0, y: 14 }}
@@ -72,46 +76,112 @@ export function LawMetaPanel({
         <div className={styles.subjectsBlock}>
           <div className={styles.subjectsHeader}>
             <div className={`eyebrow ${styles.subjectsLabel}`}>
-              {"Суб'єкти (актори)"} · {lawSubjects.length}
+              Суб&apos;єкти · {lawSubjects.length}
             </div>
-            <button
-              type="button"
-              className={`btn btn-ghost ${styles.subjectsToggle}`}
-              onClick={() => setChipsOpen(!chipsOpen)}
-            >
-              {chipsOpen ? "Сховати" : "Показати всі"}
-            </button>
-          </div>
-          <div className={styles.subjectsList}>
-            {visibleSubjects.map(({ subject_id, name }) => (
-              <button
-                key={subject_id}
-                type="button"
-                className={`directory-chip mono ${styles.subjectChip} ${
-                  selectedSubjectId === subject_id
-                    ? styles.subjectChipActive
-                    : ""
-                }`}
-                onClick={() =>
-                  onSubjectSelect(
-                    selectedSubjectId === subject_id ? null : subject_id,
-                  )
-                }
-              >
-                {name}
-              </button>
-            ))}
-
-            {!chipsOpen && lawSubjects.length > 5 && (
+            <div className={styles.subjectsHeaderActions}>
               <button
                 type="button"
-                onClick={() => setChipsOpen(true)}
-                className={styles.moreSubjects}
+                className={styles.showAllSubjectsBtn}
+                onClick={() => setShowAllSubjects((v) => !v)}
               >
-                + ще {lawSubjects.length - visibleSubjects.length}
+                {showAllSubjects
+                  ? "Скасувати"
+                  : `Показати всі · ${lawSubjects.length}`}
               </button>
-            )}
+              <div className={styles.subjectsSearchPill}>
+                <span className={styles.subjectsSearchIcon}>⌕</span>
+                <input
+                  type="text"
+                  className={styles.subjectsSearchInput}
+                  placeholder="Пошук..."
+                  value={subjectsQuery}
+                  onChange={(e) => setSubjectsQuery(e.target.value)}
+                />
+                {subjectsQuery && (
+                  <button
+                    type="button"
+                    className={styles.subjectsSearchClear}
+                    onClick={() => setSubjectsQuery("")}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
+          {(() => {
+            const DEFAULT_N = 8;
+            const filtered = subjectsQuery
+              ? lawSubjects.filter((s) =>
+                  s.name.toLowerCase().includes(subjectsQuery.toLowerCase()),
+                )
+              : lawSubjects;
+            const visible =
+              !showAllSubjects && !subjectsQuery
+                ? filtered.slice(0, DEFAULT_N)
+                : filtered;
+            return (
+              <>
+                <div className={styles.subjectsGrid}>
+                  {visible.map(({ subject_id, name, role }) => {
+                    const c = getRoleColor(role);
+                    const isActive = selectedSubjectId === subject_id;
+                    return (
+                      <button
+                        key={subject_id}
+                        type="button"
+                        className={`directory-chip mono ${styles.subjectChip} ${isActive ? styles.subjectChipActive : ""}`}
+                        style={{
+                          color: isActive ? c : c,
+                          background: isActive ? `${c}20` : `${c}0d`,
+                          borderColor: isActive ? `${c}c0` : `${c}40`,
+                        }}
+                        onClick={() =>
+                          onSubjectSelect(
+                            selectedSubjectId === subject_id
+                              ? null
+                              : subject_id,
+                          )
+                        }
+                      >
+                        {name}
+                      </button>
+                    );
+                  })}
+                </div>
+                {subjectsQuery && filtered.length === 0 && (
+                  <p className={styles.subjectsEmpty}>Нічого не знайдено</p>
+                )}
+                {selectedSubjectId && (
+                  <div className={styles.subjectsActions}>
+                    <button
+                      type="button"
+                      className={styles.scrollToArticlesBtn}
+                      onClick={() => {
+                        const el = document.querySelector(
+                          ".law-structure-list",
+                        );
+                        if (el)
+                          el.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
+                      }}
+                    >
+                      Перейти ↓
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.resetSubjectBtn}
+                      onClick={() => onSubjectSelect(null)}
+                    >
+                      ✕ скинути фільтр
+                    </button>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
       <p className={styles.lawDesc}>

@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import RootLayout, { metadata } from "@/app/layout";
 import Header from "@/layout/Header/Header";
 
-vi.mock("@/components/AppHeader", () => ({
+vi.mock("@/components/layout/AppHeader", () => ({
   AppHeader: () => <div>Mock AppHeader</div>,
 }));
 
@@ -14,8 +14,9 @@ describe("frontend layout wrappers", () => {
   });
 
   it("exports root metadata and html shell structure", () => {
-    expect(metadata.title).toBe("Law Analysis");
-    expect(metadata.description).toContain("Ukrainian legislation");
+    const titleDefault = (metadata.title as { default: string }).default;
+    expect(titleDefault).toContain("Law Analysis");
+    expect(metadata.description).toContain("законодавства України");
 
     const tree = RootLayout({
       children: <span>Дитина</span>,

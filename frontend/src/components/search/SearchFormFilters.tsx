@@ -2,7 +2,7 @@
 
 import type { SearchParams } from "@/types/search.types";
 import styles from "./SearchForm.module.scss";
-import { DATE_PLACEHOLDER, formatDateInput } from "@/lib/dateUtils";
+import { DATE_PLACEHOLDER, formatDateInput } from "@/lib/utils/dateUtils";
 
 interface SearchFormFiltersProps {
   params: SearchParams;

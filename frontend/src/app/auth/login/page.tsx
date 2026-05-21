@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import { Layout } from "@/components/Layout";
+﻿import { Suspense } from "react";
+import { Layout } from "@/components/layout/Layout";
 import { AuthFormScreen } from "@/components/auth/AuthFormScreen";
 
 export default function LoginPage() {

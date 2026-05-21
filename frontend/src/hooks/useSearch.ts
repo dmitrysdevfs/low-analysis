@@ -6,7 +6,7 @@ import { getLaws } from "@/lib/api";
 import { parseApiError } from "@/lib/utils";
 import type { Law } from "@/types";
 import type { SearchParams } from "@/types/search.types";
-import { applySearchFilters, sortLaws } from "@/lib/searchFilters";
+import { applySearchFilters, sortLaws } from "@/lib/search/filters";
 
 export type { SearchParams };
 
@@ -32,6 +32,10 @@ interface State {
 }
 
 type SearchInput = Partial<SearchParams> & { type?: string };
+
+// Raw results cached by query string — filters applied client-side without refetch
+const rawCache = new Map<string, { data: Law[]; ts: number }>();
+const RAW_CACHE_TTL = 60_000;
 
 export function useSearch() {
   const { consumeSearch, isGuest } = useGuestLimits();
@@ -61,6 +65,24 @@ export function useSearch() {
         return;
       }
 
+      const applyFilters = (raw: Law[]) => {
+        const filtered = applySearchFilters(raw, normalizedParams);
+        const sorted = sortLaws(filtered, normalizedParams.sort);
+        return isGuest ? sorted.slice(0, GUEST_VISIBLE_RESULTS_LIMIT) : sorted;
+      };
+
+      // If we already have raw results for this query — skip network + quota
+      const cached = rawCache.get(normalizedParams.q);
+      if (cached && Date.now() - cached.ts < RAW_CACHE_TTL) {
+        setState({
+          results: applyFilters(cached.data),
+          loading: false,
+          error: null,
+          searched: true,
+        });
+        return;
+      }
+
       abortRef.current?.abort();
       abortRef.current = new AbortController();
       const { signal } = abortRef.current;
@@ -81,14 +103,9 @@ export function useSearch() {
 
       getLaws(normalizedParams.q, { signal })
         .then((laws) => {
-          const filtered = applySearchFilters(laws, normalizedParams);
-          const sorted = sortLaws(filtered, normalizedParams.sort);
-          const visibleResults = isGuest
-            ? sorted.slice(0, GUEST_VISIBLE_RESULTS_LIMIT)
-            : sorted;
-
+          rawCache.set(normalizedParams.q, { data: laws, ts: Date.now() });
           setState({
-            results: visibleResults,
+            results: applyFilters(laws),
             loading: false,
             error: null,
             searched: true,

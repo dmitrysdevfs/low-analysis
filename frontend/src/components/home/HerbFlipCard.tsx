@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TryzubMark } from "@/components/TryzubMark";
+import { TryzubMark } from "@/components/ui/TryzubMark";
 import { rights } from "@/constants/homeContent";
 import styles from "@/app/page.module.scss";
 

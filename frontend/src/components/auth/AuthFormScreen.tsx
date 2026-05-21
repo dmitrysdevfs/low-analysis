@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { TryzubMark } from "@/components/TryzubMark";
+import { TryzubMark } from "@/components/ui/TryzubMark";
 import { ROUTES } from "@/constants/routes";
 import { notify } from "@/lib/toast";
 import type { AuthAccountType, LoginPayload, RegisterPayload } from "@/types";

@@ -1,15 +1,18 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Breadcrumb } from "@/components/Breadcrumb";
-import { Layout } from "@/components/Layout";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
 import { useLaws } from "@/hooks/useLaws";
-import { parseElementCode, getRoleLabel, getTypeLabel } from "@/lib/lawTree";
+import { parseElementCode, getRoleLabel, getTypeLabel } from "@/lib/tree";
+import { NoteModal } from "@/components/notes/NoteModal";
+import SelectionTooltip from "@/components/notes/SelectionTooltip";
+import type { NoteDraft } from "@/lib/notes/types";
 import styles from "./page.module.scss";
 
 export default function SubjectDetailPage() {
@@ -18,6 +21,8 @@ export default function SubjectDetailPage() {
   const { subject, elements, loading, error } = useSubjectDetail(subjectId);
   const { laws } = useLaws();
   const lawsMap = useMemo(() => new Map(laws.map((l) => [l._id, l])), [laws]);
+  const containerRef = useRef<HTMLElement | null>(null);
+  const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
 
   return (
     <Layout>
@@ -35,7 +40,12 @@ export default function SubjectDetailPage() {
         />
       </motion.div>
 
-      <div className={styles.scrollArea}>
+      <div
+        className={styles.scrollArea}
+        ref={(el) => {
+          containerRef.current = el;
+        }}
+      >
         <div className={styles.inner}>
           {loading ? (
             <div className={styles.skeletonList}>
@@ -206,6 +216,22 @@ export default function SubjectDetailPage() {
           ) : null}
         </div>
       </div>
+
+      <SelectionTooltip
+        containerRef={containerRef}
+        lawId=""
+        lawTitle=""
+        articleNum=""
+        articleTitle={subject?.canonical_name ?? ""}
+        onRequestNote={(draft: NoteDraft) => setNoteDraft(draft)}
+      />
+
+      <NoteModal
+        open={noteDraft !== null}
+        draft={noteDraft}
+        onClose={() => setNoteDraft(null)}
+        onSaved={() => setNoteDraft(null)}
+      />
     </Layout>
   );
 }

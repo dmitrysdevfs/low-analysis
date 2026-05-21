@@ -464,6 +464,8 @@ input {
 .directory-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 8px;
   padding: 2px 8px;
   border-radius: 999px;

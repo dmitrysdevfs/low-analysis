@@ -30,7 +30,7 @@ export default function Sidebar({
   } = useSubjects();
 
   const loading = isLoading ?? fetchLoading;
-  const subjects = subjectsList?.length ? subjectsList : fetchedSubjects;
+  const subjects = subjectsList !== undefined ? subjectsList : fetchedSubjects;
   const error = subjectsList ? null : fetchError;
 
   const sortedSubjects = useMemo(() => {

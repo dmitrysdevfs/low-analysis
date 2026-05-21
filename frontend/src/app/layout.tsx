@@ -5,14 +5,15 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import Header from "@/layout/Header/Header";
 import Footer from "@/layout/Footer/Footer";
-import { BackendWarmup } from "@/components/BackendWarmup";
-import { ScrollRestore } from "@/components/ScrollRestore";
+import { BackendWarmup } from "@/components/layout/BackendWarmup";
+import { ScrollRestore } from "@/components/layout/ScrollRestore";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { RouteAccessGate } from "@/components/auth/RouteAccessGate";
 import { BillingProvider } from "@/components/billing/BillingProvider";
 import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { AiAssistant } from "@/components/AiAssistant";
+import { AiAssistant } from "@/components/ai/AiAssistant";
+import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
@@ -32,12 +33,46 @@ const mono = JetBrains_Mono({
   weight: ["400", "500", "700"],
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://low-analysis.onrender.com";
+
 export const metadata: Metadata = {
-  title: "Law Analysis",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Law Analysis — Аналіз законодавства України",
+    template: "%s · Law Analysis",
+  },
   description:
-    "Platform for structuring, exploring, and analyzing Ukrainian legislation.",
+    "Платформа для структурування, перегляду та аналізу законодавства України. Конституція, кодекси, закони — у зручному ієрархічному форматі.",
+  keywords: [
+    "закони України",
+    "законодавство",
+    "Конституція України",
+    "правовий аналіз",
+    "нормативно-правові акти",
+    "кодекс",
+    "статті закону",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "uk_UA",
+    siteName: "Law Analysis",
+    title: "Law Analysis — Аналіз законодавства України",
+    description:
+      "Платформа для структурування, перегляду та аналізу законодавства України.",
+    url: siteUrl,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Law Analysis — Аналіз законодавства України",
+    description:
+      "Платформа для структурування, перегляду та аналізу законодавства України.",
+  },
   icons: {
     icon: "/favicon/favicon.ico",
+  },
+  alternates: {
+    canonical: siteUrl,
   },
 };
 
@@ -56,16 +91,18 @@ export default function RootLayout({
           <AuthProvider>
             <BillingProvider>
               <GuestLimitsProvider>
-                <div className="site-shell">
-                  <BackendWarmup />
-                  <ScrollRestore />
-                  <Header />
-                  <div className="site-content">
-                    <RouteAccessGate>{children}</RouteAccessGate>
+                <SidebarDataProvider>
+                  <div className="site-shell">
+                    <BackendWarmup />
+                    <ScrollRestore />
+                    <Header />
+                    <div className="site-content">
+                      <RouteAccessGate>{children}</RouteAccessGate>
+                    </div>
+                    <AiAssistant />
+                    <Footer />
                   </div>
-                  <AiAssistant />
-                  <Footer />
-                </div>
+                </SidebarDataProvider>
               </GuestLimitsProvider>
             </BillingProvider>
           </AuthProvider>

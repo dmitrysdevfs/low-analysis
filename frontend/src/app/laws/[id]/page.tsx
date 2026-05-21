@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   useParams,
   usePathname,
@@ -8,12 +8,11 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { motion } from "framer-motion";
-import { Breadcrumb } from "@/components/Breadcrumb";
-import { LawMetaPanel } from "@/components/LawMetaPanel";
-import { LawStructureList } from "@/components/LawStructureList";
-import Sidebar from "@/components/Sidebar";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { LawMetaPanel } from "@/components/law/LawMetaPanel";
+import { LawStructureList } from "@/components/law/LawStructureList";
 import type { TreeNode } from "@/types";
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useLawTree } from "@/hooks/useLawTree";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
@@ -21,14 +20,15 @@ import {
   buildLawSections,
   countArticlesInSections,
   limitLawSections,
-} from "@/lib/lawTree";
+} from "@/lib/tree";
 import styles from "./page.module.scss";
 import {
   DEFAULT_ARTICLE_LIMIT,
   ARTICLE_LIMIT_OPTIONS,
   parseLimitValue,
   toLimitParam,
-} from "@/lib/pageLimits";
+} from "@/lib/utils/pageLimits";
+import { useSidebarData } from "@/components/layout/SidebarDataContext";
 
 function filterTreeBySubject(
   tree: TreeNode[],
@@ -69,16 +69,49 @@ export default function LawTreePage() {
   const lawId = params?.id;
   const { law, tree, loading, error } = useLawTree(lawId);
   const { subjectsMap } = useSubjectsMap();
-  const [selectedLimit, setSelectedLimit] = useState<number | "all">(() =>
+  const { setSubjects, setOnSubjectSelect } = useSidebarData();
+  const [selectedLimit, setSelectedLimit] = useState(() =>
     parseLimitValue(searchParams.get("limit")),
   );
-
+  // Sync state when URL changes (back/forward navigation)
+  useEffect(() => {
+    setSelectedLimit(parseLimitValue(searchParams.get("limit")));
+  }, [searchParams]);
   const selectedSubjectId = searchParams.get("subject");
+
+  // Save to recently viewed in localStorage
+  useEffect(() => {
+    if (!law || typeof window === "undefined") return;
+    const RECENTLY_VIEWED_KEY = "law-analysis.recently-viewed";
+    const MAX_RECENT = 5;
+    try {
+      const raw = localStorage.getItem(RECENTLY_VIEWED_KEY);
+      const current: Array<{ _id: string; title: string; code: string }> = raw
+        ? JSON.parse(raw)
+        : [];
+      const entry = { _id: law._id, title: law.title, code: law.code };
+      const filtered = current.filter((item) => item._id !== law._id);
+      const updated = [entry, ...filtered].slice(0, MAX_RECENT);
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
+    } catch {
+      // localStorage unavailable — skip silently
+    }
+  }, [law]);
 
   const lawSubjects = useMemo(() => {
     const seen = new Set<string>();
-    const result: Array<{ subject_id: string; name: string; status: string }> =
-      [];
+    const countMap = new Map<string, number>();
+    tree.forEach((el) => {
+      el.subjects?.forEach((s) => {
+        countMap.set(s.subject_id, (countMap.get(s.subject_id) ?? 0) + 1);
+      });
+    });
+    const result: Array<{
+      subject_id: string;
+      name: string;
+      role: string;
+      count: number;
+    }> = [];
     tree.forEach((el) => {
       el.subjects?.forEach((s) => {
         const subj = subjectsMap.get(s.subject_id);
@@ -87,13 +120,27 @@ export default function LawTreePage() {
           result.push({
             subject_id: s.subject_id,
             name: subj.canonical_name,
-            status: subj.legal_status,
+            role: s.role,
+            count: countMap.get(s.subject_id) ?? 1,
           });
         }
       });
     });
-    return result;
+    return result.sort((a, b) => b.count - a.count);
   }, [tree, subjectsMap]);
+
+  useEffect(() => {
+    if (lawSubjects.length === 0) return;
+    setSubjects(
+      lawSubjects.map((s) => ({
+        id: s.subject_id,
+        name: s.name,
+        role: s.role,
+        count: s.count,
+      })),
+    );
+    return () => setSubjects([]);
+  }, [lawSubjects, setSubjects]);
 
   const filteredTree = useMemo(
     () => filterTreeBySubject(tree, selectedSubjectId),
@@ -129,7 +176,6 @@ export default function LawTreePage() {
 
   const updateLimit = (nextValue: number | "all") => {
     setSelectedLimit(nextValue);
-
     const nextSearchParams = new URLSearchParams(searchParams.toString());
     const nextParam = toLimitParam(nextValue);
 
@@ -145,35 +191,31 @@ export default function LawTreePage() {
     });
   };
 
-  const updateSubject = (nextValue: string | null) => {
-    const nextSearchParams = new URLSearchParams(searchParams.toString());
-    if (nextValue) {
-      nextSearchParams.set("subject", nextValue);
-    } else {
-      nextSearchParams.delete("subject");
-    }
-    const nextQuery = nextSearchParams.toString();
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
-      scroll: false,
-    });
-  };
-  console.log("lawSubjects", lawSubjects);
-  console.log(subjectsMap.size);
-  console.log(tree[0]?.subjects);
+  const updateSubject = useCallback(
+    (nextValue: string | null) => {
+      const nextSearchParams = new URLSearchParams(searchParams.toString());
+      if (nextValue) {
+        nextSearchParams.set("subject", nextValue);
+      } else {
+        nextSearchParams.delete("subject");
+      }
+      const nextQuery = nextSearchParams.toString();
+      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+        scroll: false,
+      });
+    },
+    [searchParams, pathname, router],
+  );
+
+  useEffect(() => {
+    setOnSubjectSelect(updateSubject);
+    return () => setOnSubjectSelect(null);
+  }, [updateSubject, setOnSubjectSelect]);
 
   return (
     <Layout fullHeight>
       <div className={styles.contentFlex}>
         <div className="sm:flex sm:gap-8 max-w-[1400px] mx-auto w-full">
-          <Sidebar
-            subjectsList={lawSubjects.map((s) => ({
-              _id: s.subject_id,
-              canonical_name: s.name,
-            }))}
-            selectedId={selectedSubjectId}
-            onSelect={updateSubject}
-          />
-
           <div className={`section-pad page-frame ${styles.pageInner} flex-1`}>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -268,6 +310,7 @@ export default function LawTreePage() {
               <LawStructureList
                 sections={visibleSections}
                 lawId={lawId}
+                lawTitle={law?.title}
                 highlightSubjectId={selectedSubjectId}
               />
             ) : null}

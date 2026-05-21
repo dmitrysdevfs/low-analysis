@@ -2,9 +2,20 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { useSearch } from "@/hooks/useSearch";
 import { getLaws } from "@/lib/api";
 import { LAW_FIXTURE, LAW_FIXTURE_2, LAW_FIXTURE_3 } from "@/test/fixtures";
+import type { GuestLimitAttemptResult } from "@/lib/guestLimits";
 
 vi.mock("@/lib/api", () => ({
   getLaws: vi.fn(),
+}));
+
+vi.mock("@/components/guest/GuestLimitsProvider", () => ({
+  useGuestLimits: vi.fn(() => ({
+    isGuest: false,
+    consumeSearch: () =>
+      ({ allowed: true }) as unknown as GuestLimitAttemptResult,
+    consumeView: () =>
+      ({ allowed: true }) as unknown as GuestLimitAttemptResult,
+  })),
 }));
 
 describe("useSearch", () => {
@@ -112,5 +123,50 @@ describe("useSearch", () => {
     expect(result.current.results).toEqual([]);
     expect(result.current.error).toBe("search failed");
     expect(result.current.searched).toBe(true);
+  });
+
+  it("blocks search and returns error when quota is exceeded", async () => {
+    const { useGuestLimits } =
+      await import("@/components/guest/GuestLimitsProvider");
+    vi.mocked(useGuestLimits).mockReturnValueOnce({
+      isGuest: true,
+      consumeSearch: () =>
+        ({
+          allowed: false,
+          message: "Ліміт пошуку вичерпано",
+        }) as unknown as GuestLimitAttemptResult,
+      consumeView: () =>
+        ({ allowed: true }) as unknown as GuestLimitAttemptResult,
+      snapshot: {} as never,
+    });
+
+    const { result } = renderHook(() => useSearch());
+
+    act(() => {
+      result.current.search({ q: "quota test" });
+    });
+
+    expect(getLaws).not.toHaveBeenCalled();
+    expect(result.current.error).toBe("Ліміт пошуку вичерпано");
+    expect(result.current.searched).toBe(true);
+  });
+
+  it("resets state and aborts in-flight request", async () => {
+    vi.mocked(getLaws).mockResolvedValue([LAW_FIXTURE]);
+
+    const { result } = renderHook(() => useSearch());
+
+    act(() => {
+      result.current.search({ q: "тест" });
+    });
+
+    act(() => {
+      result.current.reset();
+    });
+
+    expect(result.current.results).toEqual([]);
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBeNull();
+    expect(result.current.searched).toBe(false);
   });
 });

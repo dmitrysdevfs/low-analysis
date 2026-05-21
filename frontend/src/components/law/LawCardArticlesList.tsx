@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { LawCardSkeletonLine } from "./LawCardSkeletonLine";
 import { ROUTES } from "@/constants/routes";
-import { getNodeLabel, getArticleTitle } from "@/lib/lawTree";
+import { getNodeLabel, getArticleTitle } from "@/lib/tree";
 import type { TreeNode } from "@/types";
 import styles from "./LawCard.module.scss";
 

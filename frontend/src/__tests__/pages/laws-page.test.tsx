@@ -19,6 +19,7 @@ describe("Laws page", () => {
       if (query === "zzz") {
         return {
           fetchedQ: "zzz",
+          fetchedRefreshKey: null,
           laws: [],
           error: null,
           loading: false,
@@ -27,6 +28,7 @@ describe("Laws page", () => {
 
       return {
         fetchedQ: query,
+        fetchedRefreshKey: null,
         laws: [LAW_FIXTURE],
         error: null,
         loading: false,
@@ -65,6 +67,7 @@ describe("Laws page", () => {
   it("renders the request error state", () => {
     vi.mocked(useLaws).mockReturnValue({
       fetchedQ: "",
+      fetchedRefreshKey: null,
       laws: [],
       error: "Помилка завантаження",
       loading: false,

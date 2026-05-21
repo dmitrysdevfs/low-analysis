@@ -1,18 +1,20 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { type TreeBranch } from "@/lib/lawTree";
+import { type TreeBranch } from "@/lib/tree";
 import styles from "./LawStructureList.module.scss";
 import { ArticleEntry } from "./LawStructureListArticle";
 
 export function SectionBlock({
   section,
   lawId,
+  lawTitle,
   index,
   highlightSubjectId,
 }: {
   section: TreeBranch;
   lawId: string;
+  lawTitle?: string;
   index: number;
   highlightSubjectId?: string | null;
 }) {
@@ -49,6 +51,7 @@ export function SectionBlock({
                 key={article.key}
                 article={article}
                 lawId={lawId}
+                lawTitle={lawTitle}
                 highlightSubjectId={highlightSubjectId}
               />
             ))}
