@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { ROUTES } from "@/constants/routes";
+import { formatDateMedium, groupCounts } from "@/lib/utils";
 import { useLaws } from "@/hooks/useLaws";
 import { useSubjects } from "@/hooks/useSubjects";
-import { groupCounts, formatDateMedium } from "@/lib/utils";
 import styles from "./AdminAnalyticsView.module.scss";
 
 export function AdminAnalyticsView() {
@@ -26,7 +26,7 @@ export function AdminAnalyticsView() {
     const averageArticles =
       laws.length > 0 ? (totalArticles / laws.length).toFixed(1) : "0";
     const statusDistribution = groupCounts(
-      laws.map((law) => law.status ?? "Unknown"),
+      laws.map((law) => law.status ?? "Невідомо"),
     );
     const subjectStatusDistribution = groupCounts(
       subjects.map((subject) => subject.legal_status),
@@ -57,27 +57,25 @@ export function AdminAnalyticsView() {
       <div className={styles.hero}>
         <div>
           <span className={styles.eyebrow}>Аналітика адміна</span>
-          <h1 className={styles.title}>
-            Операційні метрики з поточних запитів
-          </h1>
+          <h1 className={styles.title}>Операційні метрики з поточних запитів</h1>
           <p className={styles.description}>
             Цей огляд агрегує відповіді `/api/laws` та `/api/subjects` для
-            швидкого операційного огляду правового покриття та розподілу
-            суб'єктів.
+            швидкого операційного зрізу правового покриття, глибини структури та
+            розподілу суб'єктів.
           </p>
         </div>
 
         <div className={styles.heroAside}>
-          <span className={styles.tag}>Тільки фронтенд</span>
+          <span className={styles.tag}>Лише клієнтський рівень</span>
           <div className={styles.heroValue}>
             {laws.length + subjects.length} відстежуваних об'єктів
           </div>
           <div className={styles.heroMeta}>
-            Закони, суб'єкти, глибина статей та метадані обчислюються на
-            фронтенді з наявних API-запитів.
+            Закони, суб'єкти, глибина статей і метадані обчислюються у клієнтському застосунку
+            з наявних API-запитів.
           </div>
           <Link href={ROUTES.admin} className={styles.heroLink}>
-            Повернутися до панелі адміна
+            Повернутися до адмін-панелі
           </Link>
         </div>
       </div>
@@ -86,57 +84,39 @@ export function AdminAnalyticsView() {
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Закони</span>
           <strong className={styles.metricValue}>{laws.length}</strong>
-          <p className={styles.metricNote}>
-            Всього правових документів з `/api/laws`.
-          </p>
+          <p className={styles.metricNote}>Усього правових документів з поточного запиту законів.</p>
         </article>
 
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Суб'єкти</span>
           <strong className={styles.metricValue}>{subjects.length}</strong>
           <p className={styles.metricNote}>
-            Визначених правових суб'єктів з `/api/subjects`.
+            Визначених правових суб'єктів з поточного запиту суб'єктів.
           </p>
         </article>
 
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Розділи</span>
-          <strong className={styles.metricValue}>
-            {metrics.totalSections}
-          </strong>
-          <p className={styles.metricNote}>
-            Структуровані розділи по всіх законах.
-          </p>
+          <strong className={styles.metricValue}>{metrics.totalSections}</strong>
+          <p className={styles.metricNote}>Структуровані розділи по всіх законах.</p>
         </article>
 
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Статті</span>
-          <strong className={styles.metricValue}>
-            {metrics.totalArticles}
-          </strong>
-          <p className={styles.metricNote}>
-            Загальна кількість статей у наборі даних.
-          </p>
+          <strong className={styles.metricValue}>{metrics.totalArticles}</strong>
+          <p className={styles.metricNote}>Загальна кількість статей у наборі даних.</p>
         </article>
 
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Абзаци</span>
-          <strong className={styles.metricValue}>
-            {metrics.totalParagraphs}
-          </strong>
-          <p className={styles.metricNote}>
-            Глибина абзаців в метаданих законів.
-          </p>
+          <strong className={styles.metricValue}>{metrics.totalParagraphs}</strong>
+          <p className={styles.metricNote}>Глибина абзаців у метаданих законів.</p>
         </article>
 
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Сер. статей</span>
-          <strong className={styles.metricValue}>
-            {metrics.averageArticles}
-          </strong>
-          <p className={styles.metricNote}>
-            Середня кількість статей на закон.
-          </p>
+          <strong className={styles.metricValue}>{metrics.averageArticles}</strong>
+          <p className={styles.metricNote}>Середня кількість статей на один закон.</p>
         </article>
       </div>
 
@@ -150,9 +130,7 @@ export function AdminAnalyticsView() {
           </div>
 
           {lawsLoading ? (
-            <div className={styles.emptyState}>
-              Завантаження розподілу статусів…
-            </div>
+            <div className={styles.emptyState}>Завантаження розподілу статусів…</div>
           ) : lawsError ? (
             <div className={styles.emptyState}>{lawsError}</div>
           ) : (
@@ -172,10 +150,7 @@ export function AdminAnalyticsView() {
                     />
                   </div>
                   <div className={styles.distributionMeta}>
-                    {laws.length > 0
-                      ? Math.round((count / laws.length) * 100)
-                      : 0}
-                    % законів
+                    {laws.length > 0 ? Math.round((count / laws.length) * 100) : 0}% законів
                   </div>
                 </div>
               ))}
@@ -192,9 +167,7 @@ export function AdminAnalyticsView() {
           </div>
 
           {subjectsLoading ? (
-            <div className={styles.emptyState}>
-              Завантаження розподілу суб'єктів…
-            </div>
+            <div className={styles.emptyState}>Завантаження розподілу суб'єктів…</div>
           ) : subjectsError ? (
             <div className={styles.emptyState}>{subjectsError}</div>
           ) : (
@@ -229,9 +202,7 @@ export function AdminAnalyticsView() {
           <div className={styles.panelHeader}>
             <div>
               <span className={styles.panelEyebrow}>Нові закони</span>
-              <h2 className={styles.panelTitle}>
-                Найновіші документи в наборі даних
-              </h2>
+              <h2 className={styles.panelTitle}>Найновіші документи в наборі даних</h2>
             </div>
           </div>
 
@@ -244,15 +215,11 @@ export function AdminAnalyticsView() {
                       <span className={styles.listCode}>{law.code}</span>
                       <div className={styles.listTitle}>{law.title}</div>
                       <div className={styles.listMeta}>
-                        Created {formatDateMedium(law.createdAt)} ·{" "}
-                        {law.totalArticles} articles · {law.totalSections}{" "}
-                        sections
+                        Створено {formatDateMedium(law.createdAt)}, {law.totalArticles} статей,{" "}
+                        {law.totalSections} розділів
                       </div>
                     </div>
-                    <Link
-                      href={ROUTES.law(law._id)}
-                      className={styles.heroLink}
-                    >
+                    <Link href={ROUTES.law(law._id)} className={styles.heroLink}>
                       Відкрити
                     </Link>
                   </div>
@@ -261,7 +228,7 @@ export function AdminAnalyticsView() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              Законів у поточній відповіді немає.
+              У поточній відповіді немає жодного закону.
             </div>
           )}
         </article>
@@ -270,18 +237,14 @@ export function AdminAnalyticsView() {
           <div className={styles.panelHeader}>
             <div>
               <span className={styles.panelEyebrow}>Якість метаданих</span>
-              <h2 className={styles.panelTitle}>
-                Покриття необов'язкових полів
-              </h2>
+              <h2 className={styles.panelTitle}>Покриття необов'язкових полів</h2>
             </div>
           </div>
 
           <div className={styles.distributionList}>
             <div className={styles.distributionRow}>
               <div className={styles.distributionTopRow}>
-                <span className={styles.distributionLabel}>
-                  Покриття підписантів
-                </span>
+                <span className={styles.distributionLabel}>Покриття підписантів</span>
                 <span className={styles.tag}>{metrics.signatoryCoverage}</span>
               </div>
               <div className={styles.progressTrack}>
@@ -299,9 +262,7 @@ export function AdminAnalyticsView() {
 
             <div className={styles.distributionRow}>
               <div className={styles.distributionTopRow}>
-                <span className={styles.distributionLabel}>
-                  Покриття преамбул
-                </span>
+                <span className={styles.distributionLabel}>Покриття преамбул</span>
                 <span className={styles.tag}>{metrics.preambleCoverage}</span>
               </div>
               <div className={styles.progressTrack}>
@@ -313,7 +274,7 @@ export function AdminAnalyticsView() {
                 />
               </div>
               <div className={styles.distributionMeta}>
-                Закони де текст преамбули доступний для аналізу.
+                Закони, де текст преамбули доступний для аналізу.
               </div>
             </div>
           </div>
@@ -331,11 +292,7 @@ export function AdminAnalyticsView() {
             <div className={styles.listRow}>
               <div className={styles.listTitle}>Запит законів</div>
               <div className={styles.listMeta}>
-                {lawsLoading
-                  ? "Завантаження…"
-                  : lawsError
-                    ? lawsError
-                    : "Готово"}
+                {lawsLoading ? "Завантаження…" : lawsError ? lawsError : "Готово"}
               </div>
             </div>
             <div className={styles.listRow}>

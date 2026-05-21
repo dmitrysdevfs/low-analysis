@@ -2,6 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { formatDateShort } from "@/lib/utils";
+import {
+  formatAccountSourceLabel,
+  formatAccountStatusLabel,
+  formatAccountTypeLabel,
+  formatPlanFilterLabel,
+} from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import styles from "./AdminWorkspace.module.scss";
 
@@ -57,45 +63,54 @@ export function AdminUsersView() {
     <section className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <span className={styles.eyebrow}>Users</span>
-          <h2 className={styles.title}>Account registry with live admin actions.</h2>
+          <span className={styles.eyebrow}>Користувачі</span>
+          <h2 className={styles.title}>Реєстр акаунтів із живими адмін-діями.</h2>
           <p className={styles.description}>
-            This screen keeps the existing mock account logic, but upgrades it
-            into a focused registry with clearer status visibility, safer dev
-            account handling and faster role-based filtering.
+            Цей екран зберігає поточну демонстраційну логіку акаунтів, але подає її як
+            сфокусований реєстр із чіткішим відображенням статусів, безпечнішою
+            роботою з розробницькими акаунтами та швидкими рольовими фільтрами.
           </p>
         </div>
 
         <aside className={styles.heroAside}>
-          <span className={styles.tag}>Current registry</span>
-          <div className={styles.heroValue}>{snapshot.totalAccounts} accounts</div>
+          <span className={styles.tag}>Поточний реєстр</span>
+          <div className={styles.heroValue}>{snapshot.totalAccounts} акаунтів</div>
           <div className={styles.heroMeta}>
-            {snapshot.clientAccounts} clients · {snapshot.adminAccounts} admins ·{" "}
-            {statusCounts.inactive} inactive · {statusCounts.dev} dev identities
+            {snapshot.clientAccounts} клієнтів, {snapshot.adminAccounts} адмінів,{" "}
+            {statusCounts.inactive} неактивних, {statusCounts.dev} розробницьких ідентичностей
           </div>
         </aside>
       </section>
 
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Total</span>
+          <span className={styles.metricLabel}>Усього</span>
           <strong className={styles.metricValue}>{snapshot.totalAccounts}</strong>
-          <p className={styles.metricNote}>All stored and built-in dev identities visible to the admin layer.</p>
+          <p className={styles.metricNote}>
+            Усі збережені та вбудовані розробницькі ідентичності, які бачить адмін-простір.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Clients</span>
+          <span className={styles.metricLabel}>Клієнти</span>
           <strong className={styles.metricValue}>{snapshot.clientAccounts}</strong>
-          <p className={styles.metricNote}>Customer-facing sessions with standard access to laws, subjects and search.</p>
+          <p className={styles.metricNote}>
+            Клієнтські сесії зі стандартним доступом до законів, суб'єктів і пошуку.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Admins</span>
+          <span className={styles.metricLabel}>Адміни</span>
           <strong className={styles.metricValue}>{snapshot.adminAccounts}</strong>
-          <p className={styles.metricNote}>Identities that can enter the admin shell and operate secure flows.</p>
+          <p className={styles.metricNote}>
+            Ідентичності, які можуть входити в адмін-простір і керувати захищеними
+            сценаріями.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Inactive</span>
+          <span className={styles.metricLabel}>Неактивні</span>
           <strong className={styles.metricValue}>{statusCounts.inactive}</strong>
-          <p className={styles.metricNote}>Accounts currently toggled off from the preview authentication store.</p>
+          <p className={styles.metricNote}>
+            Акаунти, які зараз вимкнені у локальному сховищі автентифікації.
+          </p>
         </article>
       </section>
 
@@ -103,15 +118,15 @@ export function AdminUsersView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Status mix</span>
-              <h3 className={styles.panelTitle}>Account health</h3>
+              <span className={styles.panelEyebrow}>Мікс статусів</span>
+              <h3 className={styles.panelTitle}>Стан акаунтів</h3>
             </div>
           </div>
 
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Active accounts</span>
+                <span className={styles.progressLabel}>Активні акаунти</span>
                 <span className={styles.progressValue}>{statusCounts.active}</span>
               </div>
               <div className={styles.progressTrack}>
@@ -125,7 +140,7 @@ export function AdminUsersView() {
             </div>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Inactive accounts</span>
+                <span className={styles.progressLabel}>Неактивні акаунти</span>
                 <span className={styles.progressValue}>{statusCounts.inactive}</span>
               </div>
               <div className={styles.progressTrack}>
@@ -143,15 +158,15 @@ export function AdminUsersView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Source mix</span>
-              <h3 className={styles.panelTitle}>Stored vs dev identities</h3>
+              <span className={styles.panelEyebrow}>Мікс джерел</span>
+              <h3 className={styles.panelTitle}>Збережені та розробницькі ідентичності</h3>
             </div>
           </div>
 
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Stored accounts</span>
+                <span className={styles.progressLabel}>Збережені акаунти</span>
                 <span className={styles.progressValue}>{statusCounts.stored}</span>
               </div>
               <div className={styles.progressTrack}>
@@ -165,7 +180,7 @@ export function AdminUsersView() {
             </div>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Dev accounts</span>
+                <span className={styles.progressLabel}>Розробницькі акаунти</span>
                 <span className={styles.progressValue}>{statusCounts.dev}</span>
               </div>
               <div className={styles.progressTrack}>
@@ -177,8 +192,8 @@ export function AdminUsersView() {
                 />
               </div>
               <div className={styles.progressMeta}>
-                Dev identities stay visible for preview flows, but account role
-                and status actions are intentionally disabled for them.
+                Розробницькі ідентичності лишаються видимими для демонстраційних сценаріїв, але дії
+                над роллю та статусом для них навмисно вимкнені.
               </div>
             </div>
           </div>
@@ -187,8 +202,8 @@ export function AdminUsersView() {
         <article className={`${styles.panel} ${styles.panelWide}`}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Registry</span>
-              <h3 className={styles.panelTitle}>Search and manage accounts</h3>
+              <span className={styles.panelEyebrow}>Реєстр</span>
+              <h3 className={styles.panelTitle}>Пошук і керування акаунтами</h3>
             </div>
           </div>
 
@@ -197,7 +212,7 @@ export function AdminUsersView() {
               value={registryQuery}
               onChange={(event) => setRegistryQuery(event.target.value)}
               className={styles.toolbarInput}
-              placeholder="Search by name or email"
+              placeholder="Пошук за ім'ям або email"
             />
             <div className={styles.filterTabs}>
               {(["all", "client", "admin"] as const).map((value) => (
@@ -207,7 +222,7 @@ export function AdminUsersView() {
                   className={`${styles.filterTab} ${registryFilter === value ? styles.filterTabActive : ""}`}
                   onClick={() => setRegistryFilter(value)}
                 >
-                  {value}
+                  {formatPlanFilterLabel(value)}
                 </button>
               ))}
             </div>
@@ -228,8 +243,12 @@ export function AdminUsersView() {
                       </div>
 
                       <div className={styles.accountBadges}>
-                        <span className={styles.accountBadge}>{account.accountType}</span>
-                        <span className={styles.accountBadge}>{account.source}</span>
+                        <span className={styles.accountBadge}>
+                          {formatAccountTypeLabel(account.accountType)}
+                        </span>
+                        <span className={styles.accountBadge}>
+                          {formatAccountSourceLabel(account.source)}
+                        </span>
                         <span
                           className={
                             isInactive
@@ -237,20 +256,20 @@ export function AdminUsersView() {
                               : styles.accountBadgeAccent
                           }
                         >
-                          {account.status}
+                          {formatAccountStatusLabel(account.status)}
                         </span>
                         {account.superCodeProtected ? (
-                          <span className={styles.accountBadgeAccent}>super code</span>
+                          <span className={styles.accountBadgeAccent}>супер-код</span>
                         ) : null}
                       </div>
 
                       <div className={styles.accountMetaBlock}>
-                        <span>Created: {formatDateShort(account.createdAt)}</span>
+                        <span>Створено: {formatDateShort(account.createdAt)}</span>
                         <span>
-                          Last login:{" "}
+                          Останній вхід:{" "}
                           {account.lastLoginAt
                             ? formatDateShort(account.lastLoginAt)
-                            : "never"}
+                            : "ніколи"}
                         </span>
                       </div>
 
@@ -267,7 +286,7 @@ export function AdminUsersView() {
                             )
                           }
                         >
-                          {isInactive ? "Reactivate" : "Deactivate"}
+                          {isInactive ? "Активувати" : "Деактивувати"}
                         </button>
                         <button
                           type="button"
@@ -281,7 +300,9 @@ export function AdminUsersView() {
                             )
                           }
                         >
-                          {account.accountType === "admin" ? "Demote" : "Promote"}
+                          {account.accountType === "admin"
+                            ? "Знизити роль"
+                            : "Підвищити"}
                         </button>
                         <button
                           type="button"
@@ -294,7 +315,7 @@ export function AdminUsersView() {
                             )
                           }
                         >
-                          Force logout
+                          Вийти примусово
                         </button>
                       </div>
                     </div>
@@ -302,7 +323,7 @@ export function AdminUsersView() {
                 })
               ) : (
                 <div className={styles.emptyState}>
-                  No accounts match the current registry filter.
+                  За поточним фільтром не знайдено жодного акаунта.
                 </div>
               )}
             </div>

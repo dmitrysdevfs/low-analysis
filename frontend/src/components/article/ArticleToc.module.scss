@@ -11,7 +11,9 @@
   color: var(--color-smoke);
   cursor: pointer;
   margin-bottom: 8px;
-  transition: color 0.18s, border-color 0.18s;
+  transition:
+    color 0.18s,
+    border-color 0.18s;
 
   &:hover {
     color: var(--color-gold);
@@ -70,7 +72,9 @@
   cursor: pointer;
   padding: 3px 6px;
   border-radius: 3px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

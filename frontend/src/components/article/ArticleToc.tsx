@@ -68,7 +68,9 @@ export function ArticleToc({ nodes }: { nodes: TreeBranch[] }) {
   if (!entries.length) return null;
 
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
     setOpen(false);
   };
 
@@ -93,7 +95,11 @@ export function ArticleToc({ nodes }: { nodes: TreeBranch[] }) {
         <div className={`mono ${styles.tocHeading}`}>ЗМІСТ</div>
         <ul className={styles.tocList}>
           {entries.map((entry) => (
-            <li key={entry.id} className={styles.tocItem} style={{ paddingLeft: entry.depth * 10 }}>
+            <li
+              key={entry.id}
+              className={styles.tocItem}
+              style={{ paddingLeft: entry.depth * 10 }}
+            >
               <button
                 type="button"
                 className={`${styles.tocLink} ${activeId === entry.id ? styles.tocLinkActive : ""}`}

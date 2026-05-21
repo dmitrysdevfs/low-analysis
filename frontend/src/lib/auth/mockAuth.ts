@@ -47,7 +47,7 @@ type DevAccountOverride = Partial<
 >;
 
 export type AdminAccessMatrixRow = {
-  role: "Guest" | "Client" | "Admin";
+  role: "Гість" | "Клієнт" | "Адмін";
   home: boolean;
   laws: boolean;
   subjects: boolean;
@@ -182,11 +182,51 @@ function writeSessionStorageItem(key: string, value: unknown) {
   window.sessionStorage.setItem(key, JSON.stringify(value));
 }
 
+function normalizeLegacyAuditEntry(entry: AdminAuditLogEntry): AdminAuditLogEntry {
+  const actionMap: Record<string, string> = {
+    "Super code regenerated": "Супер-код оновлено",
+    "Profile updated": "Профіль оновлено",
+    "Password updated": "Пароль оновлено",
+    "Admin registered": "Адміністратора зареєстровано",
+    "Client registered": "Клієнта зареєстровано",
+    "Administrator login": "Вхід адміністратора",
+    "Client login": "Вхід клієнта",
+    "Account deactivated": "Акаунт деактивовано",
+    "Account reactivated": "Акаунт реактивовано",
+    "Account promoted to admin": "Акаунт підвищено до адміна",
+    "Admin rights removed": "Права адміністратора знято",
+    "Force logout executed": "Виконано примусовий вихід",
+    "Super code copied": "Супер-код скопійовано",
+    "Force logout": "Примусовий вихід",
+    "Billing plan reassigned": "План білінгу оновлено",
+  };
+
+  return {
+    ...entry,
+    action: actionMap[entry.action] ?? entry.action,
+    detail: entry.detail
+      .replace("A fresh administrator onboarding code was issued:", "Створено новий код для підключення адміністратора:")
+      .replace("Display name changed to", "Ім'я профілю змінено на")
+      .replace("The account password was changed in the frontend preview store.", "Пароль акаунта змінено у локальному сховищі попереднього режиму.")
+      .replace("authenticated successfully.", "успішно автентифікувався.")
+      .replace("Force logout applied to account", "Для акаунта застосовано примусовий вихід")
+      .replace("Account ", "Акаунт ")
+      .replace(" status set to inactive.", " переведено в статус неактивний.")
+      .replace(" status set to active.", " переведено в статус активний.")
+      .replace(" role changed to admin.", " отримав роль адміна.")
+      .replace(" role changed to client.", " переведено в роль клієнта.")
+      .replace(" created a admin account.", " створив адмінський акаунт.")
+      .replace(" created a client account.", " створив клієнтський акаунт.")
+      .replace("Plan ", "План ")
+      .replace(" assigned by admin", " призначено адміністратором"),
+  };
+}
+
 function readAuditLog() {
   return readStorageItem<AdminAuditLogEntry[]>(
     AUTH_ADMIN_AUDIT_LOG_STORAGE_KEY,
     [],
-  );
+  ).map(normalizeLegacyAuditEntry);
 }
 
 function writeAuditLog(entries: AdminAuditLogEntry[]) {
@@ -375,7 +415,7 @@ export function readAdminSuperCodeHistory() {
     id: "super-code-default",
     code: readActiveAdminSuperCode(),
     rotatedAt: readAdminSuperCodeRotatedAt() ?? "2026-01-01T00:00:00.000Z",
-    rotatedBy: "System bootstrap",
+    rotatedBy: "Системний запуск",
     status: "default",
   };
 
@@ -386,7 +426,7 @@ export function readAdminSuperCodeHistory() {
 export function regenerateAdminSuperCode() {
   const nextCode = createInviteCode();
   const rotatedAt = new Date().toISOString();
-  const rotatedBy = readStoredSession()?.displayName ?? "Administrator";
+  const rotatedBy = readStoredSession()?.displayName ?? "Адміністратор";
   const nextHistoryEntry: AdminSuperCodeHistoryEntry = {
     id: `super-code-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     code: nextCode,
@@ -406,8 +446,8 @@ export function regenerateAdminSuperCode() {
   writeStorageItem(AUTH_ADMIN_SUPER_CODE_ROTATED_AT_STORAGE_KEY, rotatedAt);
   writeStorageItem(AUTH_ADMIN_SUPER_CODE_HISTORY_STORAGE_KEY, nextHistory);
   appendAuditLogEntry({
-    action: "Super code regenerated",
-    detail: `A fresh administrator onboarding code was issued: ${nextCode}.`,
+    action: "Супер-код оновлено",
+    detail: `Створено новий код для підключення адміністратора: ${nextCode}.`,
     actor: rotatedBy,
     severity: "security",
   });
@@ -456,8 +496,8 @@ export function updateMockProfile(
   }
 
   appendAuditLogEntry({
-    action: "Profile updated",
-    detail: `Display name changed to ${updatedAccount.displayName}.`,
+    action: "Профіль оновлено",
+    detail: `Ім'я профілю змінено на ${updatedAccount.displayName}.`,
     actor: target.account.displayName,
     severity: "info",
   });
@@ -504,8 +544,8 @@ export function changeMockPassword(
   }
 
   appendAuditLogEntry({
-    action: "Password updated",
-    detail: "The account password was changed in the frontend preview store.",
+    action: "Пароль оновлено",
+    detail: "Пароль акаунта змінено у локальному сховищі попереднього режиму.",
     actor: target.account.displayName,
     severity: "security",
   });
@@ -567,9 +607,9 @@ export function registerMockAccount(
   appendAuditLogEntry({
     action:
       payload.accountType === "admin"
-        ? "Admin registered"
-        : "Client registered",
-    detail: `${account.displayName} (${account.email}) created a ${payload.accountType} account.`,
+        ? "Адміністратора зареєстровано"
+        : "Клієнта зареєстровано",
+    detail: `${account.displayName} (${account.email}) створив ${payload.accountType === "admin" ? "адмінський" : "клієнтський"} акаунт.`,
     actor: account.displayName,
     severity: payload.accountType === "admin" ? "security" : "info",
   });
@@ -646,8 +686,10 @@ export function loginMockAccount(payload: LoginPayload): AuthActionResult {
   }
   appendAuditLogEntry({
     action:
-      session.accountType === "admin" ? "Administrator login" : "Client login",
-    detail: `${session.displayName} authenticated successfully.`,
+      session.accountType === "admin"
+        ? "Вхід адміністратора"
+        : "Вхід клієнта",
+    detail: `${session.displayName} успішно автентифікувався.`,
     actor: session.displayName,
     severity: session.accountType === "admin" ? "security" : "info",
   });
@@ -674,7 +716,7 @@ export function deactivateMockAccount(userId: string): {
   if (idx === -1) {
     return {
       ok: false,
-      error: "Акаунт є dev-акаунтом і не може бути змінений.",
+      error: "Акаунт є розробницьким і не може бути змінений.",
     };
   }
   const account = storedAccounts[idx];
@@ -686,8 +728,10 @@ export function deactivateMockAccount(userId: string): {
   writeStorageItem(AUTH_ACCOUNTS_STORAGE_KEY, next);
   appendAuditLogEntry({
     action:
-      nextStatus === "inactive" ? "Account deactivated" : "Account reactivated",
-    detail: `Account ${userId} status set to ${nextStatus}.`,
+      nextStatus === "inactive"
+        ? "Акаунт деактивовано"
+        : "Акаунт реактивовано",
+    detail: `Для акаунта ${userId} встановлено статус ${nextStatus === "inactive" ? "неактивний" : "активний"}.`,
     actor: "admin",
     severity: "warning",
   });
@@ -703,7 +747,7 @@ export function promoteMockAccount(userId: string): {
   if (idx === -1) {
     return {
       ok: false,
-      error: "Акаунт є dev-акаунтом і не може бути змінений.",
+      error: "Акаунт є розробницьким і не може бути змінений.",
     };
   }
   const account = storedAccounts[idx];
@@ -718,9 +762,9 @@ export function promoteMockAccount(userId: string): {
   appendAuditLogEntry({
     action:
       nextType === "admin"
-        ? "Account promoted to admin"
-        : "Admin rights removed",
-    detail: `Account ${userId} role changed to ${nextType}.`,
+        ? "Акаунт підвищено до адміна"
+        : "Права адміністратора знято",
+    detail: `Для акаунта ${userId} роль змінено на ${nextType === "admin" ? "адмін" : "клієнт"}.`,
     actor: "admin",
     severity: "security",
   });
@@ -734,8 +778,8 @@ export function forceLogoutMockAccount(userId: string): { ok: boolean } {
     window.sessionStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
   }
   appendAuditLogEntry({
-    action: "Force logout executed",
-    detail: `Force logout applied to account ${userId}.`,
+    action: "Виконано примусовий вихід",
+    detail: `Для акаунта ${userId} застосовано примусовий вихід.`,
     actor: "admin",
     severity: "warning",
   });
@@ -794,7 +838,7 @@ export function getAdminDashboardSnapshot() {
     },
     accessMatrix: [
       {
-        role: "Guest",
+        role: "Гість",
         home: true,
         laws: true,
         subjects: true,
@@ -802,7 +846,7 @@ export function getAdminDashboardSnapshot() {
         adminPanel: false,
       },
       {
-        role: "Client",
+        role: "Клієнт",
         home: true,
         laws: true,
         subjects: true,
@@ -810,7 +854,7 @@ export function getAdminDashboardSnapshot() {
         adminPanel: false,
       },
       {
-        role: "Admin",
+        role: "Адмін",
         home: true,
         laws: true,
         subjects: true,

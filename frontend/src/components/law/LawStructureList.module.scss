@@ -58,7 +58,11 @@
   transition: opacity 0.15s;
   color: var(--rc, var(--color-smoke));
   background: color-mix(in srgb, var(--rc, var(--color-smoke)) 8%, transparent);
-  border-color: color-mix(in srgb, var(--rc, var(--color-smoke)) 30%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--rc, var(--color-smoke)) 30%,
+    transparent
+  );
 
   &:hover {
     opacity: 0.8;

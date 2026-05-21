@@ -196,8 +196,12 @@ export default function LawTreePage() {
       const nextSearchParams = new URLSearchParams(searchParams.toString());
       if (nextValue) {
         nextSearchParams.set("subject", nextValue);
+        nextSearchParams.set("subjectModal", nextValue);
+        nextSearchParams.set("mentionIdx", "0");
       } else {
         nextSearchParams.delete("subject");
+        nextSearchParams.delete("subjectModal");
+        nextSearchParams.delete("mentionIdx");
       }
       const nextQuery = nextSearchParams.toString();
       router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {

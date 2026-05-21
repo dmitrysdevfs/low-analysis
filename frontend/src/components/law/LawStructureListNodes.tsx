@@ -48,7 +48,10 @@ function NestedNode({
                 const subject = subjectsMap.get(s.subject_id);
                 return subject ? { subject, role: s.role } : null;
               })
-              .filter((item): item is { subject: Subject; role: string } => item !== null)
+              .filter(
+                (item): item is { subject: Subject; role: string } =>
+                  item !== null,
+              )
               .map((item) => [item.subject._id, item]),
           ).values(),
         )

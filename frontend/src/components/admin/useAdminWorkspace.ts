@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { useBilling } from "@/components/billing/BillingProvider";
 import { notify } from "@/lib/toast";
 import {
   appendAdminAuditLog,
@@ -11,8 +13,6 @@ import {
   regenerateAdminSuperCode,
   type AdminDashboardSnapshot,
 } from "@/lib/auth/mockAuth";
-import { useAuth } from "@/components/auth/AuthProvider";
-import { useBilling } from "@/components/billing/BillingProvider";
 import type { BillingPlanId } from "@/types";
 
 const CLIENT_PLAN_IDS = ["trial", "user", "plus", "pro"] as const;
@@ -84,14 +84,14 @@ export function useAdminWorkspace() {
 
     try {
       await writeClipboard(snapshot.activeSuperCode);
-      notify.success("ÐÐºÑ‚Ð¸Ð²Ð½Ð¸Ð¹ ÑÑƒÐ¿ÐµÑ€-ÐºÐ¾Ð´ ÑÐºÐ¾Ð¿Ñ–Ð¹Ð¾Ð²Ð°Ð½Ð¾.");
+      notify.success("Активний супер-код скопійовано.");
     } catch {
-      notify.info(`ÐŸÐ¾Ñ‚Ð¾Ñ‡Ð½Ð¸Ð¹ ÑÑƒÐ¿ÐµÑ€-ÐºÐ¾Ð´: ${snapshot.activeSuperCode}`);
+      notify.info(`Поточний супер-код: ${snapshot.activeSuperCode}`);
     }
 
     appendAdminAuditLog({
-      action: "Super code copied",
-      detail: `ÐÐºÑ‚Ð¸Ð²Ð½Ð¸Ð¹ ÑÑƒÐ¿ÐµÑ€-ÐºÐ¾Ð´ ÑÐºÐ¾Ð¿Ñ–Ð¹Ð¾Ð²Ð°Ð½Ð¾ Ð°Ð´Ð¼Ñ–Ð½Ð¾Ð¼ ${user?.email ?? "admin"}.`,
+      action: "Супер-код скопійовано",
+      detail: `Активний супер-код скопійовано адміністратором ${user?.email ?? "admin"}.`,
       actor: user?.email ?? "admin",
       severity: "info",
     });
@@ -101,7 +101,7 @@ export function useAdminWorkspace() {
   const handleRegenerateCode = useCallback(() => {
     const next = regenerateAdminSuperCode();
     refreshSnapshot();
-    notify.success(`ÐÐ¾Ð²Ð¸Ð¹ ÑÑƒÐ¿ÐµÑ€-ÐºÐ¾Ð´ Ð²Ð¸Ð´Ð°Ð½Ð¾: ${next.code}`);
+    notify.success(`Новий супер-код створено: ${next.code}`);
   }, [refreshSnapshot]);
 
   const handleCopyGuestStatus = useCallback(async () => {
@@ -110,15 +110,15 @@ export function useAdminWorkspace() {
     }
 
     const summary = [
-      `ÐŸÐ¾ÑˆÑƒÐº Ð³Ð¾ÑÑ‚ÐµÐ¹: ${snapshot.guestPressure.searchUsed}/${snapshot.guestPressure.searchLimit}`,
-      `ÐŸÐµÑ€ÐµÐ³Ð»ÑÐ´Ð¸ Ð³Ð¾ÑÑ‚ÐµÐ¹: ${snapshot.guestPressure.viewUsed}/${snapshot.guestPressure.viewLimit}`,
-      `ÐšÑƒÐ»Ð´Ð°ÑƒÐ½ Ð¿Ð¾ÑˆÑƒÐºÑƒ: ${snapshot.guestPressure.searchCooldownActive ? "Ð°ÐºÑ‚Ð¸Ð²Ð½Ð¸Ð¹" : "Ð²Ð¸Ð¼ÐºÐ½ÐµÐ½Ð¾"}`,
-      `ÐšÑƒÐ»Ð´Ð°ÑƒÐ½ Ð¿ÐµÑ€ÐµÐ³Ð»ÑÐ´Ñƒ: ${snapshot.guestPressure.viewCooldownActive ? "Ð°ÐºÑ‚Ð¸Ð²Ð½Ð¸Ð¹" : "Ð²Ð¸Ð¼ÐºÐ½ÐµÐ½Ð¾"}`,
+      `Пошук гостей: ${snapshot.guestPressure.searchUsed}/${snapshot.guestPressure.searchLimit}`,
+      `Перегляди гостей: ${snapshot.guestPressure.viewUsed}/${snapshot.guestPressure.viewLimit}`,
+      `Кулдаун пошуку: ${snapshot.guestPressure.searchCooldownActive ? "активний" : "вимкнено"}`,
+      `Кулдаун перегляду: ${snapshot.guestPressure.viewCooldownActive ? "активний" : "вимкнено"}`,
     ].join(" | ");
 
     try {
       await writeClipboard(summary);
-      notify.success("Ð—Ð²ÐµÐ´ÐµÐ½Ð½Ñ Ð½Ð°Ð²Ð°Ð½Ñ‚Ð°Ð¶ÐµÐ½Ð½Ñ Ð³Ð¾ÑÑ‚ÐµÐ¹ ÑÐºÐ¾Ð¿Ñ–Ð¹Ð¾Ð²Ð°Ð½Ð¾.");
+      notify.success("Зведення про навантаження гостей скопійовано.");
     } catch {
       notify.info(summary);
     }
@@ -129,26 +129,26 @@ export function useAdminWorkspace() {
       if (action === "deactivate") {
         const result = deactivateMockAccount(accountId);
         if (!result.ok) {
-          notify.warning(result.error ?? "ÐÐµ Ð²Ð´Ð°Ð»Ð¾ÑÑ Ð·Ð¼Ñ–Ð½Ð¸Ñ‚Ð¸ ÑÑ‚Ð°Ñ‚ÑƒÑ.");
+          notify.warning(result.error ?? "Не вдалося змінити статус акаунта.");
           return;
         }
-        notify.success("Ð¡Ñ‚Ð°Ñ‚ÑƒÑ Ð°ÐºÐ°ÑƒÐ½Ñ‚Ñƒ Ð·Ð¼Ñ–Ð½ÐµÐ½Ð¾.");
+        notify.success("Статус акаунта оновлено.");
       } else if (action === "promote") {
         const result = promoteMockAccount(accountId);
         if (!result.ok) {
-          notify.warning(result.error ?? "ÐÐµ Ð²Ð´Ð°Ð»Ð¾ÑÑ Ð·Ð¼Ñ–Ð½Ð¸Ñ‚Ð¸ Ñ€Ð¾Ð»ÑŒ.");
+          notify.warning(result.error ?? "Не вдалося змінити роль акаунта.");
           return;
         }
-        notify.success("Ð Ð¾Ð»ÑŒ Ð°ÐºÐ°ÑƒÐ½Ñ‚Ñƒ Ð¾Ð½Ð¾Ð²Ð»ÐµÐ½Ð¾.");
+        notify.success("Роль акаунта оновлено.");
       } else {
         forceLogoutMockAccount(accountId);
         appendAdminAuditLog({
-          action: "Force logout",
-          detail: `ÐŸÑ€Ð¸Ð¼ÑƒÑÐ¾Ð²Ð¸Ð¹ Ð²Ð¸Ñ…Ñ–Ð´ Ð²Ð¸ÐºÐ¾Ð½Ð°Ð½Ð¾ Ð´Ð»Ñ ${accountName} (${accountId}).`,
+          action: "Примусовий вихід",
+          detail: `Для акаунта ${accountName} (${accountId}) виконано примусовий вихід.`,
           actor: user?.email ?? "admin",
           severity: "warning",
         });
-        notify.success("ÐŸÑ€Ð¸Ð¼ÑƒÑÐ¾Ð²Ð¸Ð¹ Ð²Ð¸Ñ…Ñ–Ð´ Ð²Ð¸ÐºÐ¾Ð½Ð°Ð½Ð¾.");
+        notify.success("Примусовий вихід виконано.");
       }
 
       refreshSnapshot();
@@ -161,17 +161,17 @@ export function useAdminWorkspace() {
       const result = assignPlan(accountId, planId, user?.email ?? "admin");
 
       if (!result.ok) {
-        notify.warning(result.error ?? "ÐÐµ Ð²Ð´Ð°Ð»Ð¾ÑÑ Ð¾Ð½Ð¾Ð²Ð¸Ñ‚Ð¸ Ð¿Ð»Ð°Ð½.");
+        notify.warning(result.error ?? "Не вдалося оновити план.");
         return;
       }
 
       appendAdminAuditLog({
-        action: "Billing plan reassigned",
-        detail: `ÐŸÐ»Ð°Ð½ ${planId} Ð²ÑÑ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½Ð¾ Ð´Ð»Ñ ${accountName} (${accountId}).`,
+        action: "План білінгу оновлено",
+        detail: `План ${planId} призначено для ${accountName} (${accountId}).`,
         actor: user?.email ?? "admin",
         severity: "security",
       });
-      notify.success("ÐŸÐ»Ð°Ð½ ÐºÐ»Ñ–Ñ”Ð½Ñ‚Ð° Ð¾Ð½Ð¾Ð²Ð»ÐµÐ½Ð¾.");
+      notify.success("План клієнта оновлено.");
       refreshSnapshot();
     },
     [assignPlan, refreshSnapshot, user?.email],

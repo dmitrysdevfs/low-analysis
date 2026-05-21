@@ -2,23 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { formatDateShort } from "@/lib/utils";
+import { formatSeverityLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import styles from "./AdminWorkspace.module.scss";
 
 type SeverityFilter = "all" | "info" | "warning" | "security";
-
-function formatSeverityLabel(value: SeverityFilter | "info" | "warning" | "security") {
-  if (value === "security") {
-    return "Security";
-  }
-  if (value === "warning") {
-    return "Warning";
-  }
-  if (value === "info") {
-    return "Info";
-  }
-  return "All";
-}
 
 export function AdminAuditView() {
   const { snapshot } = useAdminWorkspace();
@@ -33,7 +21,8 @@ export function AdminAuditView() {
     const normalizedQuery = query.trim().toLowerCase();
 
     return snapshot.auditLog.filter((item) => {
-      const matchesSeverity = filter === "all" ? true : item.severity === filter;
+      const matchesSeverity =
+        filter === "all" ? true : item.severity === filter;
       const matchesQuery =
         normalizedQuery.length === 0
           ? true
@@ -67,53 +56,61 @@ export function AdminAuditView() {
     <section className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <span className={styles.eyebrow}>Audit</span>
-          <h2 className={styles.title}>Readable event feed instead of a hidden log.</h2>
+          <span className={styles.eyebrow}>Аудит</span>
+          <h2 className={styles.title}>Читабельна стрічка подій замість прихованого логу.</h2>
           <p className={styles.description}>
-            The audit module keeps the same frontend event source, but upgrades it
-            into a dedicated review screen with severity filters, search and a
-            clearer signal around security-relevant operations.
+            Модуль аудиту зберігає те саме фронтенд-джерело подій, але подає його
+            як окремий екран перевірки з фільтрами за критичністю, пошуком і
+            чіткішим сигналом навколо безпекових операцій.
           </p>
         </div>
 
         <aside className={styles.heroAside}>
-          <span className={styles.tag}>Current feed</span>
-          <div className={styles.heroValue}>{snapshot.auditLog.length} events</div>
+          <span className={styles.tag}>Поточна стрічка</span>
+          <div className={styles.heroValue}>{snapshot.auditLog.length} подій</div>
           <div className={styles.heroMeta}>
-            {severityCounts.security} security · {severityCounts.warning} warning ·{" "}
-            {severityCounts.info} info
+            {severityCounts.security} безпекових, {severityCounts.warning} попереджень,{" "}
+            {severityCounts.info} інформаційних
           </div>
         </aside>
       </section>
 
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Info</span>
+          <span className={styles.metricLabel}>Інфо</span>
           <strong className={styles.metricValue}>{severityCounts.info}</strong>
-          <p className={styles.metricNote}>General auth and navigation related events.</p>
+          <p className={styles.metricNote}>
+            Загальні події, пов'язані з автентифікацією та навігацією.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Warning</span>
+          <span className={styles.metricLabel}>Попередження</span>
           <strong className={styles.metricValue}>{severityCounts.warning}</strong>
-          <p className={styles.metricNote}>Status changes, force logout actions and elevated operational signals.</p>
+          <p className={styles.metricNote}>
+            Зміни статусів, примусові виходи та підвищені операційні сигнали.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Security</span>
+          <span className={styles.metricLabel}>Безпека</span>
           <strong className={styles.metricValue}>{severityCounts.security}</strong>
-          <p className={styles.metricNote}>Admin logins, code rotations and billing/security-sensitive changes.</p>
+          <p className={styles.metricNote}>
+            Входи адмінів, ротації коду та білінг/безпеково-чутливі зміни.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Visible</span>
+          <span className={styles.metricLabel}>Видимі</span>
           <strong className={styles.metricValue}>{filteredEvents.length}</strong>
-          <p className={styles.metricNote}>Events currently matching the active filter and search query.</p>
+          <p className={styles.metricNote}>
+            Події, які зараз відповідають активному фільтру й пошуковому запиту.
+          </p>
         </article>
       </section>
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <span className={styles.panelEyebrow}>Event feed</span>
-            <h3 className={styles.panelTitle}>Filter and inspect events</h3>
+            <span className={styles.panelEyebrow}>Стрічка подій</span>
+            <h3 className={styles.panelTitle}>Фільтрування та перегляд подій</h3>
           </div>
         </div>
 
@@ -122,7 +119,7 @@ export function AdminAuditView() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             className={styles.toolbarInput}
-            placeholder="Search by action, detail or actor"
+            placeholder="Пошук за дією, деталями або виконавцем"
           />
           <div className={styles.filterTabs}>
             {(["all", "info", "warning", "security"] as const).map((value) => (
@@ -164,7 +161,7 @@ export function AdminAuditView() {
               ))
             ) : (
               <div className={styles.emptyState}>
-                No audit records match the current filters.
+                За поточними фільтрами не знайдено жодного запису аудиту.
               </div>
             )}
           </div>

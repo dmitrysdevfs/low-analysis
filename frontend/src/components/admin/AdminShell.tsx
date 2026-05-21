@@ -16,69 +16,69 @@ type AdminNavItem = {
 const ADMIN_NAV: AdminNavItem[] = [
   {
     href: ROUTES.admin,
-    label: "Dashboard",
-    note: "KPI, graphs and site health",
+    label: "Дашборд",
+    note: "Ключові метрики, графіки та стан платформи",
   },
   {
     href: ROUTES.adminUsers,
-    label: "Users",
-    note: "Registry, roles and account actions",
+    label: "Користувачі",
+    note: "Реєстр, ролі та дії над акаунтами",
   },
   {
     href: ROUTES.adminBilling,
-    label: "Billing",
-    note: "Plans, quotas and assignments",
+    label: "Білінг",
+    note: "Плани, квоти та призначення",
   },
   {
     href: ROUTES.adminAccess,
-    label: "Access",
-    note: "Role matrix and protected areas",
+    label: "Доступ",
+    note: "Матриця ролей і захищені зони",
   },
   {
     href: ROUTES.adminCodes,
-    label: "Codes",
-    note: "Super code lifecycle",
+    label: "Коди",
+    note: "Життєвий цикл супер-коду",
   },
   {
     href: ROUTES.adminAudit,
-    label: "Audit",
-    note: "Operational event feed",
+    label: "Аудит",
+    note: "Стрічка операційних подій",
   },
   {
     href: ROUTES.adminAnalytics,
-    label: "Analytics",
-    note: "Deep frontend data view",
+    label: "Аналітика",
+    note: "Поглиблений зріз поточних даних сайту",
   },
 ];
 
 const PAGE_COPY: Record<string, { title: string; subtitle: string }> = {
   [ROUTES.admin]: {
-    title: "Admin dashboard",
-    subtitle: "Control room for accounts, billing, security and site activity.",
+    title: "Адмін-дашборд",
+    subtitle: "Пульт керування акаунтами, білінгом, безпекою та активністю сайту.",
   },
   [ROUTES.adminUsers]: {
-    title: "User registry",
-    subtitle: "Account search, role changes, status control and force logout.",
+    title: "Реєстр користувачів",
+    subtitle: "Пошук акаунтів, зміна ролей, керування статусами та примусовий вихід.",
   },
   [ROUTES.adminBilling]: {
-    title: "Billing workspace",
-    subtitle: "Plan distribution, quota health and admin-side assignments.",
+    title: "Білінг-простір",
+    subtitle: "Розподіл планів, стан квот і адміністраторські призначення.",
   },
   [ROUTES.adminAccess]: {
-    title: "Access matrix",
-    subtitle: "Current route permissions and protected admin surface.",
+    title: "Матриця доступу",
+    subtitle: "Поточні права для маршрутів і захищена адмін-поверхня.",
   },
   [ROUTES.adminCodes]: {
-    title: "Super code lifecycle",
-    subtitle: "Administrator onboarding code, rotation history and safeguards.",
+    title: "Життєвий цикл супер-коду",
+    subtitle: "Код для входу адміністраторів, історія ротацій і запобіжники.",
   },
   [ROUTES.adminAudit]: {
-    title: "Audit log",
-    subtitle: "Recent security, warning and operational events.",
+    title: "Журнал аудиту",
+    subtitle: "Останні події безпеки, попередження та операційні зміни.",
   },
   [ROUTES.adminAnalytics]: {
-    title: "Analytics",
-    subtitle: "Deeper site metrics aggregated from current frontend datasets.",
+    title: "Аналітика",
+    subtitle: "Глибші метрики сайту, зібрані з поточних фронтенд-даних.",
   },
 };
 
@@ -94,7 +94,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
     const fallback =
       ADMIN_NAV.find(
-        (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+        (item) =>
+          pathname === item.href || pathname.startsWith(`${item.href}/`),
       ) ?? ADMIN_NAV[0];
 
     return (
@@ -110,10 +111,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <aside className={styles.sidebar}>
         <div className={styles.brandBlock}>
           <span className={styles.brandEyebrow}>Law Analysis</span>
-          <h1 className={styles.brandTitle}>Admin workspace</h1>
+          <h1 className={styles.brandTitle}>Адмін-простір</h1>
           <p className={styles.brandNote}>
-            Separate operating surface for platform supervision, billing control
-            and security flows.
+            Окрема робоча поверхня для нагляду за платформою, контролю білінгу
+            та безпекових сценаріїв.
           </p>
         </div>
 
@@ -139,10 +140,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <div className={styles.sidebarFooter}>
           <Link href={ROUTES.home} className={styles.secondaryLink}>
-            Public site
+            Публічний сайт
           </Link>
           <div className={styles.sidebarMeta}>
-            Active admin: {user?.displayName ?? "Administrator"}
+            Активний адмін: {user?.displayName ?? "Адміністратор"}
           </div>
         </div>
       </aside>
@@ -150,20 +151,20 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <div className={styles.contentArea}>
         <header className={styles.topbar}>
           <div>
-            <span className={styles.topbarEyebrow}>Admin zone</span>
+            <span className={styles.topbarEyebrow}>Адмін-зона</span>
             <div className={styles.topbarTitle}>{pageCopy.title}</div>
             <p className={styles.topbarSubtitle}>{pageCopy.subtitle}</p>
           </div>
 
           <div className={styles.topbarActions}>
             <Link href={ROUTES.home} className={styles.siteSwitch}>
-              Open public site
+              Відкрити сайт
             </Link>
 
             <div className={styles.topbarCard}>
-              <span className={styles.topbarCardLabel}>Session</span>
+              <span className={styles.topbarCardLabel}>Сесія</span>
               <strong className={styles.topbarCardValue}>
-                {user?.displayName ?? "Admin"}
+                {user?.displayName ?? "Адмін"}
               </strong>
               <span className={styles.topbarCardMeta}>
                 {user?.email ?? "admin@low-analysis.dev"}

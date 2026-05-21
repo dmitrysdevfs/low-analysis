@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { getNodeBadge, getRoleColor, sanitizeAnchor, formatCitation } from "@/lib/tree";
+import {
+  getNodeBadge,
+  getRoleColor,
+  sanitizeAnchor,
+  formatCitation,
+} from "@/lib/tree";
 import type { TreeBranch } from "@/lib/tree";
 import { highlightMatch } from "@/lib/utils/highlightMatch";
 import { notify } from "@/lib/toast";
@@ -68,7 +73,6 @@ function hasTermsMatch(
   const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   return new RegExp(`(${escaped.join("|")})`, "i").test(text);
 }
-
 
 function NestedNode({
   node,

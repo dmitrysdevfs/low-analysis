@@ -6,6 +6,10 @@ import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import { useSubjects } from "@/hooks/useSubjects";
 import { formatDateMedium, formatDateShort, groupCounts } from "@/lib/utils";
+import {
+  formatAccessRoleLabel,
+  formatSeverityLabel,
+} from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import styles from "./AdminWorkspace.module.scss";
 
@@ -50,7 +54,9 @@ export function AdminDashboardView() {
       (sum, law) => sum + (law.totalParagraphs ?? 0),
       0,
     );
-    const signatoryCoverage = laws.filter((law) => Boolean(law.signatory)).length;
+    const signatoryCoverage = laws.filter((law) =>
+      Boolean(law.signatory),
+    ).length;
     const preambleCoverage = laws.filter((law) => Boolean(law.preamble)).length;
     const subjectStatusDistribution = groupCounts(
       subjects.map((subject) => subject.legal_status),
@@ -72,12 +78,12 @@ export function AdminDashboardView() {
 
   const billingSegments = useMemo<DonutSegment[]>(
     () => [
-      { label: "Preview", value: billingCounts.preview, color: "#4a80d4" },
-      { label: "Trial", value: billingCounts.trial, color: "#6aa1ff" },
-      { label: "User", value: billingCounts.user, color: "#93b7ff" },
-      { label: "Plus", value: billingCounts.plus, color: "#c8a843" },
-      { label: "Pro", value: billingCounts.pro, color: "#f2d675" },
-      { label: "Admin", value: billingCounts.admin, color: "#e9774b" },
+      { label: "Прев'ю", value: billingCounts.preview, color: "#4a80d4" },
+      { label: "Тріал", value: billingCounts.trial, color: "#6aa1ff" },
+      { label: "Користувач", value: billingCounts.user, color: "#93b7ff" },
+      { label: "Плюс", value: billingCounts.plus, color: "#c8a843" },
+      { label: "Про", value: billingCounts.pro, color: "#f2d675" },
+      { label: "Адмін", value: billingCounts.admin, color: "#e9774b" },
     ],
     [billingCounts],
   );
@@ -106,14 +112,14 @@ export function AdminDashboardView() {
   const siteCoverageBase = laws.length || 1;
   const accountSplit = [
     {
-      label: "Clients",
+      label: formatAccessRoleLabel("client"),
       count: snapshot.clientAccounts,
       percent: snapshot.totalAccounts
         ? (snapshot.clientAccounts / snapshot.totalAccounts) * 100
         : 0,
     },
     {
-      label: "Admins",
+      label: formatAccessRoleLabel("admin"),
       count: snapshot.adminAccounts,
       percent: snapshot.totalAccounts
         ? (snapshot.adminAccounts / snapshot.totalAccounts) * 100
@@ -125,62 +131,74 @@ export function AdminDashboardView() {
     <section className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <span className={styles.eyebrow}>Dashboard</span>
-          <h2 className={styles.title}>One screen for the whole platform.</h2>
+          <span className={styles.eyebrow}>Дашборд</span>
+          <h2 className={styles.title}>Один екран для всієї платформи.</h2>
           <p className={styles.description}>
-            The dashboard is now a real control room: site-wide metrics, billing
-            distribution, guest pressure, content coverage and direct jump points
-            into each admin module.
+            Це головний пульт керування: загальні метрики сайту, розподіл
+            білінгу, навантаження гостей, повнота контенту та швидкі переходи до
+            окремих адмін-модулів.
           </p>
         </div>
 
         <aside className={styles.heroAside}>
-          <span className={styles.tag}>Current footprint</span>
+          <span className={styles.tag}>Поточний масштаб</span>
           <div className={styles.heroValue}>
-            {laws.length + subjects.length + snapshot.totalAccounts} tracked
-            entities
+            {laws.length + subjects.length + snapshot.totalAccounts} об'єктів
+            під наглядом
           </div>
           <div className={styles.heroMeta}>
-            {laws.length} laws · {subjects.length} subjects ·{" "}
-            {snapshot.totalAccounts} accounts · {billingRegistry.length} billing
-            records
+            {laws.length} законів, {subjects.length} суб'єктів,{" "}
+            {snapshot.totalAccounts} акаунтів, {billingRegistry.length} записів
+            білінгу
           </div>
           <Link href={ROUTES.adminBilling} className={styles.heroLink}>
-            Open billing workspace
+            Відкрити білінг
           </Link>
         </aside>
       </section>
 
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Laws</span>
+          <span className={styles.metricLabel}>Закони</span>
           <strong className={styles.metricValue}>{laws.length}</strong>
-          <p className={styles.metricNote}>Structured legal documents in the current frontend dataset.</p>
+          <p className={styles.metricNote}>
+            Структуровані правові документи в поточному наборі даних.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Subjects</span>
+          <span className={styles.metricLabel}>Суб'єкти</span>
           <strong className={styles.metricValue}>{subjects.length}</strong>
-          <p className={styles.metricNote}>Resolved regulatory entities available for linking and filtering.</p>
+          <p className={styles.metricNote}>
+            Розпізнані регуляторні суб'єкти, доступні для зв'язування та фільтрів.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Accounts</span>
+          <span className={styles.metricLabel}>Акаунти</span>
           <strong className={styles.metricValue}>{snapshot.totalAccounts}</strong>
-          <p className={styles.metricNote}>Stored plus dev identities currently visible to the admin layer.</p>
+          <p className={styles.metricNote}>
+            Збережені та розробницькі ідентичності, які бачить адмін-простір.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Paid plans</span>
+          <span className={styles.metricLabel}>Платні плани</span>
           <strong className={styles.metricValue}>{paidAccounts}</strong>
-          <p className={styles.metricNote}>User, Plus and Pro seats currently assigned from the demo billing registry.</p>
+          <p className={styles.metricNote}>
+            Місця тарифів «Користувач», «Плюс» і «Про», призначені через демо-білінг.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Articles</span>
+          <span className={styles.metricLabel}>Статті</span>
           <strong className={styles.metricValue}>{siteMetrics.totalArticles}</strong>
-          <p className={styles.metricNote}>Total structured articles across the current legal corpus.</p>
+          <p className={styles.metricNote}>
+            Загальна кількість структурованих статей у корпусі законів.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Audit events</span>
+          <span className={styles.metricLabel}>Події аудиту</span>
           <strong className={styles.metricValue}>{snapshot.auditLog.length}</strong>
-          <p className={styles.metricNote}>Recent admin, auth and security events stored by the frontend audit layer.</p>
+          <p className={styles.metricNote}>
+            Останні адмінські, автентифікаційні та безпекові події в локальному журналі.
+          </p>
         </article>
       </section>
 
@@ -188,18 +206,18 @@ export function AdminDashboardView() {
         {[
           {
             href: ROUTES.adminUsers,
-            label: "Users",
-            note: "Search registry, roles, source type and force logout actions.",
+            label: "Користувачі",
+            note: "Пошук реєстру, ролі, тип джерела та примусовий вихід.",
           },
           {
             href: ROUTES.adminBilling,
-            label: "Billing",
-            note: "Inspect distribution of plans, quota usage and reassign seats.",
+            label: "Білінг",
+            note: "Перевірити розподіл планів, використання квот і перепризначення місць.",
           },
           {
             href: ROUTES.adminAudit,
-            label: "Audit",
-            note: "Review warning and security events without leaving the admin shell.",
+            label: "Аудит",
+            note: "Переглянути попередження і безпекові події без виходу з адмінки.",
           },
         ].map((item) => (
           <Link key={item.href} href={item.href} className={styles.quickCard}>
@@ -213,8 +231,8 @@ export function AdminDashboardView() {
         <article className={styles.donutCard}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Billing mix</span>
-              <h3 className={styles.panelTitle}>Current plan distribution</h3>
+              <span className={styles.panelEyebrow}>Білінг-мікс</span>
+              <h3 className={styles.panelTitle}>Поточний розподіл планів</h3>
             </div>
           </div>
 
@@ -222,7 +240,7 @@ export function AdminDashboardView() {
             <div className={styles.donutHole}>
               <div>
                 <strong>{billingRegistry.length}</strong>
-                <span>registry rows</span>
+                <span>рядків реєстру</span>
               </div>
             </div>
           </div>
@@ -246,22 +264,22 @@ export function AdminDashboardView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Operational pressure</span>
-              <h3 className={styles.panelTitle}>Guests and account split</h3>
+              <span className={styles.panelEyebrow}>Операційний тиск</span>
+              <h3 className={styles.panelTitle}>Гості та розподіл акаунтів</h3>
             </div>
             <button
               type="button"
               className={styles.secondaryAction}
               onClick={handleCopyGuestStatus}
             >
-              Copy guest summary
+              Копіювати зведення гостей
             </button>
           </div>
 
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Guest search usage</span>
+                <span className={styles.progressLabel}>Використання пошуку гостями</span>
                 <span className={styles.progressValue}>
                   {snapshot.guestPressure.searchUsed}/
                   {snapshot.guestPressure.searchLimit}
@@ -274,14 +292,14 @@ export function AdminDashboardView() {
                 />
               </div>
               <div className={styles.progressMeta}>
-                Remaining: {snapshot.guestPressure.searchRemaining} · Cooldown{" "}
-                {snapshot.guestPressure.searchCooldownActive ? "active" : "off"}
+                Залишок: {snapshot.guestPressure.searchRemaining}, кулдаун{" "}
+                {snapshot.guestPressure.searchCooldownActive ? "активний" : "вимкнено"}
               </div>
             </div>
 
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Guest view usage</span>
+                <span className={styles.progressLabel}>Використання переглядів гостями</span>
                 <span className={styles.progressValue}>
                   {snapshot.guestPressure.viewUsed}/
                   {snapshot.guestPressure.viewLimit}
@@ -294,8 +312,8 @@ export function AdminDashboardView() {
                 />
               </div>
               <div className={styles.progressMeta}>
-                Remaining: {snapshot.guestPressure.viewRemaining} · Cooldown{" "}
-                {snapshot.guestPressure.viewCooldownActive ? "active" : "off"}
+                Залишок: {snapshot.guestPressure.viewRemaining}, кулдаун{" "}
+                {snapshot.guestPressure.viewCooldownActive ? "активний" : "вимкнено"}
               </div>
             </div>
 
@@ -312,7 +330,7 @@ export function AdminDashboardView() {
                   />
                 </div>
                 <div className={styles.progressMeta}>
-                  {Math.round(item.percent)}% of all accounts
+                  {Math.round(item.percent)}% від усіх акаунтів
                 </div>
               </div>
             ))}
@@ -324,15 +342,15 @@ export function AdminDashboardView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Coverage</span>
-              <h3 className={styles.panelTitle}>Content completeness</h3>
+              <span className={styles.panelEyebrow}>Покриття</span>
+              <h3 className={styles.panelTitle}>Повнота контенту</h3>
             </div>
           </div>
 
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Signatory coverage</span>
+                <span className={styles.progressLabel}>Покриття підписантів</span>
                 <span className={styles.progressValue}>
                   {siteMetrics.signatoryCoverage}/{laws.length}
                 </span>
@@ -349,7 +367,7 @@ export function AdminDashboardView() {
 
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Preamble coverage</span>
+                <span className={styles.progressLabel}>Покриття преамбул</span>
                 <span className={styles.progressValue}>
                   {siteMetrics.preambleCoverage}/{laws.length}
                 </span>
@@ -366,13 +384,13 @@ export function AdminDashboardView() {
 
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Structured depth</span>
+                <span className={styles.progressLabel}>Глибина структури</span>
                 <span className={styles.progressValue}>
-                  {siteMetrics.totalSections} sec · {siteMetrics.totalParagraphs} par
+                  {siteMetrics.totalSections} розд., {siteMetrics.totalParagraphs} абз.
                 </span>
               </div>
               <div className={styles.progressMeta}>
-                Total article depth is calculated from the live frontend law payload.
+                Глибина статей обчислюється з актуальних даних, отриманих для законів.
               </div>
             </div>
           </div>
@@ -381,13 +399,13 @@ export function AdminDashboardView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Subject landscape</span>
-              <h3 className={styles.panelTitle}>Top subject categories</h3>
+              <span className={styles.panelEyebrow}>Ландшафт суб'єктів</span>
+              <h3 className={styles.panelTitle}>Топові категорії суб'єктів</h3>
             </div>
           </div>
 
           {subjectsLoading ? (
-            <div className={styles.emptyState}>Loading subject distribution…</div>
+            <div className={styles.emptyState}>Завантаження розподілу суб'єктів…</div>
           ) : subjectsError ? (
             <div className={styles.emptyState}>{subjectsError}</div>
           ) : (
@@ -408,7 +426,7 @@ export function AdminDashboardView() {
                   </div>
                   <div className={styles.progressMeta}>
                     {subjects.length ? Math.round((count / subjects.length) * 100) : 0}
-                    % of all subjects
+                    % від усіх суб'єктів
                   </div>
                 </div>
               ))}
@@ -419,13 +437,13 @@ export function AdminDashboardView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Newest laws</span>
-              <h3 className={styles.panelTitle}>Recently added documents</h3>
+              <span className={styles.panelEyebrow}>Нові закони</span>
+              <h3 className={styles.panelTitle}>Останні додані документи</h3>
             </div>
           </div>
 
           {lawsLoading ? (
-            <div className={styles.emptyState}>Loading law feed…</div>
+            <div className={styles.emptyState}>Завантаження стрічки законів…</div>
           ) : lawsError ? (
             <div className={styles.emptyState}>{lawsError}</div>
           ) : (
@@ -435,13 +453,13 @@ export function AdminDashboardView() {
                   <div className={styles.listTopRow}>
                     <span className={styles.listCode}>{law.code}</span>
                     <Link href={ROUTES.law(law._id)} className={styles.heroLink}>
-                      Open
+                      Відкрити
                     </Link>
                   </div>
                   <div className={styles.listTitle}>{law.title}</div>
                   <div className={styles.listMeta}>
-                    {formatDateMedium(law.createdAt)} · {law.totalArticles} articles ·{" "}
-                    {law.totalSections} sections
+                    {formatDateMedium(law.createdAt)}, {law.totalArticles} статей,{" "}
+                    {law.totalSections} розділів
                   </div>
                 </div>
               ))}
@@ -452,8 +470,8 @@ export function AdminDashboardView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Audit radar</span>
-              <h3 className={styles.panelTitle}>Latest control events</h3>
+              <span className={styles.panelEyebrow}>Радар аудиту</span>
+              <h3 className={styles.panelTitle}>Останні контрольні події</h3>
             </div>
           </div>
 
@@ -471,7 +489,7 @@ export function AdminDashboardView() {
                             : ""
                       }`}
                     >
-                      {item.severity}
+                      {formatSeverityLabel(item.severity)}
                     </span>
                     <span>{formatDateShort(item.createdAt)}</span>
                     <span>{item.actor}</span>
@@ -482,7 +500,9 @@ export function AdminDashboardView() {
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>Audit entries will appear here as admin activity grows.</div>
+            <div className={styles.emptyState}>
+              Записи аудиту з'являться тут, коли адмін-активність зростатиме.
+            </div>
           )}
         </article>
       </section>

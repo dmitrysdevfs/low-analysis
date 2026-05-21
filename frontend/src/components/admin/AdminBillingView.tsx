@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 import { formatDateShort } from "@/lib/utils";
+import { formatAccountTypeLabel, formatPlanFilterLabel, formatPlanLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import styles from "./AdminWorkspace.module.scss";
 
@@ -72,12 +73,12 @@ export function AdminBillingView() {
 
   const billingSegments = useMemo<DonutSegment[]>(
     () => [
-      { label: "Preview", value: billingCounts.preview, color: "#4a80d4" },
-      { label: "Trial", value: billingCounts.trial, color: "#6aa1ff" },
-      { label: "User", value: billingCounts.user, color: "#93b7ff" },
-      { label: "Plus", value: billingCounts.plus, color: "#c8a843" },
-      { label: "Pro", value: billingCounts.pro, color: "#f2d675" },
-      { label: "Admin", value: billingCounts.admin, color: "#e9774b" },
+      { label: "Прев'ю", value: billingCounts.preview, color: "#4a80d4" },
+      { label: "Тріал", value: billingCounts.trial, color: "#6aa1ff" },
+      { label: "Користувач", value: billingCounts.user, color: "#93b7ff" },
+      { label: "Плюс", value: billingCounts.plus, color: "#c8a843" },
+      { label: "Про", value: billingCounts.pro, color: "#f2d675" },
+      { label: "Адмін", value: billingCounts.admin, color: "#e9774b" },
     ],
     [billingCounts],
   );
@@ -139,45 +140,55 @@ export function AdminBillingView() {
     <section className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <span className={styles.eyebrow}>Billing</span>
-          <h2 className={styles.title}>Dedicated billing workspace.</h2>
+          <span className={styles.eyebrow}>Білінг</span>
+          <h2 className={styles.title}>Окремий білінг-простір.</h2>
           <p className={styles.description}>
-            Billing is no longer buried inside the dashboard. This page now owns
-            plan distribution, quota health, plan reassignment and account-level
-            subscription inspection.
+            Білінг більше не захований у дашборді. Тепер ця сторінка відповідає
+            за розподіл планів, стан квот, перепризначення тарифів і перегляд
+            підписок на рівні акаунтів.
           </p>
         </div>
 
         <aside className={styles.heroAside}>
-          <span className={styles.tag}>Assigned seats</span>
-          <div className={styles.heroValue}>{billingRegistry.length} rows</div>
+          <span className={styles.tag}>Призначені місця</span>
+          <div className={styles.heroValue}>{billingRegistry.length} рядків</div>
           <div className={styles.heroMeta}>
-            {billingCounts.preview} preview · {billingCounts.trial} trial ·{" "}
-            {paidAccounts} paid · {billingCounts.admin} admin managed
+            {billingCounts.preview} прев'ю, {billingCounts.trial} тріал,{" "}
+            {paidAccounts} платних, {billingCounts.admin} адмінських
           </div>
         </aside>
       </section>
 
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Preview</span>
+          <span className={styles.metricLabel}>Прев'ю</span>
           <strong className={styles.metricValue}>{billingCounts.preview}</strong>
-          <p className={styles.metricNote}>Accounts without a paid cycle, still using preview quotas.</p>
+          <p className={styles.metricNote}>
+            Акаунти без активного платного циклу, які все ще працюють на
+            прев'ю-квотах.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Trial</span>
+          <span className={styles.metricLabel}>Тріал</span>
           <strong className={styles.metricValue}>{billingCounts.trial}</strong>
-          <p className={styles.metricNote}>Starter seats with temporary unlimited access in the demo billing model.</p>
+          <p className={styles.metricNote}>
+            Стартові місця з тимчасовим безлімітним доступом у демо-моделі білінгу.
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Paid tiers</span>
+          <span className={styles.metricLabel}>Платні тарифи</span>
           <strong className={styles.metricValue}>{paidAccounts}</strong>
-          <p className={styles.metricNote}>User {billingCounts.user} · Plus {billingCounts.plus} · Pro {billingCounts.pro}</p>
+          <p className={styles.metricNote}>
+            Користувач {billingCounts.user}, Плюс {billingCounts.plus}, Про{" "}
+            {billingCounts.pro}
+          </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Expiring soon</span>
+          <span className={styles.metricLabel}>Скоро завершаться</span>
           <strong className={styles.metricValue}>{expiringSoon}</strong>
-          <p className={styles.metricNote}>Subscriptions ending within the next seven days.</p>
+          <p className={styles.metricNote}>
+            Підписки, які завершуються протягом наступних семи днів.
+          </p>
         </article>
       </section>
 
@@ -185,8 +196,8 @@ export function AdminBillingView() {
         <article className={styles.donutCard}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Plan split</span>
-              <h3 className={styles.panelTitle}>Distribution by plan</h3>
+              <span className={styles.panelEyebrow}>Розподіл планів</span>
+              <h3 className={styles.panelTitle}>Структура за тарифами</h3>
             </div>
           </div>
 
@@ -194,7 +205,7 @@ export function AdminBillingView() {
             <div className={styles.donutHole}>
               <div>
                 <strong>{billingRegistry.length}</strong>
-                <span>billing rows</span>
+                <span>рядків білінгу</span>
               </div>
             </div>
           </div>
@@ -218,15 +229,15 @@ export function AdminBillingView() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Quota health</span>
-              <h3 className={styles.panelTitle}>Average usage pressure</h3>
+              <span className={styles.panelEyebrow}>Стан квот</span>
+              <h3 className={styles.panelTitle}>Середній тиск використання</h3>
             </div>
           </div>
 
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Average search burn</span>
+                <span className={styles.progressLabel}>Середнє вигорання пошуку</span>
                 <span className={styles.progressValue}>{quotaHealth.search}%</span>
               </div>
               <div className={styles.progressTrack}>
@@ -239,7 +250,7 @@ export function AdminBillingView() {
 
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Average view burn</span>
+                <span className={styles.progressLabel}>Середнє вигорання переглядів</span>
                 <span className={styles.progressValue}>{quotaHealth.view}%</span>
               </div>
               <div className={styles.progressTrack}>
@@ -252,11 +263,12 @@ export function AdminBillingView() {
 
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Admin seats</span>
+                <span className={styles.progressLabel}>Адмінські місця</span>
                 <span className={styles.progressValue}>{billingCounts.admin}</span>
               </div>
               <div className={styles.progressMeta}>
-                Admins remain outside customer billing tiers and keep unlimited access.
+                Адміни не входять у клієнтські тарифні лінійки та мають
+                безлімітний доступ.
               </div>
             </div>
           </div>
@@ -266,8 +278,8 @@ export function AdminBillingView() {
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <span className={styles.panelEyebrow}>Registry</span>
-            <h3 className={styles.panelTitle}>Assign plans and inspect quotas</h3>
+            <span className={styles.panelEyebrow}>Реєстр</span>
+            <h3 className={styles.panelTitle}>Призначення планів і перевірка квот</h3>
           </div>
         </div>
 
@@ -276,7 +288,7 @@ export function AdminBillingView() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             className={styles.toolbarInput}
-            placeholder="Search by user or email"
+            placeholder="Пошук за користувачем або email"
           />
           <div className={styles.filterTabs}>
             {(
@@ -296,7 +308,7 @@ export function AdminBillingView() {
                 className={`${styles.filterTab} ${planFilter === value ? styles.filterTabActive : ""}`}
                 onClick={() => setPlanFilter(value)}
               >
-                {value}
+                {formatPlanFilterLabel(value)}
               </button>
             ))}
           </div>
@@ -313,32 +325,40 @@ export function AdminBillingView() {
                   </div>
 
                   <div className={styles.accountBadges}>
-                    <span className={styles.accountBadge}>{account.accountType}</span>
                     <span className={styles.accountBadge}>
-                      {account.subscription.plan?.label ?? "Preview"}
+                      {formatAccountTypeLabel(account.accountType)}
+                    </span>
+                    <span className={styles.accountBadge}>
+                      {formatPlanLabel(account.subscription.planId)}
                     </span>
                     <span className={styles.accountBadgeAccent}>
-                      {account.subscription.status}
+                      {account.subscription.status === "active"
+                        ? "активний"
+                        : account.subscription.status === "trialing"
+                          ? "тріал"
+                          : account.subscription.status === "expired"
+                            ? "прострочений"
+                            : "неактивний"}
                     </span>
                   </div>
 
                   <div className={styles.accountMetaBlock}>
                     <span>
-                      Search:{" "}
+                      Пошук:{" "}
                       {account.subscription.searchRemaining === null
-                        ? "unlimited"
+                        ? "безліміт"
                         : `${account.subscription.searchRemaining} / ${account.subscription.searchLimit}`}
                     </span>
                     <span>
-                      Views:{" "}
+                      Перегляди:{" "}
                       {account.subscription.viewRemaining === null
-                        ? "unlimited"
+                        ? "безліміт"
                         : `${account.subscription.viewRemaining} / ${account.subscription.viewLimit}`}
                     </span>
                     <span>
                       {account.subscription.endsAt
-                        ? `Ends ${formatDateShort(account.subscription.endsAt)}`
-                        : "No active billing cycle"}
+                        ? `До ${formatDateShort(account.subscription.endsAt)}`
+                        : "Немає активного платіжного циклу"}
                     </span>
                   </div>
 
@@ -353,20 +373,20 @@ export function AdminBillingView() {
                             handleAssignPlan(account.id, account.displayName, planId)
                           }
                         >
-                          {planId}
+                          {formatPlanLabel(planId)}
                         </button>
                       ))}
                     </div>
                   ) : (
                     <div className={styles.accountActions}>
-                      <span className={styles.accountBadgeAccent}>admin-managed</span>
+                      <span className={styles.accountBadgeAccent}>керується адміном</span>
                     </div>
                   )}
                 </div>
               ))
             ) : (
               <div className={styles.emptyState}>
-                No billing entries match the current filter.
+                За поточним фільтром не знайдено жодного білінг-запису.
               </div>
             )}
           </div>
