@@ -18,6 +18,7 @@ describe("Article page", () => {
     setMockParams({ id: LAW_FIXTURE._id, num: "1" });
     vi.mocked(useLaws).mockReturnValue({
       fetchedQ: "",
+      fetchedRefreshKey: null,
       laws: [LAW_FIXTURE],
       error: null,
       loading: false,

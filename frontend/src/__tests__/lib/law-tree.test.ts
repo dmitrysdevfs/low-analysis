@@ -12,7 +12,7 @@ import {
   getNodeLabel,
   getSortedArticles,
   limitLawSections,
-} from "@/lib/lawTree";
+} from "@/lib/tree";
 import type { TreeNode } from "@/types";
 
 describe("law tree helpers", () => {

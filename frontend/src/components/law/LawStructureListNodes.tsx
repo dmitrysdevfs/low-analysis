@@ -1,6 +1,6 @@
 "use client";
 
-import { getNodeContent, getNodeLabel, type TreeBranch } from "@/lib/lawTree";
+import { getNodeContent, getNodeLabel, type TreeBranch } from "@/lib/tree";
 import styles from "./LawStructureList.module.scss";
 
 function NestedNode({

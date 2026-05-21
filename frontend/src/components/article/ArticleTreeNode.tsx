@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { getNodeBadge } from "@/lib/lawTree";
-import type { TreeBranch } from "@/lib/lawTree";
+import { getNodeBadge, getRoleColor } from "@/lib/tree";
+import type { TreeBranch } from "@/lib/tree";
 import { highlightMatch } from "@/lib/utils/highlightMatch";
 import { notify } from "@/lib/toast";
 import type { Subject } from "@/types";
@@ -69,32 +69,42 @@ function hasTermsMatch(
   return new RegExp(`(${escaped.join("|")})`, "i").test(text);
 }
 
+function sanitizeAnchor(code: string): string {
+  return code.replace(/[.:]/g, "-");
+}
+
 function formatCitation(opts: {
   badge: string;
   text: string;
   charCount: number;
-  subjects: string[];
+  subjectLinks: { name: string; id: string }[];
   lawId: string;
   articleNum: string;
   lawTitle: string;
   code: string;
 }): string {
-  const url =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/laws/${opts.lawId}/articles/${opts.articleNum}#${opts.code}`
-      : `/laws/${opts.lawId}/articles/${opts.articleNum}#${opts.code}`;
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const anchor = sanitizeAnchor(opts.code);
+  const url = `${origin}/laws/${opts.lawId}/articles/${opts.articleNum}#${anchor}`;
 
-  const subjectsLine = opts.subjects.length
-    ? `Суб'єкти: ${opts.subjects.join(", ")}`
+  const subjectsLine = opts.subjectLinks.length
+    ? `Суб'єкти: ${opts.subjectLinks.map((s) => s.name).join(", ")}`
     : "Суб'єктів не знайдено";
 
-  return [
+  const lines = [
     `§ ${opts.badge} — ${opts.text}`,
     `Символів: ${opts.charCount}`,
     subjectsLine,
-    `Посилання: ${url}`,
-    `Закон: ${opts.lawTitle}`,
-  ].join("\n");
+  ];
+
+  if (opts.subjectLinks.length) {
+    lines.push(
+      `Профілі: ${opts.subjectLinks.map((s) => `${origin}/subjects/${s.id}`).join(", ")}`,
+    );
+  }
+
+  lines.push(`Посилання: ${url}`, `Закон: ${opts.lawTitle}`);
+  return lines.join("\n");
 }
 
 function NestedNode({
@@ -136,20 +146,29 @@ function NestedNode({
   const nodeSubjects = Array.from(
     new Map(
       (node.subjects ?? [])
-        .map((s) => subjectsMap?.get(s.subject_id))
-        .filter(Boolean)
-        .map((s) => [s!._id, s!]),
+        .map((s) => {
+          const subject = subjectsMap?.get(s.subject_id);
+          return subject ? { subject, role: s.role } : null;
+        })
+        .filter(
+          (item): item is { subject: Subject; role: string } => item !== null,
+        )
+        .map((item) => [item.subject._id, item]),
     ).values(),
   );
 
   const handleCopy = async () => {
-    const subjectNames = nodeSubjects.map((s) => s.canonical_name);
+    const subjectLinks = nodeSubjects.map(({ subject }) => ({
+      name: subject.canonical_name,
+      id: subject._id,
+    }));
+    const copyText = node.text ?? node.title ?? "";
 
     const text = formatCitation({
-      badge: node.code ?? "",
-      text: node.text ?? "",
-      charCount,
-      subjects: subjectNames,
+      badge: getNodeBadge(node),
+      text: copyText,
+      charCount: copyText.length,
+      subjectLinks,
       lawId: lawId ?? "",
       articleNum: articleNum ?? "",
       lawTitle: lawTitle ?? "",
@@ -172,6 +191,7 @@ function NestedNode({
 
   return (
     <div
+      id={sanitizeAnchor(node.code)}
       className={styles.childItem}
       style={{
         opacity: isDimmed ? 0.3 : 1,
@@ -181,8 +201,23 @@ function NestedNode({
         background: hasActiveSubject ? `${color}0a` : undefined,
       }}
     >
-      <span className={`mono ${styles.childBadge}`}>{getNodeBadge(node)}</span>
-      {charCount > 0 && <span className={styles.charCount}>({charCount})</span>}
+      <div className={styles.leftMeta}>
+        <span className={`mono ${styles.childBadge}`}>
+          {getNodeBadge(node)}
+        </span>
+        {charCount > 0 && (
+          <span className={`mono ${styles.charCount}`}>{charCount}</span>
+        )}
+        {/* FE-T63: Copy button */}
+        <button
+          type="button"
+          className={styles.copyBtn}
+          aria-label="Копіювати елемент"
+          onClick={handleCopy}
+        >
+          ⧉
+        </button>
+      </div>
 
       <div className={styles.childContent}>
         {displayTitle ? (
@@ -194,22 +229,25 @@ function NestedNode({
         ) : null}
 
         {/* FE-T62: Subjects for this element */}
-        {nodeSubjects.length > 0 ? (
+        {nodeSubjects.length > 0 && (
           <div className={styles.nodeSubjects}>
-            {nodeSubjects.map((subject) => (
+            <span className={`mono ${styles.subjectsLabel}`}>
+              Суб&apos;єкти:
+            </span>
+            {nodeSubjects.map(({ subject, role }) => (
               <Link
                 key={subject._id}
                 href={ROUTES.subject(subject._id)}
                 className={styles.subjectChip}
+                style={{
+                  color: getRoleColor(role),
+                  borderColor: `${getRoleColor(role)}40`,
+                }}
               >
                 {subject.canonical_name}
               </Link>
             ))}
           </div>
-        ) : (
-          <p className={styles.noSubjects}>
-            Суб&apos;єктів не знайдено. AI-аналіз ще не виконано.
-          </p>
         )}
 
         {node.children.length > 0 ? (
@@ -225,15 +263,6 @@ function NestedNode({
           />
         ) : null}
       </div>
-
-      {/* FE-T63: Copy button */}
-      <button
-        className={styles.copyBtn}
-        aria-label="Копіювати елемент"
-        onClick={handleCopy}
-      >
-        ⧉
-      </button>
     </div>
   );
 }

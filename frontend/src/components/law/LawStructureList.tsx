@@ -1,16 +1,18 @@
 "use client";
 
-import { type TreeBranch } from "@/lib/lawTree";
+import { type TreeBranch } from "@/lib/tree";
 import { SectionBlock } from "./LawStructureListSection";
 import { AnimatePresence, motion } from "framer-motion";
 
 export function LawStructureList({
   sections,
   lawId,
+  lawTitle,
   highlightSubjectId,
 }: {
   sections: TreeBranch[];
   lawId: string;
+  lawTitle?: string;
   highlightSubjectId?: string | null;
 }) {
   const sectionsWithArticles = sections.filter((section) =>
@@ -25,6 +27,7 @@ export function LawStructureList({
             key={section.key}
             section={section}
             lawId={lawId}
+            lawTitle={lawTitle}
             index={index}
             highlightSubjectId={highlightSubjectId}
           />

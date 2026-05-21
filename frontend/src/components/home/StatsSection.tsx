@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { StatItem } from "@/components/StatItem";
+import { AnimatePresence, motion } from "framer-motion";
+import { StatItem } from "@/components/home/StatItem";
 import type { Law } from "@/types";
 import styles from "@/app/page.module.scss";
 
@@ -13,9 +12,6 @@ export function StatsSection({
   laws: Law[];
   loading: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.4 });
-
   const stats = [
     { value: laws.length, label: "законів у базі" },
     {
@@ -29,7 +25,7 @@ export function StatsSection({
   ];
 
   return (
-    <div ref={ref} className={styles.statsBand}>
+    <div className={styles.statsBand}>
       <div className={styles.statsInner}>
         <AnimatePresence mode="wait">
           {loading ? (
@@ -66,13 +62,14 @@ export function StatsSection({
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 16 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
                   transition={{ delay: index * 0.1, duration: 0.4 }}
                 >
                   <StatItem
                     value={stat.value}
                     label={stat.label}
-                    active={inView}
+                    active={true}
                   />
                 </motion.div>
               ))}

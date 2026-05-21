@@ -1,4 +1,4 @@
-import { Layout } from "@/components/Layout";
+﻿import { Layout } from "@/components/layout/Layout";
 import { CheckoutDemo } from "@/components/account/CheckoutDemo";
 
 export default function AccountBillingCheckoutPage() {

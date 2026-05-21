@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGuestLimits } from "@/components/guest/GuestLimitsProvider";
 import { getLawTree } from "@/lib/api";
 import { parseApiError } from "@/lib/utils";
@@ -15,6 +15,8 @@ interface State {
 
 export function useLawTree(id?: string) {
   const { consumeView } = useGuestLimits();
+  const consumeViewRef = useRef(consumeView);
+  consumeViewRef.current = consumeView;
   const [state, setState] = useState<State>({
     fetchedId: null,
     law: null,
@@ -28,7 +30,7 @@ export function useLawTree(id?: string) {
     if (!id) return;
 
     const controller = new AbortController();
-    const guestAttempt = consumeView(`law-tree:${id}`);
+    const guestAttempt = consumeViewRef.current(`law-tree:${id}`);
 
     if (!guestAttempt.allowed) {
       setState({
@@ -61,7 +63,7 @@ export function useLawTree(id?: string) {
       });
 
     return () => controller.abort();
-  }, [consumeView, id]);
+  }, [id]);
 
   return { ...state, loading };
 }

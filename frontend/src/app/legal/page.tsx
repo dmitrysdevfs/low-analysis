@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import styles from "./page.module.scss";
 

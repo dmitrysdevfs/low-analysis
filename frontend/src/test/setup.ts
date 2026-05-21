@@ -52,6 +52,17 @@ vi.mock("next/font/google", () => {
   };
 });
 
+if (!window.IntersectionObserver) {
+  Object.defineProperty(window, "IntersectionObserver", {
+    writable: true,
+    value: class IntersectionObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  });
+}
+
 if (!window.matchMedia) {
   Object.defineProperty(window, "matchMedia", {
     writable: true,

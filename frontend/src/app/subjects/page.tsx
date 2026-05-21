@@ -1,15 +1,31 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjects } from "@/hooks/useSubjects";
-import { getLegalStatusLabel, getLegalStatusColor } from "@/lib/lawTree";
+import { getLegalStatusLabel, getLegalStatusColor } from "@/lib/tree";
 import styles from "./page.module.scss";
+
+const ALL_FILTER = "Всі";
 
 export default function SubjectsPage() {
   const { subjects, loading, error } = useSubjects();
+  const [activeFilter, setActiveFilter] = useState<string>(ALL_FILTER);
+
+  const filterTypes = useMemo(() => {
+    const unique = Array.from(
+      new Set(subjects.map((s) => s.legal_status).filter(Boolean)),
+    );
+    return [ALL_FILTER, ...unique];
+  }, [subjects]);
+
+  const filteredSubjects = useMemo(() => {
+    if (activeFilter === ALL_FILTER) return subjects;
+    return subjects.filter((s) => s.legal_status === activeFilter);
+  }, [subjects, activeFilter]);
 
   return (
     <Layout>
@@ -46,10 +62,25 @@ export default function SubjectsPage() {
                 transition={{ duration: 0.2 }}
                 className={`mono ${styles.countLine}`}
               >
-                {subjects.length} суб&apos;єктів у базі
+                {filteredSubjects.length} суб&apos;єктів у базі
               </motion.div>
             ) : null}
           </AnimatePresence>
+
+          {!loading && !error && filterTypes.length > 1 ? (
+            <div className={styles.chipBar}>
+              {filterTypes.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setActiveFilter(type)}
+                  className={`mono ${styles.chip} ${activeFilter === type ? styles.chipActive : ""}`}
+                >
+                  {type === ALL_FILTER ? type : getLegalStatusLabel(type)}
+                </button>
+              ))}
+            </div>
+          ) : null}
 
           {loading ? (
             <div className={styles.skeletonList}>
@@ -79,7 +110,7 @@ export default function SubjectsPage() {
             </motion.div>
           ) : null}
 
-          {!loading && !error && subjects.length === 0 ? (
+          {!loading && !error && filteredSubjects.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -90,10 +121,10 @@ export default function SubjectsPage() {
             </motion.div>
           ) : null}
 
-          {!loading && !error && subjects.length > 0 ? (
+          {!loading && !error && filteredSubjects.length > 0 ? (
             <AnimatePresence>
               <div className={styles.cardList}>
-                {subjects.map((subject, index) => {
+                {filteredSubjects.map((subject, index) => {
                   const statusColor = getLegalStatusColor(subject.legal_status);
                   const statusLabel = getLegalStatusLabel(subject.legal_status);
                   return (
