@@ -10,19 +10,27 @@
     "test": "vitest --passWithNoTests",
     "test:run": "vitest run --passWithNoTests",
     "test:coverage": "vitest run --coverage --passWithNoTests",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:api-metrics": "playwright test tests/e2e/api-request-metrics.spec.ts",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "check-format": "prettier --check ."
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
+    "@tanstack/react-query": "^5.100.11",
+    "@tanstack/react-virtual": "^3.13.25",
     "framer-motion": "^12.38.0",
+    "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-toastify": "^11.1.0"
+    "react-toastify": "^11.1.0",
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
@@ -34,6 +42,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "jsdom": "^29.1.1",
+    "msw": "^2.14.6",
     "prettier": "^3.8.3",
     "sass": "^1.99.0",
     "tailwindcss": "^4",

@@ -7,7 +7,13 @@ import {
   sanitizeAnchor,
   formatCitation,
 } from "@/lib/tree";
-import type { TreeBranch } from "@/lib/tree";
+import type { TreeBranch, RiskLevel } from "@/lib/tree";
+
+const RISK_DOT_COLOR: Record<RiskLevel, string> = {
+  green: "#4a9e6b",
+  yellow: "#c8a843",
+  red: "#c0392b",
+};
 import { highlightMatch } from "@/lib/utils/highlightMatch";
 import { notify } from "@/lib/toast";
 import type { Subject } from "@/types";
@@ -97,6 +103,8 @@ function NestedNode({
 
   const isDimmed =
     activeSubjectId != null && !hasActiveSubject && !hasTextMatch;
+
+  const riskLevel = (node.risk_level as RiskLevel | null | undefined) ?? null;
   const activeTerms = hasActiveSubject || hasTextMatch ? allTerms : [];
 
   const displayText =
@@ -174,6 +182,25 @@ function NestedNode({
         </span>
         {charCount > 0 && (
           <span className={`mono ${styles.charCount}`}>{charCount}</span>
+        )}
+        {riskLevel && (
+          <span
+            style={{
+              display: "inline-block",
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              background: RISK_DOT_COLOR[riskLevel],
+              flexShrink: 0,
+            }}
+            title={
+              riskLevel === "red"
+                ? "Об'ємний елемент"
+                : riskLevel === "yellow"
+                  ? "Помірна складність"
+                  : "Норма"
+            }
+          />
         )}
         {/* FE-T63: Copy button */}
         <button

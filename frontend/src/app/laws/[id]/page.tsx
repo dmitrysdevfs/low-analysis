@@ -20,6 +20,10 @@ import {
   buildLawSections,
   countArticlesInSections,
   limitLawSections,
+  computeArticleRiskMap,
+  computeStatsFromTree,
+  type RiskLevel,
+  type TreeBranch,
 } from "@/lib/tree";
 import styles from "./page.module.scss";
 import {
@@ -29,6 +33,7 @@ import {
   toLimitParam,
 } from "@/lib/utils/pageLimits";
 import { useSidebarData } from "@/components/layout/SidebarDataContext";
+import { useLawStats } from "@/hooks/useLawStats";
 
 function filterTreeBySubject(
   tree: TreeNode[],
@@ -68,6 +73,7 @@ export default function LawTreePage() {
   const searchParams = useSearchParams();
   const lawId = params?.id;
   const { law, tree, loading, error } = useLawTree(lawId);
+  const { stats } = useLawStats(lawId);
   const { subjectsMap } = useSubjectsMap();
   const { setSubjects, setOnSubjectSelect } = useSidebarData();
   const [selectedLimit, setSelectedLimit] = useState(() =>
@@ -78,6 +84,7 @@ export default function LawTreePage() {
     setSelectedLimit(parseLimitValue(searchParams.get("limit")));
   }, [searchParams]);
   const selectedSubjectId = searchParams.get("subject");
+  const riskFilter = searchParams.get("risk") as RiskLevel | null;
 
   // Save to recently viewed in localStorage
   useEffect(() => {
@@ -167,8 +174,35 @@ export default function LawTreePage() {
     () => countArticlesInSections(visibleSections),
     [visibleSections],
   );
+  const computedStats = useMemo(() => computeStatsFromTree(tree), [tree]);
+
+  const articleRiskMap = useMemo(
+    () => computeArticleRiskMap(sections),
+    [sections],
+  );
+
+  const riskFilteredArticles = useMemo(() => {
+    if (!riskFilter) return null;
+    const articles: TreeBranch[] = [];
+    for (const section of sections) {
+      for (const child of section.children) {
+        if (child.type === "article" && child._id) {
+          const computedRisk = articleRiskMap.get(child._id);
+          if (computedRisk === riskFilter) {
+            // Override risk_level so ArticleEntry dot shows the computed level
+            articles.push({ ...child, risk_level: computedRisk });
+          }
+        }
+      }
+    }
+    return articles;
+  }, [sections, riskFilter, articleRiskMap]);
+
   const showLimitControls =
-    !loading && !error && articleCount > ARTICLE_LIMIT_OPTIONS[0];
+    !loading &&
+    !error &&
+    !riskFilter &&
+    articleCount > ARTICLE_LIMIT_OPTIONS[0];
   const canLoadMore =
     showLimitControls &&
     selectedLimit !== "all" &&
@@ -190,6 +224,22 @@ export default function LawTreePage() {
       scroll: false,
     });
   };
+
+  const updateRisk = useCallback(
+    (level: RiskLevel) => {
+      const nextSearchParams = new URLSearchParams(searchParams.toString());
+      if (searchParams.get("risk") === level) {
+        nextSearchParams.delete("risk");
+      } else {
+        nextSearchParams.set("risk", level);
+      }
+      const nextQuery = nextSearchParams.toString();
+      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+        scroll: false,
+      });
+    },
+    [searchParams, pathname, router],
+  );
 
   const updateSubject = useCallback(
     (nextValue: string | null) => {
@@ -246,6 +296,10 @@ export default function LawTreePage() {
               lawSubjects={lawSubjects}
               selectedSubjectId={selectedSubjectId}
               onSubjectSelect={updateSubject}
+              stats={stats ?? computedStats}
+              activeRiskLevel={riskFilter}
+              onRiskLevelClick={updateRisk}
+              riskFilterCount={riskFilteredArticles?.length}
             />
 
             {loading ? (
@@ -317,6 +371,7 @@ export default function LawTreePage() {
                 lawTitle={law?.title}
                 highlightSubjectId={selectedSubjectId}
                 subjectsMap={subjectsMap}
+                flatArticles={riskFilteredArticles}
               />
             ) : null}
           </div>

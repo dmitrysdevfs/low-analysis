@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import type { Law } from "@/types";
+import type { Law, LawStats } from "@/types";
 import {
   ARTICLE_LIMIT_OPTIONS,
   getNextLimitValue,
@@ -10,6 +10,19 @@ import {
   toLimitParam,
 } from "@/lib/utils/pageLimits";
 import { getRoleColor } from "@/lib/tree";
+import { LawRiskBar } from "./LawRiskBar";
+import type { RiskLevel } from "@/lib/tree";
+
+const RISK_DOT_COLOR: Record<RiskLevel, string> = {
+  green: "#4a9e6b",
+  yellow: "#c8a843",
+  red: "#c0392b",
+};
+const RISK_LEVEL_LABEL: Record<RiskLevel, string> = {
+  green: "Норма",
+  yellow: "Помірна складність",
+  red: "Об’ємні статті",
+};
 import styles from "./LawMetaPanel.module.scss";
 
 interface LawMetaPanelProps {
@@ -29,6 +42,10 @@ interface LawMetaPanelProps {
   }>;
   selectedSubjectId: string | null;
   onSubjectSelect: (value: string | null) => void;
+  stats?: LawStats | null;
+  activeRiskLevel?: RiskLevel | null;
+  onRiskLevelClick?: (level: RiskLevel) => void;
+  riskFilterCount?: number;
 }
 
 export function LawMetaPanel({
@@ -43,6 +60,10 @@ export function LawMetaPanel({
   lawSubjects,
   selectedSubjectId,
   onSubjectSelect,
+  stats,
+  activeRiskLevel,
+  onRiskLevelClick,
+  riskFilterCount,
 }: LawMetaPanelProps) {
   const [subjectsQuery, setSubjectsQuery] = useState("");
   const [showAllSubjects, setShowAllSubjects] = useState(false);
@@ -66,6 +87,32 @@ export function LawMetaPanel({
           {sectionsCount} розділів · {articleCount} статей
         </span>
       </div>
+      {stats && (
+        <LawRiskBar
+          stats={stats}
+          activeLevel={activeRiskLevel}
+          onLevelClick={onRiskLevelClick}
+        />
+      )}
+      {activeRiskLevel && riskFilterCount !== undefined && (
+        <div className={styles.riskFilterBadge}>
+          <span
+            className={styles.riskFilterDot}
+            style={{ background: RISK_DOT_COLOR[activeRiskLevel] }}
+          />
+          <span className={`mono ${styles.riskFilterLabel}`}>
+            {RISK_LEVEL_LABEL[activeRiskLevel]} · {riskFilterCount} статей
+          </span>
+          <button
+            type="button"
+            className={styles.riskFilterReset}
+            onClick={() => onRiskLevelClick?.(activeRiskLevel)}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {law?.status && (
         <div className={styles.lawStatus}>
           {law.status.charAt(0).toUpperCase() +

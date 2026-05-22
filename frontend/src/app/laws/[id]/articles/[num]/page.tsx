@@ -8,14 +8,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-  useCallback,
-  Suspense,
-} from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { recordWorkspaceView } from "@/lib/auth/clientWorkspace";
@@ -26,7 +19,13 @@ import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import { useArticle } from "@/hooks/useArticle";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
-import { buildTreeBranches, getRoleColor } from "@/lib/tree";
+import {
+  buildTreeBranches,
+  getRoleColor,
+  computeStatsFromTree,
+  type RiskLevel,
+} from "@/lib/tree";
+import { LawRiskBar } from "@/components/law/LawRiskBar";
 import styles from "./page.module.scss";
 import { NestedNodeList } from "@/components/article/ArticleTreeNode";
 import type { Subject } from "@/types";
@@ -34,7 +33,6 @@ import { NoteModal } from "@/components/notes/NoteModal";
 import SelectionTooltip from "@/components/notes/SelectionTooltip";
 import type { NoteDraft } from "@/lib/notes/types";
 import { useSidebarData } from "@/components/layout/SidebarDataContext";
-import { SubjectMentionsModal } from "@/components/subject/SubjectMentionsModal";
 import { scrollToHashWithRetry } from "@/lib/utils/scrollToHashWithRetry";
 
 export default function ArticlePage() {
@@ -56,7 +54,43 @@ export default function ArticlePage() {
   const lawTitle = law?.title ?? "Закон";
   const lawCode = law?.code ?? "";
 
-  const childTree = useMemo(() => buildTreeBranches(children), [children]);
+  const [activeRiskLevel, setActiveRiskLevel] = useState<RiskLevel | null>(
+    null,
+  );
+
+  const filteredChildren = useMemo(() => {
+    if (!activeRiskLevel) return children;
+    const matchingIds = new Set(
+      children
+        .filter((c) => c.risk_level === activeRiskLevel)
+        .map((c) => c._id)
+        .filter(Boolean) as string[],
+    );
+    if (matchingIds.size === 0) return [];
+    const parentMap = new Map<string, string>();
+    children.forEach((c) => {
+      if (c._id && c.parentId) parentMap.set(c._id, c.parentId);
+    });
+    const toKeep = new Set<string>(matchingIds);
+    matchingIds.forEach((id) => {
+      let cur: string | null = id;
+      while (cur) {
+        const parentId: string | null = parentMap.get(cur) ?? null;
+        if (parentId) toKeep.add(parentId);
+        cur = parentId;
+      }
+    });
+    return children.filter((c) => c._id && toKeep.has(c._id));
+  }, [children, activeRiskLevel]);
+
+  const childTree = useMemo(
+    () => buildTreeBranches(filteredChildren),
+    [filteredChildren],
+  );
+  const articleStats = useMemo(
+    () => computeStatsFromTree(article ? [article, ...children] : children),
+    [article, children],
+  );
 
   const { subjectsMap } = useSubjectsMap();
 
@@ -443,6 +477,18 @@ export default function ArticlePage() {
                           })}
                         </div>
                       </div>
+                    )}
+
+                    {articleStats && (
+                      <LawRiskBar
+                        stats={articleStats}
+                        activeLevel={activeRiskLevel}
+                        onLevelClick={(level) =>
+                          setActiveRiskLevel((prev) =>
+                            prev === level ? null : level,
+                          )
+                        }
+                      />
                     )}
 
                     {article.text ? (

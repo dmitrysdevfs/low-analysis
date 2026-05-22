@@ -10,7 +10,11 @@ export {
   countArticlesInSections,
   limitLawSections,
   countNestedNodes,
+  computeArticleRiskMap,
+  computeStatsFromTree,
+  RISK_RANK,
 } from "./counters";
+export type { RiskLevel } from "./counters";
 export {
   getArticleBadge,
   getArticleRouteNumber,
