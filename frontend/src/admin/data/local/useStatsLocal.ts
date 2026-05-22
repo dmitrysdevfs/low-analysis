@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getLawStats } from "@/lib/api";
+import { getLawTree } from "@/lib/api";
+import { computeStatsFromTree } from "@/lib/tree";
 import type { Law } from "@/types";
 import type { LawStats } from "@/types";
 import { ADMIN_STATS_CONCURRENCY } from "../../config/adminConfig";
@@ -45,7 +46,12 @@ export function useStatsLocal(laws: Law[]) {
     setLoading(true);
 
     const tasks = laws.map(
-      (law) => () => getLawStats(law._id).then((s) => ({ id: law._id, s })),
+      (law) => () =>
+        getLawTree(law._id).then((r) => {
+          const s = computeStatsFromTree(r.elements);
+          if (!s) throw new Error("no risk data in tree");
+          return { id: law._id, s };
+        }),
     );
 
     throttledAllSettled(tasks, ADMIN_STATS_CONCURRENCY).then((results) => {

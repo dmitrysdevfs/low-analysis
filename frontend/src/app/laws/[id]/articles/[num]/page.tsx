@@ -14,7 +14,6 @@ import {
   useEffect,
   useRef,
   useCallback,
-  Suspense,
 } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -40,7 +39,6 @@ import { NoteModal } from "@/components/notes/NoteModal";
 import SelectionTooltip from "@/components/notes/SelectionTooltip";
 import type { NoteDraft } from "@/lib/notes/types";
 import { useSidebarData } from "@/components/layout/SidebarDataContext";
-import { SubjectMentionsModal } from "@/components/subject/SubjectMentionsModal";
 import { scrollToHashWithRetry } from "@/lib/utils/scrollToHashWithRetry";
 
 export default function ArticlePage() {

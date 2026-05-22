@@ -8,9 +8,35 @@ import { useAdminLaws } from "@/admin/data/_adapters/lawsAdapter";
 import { useAdminSubjects } from "@/admin/data/_adapters/subjectsAdapter";
 import { useAdminStats } from "@/admin/data/_adapters/statsAdapter";
 import { SemanticProgressBar } from "@/admin/components/SemanticProgressBar/SemanticProgressBar";
+import { useApiMetrics } from "@/hooks/useApiMetrics";
 import styles from "./AdminAnalyticsView.module.scss";
 
+const COST_LABEL: Record<string, string> = {
+  light: "легкий",
+  medium: "середній",
+  heavy: "важкий",
+  critical: "критичний",
+};
+
+const COST_CLASS: Record<string, string> = {
+  light: styles.costLight,
+  medium: styles.costMedium,
+  heavy: styles.costHeavy,
+  critical: styles.costCritical,
+};
+
 export function AdminAnalyticsView() {
+  const {
+    source,
+    setSource,
+    aggregated,
+    duplicates,
+    totalRequests,
+    lastUpdatedAt,
+    clear,
+    backendError,
+  } = useApiMetrics();
+
   const { laws, loading: lawsLoading, error: lawsError } = useAdminLaws();
   const {
     subjects,
@@ -277,8 +303,16 @@ export function AdminAnalyticsView() {
             </div>
           </div>
 
-          {statsLoading || lawStatsMap.size === 0 ? (
+          {statsLoading ? (
             <div className={styles.emptyState}>Завантаження статистики…</div>
+          ) : lawStatsMap.size === 0 ? (
+            <div className={styles.emptyState}>
+              Статистика недоступна — ендпоінт{" "}
+              <code style={{ fontFamily: "var(--font-mono)", color: "#c8a843" }}>
+                /api/laws/:id/stats
+              </code>{" "}
+              не відповідає. Дані будуть тут коли бекенд поверне stats.
+            </div>
           ) : (
             <div className={styles.statsTable}>
               <div className={`${styles.statsRow} ${styles.statsRowHead}`}>
@@ -396,6 +430,139 @@ export function AdminAnalyticsView() {
             </div>
           </div>
         </article>
+      </div>
+      {/* ─── API Load Monitor ─── */}
+      <div className={styles.apiSection}>
+        <div className={styles.apiSectionHeader}>
+          <div>
+            <span className={styles.panelEyebrow}>Навантаження на API</span>
+            <h2 className={styles.panelTitle}>Живий моніторинг запитів</h2>
+          </div>
+
+          <div className={styles.apiControls}>
+            <div className={styles.sourceToggle}>
+              <button
+                type="button"
+                className={`${styles.sourcePill} ${source === "live" ? styles.sourcePillActive : ""}`}
+                onClick={() => setSource("live")}
+              >
+                {source === "live" && <span className={styles.liveDot} />}
+                Живі дані
+              </button>
+              <button
+                type="button"
+                className={`${styles.sourcePill} ${source === "backend" ? styles.sourcePillActive : ""}`}
+                onClick={() => setSource("backend")}
+              >
+                Бекенд
+              </button>
+            </div>
+
+            {source === "live" && (
+              <button
+                type="button"
+                className={styles.clearBtn}
+                onClick={clear}
+              >
+                Очистити
+              </button>
+            )}
+          </div>
+        </div>
+
+        {source === "backend" && backendError && (
+          <div className={`${styles.emptyState} ${styles.backendError}`}>
+            <span className="mono" style={{ color: "#c0392b" }}>
+              Бекенд недоступний:
+            </span>{" "}
+            {backendError}
+            <br />
+            <span style={{ color: "#8a9bbf", fontSize: "0.8rem" }}>
+              Ендпоінт <code>/api/admin/metrics</code> буде підключений пізніше.
+            </span>
+          </div>
+        )}
+
+        <div className={styles.apiMetaRow}>
+          <div className={styles.apiStatChip}>
+            <span className={styles.apiStatValue}>{totalRequests}</span>
+            <span className={styles.apiStatLabel}>запитів</span>
+          </div>
+          <div className={styles.apiStatChip}>
+            <span className={styles.apiStatValue}>{aggregated.length}</span>
+            <span className={styles.apiStatLabel}>унікальних ендпоінтів</span>
+          </div>
+          {duplicates.length > 0 && (
+            <div className={`${styles.apiStatChip} ${styles.apiStatChipWarn}`}>
+              <span className={styles.apiStatValue}>{duplicates.length}</span>
+              <span className={styles.apiStatLabel}>повторних</span>
+            </div>
+          )}
+          <span className={`mono ${styles.apiUpdated}`}>
+            оновлено{" "}
+            {new Date(lastUpdatedAt).toLocaleTimeString("uk-UA", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })}
+          </span>
+        </div>
+
+        {aggregated.length === 0 ? (
+          <div className={styles.emptyState}>
+            {source === "live"
+              ? "Записів ще немає. Походіть по сторінках — дані з'являться тут."
+              : "Немає даних від бекенду."}
+          </div>
+        ) : (
+          <div className={styles.apiTable}>
+            <div className={`${styles.apiRow} ${styles.apiRowHead}`}>
+              <span>Ендпоінт</span>
+              <span>Виклики</span>
+              <span>Вартість</span>
+              <span>Сторінки</span>
+            </div>
+            {aggregated.map((ep) => (
+              <div
+                key={ep.key}
+                className={`${styles.apiRow} ${ep.count > 1 ? styles.apiRowDuplicate : ""}`}
+              >
+                <span className={`mono ${styles.apiEndpoint}`}>
+                  <span className={styles.apiMethod}>{ep.method}</span>{" "}
+                  {ep.normalizedPath}
+                </span>
+                <span className={`mono ${styles.apiCount}`}>{ep.count}</span>
+                <span
+                  className={`mono ${styles.costBadge} ${COST_CLASS[ep.costHint] ?? ""}`}
+                >
+                  {COST_LABEL[ep.costHint] ?? ep.costHint}
+                </span>
+                <span className={styles.apiPages}>
+                  {ep.pages.map((p) => (
+                    <span key={p} className={`mono ${styles.apiPage}`}>
+                      {p}
+                    </span>
+                  ))}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {duplicates.length > 0 && (
+          <div className={styles.duplicatesAlert}>
+            <span className={styles.duplicatesTitle}>
+              Підозрілі повтори ({duplicates.length})
+            </span>
+            <div className={styles.duplicatesList}>
+              {duplicates.map((ep) => (
+                <span key={ep.key} className={`mono ${styles.duplicateItem}`}>
+                  {ep.key} ×{ep.count}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
