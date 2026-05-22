@@ -11,6 +11,7 @@ export const getAllLaws = async ({
   status,
   dateFrom,
   dateTo,
+  documentType,
   page = 1,
   limit = 10,
 } = {}) => {
@@ -28,6 +29,17 @@ export const getAllLaws = async ({
         `^${status.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
         'i',
       ),
+    };
+  }
+
+  if (documentType) {
+    filter.documentType = {
+      $elemMatch: {
+        $regex: new RegExp(
+          `^${documentType.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+          'i',
+        ),
+      },
     };
   }
 
@@ -119,10 +131,11 @@ export const getArticle = async (lawId, articleNumber) => {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export const upsertLaw = async (lawData) => {
-  const { code, title, source, status, preamble, signatory, adoptedDate } =
+  const { code, title, source, status, preamble, signatory, adoptedDate, documentType } =
     lawData;
   const update = { title, source, status, preamble, signatory };
   if (adoptedDate != null) update.adoptedDate = adoptedDate;
+  if (documentType != null && documentType.length > 0) update.documentType = documentType;
   const law = await Law.findOneAndUpdate(
     { code },
     { $set: update },

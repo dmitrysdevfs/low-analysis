@@ -28,6 +28,11 @@ export const getAllLaws = async (req, res, next) => {
         ? req.query.status.trim()
         : undefined;
 
+    const documentType =
+      typeof req.query.documentType === 'string'
+        ? req.query.documentType.trim()
+        : undefined;
+
     let dateFrom;
     if (req.query.dateFrom !== undefined) {
       dateFrom = new Date(req.query.dateFrom);
@@ -70,6 +75,7 @@ export const getAllLaws = async (req, res, next) => {
       status,
       dateFrom,
       dateTo,
+      documentType,
       page,
       limit,
     });
@@ -138,6 +144,7 @@ export const parseLawFromUrl = async (req, res, next) => {
       preamble: parsedData.preamble,
       signatory: parsedData.signatory,
       adoptedDate: parsedData.adoptedDate,
+      documentType: parsedData.documentType,
     });
 
     // 4. Attach lawId, generate _id, and link parentId

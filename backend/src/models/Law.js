@@ -26,6 +26,10 @@ const lawSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    documentType: {
+      type: [String],
+      default: [],
+    },
     source: {
       type: String,
     },

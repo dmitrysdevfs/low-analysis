@@ -136,6 +136,27 @@ describe('GET /api/laws', () => {
     expect(res.body.message).toMatch(/dateTo/);
   });
 
+  it('passes documentType filter to the service', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    await request(app).get('/api/laws?documentType=Закон України');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ documentType: 'Закон України' }),
+    );
+  });
+
+  it('returns 200 when documentType is not provided', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    const res = await request(app).get('/api/laws');
+
+    expect(res.status).toBe(200);
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ documentType: undefined }),
+    );
+  });
+
   it('passes page and limit to the service', async () => {
     lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 

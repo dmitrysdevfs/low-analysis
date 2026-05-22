@@ -19,13 +19,14 @@ const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
  *
  * @param {string} html - Raw HTML content of the .frame page
  * @param {string} [mainHtml] - Raw HTML content of the main page (optional)
- * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null, adoptedDate: Date|null }} parsed data
+ * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null, adoptedDate: Date|null, documentType: string[] }} parsed data
  */
 export const parseLawHtml = (html, mainHtml = null) => {
   const $ = cheerio.load(html);
 
   let status = null;
   let adoptedDate = null;
+  let documentType = [];
   if (mainHtml) {
     const $main = cheerio.load(mainHtml);
     status =
@@ -40,6 +41,17 @@ export const parseLawHtml = (html, mainHtml = null) => {
     if (dateMatch) {
       const [, day, month, year] = dateMatch;
       adoptedDate = new Date(`${year}-${month}-${day}`);
+    }
+
+    // Extract document types from .doc-card — clone to strip date/number nodes
+    const docCard = $main('.doc-card').first().clone();
+    docCard.find('span, strong').remove();
+    const typePart = docCard.text().trim().split(/\s+від\s+/)[0].trim();
+    if (typePart) {
+      documentType = typePart
+        .split(/[;,]/)
+        .map((t) => t.trim())
+        .filter(Boolean);
     }
   }
 
@@ -251,5 +263,5 @@ export const parseLawHtml = (html, mainHtml = null) => {
   const preamble = preambleText.length > 0 ? preambleText.join('\n') : null;
   const signatory = signatoryText.length > 0 ? signatoryText.join('\n') : null;
 
-  return { title, code, elements, preamble, status, signatory, adoptedDate };
+  return { title, code, elements, preamble, status, signatory, adoptedDate, documentType };
 };

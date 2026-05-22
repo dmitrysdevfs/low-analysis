@@ -47,7 +47,7 @@ const ingestLaw = async (filePath) => {
     );
   }
 
-  const { title, code, elements, preamble, status, signatory } = parseLawHtml(
+  const { title, code, elements, preamble, status, signatory, adoptedDate, documentType } = parseLawHtml(
     html,
     mainHtml,
   );
@@ -80,6 +80,7 @@ const ingestLaw = async (filePath) => {
     preamble,
     signatory,
     adoptedDate,
+    documentType,
   });
 
   // Persist Elements (attach lawId resolved from the created Law)

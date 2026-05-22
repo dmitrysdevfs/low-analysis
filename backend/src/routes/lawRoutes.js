@@ -31,6 +31,13 @@ const router = express.Router();
  *           type: string
  *           example: Чинний
  *       - in: query
+ *         name: documentType
+ *         required: false
+ *         description: Фільтр за типом документа — точний збіг з одним з елементів масиву (регістронезалежний)
+ *         schema:
+ *           type: string
+ *           example: Закон України
+ *       - in: query
  *         name: dateFrom
  *         required: false
  *         description: Фільтр за датою прийняття — від (включно)

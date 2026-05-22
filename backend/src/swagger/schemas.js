@@ -33,6 +33,13 @@ export const schemas = {
         example: 'Президент України Л.КУЧМА',
         nullable: true,
       },
+      documentType: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['Постанова Кабінету Міністрів України', 'Порядок', 'Акт'],
+        description:
+          'Типи документа з блоку .doc-card на zakon.rada.gov.ua. Для простих законів — один елемент ["Закон України"]. Для складених актів — кілька: основний тип + підтипи через ";" та ",".',
+      },
       source: {
         type: 'string',
         example: 'https://zakon.rada.gov.ua/laws/show/254к/96-вр',
