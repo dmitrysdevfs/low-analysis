@@ -286,6 +286,48 @@
   }
 }
 
+.riskFilterBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.riskFilterDot {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.riskFilterLabel {
+  font-size: 0.72rem;
+  color: #d6e0f0;
+  letter-spacing: 0.04em;
+}
+
+.riskFilterReset {
+  background: none;
+  border: none;
+  color: rgba(122, 152, 192, 0.6);
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 0 2px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-left: 2px;
+
+  &:hover {
+    color: #c8a843;
+  }
+}
+
 .subjectsLabel {
   margin-bottom: 0;
 }

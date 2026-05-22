@@ -1,6 +1,6 @@
 "use client";
 
-import type { Law, LawTreeResponse, ArticleResponse } from "@/types";
+import type { Law, LawStats, LawTreeResponse, ArticleResponse } from "@/types";
 import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
 
 const API_BASE = "/api";
@@ -28,6 +28,13 @@ export async function getLawTree(
   options?: RequestInit,
 ): Promise<LawTreeResponse> {
   return getJson<LawTreeResponse>(`/laws/${id}/tree`, options);
+}
+
+export async function getLawStats(
+  id: string,
+  options?: RequestInit,
+): Promise<LawStats> {
+  return getJson<LawStats>(`/laws/${id}/stats`, options);
 }
 
 export async function getArticle(

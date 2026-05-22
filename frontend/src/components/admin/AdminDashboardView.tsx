@@ -1,48 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, type CSSProperties } from "react";
+import { useMemo } from "react";
 import { ROUTES } from "@/constants/routes";
-import { useLaws } from "@/hooks/useLaws";
-import { useSubjects } from "@/hooks/useSubjects";
 import { formatDateMedium, formatDateShort, groupCounts } from "@/lib/utils";
 import { formatAccessRoleLabel, formatSeverityLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
+import { MetricCard } from "@/admin/components/MetricCard/MetricCard";
+import { AdminDonutChart } from "@/admin/components/AdminDonutChart/AdminDonutChart";
+import { SemanticProgressBar } from "@/admin/components/SemanticProgressBar/SemanticProgressBar";
+import { AuditBadge } from "@/admin/components/AuditBadge/AuditBadge";
+import { useAdminLaws } from "@/admin/data/_adapters/lawsAdapter";
+import { useAdminSubjects } from "@/admin/data/_adapters/subjectsAdapter";
+import type { DonutSegment } from "@/admin/components/AdminDonutChart/AdminDonutChart";
 import styles from "./AdminWorkspace.module.scss";
-
-type DonutSegment = {
-  label: string;
-  value: number;
-  color: string;
-};
-
-function buildDonutStops(segments: DonutSegment[]) {
-  const total = segments.reduce((sum, segment) => sum + segment.value, 0);
-
-  if (!total) {
-    return "rgba(255,255,255,0.08) 0 100%";
-  }
-
-  let cursor = 0;
-  return segments
-    .filter((segment) => segment.value > 0)
-    .map((segment) => {
-      const start = cursor;
-      cursor += (segment.value / total) * 100;
-      return `${segment.color} ${start}% ${cursor}%`;
-    })
-    .join(", ");
-}
 
 export function AdminDashboardView() {
   const { snapshot, billingCounts, billingRegistry, handleCopyGuestStatus } =
     useAdminWorkspace();
-  const { laws, loading: lawsLoading, error: lawsError } = useLaws();
+  const { laws, loading: lawsLoading, error: lawsError } = useAdminLaws();
   const {
     subjects,
     loading: subjectsLoading,
     error: subjectsError,
-  } = useSubjects();
+  } = useAdminSubjects();
 
   const siteMetrics = useMemo(() => {
     const totalSections = laws.reduce((sum, law) => sum + law.totalSections, 0);
@@ -85,28 +66,12 @@ export function AdminDashboardView() {
     [billingCounts],
   );
 
-  const billingDonutStyle = useMemo(
-    () =>
-      ({
-        "--donut-stops": buildDonutStops(billingSegments),
-      }) as CSSProperties,
-    [billingSegments],
-  );
-
   if (!snapshot) {
     return null;
   }
 
   const paidAccounts =
     billingCounts.user + billingCounts.plus + billingCounts.pro;
-  const guestSearchUsage = snapshot.guestPressure.searchLimit
-    ? (snapshot.guestPressure.searchUsed / snapshot.guestPressure.searchLimit) *
-      100
-    : 0;
-  const guestViewUsage = snapshot.guestPressure.viewLimit
-    ? (snapshot.guestPressure.viewUsed / snapshot.guestPressure.viewLimit) * 100
-    : 0;
-  const siteCoverageBase = laws.length || 1;
   const accountSplit = [
     {
       label: formatAccessRoleLabel("client"),
@@ -155,57 +120,12 @@ export function AdminDashboardView() {
       </section>
 
       <section className={styles.metricsGrid}>
-        <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Закони</span>
-          <strong className={styles.metricValue}>{laws.length}</strong>
-          <p className={styles.metricNote}>
-            Структуровані правові документи в поточному наборі даних.
-          </p>
-        </article>
-        <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Суб'єкти</span>
-          <strong className={styles.metricValue}>{subjects.length}</strong>
-          <p className={styles.metricNote}>
-            Розпізнані регуляторні суб'єкти, доступні для зв'язування та
-            фільтрів.
-          </p>
-        </article>
-        <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Акаунти</span>
-          <strong className={styles.metricValue}>
-            {snapshot.totalAccounts}
-          </strong>
-          <p className={styles.metricNote}>
-            Збережені та розробницькі ідентичності, які бачить адмін-простір.
-          </p>
-        </article>
-        <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Платні плани</span>
-          <strong className={styles.metricValue}>{paidAccounts}</strong>
-          <p className={styles.metricNote}>
-            Місця тарифів «Користувач», «Плюс» і «Про», призначені через
-            демо-білінг.
-          </p>
-        </article>
-        <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Статті</span>
-          <strong className={styles.metricValue}>
-            {siteMetrics.totalArticles}
-          </strong>
-          <p className={styles.metricNote}>
-            Загальна кількість структурованих статей у корпусі законів.
-          </p>
-        </article>
-        <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Події аудиту</span>
-          <strong className={styles.metricValue}>
-            {snapshot.auditLog.length}
-          </strong>
-          <p className={styles.metricNote}>
-            Останні адмінські, автентифікаційні та безпекові події в локальному
-            журналі.
-          </p>
-        </article>
+        <MetricCard label="Закони" value={laws.length} note="Структуровані правові документи." loading={lawsLoading} color="#4a80d4" />
+        <MetricCard label="Суб'єкти" value={subjects.length} note="Визначені регуляторні суб'єкти." loading={subjectsLoading} color="#93b7ff" />
+        <MetricCard label="Акаунти" value={snapshot.totalAccounts} note="Ідентичності в адмін-просторі." color="#c8a843" />
+        <MetricCard label="Платні плани" value={paidAccounts} note="Тарифи «Користувач», «Плюс» і «Про»." color="#f2d06c" />
+        <MetricCard label="Статті" value={siteMetrics.totalArticles} note="Загальна кількість статей у корпусі." loading={lawsLoading} color="#4a9e6b" />
+        <MetricCard label="Події аудиту" value={snapshot.auditLog.length} note="Останні адмінські події." color="#e9774b" />
       </section>
 
       <section className={styles.quickGrid}>
@@ -242,13 +162,13 @@ export function AdminDashboardView() {
             </div>
           </div>
 
-          <div className={styles.donutChart} style={billingDonutStyle}>
-            <div className={styles.donutHole}>
-              <div>
-                <strong>{billingRegistry.length}</strong>
-                <span>рядків реєстру</span>
-              </div>
-            </div>
+          <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+            <AdminDonutChart
+              segments={billingSegments}
+              centerValue={billingRegistry.length}
+              centerLabel="записів"
+              size={200}
+            />
           </div>
 
           <div className={styles.legend}>
@@ -283,70 +203,26 @@ export function AdminDashboardView() {
           </div>
 
           <div className={styles.progressList}>
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>
-                  Використання пошуку гостями
-                </span>
-                <span className={styles.progressValue}>
-                  {snapshot.guestPressure.searchUsed}/
-                  {snapshot.guestPressure.searchLimit}
-                </span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{ width: `${Math.min(guestSearchUsage, 100)}%` }}
-                />
-              </div>
-              <div className={styles.progressMeta}>
-                Залишок: {snapshot.guestPressure.searchRemaining}, кулдаун{" "}
-                {snapshot.guestPressure.searchCooldownActive
-                  ? "активний"
-                  : "вимкнено"}
-              </div>
-            </div>
-
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>
-                  Використання переглядів гостями
-                </span>
-                <span className={styles.progressValue}>
-                  {snapshot.guestPressure.viewUsed}/
-                  {snapshot.guestPressure.viewLimit}
-                </span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{ width: `${Math.min(guestViewUsage, 100)}%` }}
-                />
-              </div>
-              <div className={styles.progressMeta}>
-                Залишок: {snapshot.guestPressure.viewRemaining}, кулдаун{" "}
-                {snapshot.guestPressure.viewCooldownActive
-                  ? "активний"
-                  : "вимкнено"}
-              </div>
-            </div>
-
+            <SemanticProgressBar
+              value={snapshot.guestPressure.searchUsed}
+              max={snapshot.guestPressure.searchLimit ?? 1}
+              label="Пошук гостей"
+              meta={`Залишок: ${snapshot.guestPressure.searchRemaining}, кулдаун ${snapshot.guestPressure.searchCooldownActive ? "активний" : "вимкнено"}`}
+            />
+            <SemanticProgressBar
+              value={snapshot.guestPressure.viewUsed}
+              max={snapshot.guestPressure.viewLimit ?? 1}
+              label="Перегляди гостей"
+              meta={`Залишок: ${snapshot.guestPressure.viewRemaining}, кулдаун ${snapshot.guestPressure.viewCooldownActive ? "активний" : "вимкнено"}`}
+            />
             {accountSplit.map((item) => (
-              <div key={item.label} className={styles.progressRow}>
-                <div className={styles.progressTopRow}>
-                  <span className={styles.progressLabel}>{item.label}</span>
-                  <span className={styles.progressValue}>{item.count}</span>
-                </div>
-                <div className={styles.progressTrack}>
-                  <span
-                    className={styles.progressFill}
-                    style={{ width: `${item.percent}%` }}
-                  />
-                </div>
-                <div className={styles.progressMeta}>
-                  {Math.round(item.percent)}% від усіх акаунтів
-                </div>
-              </div>
+              <SemanticProgressBar
+                key={item.label}
+                value={item.count}
+                max={snapshot.totalAccounts}
+                label={item.label}
+                meta={`${Math.round(item.percent)}% від усіх акаунтів`}
+              />
             ))}
           </div>
         </article>
@@ -362,54 +238,14 @@ export function AdminDashboardView() {
           </div>
 
           <div className={styles.progressList}>
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>
-                  Покриття підписантів
-                </span>
-                <span className={styles.progressValue}>
-                  {siteMetrics.signatoryCoverage}/{laws.length}
-                </span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${(siteMetrics.signatoryCoverage / siteCoverageBase) * 100}%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Покриття преамбул</span>
-                <span className={styles.progressValue}>
-                  {siteMetrics.preambleCoverage}/{laws.length}
-                </span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${(siteMetrics.preambleCoverage / siteCoverageBase) * 100}%`,
-                  }}
-                />
-              </div>
-            </div>
-
+            <SemanticProgressBar value={siteMetrics.signatoryCoverage} max={laws.length} label="Покриття підписантів" />
+            <SemanticProgressBar value={siteMetrics.preambleCoverage} max={laws.length} label="Покриття преамбул" />
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
                 <span className={styles.progressLabel}>Глибина структури</span>
-                <span className={styles.progressValue}>
-                  {siteMetrics.totalSections} розд.,{" "}
-                  {siteMetrics.totalParagraphs} абз.
-                </span>
+                <span className={styles.progressValue}>{siteMetrics.totalSections} розд., {siteMetrics.totalParagraphs} абз.</span>
               </div>
-              <div className={styles.progressMeta}>
-                Глибина статей обчислюється з актуальних даних, отриманих для
-                законів.
-              </div>
+              <div className={styles.progressMeta}>Глибина статей обчислюється з актуальних даних.</div>
             </div>
           </div>
         </article>
@@ -507,17 +343,7 @@ export function AdminDashboardView() {
               {snapshot.auditLog.slice(0, 4).map((item) => (
                 <div key={item.id} className={styles.auditRow}>
                   <div className={styles.auditMeta}>
-                    <span
-                      className={`${styles.auditBadge} ${
-                        item.severity === "security"
-                          ? styles.auditBadgeSecurity
-                          : item.severity === "warning"
-                            ? styles.auditBadgeWarning
-                            : ""
-                      }`}
-                    >
-                      {formatSeverityLabel(item.severity)}
-                    </span>
+                    <AuditBadge severity={item.severity as "info" | "warning" | "security"} label={formatSeverityLabel(item.severity)} />
                     <span>{formatDateShort(item.createdAt)}</span>
                     <span>{item.actor}</span>
                   </div>

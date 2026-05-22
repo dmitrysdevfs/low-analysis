@@ -4,17 +4,21 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { ROUTES } from "@/constants/routes";
 import { formatDateMedium, groupCounts } from "@/lib/utils";
-import { useLaws } from "@/hooks/useLaws";
-import { useSubjects } from "@/hooks/useSubjects";
+import { useAdminLaws } from "@/admin/data/_adapters/lawsAdapter";
+import { useAdminSubjects } from "@/admin/data/_adapters/subjectsAdapter";
+import { useAdminStats } from "@/admin/data/_adapters/statsAdapter";
+import { SemanticProgressBar } from "@/admin/components/SemanticProgressBar/SemanticProgressBar";
 import styles from "./AdminAnalyticsView.module.scss";
 
 export function AdminAnalyticsView() {
-  const { laws, loading: lawsLoading, error: lawsError } = useLaws();
+  const { laws, loading: lawsLoading, error: lawsError } = useAdminLaws();
   const {
     subjects,
     loading: subjectsLoading,
     error: subjectsError,
-  } = useSubjects();
+  } = useAdminSubjects();
+
+  const { statsMap: lawStatsMap, loading: statsLoading } = useAdminStats(laws);
 
   const metrics = useMemo(() => {
     const totalSections = laws.reduce((sum, law) => sum + law.totalSections, 0);
@@ -158,26 +162,13 @@ export function AdminAnalyticsView() {
           ) : (
             <div className={styles.distributionList}>
               {metrics.statusDistribution.map(([label, count]) => (
-                <div key={label} className={styles.distributionRow}>
-                  <div className={styles.distributionTopRow}>
-                    <span className={styles.distributionLabel}>{label}</span>
-                    <span className={styles.tag}>{count}</span>
-                  </div>
-                  <div className={styles.progressTrack}>
-                    <span
-                      className={styles.progressFill}
-                      style={{
-                        width: `${laws.length > 0 ? (count / laws.length) * 100 : 0}%`,
-                      }}
-                    />
-                  </div>
-                  <div className={styles.distributionMeta}>
-                    {laws.length > 0
-                      ? Math.round((count / laws.length) * 100)
-                      : 0}
-                    % законів
-                  </div>
-                </div>
+                <SemanticProgressBar
+                  key={label}
+                  value={count}
+                  max={laws.length}
+                  label={label}
+                  meta={`${laws.length > 0 ? Math.round((count / laws.length) * 100) : 0}% законів`}
+                />
               ))}
             </div>
           )}
@@ -200,26 +191,13 @@ export function AdminAnalyticsView() {
           ) : (
             <div className={styles.distributionList}>
               {metrics.subjectStatusDistribution.map(([label, count]) => (
-                <div key={label} className={styles.distributionRow}>
-                  <div className={styles.distributionTopRow}>
-                    <span className={styles.distributionLabel}>{label}</span>
-                    <span className={styles.tag}>{count}</span>
-                  </div>
-                  <div className={styles.progressTrack}>
-                    <span
-                      className={styles.progressFill}
-                      style={{
-                        width: `${subjects.length > 0 ? (count / subjects.length) * 100 : 0}%`,
-                      }}
-                    />
-                  </div>
-                  <div className={styles.distributionMeta}>
-                    {subjects.length > 0
-                      ? Math.round((count / subjects.length) * 100)
-                      : 0}
-                    % суб'єктів
-                  </div>
-                </div>
+                <SemanticProgressBar
+                  key={label}
+                  value={count}
+                  max={subjects.length}
+                  label={label}
+                  meta={`${subjects.length > 0 ? Math.round((count / subjects.length) * 100) : 0}% суб'єктів`}
+                />
               ))}
             </div>
           )}
@@ -276,46 +254,77 @@ export function AdminAnalyticsView() {
           </div>
 
           <div className={styles.distributionList}>
-            <div className={styles.distributionRow}>
-              <div className={styles.distributionTopRow}>
-                <span className={styles.distributionLabel}>
-                  Покриття підписантів
-                </span>
-                <span className={styles.tag}>{metrics.signatoryCoverage}</span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${laws.length > 0 ? (metrics.signatoryCoverage / laws.length) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-              <div className={styles.distributionMeta}>
-                Закони з явними метаданими підписанта в наборі даних.
-              </div>
-            </div>
+            <SemanticProgressBar
+              value={metrics.signatoryCoverage}
+              max={laws.length}
+              label="Покриття підписантів"
+              meta="Закони з явними метаданими підписанта."
+            />
+            <SemanticProgressBar
+              value={metrics.preambleCoverage}
+              max={laws.length}
+              label="Покриття преамбул"
+              meta="Закони де текст преамбули доступний."
+            />
+          </div>
+        </article>
 
-            <div className={styles.distributionRow}>
-              <div className={styles.distributionTopRow}>
-                <span className={styles.distributionLabel}>
-                  Покриття преамбул
-                </span>
-                <span className={styles.tag}>{metrics.preambleCoverage}</span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${laws.length > 0 ? (metrics.preambleCoverage / laws.length) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-              <div className={styles.distributionMeta}>
-                Закони, де текст преамбули доступний для аналізу.
-              </div>
+        <article className={`${styles.panel} ${styles.panelWide}`}>
+          <div className={styles.panelHeader}>
+            <div>
+              <span className={styles.panelEyebrow}>Статистичний аналіз</span>
+              <h2 className={styles.panelTitle}>Складність норм по законах</h2>
             </div>
           </div>
+
+          {statsLoading || lawStatsMap.size === 0 ? (
+            <div className={styles.emptyState}>Завантаження статистики…</div>
+          ) : (
+            <div className={styles.statsTable}>
+              <div className={`${styles.statsRow} ${styles.statsRowHead}`}>
+                <span>Закон</span>
+                <span>Елементів</span>
+                <span>Розподіл</span>
+                <span className={styles.statsColRed}>Об'ємних</span>
+                <span>Сер. симв.</span>
+              </div>
+              {[...laws]
+                .filter((l) => lawStatsMap.has(l._id))
+                .sort((a, b) => {
+                  const sa = lawStatsMap.get(a._id)!;
+                  const sb = lawStatsMap.get(b._id)!;
+                  const pctA = sa.totalElements > 0 ? sa.riskLevels.red / sa.totalElements : 0;
+                  const pctB = sb.totalElements > 0 ? sb.riskLevels.red / sb.totalElements : 0;
+                  return pctB - pctA;
+                })
+                .map((law) => {
+                  const s = lawStatsMap.get(law._id)!;
+                  const counted = s.riskLevels.green + s.riskLevels.yellow + s.riskLevels.red;
+                  const gPct = counted > 0 ? Math.round((s.riskLevels.green / counted) * 100) : 0;
+                  const yPct = counted > 0 ? Math.round((s.riskLevels.yellow / counted) * 100) : 0;
+                  const rPct = counted > 0 ? Math.round((s.riskLevels.red / counted) * 100) : 0;
+                  return (
+                    <div key={law._id} className={styles.statsRow}>
+                      <Link href={ROUTES.law(law._id)} className={styles.statsLawTitle}>
+                        {law.title}
+                      </Link>
+                      <span className={`mono ${styles.statsNum}`}>{s.totalElements}</span>
+                      <div className={styles.statsMiniBar}>
+                        {gPct > 0 && <span className={styles.statsSegGreen} style={{ width: `${gPct}%` }} />}
+                        {yPct > 0 && <span className={styles.statsSegYellow} style={{ width: `${yPct}%` }} />}
+                        {rPct > 0 && <span className={styles.statsSegRed} style={{ width: `${rPct}%` }} />}
+                      </div>
+                      <span className={`mono ${rPct > 5 ? styles.statsNumRed : styles.statsNum}`}>
+                        {s.riskLevels.red} ({rPct}%)
+                      </span>
+                      <span className={`mono ${styles.statsNum}`}>
+                        {Math.round(s.meanChars)}
+                      </span>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </article>
 
         <article className={styles.panel}>

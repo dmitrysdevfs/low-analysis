@@ -39,6 +39,7 @@ function NestedNode({
     (node.subjects?.some((s) => s.subject_id === highlightSubjectId) ?? false);
 
   const charCount = node.text?.length ?? 0;
+  const riskLevel = node.risk_level ?? null;
 
   const nodeSubjects =
     subjectsMap && node.subjects?.length
@@ -103,6 +104,18 @@ function NestedNode({
       className={`law-structure-node ${isHighlighted ? styles.highlightedNode : ""}`}
     >
       <div className={styles.nodeHeader}>
+        {riskLevel && (
+          <span
+            className={`${styles.riskDot} ${styles[`risk${riskLevel.charAt(0).toUpperCase()}${riskLevel.slice(1)}`]}`}
+            title={
+              riskLevel === "red"
+                ? `Об'ємний елемент · ${charCount} симв.`
+                : riskLevel === "yellow"
+                  ? `Помірна складність · ${charCount} симв.`
+                  : `Норма · ${charCount} симв.`
+            }
+          />
+        )}
         <button
           type="button"
           onClick={handleAnchorClick}

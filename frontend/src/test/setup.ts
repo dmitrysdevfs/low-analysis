@@ -1,8 +1,9 @@
 import React from "react";
-import { afterEach, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { resetNavigationMocks } from "./mocks/next-navigation";
+import { server } from "./msw/server";
 
 function hasPathname(value: unknown): value is { pathname?: string | null } {
   return typeof value === "object" && value !== null && "pathname" in value;
@@ -79,9 +80,19 @@ if (!window.matchMedia) {
   });
 }
 
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: "bypass" });
+});
+
 afterEach(() => {
   cleanup();
   window.localStorage.clear();
+  window.sessionStorage.clear();
+  server.resetHandlers();
   resetNavigationMocks();
   vi.clearAllMocks();
+});
+
+afterAll(() => {
+  server.close();
 });

@@ -14,6 +14,7 @@ import { ROUTES } from "@/constants/routes";
 import { NestedNodeList } from "./LawStructureListNodes";
 import { useNotes } from "@/hooks/useNotes";
 import type { Subject } from "@/types";
+import styles from "./LawStructureList.module.scss";
 
 export function ArticleEntry({
   article,
@@ -40,6 +41,7 @@ export function ArticleEntry({
   const { hasArticleNote } = useNotes();
   const nestedCount = countNestedNodes(article);
   const routeNumber = getArticleRouteNumber(article);
+  const riskLevel = article.risk_level ?? null;
   const hasNote = hasArticleNote(lawId, String(routeNumber ?? ""));
 
   // Native addEventListener bypasses Framer Motion's pointer capture
@@ -84,6 +86,18 @@ export function ArticleEntry({
           <div className="law-structure-article-label mono">
             {getArticleBadge(article)}
           </div>
+          {riskLevel && (
+            <span
+              className={`${styles.riskDot} ${styles[`risk${riskLevel.charAt(0).toUpperCase()}${riskLevel.slice(1)}`]}`}
+              title={
+                riskLevel === "red"
+                  ? "Об'ємна стаття"
+                  : riskLevel === "yellow"
+                    ? "Помірна складність"
+                    : "Норма"
+              }
+            />
+          )}
           {routeNumber ? (
             <Link
               className="law-structure-article-link display"

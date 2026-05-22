@@ -9,6 +9,9 @@ import {
   formatPlanFilterLabel,
 } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
+import { useAdminUsers } from "@/admin/data/_adapters/usersAdapter";
+import { VirtualList } from "@/admin/components/VirtualList/VirtualList";
+import { SemanticProgressBar } from "@/admin/components/SemanticProgressBar/SemanticProgressBar";
 import styles from "./AdminWorkspace.module.scss";
 
 type RegistryFilter = "all" | "client" | "admin";
@@ -18,27 +21,11 @@ export function AdminUsersView() {
   const [registryFilter, setRegistryFilter] = useState<RegistryFilter>("all");
   const [registryQuery, setRegistryQuery] = useState("");
 
+  const { users: adapterUsers } = useAdminUsers({ query: registryQuery });
   const filteredAccounts = useMemo(() => {
-    if (!snapshot) {
-      return [];
-    }
-
-    const normalizedQuery = registryQuery.trim().toLowerCase();
-
-    return snapshot.registryAccounts.filter((account) => {
-      const matchesRole =
-        registryFilter === "all"
-          ? true
-          : account.accountType === registryFilter;
-      const matchesQuery =
-        normalizedQuery.length === 0
-          ? true
-          : account.displayName.toLowerCase().includes(normalizedQuery) ||
-            account.email.toLowerCase().includes(normalizedQuery);
-
-      return matchesRole && matchesQuery;
-    });
-  }, [registryFilter, registryQuery, snapshot]);
+    if (registryFilter === "all") return adapterUsers;
+    return adapterUsers.filter((u) => u.accountType === registryFilter);
+  }, [adapterUsers, registryFilter]);
 
   const statusCounts = useMemo(() => {
     if (!snapshot) {
@@ -140,38 +127,16 @@ export function AdminUsersView() {
           </div>
 
           <div className={styles.progressList}>
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Активні акаунти</span>
-                <span className={styles.progressValue}>
-                  {statusCounts.active}
-                </span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${snapshot.totalAccounts ? (statusCounts.active / snapshot.totalAccounts) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-            </div>
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Неактивні акаунти</span>
-                <span className={styles.progressValue}>
-                  {statusCounts.inactive}
-                </span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${snapshot.totalAccounts ? (statusCounts.inactive / snapshot.totalAccounts) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-            </div>
+            <SemanticProgressBar
+              value={statusCounts.active}
+              max={snapshot.totalAccounts}
+              label="Активні акаунти"
+            />
+            <SemanticProgressBar
+              value={statusCounts.inactive}
+              max={snapshot.totalAccounts}
+              label="Неактивні акаунти"
+            />
           </div>
         </article>
 
@@ -186,43 +151,17 @@ export function AdminUsersView() {
           </div>
 
           <div className={styles.progressList}>
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>Збережені акаунти</span>
-                <span className={styles.progressValue}>
-                  {statusCounts.stored}
-                </span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${snapshot.totalAccounts ? (statusCounts.stored / snapshot.totalAccounts) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-            </div>
-            <div className={styles.progressRow}>
-              <div className={styles.progressTopRow}>
-                <span className={styles.progressLabel}>
-                  Розробницькі акаунти
-                </span>
-                <span className={styles.progressValue}>{statusCounts.dev}</span>
-              </div>
-              <div className={styles.progressTrack}>
-                <span
-                  className={styles.progressFill}
-                  style={{
-                    width: `${snapshot.totalAccounts ? (statusCounts.dev / snapshot.totalAccounts) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-              <div className={styles.progressMeta}>
-                Розробницькі ідентичності лишаються видимими для демонстраційних
-                сценаріїв, але дії над роллю та статусом для них навмисно
-                вимкнені.
-              </div>
-            </div>
+            <SemanticProgressBar
+              value={statusCounts.stored}
+              max={snapshot.totalAccounts}
+              label="Збережені акаунти"
+            />
+            <SemanticProgressBar
+              value={statusCounts.dev}
+              max={snapshot.totalAccounts}
+              label="Розробницькі акаунти"
+              meta="Розробницькі ідентичності лишаються видимими для демо-сценаріїв."
+            />
           </div>
         </article>
 
@@ -256,112 +195,52 @@ export function AdminUsersView() {
           </div>
 
           <div className={styles.registryViewport}>
-            <div className={styles.accountList}>
-              {filteredAccounts.length > 0 ? (
-                filteredAccounts.map((account) => {
-                  const isDev = account.source === "dev";
-                  const isInactive = account.status === "inactive";
-
-                  return (
-                    <div key={account.id} className={styles.accountRow}>
-                      <div>
-                        <div className={styles.accountName}>
-                          {account.displayName}
-                        </div>
-                        <div className={styles.accountMeta}>
-                          {account.email}
-                        </div>
-                      </div>
-
-                      <div className={styles.accountBadges}>
-                        <span className={styles.accountBadge}>
-                          {formatAccountTypeLabel(account.accountType)}
-                        </span>
-                        <span className={styles.accountBadge}>
-                          {formatAccountSourceLabel(account.source)}
-                        </span>
-                        <span
-                          className={
-                            isInactive
-                              ? styles.accountBadgeDanger
-                              : styles.accountBadgeAccent
-                          }
-                        >
-                          {formatAccountStatusLabel(account.status)}
-                        </span>
-                        {account.superCodeProtected ? (
-                          <span className={styles.accountBadgeAccent}>
-                            супер-код
-                          </span>
-                        ) : null}
-                      </div>
-
-                      <div className={styles.accountMetaBlock}>
-                        <span>
-                          Створено: {formatDateShort(account.createdAt)}
-                        </span>
-                        <span>
-                          Останній вхід:{" "}
-                          {account.lastLoginAt
-                            ? formatDateShort(account.lastLoginAt)
-                            : "ніколи"}
-                        </span>
-                      </div>
-
-                      <div className={styles.accountActions}>
-                        <button
-                          type="button"
-                          className={styles.accountActionBtn}
-                          disabled={isDev}
-                          onClick={() =>
-                            handleAccountAction(
-                              "deactivate",
-                              account.id,
-                              account.displayName,
-                            )
-                          }
-                        >
-                          {isInactive ? "Активувати" : "Деактивувати"}
-                        </button>
-                        <button
-                          type="button"
-                          className={styles.accountActionBtn}
-                          disabled={isDev}
-                          onClick={() =>
-                            handleAccountAction(
-                              "promote",
-                              account.id,
-                              account.displayName,
-                            )
-                          }
-                        >
-                          {account.accountType === "admin"
-                            ? "Знизити роль"
-                            : "Підвищити"}
-                        </button>
-                        <button
-                          type="button"
-                          className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
-                          onClick={() =>
-                            handleAccountAction(
-                              "forceLogout",
-                              account.id,
-                              account.displayName,
-                            )
-                          }
-                        >
-                          Вийти примусово
-                        </button>
-                      </div>
+            <VirtualList
+              items={filteredAccounts}
+              estimateSize={120}
+              maxHeight={520}
+              emptyState={<div className={styles.emptyState}>За поточним фільтром не знайдено жодного акаунта.</div>}
+              renderItem={(account) => {
+                const isDev = account.source === "dev";
+                const isInactive = account.status === "inactive";
+                return (
+                  <div key={account.id} className={styles.accountRow}>
+                    <div>
+                      <div className={styles.accountName}>{account.displayName}</div>
+                      <div className={styles.accountMeta}>{account.email}</div>
                     </div>
-                  );
-                })
-              ) : (
-                <div className={styles.emptyState}>
-                  За поточним фільтром не знайдено жодного акаунта.
-                </div>
-              )}
-            </div>
+                    <div className={styles.accountBadges}>
+                      <span className={styles.accountBadge}>{formatAccountTypeLabel(account.accountType)}</span>
+                      <span className={styles.accountBadge}>{formatAccountSourceLabel(account.source)}</span>
+                      <span className={isInactive ? styles.accountBadgeDanger : styles.accountBadgeAccent}>
+                        {formatAccountStatusLabel(account.status)}
+                      </span>
+                      {account.superCodeProtected ? (
+                        <span className={styles.accountBadgeAccent}>супер-код</span>
+                      ) : null}
+                    </div>
+                    <div className={styles.accountMetaBlock}>
+                      <span>Створено: {formatDateShort(account.createdAt)}</span>
+                      <span>Останній вхід: {account.lastLoginAt ? formatDateShort(account.lastLoginAt) : "ніколи"}</span>
+                    </div>
+                    <div className={styles.accountActions}>
+                      <button type="button" className={styles.accountActionBtn} disabled={isDev}
+                        onClick={() => handleAccountAction("deactivate", account.id, account.displayName)}>
+                        {isInactive ? "Активувати" : "Деактивувати"}
+                      </button>
+                      <button type="button" className={styles.accountActionBtn} disabled={isDev}
+                        onClick={() => handleAccountAction("promote", account.id, account.displayName)}>
+                        {account.accountType === "admin" ? "Знизити роль" : "Підвищити"}
+                      </button>
+                      <button type="button" className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
+                        onClick={() => handleAccountAction("forceLogout", account.id, account.displayName)}>
+                        Вийти примусово
+                      </button>
+                    </div>
+                  </div>
+                );
+              }}
+            />
           </div>
         </article>
       </section>

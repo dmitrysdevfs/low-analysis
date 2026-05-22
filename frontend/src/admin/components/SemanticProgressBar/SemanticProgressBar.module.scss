@@ -1,0 +1,54 @@
+.row {
+  display: grid;
+  gap: 6px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.label {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.count {
+  color: #9eb5d9;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  overflow: visible;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.4s ease, background 0.3s ease;
+}
+
+.marker {
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 1px;
+  transform: translateX(-50%);
+}
+
+.meta {
+  color: #9eb5d9;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}

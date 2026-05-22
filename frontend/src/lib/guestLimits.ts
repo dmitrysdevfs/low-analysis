@@ -43,12 +43,12 @@ export type GuestLimitAttemptResult = {
 
 const GUEST_LIMIT_RULES = {
   search: {
-    limit: 6,
+    limit: 50,
     windowMs: 10 * 60 * 1000,
     cooldownMs: 2 * 60 * 1000,
   },
   view: {
-    limit: 12,
+    limit: 50,
     windowMs: 15 * 60 * 1000,
     cooldownMs: 3 * 60 * 1000,
   },
