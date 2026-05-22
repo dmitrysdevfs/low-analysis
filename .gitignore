@@ -26,6 +26,11 @@ Thumbs.db
 dist/
 build/
 
+# Test coverage reports
+coverage/
+backend/coverage/
+frontend/coverage/
+
 # Data (raw HTML files can be large)
 backend/data/raw/*.html
 !backend/data/.gitkeep
