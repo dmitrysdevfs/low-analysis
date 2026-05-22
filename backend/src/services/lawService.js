@@ -131,11 +131,20 @@ export const getArticle = async (lawId, articleNumber) => {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export const upsertLaw = async (lawData) => {
-  const { code, title, source, status, preamble, signatory, adoptedDate, documentType } =
-    lawData;
+  const {
+    code,
+    title,
+    source,
+    status,
+    preamble,
+    signatory,
+    adoptedDate,
+    documentType,
+  } = lawData;
   const update = { title, source, status, preamble, signatory };
   if (adoptedDate != null) update.adoptedDate = adoptedDate;
-  if (documentType != null && documentType.length > 0) update.documentType = documentType;
+  if (documentType != null && documentType.length > 0)
+    update.documentType = documentType;
   const law = await Law.findOneAndUpdate(
     { code },
     { $set: update },

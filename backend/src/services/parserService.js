@@ -46,7 +46,11 @@ export const parseLawHtml = (html, mainHtml = null) => {
     // Extract document types from .doc-card — clone to strip date/number nodes
     const docCard = $main('.doc-card').first().clone();
     docCard.find('span, strong').remove();
-    const typePart = docCard.text().trim().split(/\s+від\s+/)[0].trim();
+    const typePart = docCard
+      .text()
+      .trim()
+      .split(/\s+від\s+/)[0]
+      .trim();
     if (typePart) {
       documentType = typePart
         .split(/[;,]/)
@@ -263,5 +267,14 @@ export const parseLawHtml = (html, mainHtml = null) => {
   const preamble = preambleText.length > 0 ? preambleText.join('\n') : null;
   const signatory = signatoryText.length > 0 ? signatoryText.join('\n') : null;
 
-  return { title, code, elements, preamble, status, signatory, adoptedDate, documentType };
+  return {
+    title,
+    code,
+    elements,
+    preamble,
+    status,
+    signatory,
+    adoptedDate,
+    documentType,
+  };
 };

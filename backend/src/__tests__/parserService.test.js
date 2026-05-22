@@ -14,7 +14,11 @@ const FRAME_HTML = `
 </body></html>
 `;
 
-const mainHtml = (docCardInner, status = 'чинний', title = 'Про Національну поліцію | від 02.07.2015') => `
+const mainHtml = (
+  docCardInner,
+  status = 'чинний',
+  title = 'Про Національну поліцію | від 02.07.2015',
+) => `
 <html><head><title>${title}</title></head><body>
 <span class="valid">${status}</span>
 <div class="doc">${docCardInner}</div>
@@ -76,7 +80,10 @@ describe('parseLawHtml — status and adoptedDate extraction', () => {
 
   it('extracts adoptedDate from <title> tag', () => {
     const card = `<div class="doc-card"><em>Закон України</em> від <span>02.07.2015</span> № <strong>580-VIII</strong></div>`;
-    const result = parseLawHtml(FRAME_HTML, mainHtml(card, 'чинний', 'Про поліцію | від 02.07.2015'));
+    const result = parseLawHtml(
+      FRAME_HTML,
+      mainHtml(card, 'чинний', 'Про поліцію | від 02.07.2015'),
+    );
     expect(result.adoptedDate).toBeInstanceOf(Date);
     expect(result.adoptedDate.getFullYear()).toBe(2015);
     expect(result.adoptedDate.getMonth()).toBe(6); // July = 6 (0-indexed)
@@ -85,7 +92,10 @@ describe('parseLawHtml — status and adoptedDate extraction', () => {
 
   it('returns null adoptedDate when title has no date', () => {
     const card = `<div class="doc-card"><em>Закон України</em> від <span>02.07.2015</span> № <strong>580-VIII</strong></div>`;
-    const result = parseLawHtml(FRAME_HTML, mainHtml(card, 'чинний', 'Про поліцію'));
+    const result = parseLawHtml(
+      FRAME_HTML,
+      mainHtml(card, 'чинний', 'Про поліцію'),
+    );
     expect(result.adoptedDate).toBeNull();
   });
 
