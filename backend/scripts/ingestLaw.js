@@ -47,10 +47,16 @@ const ingestLaw = async (filePath) => {
     );
   }
 
-  const { title, code, elements, preamble, status, signatory, adoptedDate, documentType } = parseLawHtml(
-    html,
-    mainHtml,
-  );
+  const {
+    title,
+    code,
+    elements,
+    preamble,
+    status,
+    signatory,
+    adoptedDate,
+    documentType,
+  } = parseLawHtml(html, mainHtml);
 
   if (!title || !code) {
     throw new Error(

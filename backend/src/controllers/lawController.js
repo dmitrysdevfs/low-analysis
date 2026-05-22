@@ -129,6 +129,7 @@ export const parseLawFromUrl = async (req, res, next) => {
 
     // 2. Parse HTML
     const parsedData = parseLawHtml(frameHtml, mainHtml);
+    if (!parsedData.code) parsedData.code = code;
     if (!parsedData.title || !parsedData.code) {
       return res
         .status(500)
