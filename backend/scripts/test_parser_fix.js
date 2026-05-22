@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import * as cheerio from 'cheerio';
+import { isSignatoryTable } from '../src/services/parserService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -57,6 +58,14 @@ const parsedLawHtmlModified = (html, mainHtml = null) => {
 
   $('#article p').each((_, el) => {
     const $p = $(el);
+
+    // Skip paragraphs nested inside table elements to prevent table cell text leaking into signatory or elements,
+    // EXCEPT when the table is a signatory block (contains President, Chairman, PM, etc.)
+    const $table = $p.closest('table');
+    if ($table.length > 0 && !isSignatoryTable($table)) {
+      return;
+    }
+
     const anchor = $p.find('a[data-tree]').first();
     const text = $p.text().trim();
 
