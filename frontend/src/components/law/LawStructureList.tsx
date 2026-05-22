@@ -18,14 +18,14 @@ export function LawStructureList({
   highlightSubjectId?: string | null;
   subjectsMap?: Map<string, Subject>;
 }) {
-  const sectionsWithArticles = sections.filter((section) =>
-    section.children.some((node) => node.type === "article"),
+  const sectionsToRender = sections.filter((section) =>
+    section.children.length > 0,
   );
 
   return (
     <motion.div layout className="law-structure-list">
       <AnimatePresence mode="popLayout">
-        {sectionsWithArticles.map((section, index) => (
+        {sectionsToRender.map((section, index) => (
           <SectionBlock
             key={section.key}
             section={section}

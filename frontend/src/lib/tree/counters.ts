@@ -1,7 +1,20 @@
 import type { TreeBranch } from "./builders";
 
+export function countArticlesInBranch(node: TreeBranch): number {
+  let count = node.type === "article" ? 1 : 0;
+  if (node.children) {
+    for (const child of node.children) {
+      count += countArticlesInBranch(child);
+    }
+  }
+  return count;
+}
+
 export function countSectionArticles(section: TreeBranch) {
-  return section.children.filter((child) => child.type === "article").length;
+  return section.children.reduce(
+    (total, child) => total + countArticlesInBranch(child),
+    0,
+  );
 }
 
 export function countArticlesInSections(sections: TreeBranch[]) {
