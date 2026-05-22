@@ -295,9 +295,21 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
-.statsSegGreen  { background: #4a9e6b; height: 100%; border-radius: 2px; }
-.statsSegYellow { background: var(--color-gold, #c8a843); height: 100%; border-radius: 2px; }
-.statsSegRed    { background: #c0392b; height: 100%; border-radius: 2px; }
+.statsSegGreen {
+  background: #4a9e6b;
+  height: 100%;
+  border-radius: 2px;
+}
+.statsSegYellow {
+  background: var(--color-gold, #c8a843);
+  height: 100%;
+  border-radius: 2px;
+}
+.statsSegRed {
+  background: #c0392b;
+  height: 100%;
+  border-radius: 2px;
+}
 
 @media (max-width: 1200px) {
   .metricsGrid {

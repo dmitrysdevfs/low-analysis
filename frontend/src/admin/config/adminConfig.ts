@@ -14,11 +14,11 @@ export const ADMIN_PAGE_SIZE = 50;
 export const ADMIN_STATS_CONCURRENCY = 3;
 
 // TanStack Query stale times (ms)
-export const STALE_LAWS   = 60_000;
-export const STALE_USERS  = 30_000;
-export const STALE_STATS  = 120_000;
-export const STALE_AUDIT  = 15_000;
+export const STALE_LAWS = 60_000;
+export const STALE_USERS = 30_000;
+export const STALE_STATS = 120_000;
+export const STALE_AUDIT = 15_000;
 
 // Progress bar thresholds (%)
-export const THRESHOLD_WARNING  = 60;
+export const THRESHOLD_WARNING = 60;
 export const THRESHOLD_CRITICAL = 85;

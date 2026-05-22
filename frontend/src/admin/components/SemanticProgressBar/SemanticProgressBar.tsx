@@ -1,6 +1,9 @@
 "use client";
 
-import { THRESHOLD_WARNING, THRESHOLD_CRITICAL } from "../../config/adminConfig";
+import {
+  THRESHOLD_WARNING,
+  THRESHOLD_CRITICAL,
+} from "../../config/adminConfig";
 import styles from "./SemanticProgressBar.module.scss";
 
 interface SemanticProgressBarProps {
@@ -32,7 +35,9 @@ export function SemanticProgressBar({
       {label && (
         <div className={styles.topRow}>
           <span className={styles.label}>{label}</span>
-          <span className={styles.count}>{value}/{max}</span>
+          <span className={styles.count}>
+            {value}/{max}
+          </span>
         </div>
       )}
       <div className={styles.track}>
@@ -42,8 +47,14 @@ export function SemanticProgressBar({
         />
         {showThresholdMarkers && (
           <>
-            <span className={styles.marker} style={{ left: `${THRESHOLD_WARNING}%` }} />
-            <span className={styles.marker} style={{ left: `${THRESHOLD_CRITICAL}%` }} />
+            <span
+              className={styles.marker}
+              style={{ left: `${THRESHOLD_WARNING}%` }}
+            />
+            <span
+              className={styles.marker}
+              style={{ left: `${THRESHOLD_CRITICAL}%` }}
+            />
           </>
         )}
       </div>

@@ -10,10 +10,25 @@ interface AuditBadgeProps {
   label: string;
 }
 
-const SEVERITY_CONFIG: Record<Severity, { color: string; bg: string; border: string }> = {
-  info:     { color: "#93b7ff", bg: "rgba(74,128,212,0.15)",  border: "rgba(74,128,212,0.3)" },
-  warning:  { color: "#f2d06c", bg: "rgba(200,168,67,0.15)",  border: "rgba(200,168,67,0.3)" },
-  security: { color: "#f08080", bg: "rgba(192,57,43,0.15)",   border: "rgba(192,57,43,0.3)" },
+const SEVERITY_CONFIG: Record<
+  Severity,
+  { color: string; bg: string; border: string }
+> = {
+  info: {
+    color: "#93b7ff",
+    bg: "rgba(74,128,212,0.15)",
+    border: "rgba(74,128,212,0.3)",
+  },
+  warning: {
+    color: "#f2d06c",
+    bg: "rgba(200,168,67,0.15)",
+    border: "rgba(200,168,67,0.3)",
+  },
+  security: {
+    color: "#f08080",
+    bg: "rgba(192,57,43,0.15)",
+    border: "rgba(192,57,43,0.3)",
+  },
 };
 
 export function AuditBadge({ severity, label }: AuditBadgeProps) {

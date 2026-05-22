@@ -227,7 +227,11 @@ describe("useAdminWorkspace", () => {
       result.current.handleAssignPlan("client-1", "Alice", "pro");
     });
 
-    expect(assignPlan).toHaveBeenCalledWith("client-1", "pro", "admin@test.dev");
+    expect(assignPlan).toHaveBeenCalledWith(
+      "client-1",
+      "pro",
+      "admin@test.dev",
+    );
     expect(notify.success).toHaveBeenCalled();
   });
 

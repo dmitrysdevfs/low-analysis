@@ -199,41 +199,97 @@ export function AdminUsersView() {
               items={filteredAccounts}
               estimateSize={120}
               maxHeight={520}
-              emptyState={<div className={styles.emptyState}>За поточним фільтром не знайдено жодного акаунта.</div>}
+              emptyState={
+                <div className={styles.emptyState}>
+                  За поточним фільтром не знайдено жодного акаунта.
+                </div>
+              }
               renderItem={(account) => {
                 const isDev = account.source === "dev";
                 const isInactive = account.status === "inactive";
                 return (
                   <div key={account.id} className={styles.accountRow}>
                     <div>
-                      <div className={styles.accountName}>{account.displayName}</div>
+                      <div className={styles.accountName}>
+                        {account.displayName}
+                      </div>
                       <div className={styles.accountMeta}>{account.email}</div>
                     </div>
                     <div className={styles.accountBadges}>
-                      <span className={styles.accountBadge}>{formatAccountTypeLabel(account.accountType)}</span>
-                      <span className={styles.accountBadge}>{formatAccountSourceLabel(account.source)}</span>
-                      <span className={isInactive ? styles.accountBadgeDanger : styles.accountBadgeAccent}>
+                      <span className={styles.accountBadge}>
+                        {formatAccountTypeLabel(account.accountType)}
+                      </span>
+                      <span className={styles.accountBadge}>
+                        {formatAccountSourceLabel(account.source)}
+                      </span>
+                      <span
+                        className={
+                          isInactive
+                            ? styles.accountBadgeDanger
+                            : styles.accountBadgeAccent
+                        }
+                      >
                         {formatAccountStatusLabel(account.status)}
                       </span>
                       {account.superCodeProtected ? (
-                        <span className={styles.accountBadgeAccent}>супер-код</span>
+                        <span className={styles.accountBadgeAccent}>
+                          супер-код
+                        </span>
                       ) : null}
                     </div>
                     <div className={styles.accountMetaBlock}>
-                      <span>Створено: {formatDateShort(account.createdAt)}</span>
-                      <span>Останній вхід: {account.lastLoginAt ? formatDateShort(account.lastLoginAt) : "ніколи"}</span>
+                      <span>
+                        Створено: {formatDateShort(account.createdAt)}
+                      </span>
+                      <span>
+                        Останній вхід:{" "}
+                        {account.lastLoginAt
+                          ? formatDateShort(account.lastLoginAt)
+                          : "ніколи"}
+                      </span>
                     </div>
                     <div className={styles.accountActions}>
-                      <button type="button" className={styles.accountActionBtn} disabled={isDev}
-                        onClick={() => handleAccountAction("deactivate", account.id, account.displayName)}>
+                      <button
+                        type="button"
+                        className={styles.accountActionBtn}
+                        disabled={isDev}
+                        onClick={() =>
+                          handleAccountAction(
+                            "deactivate",
+                            account.id,
+                            account.displayName,
+                          )
+                        }
+                      >
                         {isInactive ? "Активувати" : "Деактивувати"}
                       </button>
-                      <button type="button" className={styles.accountActionBtn} disabled={isDev}
-                        onClick={() => handleAccountAction("promote", account.id, account.displayName)}>
-                        {account.accountType === "admin" ? "Знизити роль" : "Підвищити"}
+                      <button
+                        type="button"
+                        className={styles.accountActionBtn}
+                        disabled={isDev}
+                        onClick={() =>
+                          handleAccountAction(
+                            "promote",
+                            account.id,
+                            account.displayName,
+                          )
+                        }
+                      >
+                        {account.accountType === "admin"
+                          ? "Знизити роль"
+                          : "Підвищити"}
                       </button>
-                      <button type="button" className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
-                        onClick={() => handleAccountAction("forceLogout", account.id, account.displayName)}>
+                      <button
+                        type="button"
+                        className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
+                        onClick={() =>
+                          handleAccountAction(
+                            "forceLogout",
+                            account.id,
+                            account.displayName,
+                          )
+                        }
+                      >
                         Вийти примусово
                       </button>
                     </div>

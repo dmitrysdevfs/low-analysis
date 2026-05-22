@@ -114,7 +114,9 @@ export function AdminTopbar({
             {(userDisplayName ?? "A").charAt(0).toUpperCase()}
           </span>
           <div className={styles.userInfo}>
-            <span className={styles.userName}>{userDisplayName ?? "Адмін"}</span>
+            <span className={styles.userName}>
+              {userDisplayName ?? "Адмін"}
+            </span>
             {userEmail && <span className={styles.userEmail}>{userEmail}</span>}
           </div>
         </div>

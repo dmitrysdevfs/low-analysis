@@ -120,12 +120,45 @@ export function AdminDashboardView() {
       </section>
 
       <section className={styles.metricsGrid}>
-        <MetricCard label="Закони" value={laws.length} note="Структуровані правові документи." loading={lawsLoading} color="#4a80d4" />
-        <MetricCard label="Суб'єкти" value={subjects.length} note="Визначені регуляторні суб'єкти." loading={subjectsLoading} color="#93b7ff" />
-        <MetricCard label="Акаунти" value={snapshot.totalAccounts} note="Ідентичності в адмін-просторі." color="#c8a843" />
-        <MetricCard label="Платні плани" value={paidAccounts} note="Тарифи «Користувач», «Плюс» і «Про»." color="#f2d06c" />
-        <MetricCard label="Статті" value={siteMetrics.totalArticles} note="Загальна кількість статей у корпусі." loading={lawsLoading} color="#4a9e6b" />
-        <MetricCard label="Події аудиту" value={snapshot.auditLog.length} note="Останні адмінські події." color="#e9774b" />
+        <MetricCard
+          label="Закони"
+          value={laws.length}
+          note="Структуровані правові документи."
+          loading={lawsLoading}
+          color="#4a80d4"
+        />
+        <MetricCard
+          label="Суб'єкти"
+          value={subjects.length}
+          note="Визначені регуляторні суб'єкти."
+          loading={subjectsLoading}
+          color="#93b7ff"
+        />
+        <MetricCard
+          label="Акаунти"
+          value={snapshot.totalAccounts}
+          note="Ідентичності в адмін-просторі."
+          color="#c8a843"
+        />
+        <MetricCard
+          label="Платні плани"
+          value={paidAccounts}
+          note="Тарифи «Користувач», «Плюс» і «Про»."
+          color="#f2d06c"
+        />
+        <MetricCard
+          label="Статті"
+          value={siteMetrics.totalArticles}
+          note="Загальна кількість статей у корпусі."
+          loading={lawsLoading}
+          color="#4a9e6b"
+        />
+        <MetricCard
+          label="Події аудиту"
+          value={snapshot.auditLog.length}
+          note="Останні адмінські події."
+          color="#e9774b"
+        />
       </section>
 
       <section className={styles.quickGrid}>
@@ -162,7 +195,13 @@ export function AdminDashboardView() {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "8px 0",
+            }}
+          >
             <AdminDonutChart
               segments={billingSegments}
               centerValue={billingRegistry.length}
@@ -238,14 +277,27 @@ export function AdminDashboardView() {
           </div>
 
           <div className={styles.progressList}>
-            <SemanticProgressBar value={siteMetrics.signatoryCoverage} max={laws.length} label="Покриття підписантів" />
-            <SemanticProgressBar value={siteMetrics.preambleCoverage} max={laws.length} label="Покриття преамбул" />
+            <SemanticProgressBar
+              value={siteMetrics.signatoryCoverage}
+              max={laws.length}
+              label="Покриття підписантів"
+            />
+            <SemanticProgressBar
+              value={siteMetrics.preambleCoverage}
+              max={laws.length}
+              label="Покриття преамбул"
+            />
             <div className={styles.progressRow}>
               <div className={styles.progressTopRow}>
                 <span className={styles.progressLabel}>Глибина структури</span>
-                <span className={styles.progressValue}>{siteMetrics.totalSections} розд., {siteMetrics.totalParagraphs} абз.</span>
+                <span className={styles.progressValue}>
+                  {siteMetrics.totalSections} розд.,{" "}
+                  {siteMetrics.totalParagraphs} абз.
+                </span>
               </div>
-              <div className={styles.progressMeta}>Глибина статей обчислюється з актуальних даних.</div>
+              <div className={styles.progressMeta}>
+                Глибина статей обчислюється з актуальних даних.
+              </div>
             </div>
           </div>
         </article>
@@ -343,7 +395,12 @@ export function AdminDashboardView() {
               {snapshot.auditLog.slice(0, 4).map((item) => (
                 <div key={item.id} className={styles.auditRow}>
                   <div className={styles.auditMeta}>
-                    <AuditBadge severity={item.severity as "info" | "warning" | "security"} label={formatSeverityLabel(item.severity)} />
+                    <AuditBadge
+                      severity={
+                        item.severity as "info" | "warning" | "security"
+                      }
+                      label={formatSeverityLabel(item.severity)}
+                    />
                     <span>{formatDateShort(item.createdAt)}</span>
                     <span>{item.actor}</span>
                   </div>

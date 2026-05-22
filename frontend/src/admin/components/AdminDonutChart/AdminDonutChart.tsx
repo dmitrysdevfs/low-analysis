@@ -51,7 +51,10 @@ export function AdminDonutChart({
               fontSize: "0.78rem",
               color: "#c7d5ea",
             }}
-            formatter={(value: unknown, name: unknown) => [Number(value), String(name)]}
+            formatter={(value: unknown, name: unknown) => [
+              Number(value),
+              String(name),
+            ]}
           />
         </PieChart>
       </ResponsiveContainer>
@@ -68,12 +71,23 @@ export function AdminDonutChart({
           }}
         >
           {centerValue !== undefined && (
-            <strong style={{ color: "#ffffff", fontSize: "1.5rem", lineHeight: 1 }}>
+            <strong
+              style={{ color: "#ffffff", fontSize: "1.5rem", lineHeight: 1 }}
+            >
               {centerValue}
             </strong>
           )}
           {centerLabel && (
-            <span style={{ color: "#9eb5d9", fontSize: "0.68rem", marginTop: 4, fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <span
+              style={{
+                color: "#9eb5d9",
+                fontSize: "0.68rem",
+                marginTop: 4,
+                fontFamily: "var(--font-mono)",
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+              }}
+            >
               {centerLabel}
             </span>
           )}

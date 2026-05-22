@@ -44,9 +44,8 @@ export const handlers = [
   }),
 
   http.get("/api/laws/:id/articles/:num", ({ params }) => {
-    const payload = mswArticleResponses[
-      `${String(params.id)}:${String(params.num)}`
-    ];
+    const payload =
+      mswArticleResponses[`${String(params.id)}:${String(params.num)}`];
 
     if (!payload) {
       return HttpResponse.json(

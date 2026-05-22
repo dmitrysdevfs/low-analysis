@@ -24,7 +24,10 @@ async function throttledAllSettled<T>(
     }
   }
 
-  const workers = Array.from({ length: Math.min(concurrency, tasks.length) }, worker);
+  const workers = Array.from(
+    { length: Math.min(concurrency, tasks.length) },
+    worker,
+  );
   await Promise.all(workers);
   return results;
 }
@@ -41,7 +44,9 @@ export function useStatsLocal(laws: Law[]) {
     let cancelled = false;
     setLoading(true);
 
-    const tasks = laws.map((law) => () => getLawStats(law._id).then((s) => ({ id: law._id, s })));
+    const tasks = laws.map(
+      (law) => () => getLawStats(law._id).then((s) => ({ id: law._id, s })),
+    );
 
     throttledAllSettled(tasks, ADMIN_STATS_CONCURRENCY).then((results) => {
       if (cancelled) return;
@@ -53,7 +58,9 @@ export function useStatsLocal(laws: Law[]) {
       setLoading(false);
     });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [lawsKey, laws]);
 
   return { statsMap, loading };

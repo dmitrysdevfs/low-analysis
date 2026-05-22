@@ -293,28 +293,66 @@ export function AdminAnalyticsView() {
                 .sort((a, b) => {
                   const sa = lawStatsMap.get(a._id)!;
                   const sb = lawStatsMap.get(b._id)!;
-                  const pctA = sa.totalElements > 0 ? sa.riskLevels.red / sa.totalElements : 0;
-                  const pctB = sb.totalElements > 0 ? sb.riskLevels.red / sb.totalElements : 0;
+                  const pctA =
+                    sa.totalElements > 0
+                      ? sa.riskLevels.red / sa.totalElements
+                      : 0;
+                  const pctB =
+                    sb.totalElements > 0
+                      ? sb.riskLevels.red / sb.totalElements
+                      : 0;
                   return pctB - pctA;
                 })
                 .map((law) => {
                   const s = lawStatsMap.get(law._id)!;
-                  const counted = s.riskLevels.green + s.riskLevels.yellow + s.riskLevels.red;
-                  const gPct = counted > 0 ? Math.round((s.riskLevels.green / counted) * 100) : 0;
-                  const yPct = counted > 0 ? Math.round((s.riskLevels.yellow / counted) * 100) : 0;
-                  const rPct = counted > 0 ? Math.round((s.riskLevels.red / counted) * 100) : 0;
+                  const counted =
+                    s.riskLevels.green + s.riskLevels.yellow + s.riskLevels.red;
+                  const gPct =
+                    counted > 0
+                      ? Math.round((s.riskLevels.green / counted) * 100)
+                      : 0;
+                  const yPct =
+                    counted > 0
+                      ? Math.round((s.riskLevels.yellow / counted) * 100)
+                      : 0;
+                  const rPct =
+                    counted > 0
+                      ? Math.round((s.riskLevels.red / counted) * 100)
+                      : 0;
                   return (
                     <div key={law._id} className={styles.statsRow}>
-                      <Link href={ROUTES.law(law._id)} className={styles.statsLawTitle}>
+                      <Link
+                        href={ROUTES.law(law._id)}
+                        className={styles.statsLawTitle}
+                      >
                         {law.title}
                       </Link>
-                      <span className={`mono ${styles.statsNum}`}>{s.totalElements}</span>
+                      <span className={`mono ${styles.statsNum}`}>
+                        {s.totalElements}
+                      </span>
                       <div className={styles.statsMiniBar}>
-                        {gPct > 0 && <span className={styles.statsSegGreen} style={{ width: `${gPct}%` }} />}
-                        {yPct > 0 && <span className={styles.statsSegYellow} style={{ width: `${yPct}%` }} />}
-                        {rPct > 0 && <span className={styles.statsSegRed} style={{ width: `${rPct}%` }} />}
+                        {gPct > 0 && (
+                          <span
+                            className={styles.statsSegGreen}
+                            style={{ width: `${gPct}%` }}
+                          />
+                        )}
+                        {yPct > 0 && (
+                          <span
+                            className={styles.statsSegYellow}
+                            style={{ width: `${yPct}%` }}
+                          />
+                        )}
+                        {rPct > 0 && (
+                          <span
+                            className={styles.statsSegRed}
+                            style={{ width: `${rPct}%` }}
+                          />
+                        )}
                       </div>
-                      <span className={`mono ${rPct > 5 ? styles.statsNumRed : styles.statsNum}`}>
+                      <span
+                        className={`mono ${rPct > 5 ? styles.statsNumRed : styles.statsNum}`}
+                      >
                         {s.riskLevels.red} ({rPct}%)
                       </span>
                       <span className={`mono ${styles.statsNum}`}>

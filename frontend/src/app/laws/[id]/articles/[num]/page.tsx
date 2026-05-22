@@ -26,7 +26,12 @@ import { ROUTES } from "@/constants/routes";
 import { useLaws } from "@/hooks/useLaws";
 import { useArticle } from "@/hooks/useArticle";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
-import { buildTreeBranches, getRoleColor, computeStatsFromTree, type RiskLevel } from "@/lib/tree";
+import {
+  buildTreeBranches,
+  getRoleColor,
+  computeStatsFromTree,
+  type RiskLevel,
+} from "@/lib/tree";
 import { LawRiskBar } from "@/components/law/LawRiskBar";
 import styles from "./page.module.scss";
 import { NestedNodeList } from "@/components/article/ArticleTreeNode";
@@ -57,7 +62,9 @@ export default function ArticlePage() {
   const lawTitle = law?.title ?? "Закон";
   const lawCode = law?.code ?? "";
 
-  const [activeRiskLevel, setActiveRiskLevel] = useState<RiskLevel | null>(null);
+  const [activeRiskLevel, setActiveRiskLevel] = useState<RiskLevel | null>(
+    null,
+  );
 
   const filteredChildren = useMemo(() => {
     if (!activeRiskLevel) return children;
@@ -84,7 +91,10 @@ export default function ArticlePage() {
     return children.filter((c) => c._id && toKeep.has(c._id));
   }, [children, activeRiskLevel]);
 
-  const childTree = useMemo(() => buildTreeBranches(filteredChildren), [filteredChildren]);
+  const childTree = useMemo(
+    () => buildTreeBranches(filteredChildren),
+    [filteredChildren],
+  );
   const articleStats = useMemo(
     () => computeStatsFromTree(article ? [article, ...children] : children),
     [article, children],

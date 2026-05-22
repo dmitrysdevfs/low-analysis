@@ -19,7 +19,11 @@ export function SkeletonCard({ lines = 3, height }: SkeletonCardProps) {
       <div className={styles.header} />
       <div className={styles.value} />
       {Array.from({ length: lines - 2 }).map((_, i) => (
-        <div key={i} className={styles.line} style={{ width: `${70 + (i % 3) * 10}%` }} />
+        <div
+          key={i}
+          className={styles.line}
+          style={{ width: `${70 + (i % 3) * 10}%` }}
+        />
       ))}
     </motion.div>
   );

@@ -19,13 +19,48 @@ import { ROUTES } from "@/constants/routes";
 import styles from "./AdminSidebarNav.module.scss";
 
 const NAV_ITEMS = [
-  { href: ROUTES.admin,          label: "Дашборд",      icon: LayoutDashboard, note: "Ключові метрики платформи" },
-  { href: ROUTES.adminUsers,     label: "Користувачі",  icon: Users,           note: "Реєстр, ролі, дії" },
-  { href: ROUTES.adminBilling,   label: "Білінг",        icon: CreditCard,      note: "Плани, квоти, призначення" },
-  { href: ROUTES.adminAccess,    label: "Доступ",        icon: ShieldCheck,     note: "Матриця ролей" },
-  { href: ROUTES.adminCodes,     label: "Коди",          icon: KeyRound,        note: "Супер-код, ротація" },
-  { href: ROUTES.adminAudit,     label: "Аудит",         icon: ScrollText,      note: "Операційні події" },
-  { href: ROUTES.adminAnalytics, label: "Аналітика",     icon: BarChart3,       note: "Поглиблений зріз даних" },
+  {
+    href: ROUTES.admin,
+    label: "Дашборд",
+    icon: LayoutDashboard,
+    note: "Ключові метрики платформи",
+  },
+  {
+    href: ROUTES.adminUsers,
+    label: "Користувачі",
+    icon: Users,
+    note: "Реєстр, ролі, дії",
+  },
+  {
+    href: ROUTES.adminBilling,
+    label: "Білінг",
+    icon: CreditCard,
+    note: "Плани, квоти, призначення",
+  },
+  {
+    href: ROUTES.adminAccess,
+    label: "Доступ",
+    icon: ShieldCheck,
+    note: "Матриця ролей",
+  },
+  {
+    href: ROUTES.adminCodes,
+    label: "Коди",
+    icon: KeyRound,
+    note: "Супер-код, ротація",
+  },
+  {
+    href: ROUTES.adminAudit,
+    label: "Аудит",
+    icon: ScrollText,
+    note: "Операційні події",
+  },
+  {
+    href: ROUTES.adminAnalytics,
+    label: "Аналітика",
+    icon: BarChart3,
+    note: "Поглиблений зріз даних",
+  },
 ] as const;
 
 interface AdminSidebarNavProps {
@@ -37,7 +72,9 @@ export function AdminSidebarNav({ userDisplayName }: AdminSidebarNavProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className={`${styles.sidebar} ${collapsed ? styles.sidebarCollapsed : ""}`}>
+    <aside
+      className={`${styles.sidebar} ${collapsed ? styles.sidebarCollapsed : ""}`}
+    >
       <div className={styles.brandBlock}>
         {!collapsed && (
           <>
@@ -81,7 +118,11 @@ export function AdminSidebarNav({ userDisplayName }: AdminSidebarNavProps) {
       </nav>
 
       <div className={styles.sidebarFooter}>
-        <Link href="/" className={styles.siteLink} title={collapsed ? "Публічний сайт" : undefined}>
+        <Link
+          href="/"
+          className={styles.siteLink}
+          title={collapsed ? "Публічний сайт" : undefined}
+        >
           <ExternalLink size={14} />
           {!collapsed && <span>Публічний сайт</span>}
         </Link>

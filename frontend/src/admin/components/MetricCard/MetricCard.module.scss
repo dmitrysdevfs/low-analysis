@@ -2,9 +2,15 @@
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 100%),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.025) 100%
+    ),
     rgba(9, 18, 38, 0.84);
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   padding: 20px;
   display: grid;
   gap: 8px;
@@ -38,8 +44,12 @@
   letter-spacing: 0.04em;
 }
 
-.deltaPos { color: #4a9e6b; }
-.deltaNeg { color: #c0392b; }
+.deltaPos {
+  color: #4a9e6b;
+}
+.deltaNeg {
+  color: #c0392b;
+}
 
 .sparkline {
   margin: 4px -4px 0;
@@ -61,7 +71,7 @@
   height: 10px;
   width: 60px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .skeletonValue {

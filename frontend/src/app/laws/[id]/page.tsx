@@ -199,7 +199,10 @@ export default function LawTreePage() {
   }, [sections, riskFilter, articleRiskMap]);
 
   const showLimitControls =
-    !loading && !error && !riskFilter && articleCount > ARTICLE_LIMIT_OPTIONS[0];
+    !loading &&
+    !error &&
+    !riskFilter &&
+    articleCount > ARTICLE_LIMIT_OPTIONS[0];
   const canLoadMore =
     showLimitControls &&
     selectedLimit !== "all" &&

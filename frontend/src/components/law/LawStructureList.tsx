@@ -25,7 +25,14 @@ export function LawStructureList({
     if (flatArticles.length === 0) {
       return (
         <div className="law-structure-list">
-          <div className="panel law-structure-section" style={{ color: "var(--color-smoke)", fontSize: "0.88rem", fontFamily: "var(--font-mono, monospace)" }}>
+          <div
+            className="panel law-structure-section"
+            style={{
+              color: "var(--color-smoke)",
+              fontSize: "0.88rem",
+              fontFamily: "var(--font-mono, monospace)",
+            }}
+          >
             Жодної статті не відповідає фільтру
           </div>
         </div>
@@ -53,8 +60,8 @@ export function LawStructureList({
     );
   }
 
-  const sectionsToRender = sections.filter((section) =>
-    section.children.length > 0,
+  const sectionsToRender = sections.filter(
+    (section) => section.children.length > 0,
   );
 
   return (

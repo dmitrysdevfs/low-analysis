@@ -71,7 +71,9 @@ describe("Account notes page", () => {
 
     render(<AccountNotesPage />);
 
-    expect(screen.getByRole("heading", { name: "Нотатки" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Нотатки" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Увійти" })).toHaveAttribute(
       "href",
       "/auth/login",
@@ -83,7 +85,9 @@ describe("Account notes page", () => {
 
     render(<AccountNotesPage />);
 
-    expect(screen.getByText("Короткий коментар до виділеного фрагмента.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Короткий коментар до виділеного фрагмента."),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Дуже довгий коментар/)).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Синя" }));
@@ -99,9 +103,7 @@ describe("Account notes page", () => {
 
     render(<AccountNotesPage />);
 
-    await user.click(
-      screen.getByRole("button", { name: /читати повністю/i }),
-    );
+    await user.click(screen.getByRole("button", { name: /читати повністю/i }));
 
     expect(screen.getByRole("button", { name: "Закрити" })).toBeInTheDocument();
     expect(screen.getAllByText(/Дуже довга цитата/).length).toBeGreaterThan(0);

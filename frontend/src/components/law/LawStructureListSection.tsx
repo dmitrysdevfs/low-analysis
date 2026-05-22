@@ -32,7 +32,9 @@ export function SectionBlock({
   }, [highlightSubjectId]);
 
   const articles = section.children.filter((node) => node.type === "article");
-  const otherChildren = section.children.filter((node) => node.type !== "article");
+  const otherChildren = section.children.filter(
+    (node) => node.type !== "article",
+  );
   const hasArticles = articles.length > 0;
 
   return (
@@ -99,7 +101,10 @@ export function SectionBlock({
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.22 }}
             >
-              <div className="law-structure-nested-list" style={{ paddingLeft: 0 }}>
+              <div
+                className="law-structure-nested-list"
+                style={{ paddingLeft: 0 }}
+              >
                 <NestedNodeList
                   nodes={otherChildren}
                   highlightSubjectId={highlightSubjectId}

@@ -126,7 +126,11 @@ export function computeStatsFromTree(
 }
 
 export type RiskLevel = "green" | "yellow" | "red";
-export const RISK_RANK: Record<RiskLevel, number> = { green: 0, yellow: 1, red: 2 };
+export const RISK_RANK: Record<RiskLevel, number> = {
+  green: 0,
+  yellow: 1,
+  red: 2,
+};
 
 function worstRisk(a: RiskLevel, b: RiskLevel): RiskLevel {
   return RISK_RANK[a] >= RISK_RANK[b] ? a : b;
@@ -140,7 +144,9 @@ function branchMaxRisk(branch: TreeBranch): RiskLevel {
   );
 }
 
-export function computeArticleRiskMap(sections: TreeBranch[]): Map<string, RiskLevel> {
+export function computeArticleRiskMap(
+  sections: TreeBranch[],
+): Map<string, RiskLevel> {
   const map = new Map<string, RiskLevel>();
   for (const section of sections) {
     for (const child of section.children) {

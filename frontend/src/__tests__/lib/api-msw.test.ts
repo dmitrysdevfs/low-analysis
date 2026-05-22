@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { http, HttpResponse } from "msw";
-import { getArticle, getLawStats, getLaws, getLawTree, getSubjects, parseLaw } from "@/lib/api";
+import {
+  getArticle,
+  getLawStats,
+  getLaws,
+  getLawTree,
+  getSubjects,
+  parseLaw,
+} from "@/lib/api";
 import { getSubjectElements } from "@/lib/api/subjects";
 import { server } from "@/test/msw/server";
 

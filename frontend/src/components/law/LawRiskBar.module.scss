@@ -13,7 +13,9 @@
   margin-bottom: 10px;
 }
 
-.label { margin-bottom: 0; }
+.label {
+  margin-bottom: 0;
+}
 
 .meta {
   font-size: 0.6rem;
@@ -34,15 +36,24 @@
 .seg {
   height: 100%;
   border-radius: 2px;
-  transition: width 0.4s ease, filter 0.2s, opacity 0.2s;
+  transition:
+    width 0.4s ease,
+    filter 0.2s,
+    opacity 0.2s;
   border: none;
   padding: 0;
   outline: none;
 }
 
-.segGreen  { background: #4a9e6b; }
-.segYellow { background: var(--color-gold, #c8a843); }
-.segRed    { background: #c0392b; }
+.segGreen {
+  background: #4a9e6b;
+}
+.segYellow {
+  background: var(--color-gold, #c8a843);
+}
+.segRed {
+  background: #c0392b;
+}
 
 .segClickable {
   cursor: pointer;
@@ -89,7 +100,10 @@
   border-radius: 6px;
   padding: 5px 10px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, opacity 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    opacity 0.15s;
 
   &:hover {
     border-color: rgba(122, 152, 192, 0.5);
@@ -118,9 +132,15 @@
   flex-shrink: 0;
 }
 
-.dotGreen  { background: #4a9e6b; }
-.dotYellow { background: var(--color-gold, #c8a843); }
-.dotRed    { background: #c0392b; }
+.dotGreen {
+  background: #4a9e6b;
+}
+.dotYellow {
+  background: var(--color-gold, #c8a843);
+}
+.dotRed {
+  background: #c0392b;
+}
 
 .legendLabel {
   font-size: 0.65rem;
@@ -144,5 +164,7 @@
 }
 
 @media (max-width: 480px) {
-  .legendHint { display: none; }
+  .legendHint {
+    display: none;
+  }
 }

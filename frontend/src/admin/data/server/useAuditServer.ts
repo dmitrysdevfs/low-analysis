@@ -19,7 +19,9 @@ export function useAuditServer(opts?: { page?: number }) {
       // TODO: замінити на реальний API-виклик
       // return getJson(`/admin/audit?page=${opts?.page ?? 1}&limit=20`);
       void opts;
-      throw new Error("Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts");
+      throw new Error(
+        "Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts",
+      );
     },
     staleTime: STALE_AUDIT,
     enabled: false, // НЕ ВИДАЛЯТИ

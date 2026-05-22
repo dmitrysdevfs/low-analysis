@@ -6,10 +6,7 @@ import {
 } from "@/components/guest/GuestLimitsProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useBilling } from "@/components/billing/BillingProvider";
-import {
-  attemptGuestAction,
-  getGuestLimitSnapshot,
-} from "@/lib/guestLimits";
+import { attemptGuestAction, getGuestLimitSnapshot } from "@/lib/guestLimits";
 import { setMockPathname } from "@/test/mocks/next-navigation";
 
 vi.mock("@/components/auth/AuthProvider", () => ({
@@ -30,7 +27,9 @@ vi.mock("@/lib/guestLimits", () => ({
 function Consumer({
   onConsumeSearch,
 }: {
-  onConsumeSearch?: (result: ReturnType<typeof useGuestLimits>["snapshot"]) => void;
+  onConsumeSearch?: (
+    result: ReturnType<typeof useGuestLimits>["snapshot"],
+  ) => void;
 }) {
   const guestLimits = useGuestLimits();
 
@@ -122,7 +121,9 @@ describe("GuestLimitsProvider", () => {
       </GuestLimitsProvider>,
     );
 
-    expect(screen.getByText("Повний доступ до Law Analysis")).toBeInTheDocument();
+    expect(
+      screen.getByText("Повний доступ до Law Analysis"),
+    ).toBeInTheDocument();
     expect(screen.getByText("guest-child")).toBeInTheDocument();
   });
 

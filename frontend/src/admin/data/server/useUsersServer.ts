@@ -21,7 +21,9 @@ export function useUsersServer(opts?: { query?: string; page?: number }) {
       // if (opts?.query) params.set("q", opts.query);
       // return getJson(`/admin/users?${params}`);
       void ADMIN_PAGE_SIZE;
-      throw new Error("Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts");
+      throw new Error(
+        "Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts",
+      );
     },
     staleTime: STALE_USERS,
     enabled: false, // НЕ ВИДАЛЯТИ

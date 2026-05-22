@@ -19,7 +19,9 @@ export function useStatsServer(lawIds: string[]) {
       // TODO: замінити на batch endpoint коли бекенд готовий
       // return getJson(`/laws/stats/batch?ids=${lawIds.join(",")}`);
       void lawIds;
-      throw new Error("Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts");
+      throw new Error(
+        "Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts",
+      );
     },
     staleTime: STALE_STATS,
     enabled: false, // НЕ ВИДАЛЯТИ

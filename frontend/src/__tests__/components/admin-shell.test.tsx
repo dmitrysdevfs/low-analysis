@@ -27,10 +27,9 @@ describe("AdminShell", () => {
     );
 
     expect(screen.getAllByText("Адмін").length).toBeGreaterThan(0);
-    expect(screen.getByRole("link", { name: "Публічний сайт" })).toHaveAttribute(
-      "href",
-      "/",
-    );
+    expect(
+      screen.getByRole("link", { name: "Публічний сайт" }),
+    ).toHaveAttribute("href", "/");
     expect(screen.getByRole("heading", { name: "Білінг" })).toBeInTheDocument();
     expect(screen.getByText("billing-module")).toBeInTheDocument();
   });
@@ -44,7 +43,9 @@ describe("AdminShell", () => {
       </AdminShell>,
     );
 
-    expect(screen.getByRole("heading", { name: "Користувачі" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Користувачі" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("nested-admin-child")).toBeInTheDocument();
   });
 });

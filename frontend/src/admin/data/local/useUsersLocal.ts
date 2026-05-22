@@ -4,7 +4,8 @@ import { useMemo } from "react";
 import { useAdminWorkspace } from "@/components/admin/useAdminWorkspace";
 
 export function useUsersLocal(opts?: { query?: string }) {
-  const { snapshot, handleAccountAction, refreshSnapshot } = useAdminWorkspace();
+  const { snapshot, handleAccountAction, refreshSnapshot } =
+    useAdminWorkspace();
 
   const users = useMemo(() => {
     if (!snapshot) return [];

@@ -95,7 +95,9 @@ describe("Law tree page", () => {
       law: LAW_FIXTURE,
       tree: [
         SECTION_NODE,
-        ...Array.from({ length: 24 }, (_, index) => createArticleNode(index + 1)),
+        ...Array.from({ length: 24 }, (_, index) =>
+          createArticleNode(index + 1),
+        ),
       ],
       error: null,
       loading: false,
@@ -123,12 +125,8 @@ describe("Law tree page", () => {
       screen.getByRole("link", { name: "Назва статті 11" }),
     ).toBeInTheDocument();
 
-    expect(
-      screen.getByRole("option", { name: "50" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: "Всі" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "50" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Всі" })).toBeInTheDocument();
   });
 
   it("renders the tree request error", () => {

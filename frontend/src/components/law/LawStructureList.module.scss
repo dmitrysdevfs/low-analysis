@@ -77,9 +77,16 @@
   border-radius: 50%;
 }
 
-.riskGreen  { background: #4a9e6b; }
-.riskYellow { background: var(--color-gold, #c8a843); }
-.riskRed    { background: #c0392b; box-shadow: 0 0 4px rgba(192, 57, 43, 0.5); }
+.riskGreen {
+  background: #4a9e6b;
+}
+.riskYellow {
+  background: var(--color-gold, #c8a843);
+}
+.riskRed {
+  background: #c0392b;
+  box-shadow: 0 0 4px rgba(192, 57, 43, 0.5);
+}
 
 .highlightedNode {
   background: rgba(200, 168, 67, 0.08);

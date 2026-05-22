@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { BillingProvider, useBilling } from "@/components/billing/BillingProvider";
+import {
+  BillingProvider,
+  useBilling,
+} from "@/components/billing/BillingProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
   adminAssignDemoPlan,
@@ -72,7 +75,8 @@ describe("BillingProvider", () => {
     vi.mocked(adminAssignDemoPlan).mockReturnValue({ ok: true } as never);
     vi.mocked(consumeBillingQuota).mockReturnValue({
       allowed: true,
-      snapshot: vi.mocked(getBillingSubscriptionSnapshot).mock.results[0]?.value,
+      snapshot: vi.mocked(getBillingSubscriptionSnapshot).mock.results[0]
+        ?.value,
     } as never);
   });
 
@@ -148,11 +152,19 @@ describe("BillingProvider", () => {
         ok: true,
       });
     });
-    expect(adminAssignDemoPlan).toHaveBeenCalledWith("user-2", "trial", "Admin");
+    expect(adminAssignDemoPlan).toHaveBeenCalledWith(
+      "user-2",
+      "trial",
+      "Admin",
+    );
 
     act(() => {
       expect(result.current.consumeQuota("search").allowed).toBe(true);
     });
-    expect(consumeBillingQuota).toHaveBeenCalledWith("user-1", "client", "search");
+    expect(consumeBillingQuota).toHaveBeenCalledWith(
+      "user-1",
+      "client",
+      "search",
+    );
   });
 });

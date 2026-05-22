@@ -19,7 +19,9 @@ export function useLawsServer(opts?: { q?: string }) {
       // TODO: замінити на реальний API-виклик коли бекенд готовий
       // import { getLaws } from "@/lib/api";
       // return getLaws(opts?.q ?? "");
-      throw new Error("Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts");
+      throw new Error(
+        "Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts",
+      );
     },
     staleTime: STALE_LAWS,
     enabled: false, // НЕ ВИДАЛЯТИ: вимкнено поки LOCAL_MODE = true

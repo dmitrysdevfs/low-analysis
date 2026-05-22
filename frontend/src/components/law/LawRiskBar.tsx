@@ -21,7 +21,11 @@ const LEVEL_HINT: Record<RiskLevel, string> = {
   red: "z > 2σ — значно більше середнього",
 };
 
-export function LawRiskBar({ stats, activeLevel, onLevelClick }: LawRiskBarProps) {
+export function LawRiskBar({
+  stats,
+  activeLevel,
+  onLevelClick,
+}: LawRiskBarProps) {
   const { riskLevels, totalElements, meanChars, standardDeviation } = stats;
   const counted = riskLevels.green + riskLevels.yellow + riskLevels.red;
   if (counted === 0) return null;
