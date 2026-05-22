@@ -23,10 +23,7 @@ export function appendEntry(entry: ApiMetricEntry) {
   try {
     const state = readMetrics();
     const entries = [...state.entries, entry].slice(-MAX_ENTRIES);
-    localStorage.setItem(
-      METRICS_KEY,
-      JSON.stringify({ ...state, entries }),
-    );
+    localStorage.setItem(METRICS_KEY, JSON.stringify({ ...state, entries }));
   } catch {
     // quota exceeded — skip silently
   }

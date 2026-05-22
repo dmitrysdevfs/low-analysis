@@ -8,13 +8,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-  useCallback,
-} from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { recordWorkspaceView } from "@/lib/auth/clientWorkspace";

@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { readMetrics, clearMetrics } from "@/lib/apiMetrics/storage";
-import type { ApiMetricEntry, ApiMetricsState, CostHint } from "@/lib/apiMetrics/types";
+import type {
+  ApiMetricEntry,
+  ApiMetricsState,
+  CostHint,
+} from "@/lib/apiMetrics/types";
 
 export type MetricsSource = "live" | "backend";
 
@@ -88,9 +92,7 @@ export function useApiMetrics(): ApiMetricsResult {
       })
       .catch((err: unknown) => {
         setBackendError(
-          err instanceof Error
-            ? err.message
-            : "Помилка підключення до бекенду",
+          err instanceof Error ? err.message : "Помилка підключення до бекенду",
         );
       });
   }, [source]);

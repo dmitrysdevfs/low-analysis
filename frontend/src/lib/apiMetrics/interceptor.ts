@@ -8,9 +8,7 @@ let installed = false;
 function normalizePath(rawUrl: string): string {
   try {
     const path = new URL(rawUrl, window.location.origin).pathname;
-    return path
-      .replace(/\/[a-f0-9]{24}/gi, "/:id")
-      .replace(/\/\d+/g, "/:num");
+    return path.replace(/\/[a-f0-9]{24}/gi, "/:id").replace(/\/\d+/g, "/:num");
   } catch {
     return rawUrl;
   }
@@ -39,8 +37,7 @@ export function installFetchInterceptor() {
 
     if (rawUrl.includes("/api/")) {
       const method = (
-        init?.method ??
-        (input instanceof Request ? input.method : "GET")
+        init?.method ?? (input instanceof Request ? input.method : "GET")
       ).toUpperCase();
 
       const normalized = normalizePath(rawUrl);

@@ -354,7 +354,11 @@
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    ),
     rgba(9, 18, 38, 0.84);
   box-shadow:
     0 28px 60px rgba(0, 0, 0, 0.24),
@@ -400,7 +404,9 @@
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
 
   &:hover {
     color: #c7d5ea;
@@ -422,8 +428,13 @@
 }
 
 @keyframes livePulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.35; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .clearBtn {
@@ -544,10 +555,22 @@
   text-align: center;
 }
 
-.costLight    { background: rgba(74, 158, 107, 0.14); color: #4a9e6b; }
-.costMedium   { background: rgba(200, 168, 67, 0.14); color: #c8a843; }
-.costHeavy    { background: rgba(192, 57, 43, 0.14);  color: #c0392b; }
-.costCritical { background: rgba(192, 57, 43, 0.3);   color: #ff6b6b; }
+.costLight {
+  background: rgba(74, 158, 107, 0.14);
+  color: #4a9e6b;
+}
+.costMedium {
+  background: rgba(200, 168, 67, 0.14);
+  color: #c8a843;
+}
+.costHeavy {
+  background: rgba(192, 57, 43, 0.14);
+  color: #c0392b;
+}
+.costCritical {
+  background: rgba(192, 57, 43, 0.3);
+  color: #ff6b6b;
+}
 
 .apiPages {
   display: flex;

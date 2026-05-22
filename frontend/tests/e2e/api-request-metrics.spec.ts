@@ -87,7 +87,9 @@ test.describe.serial("frontend API request metrics", () => {
 
     expect(snapshot.totalRequests).toBeGreaterThan(0);
     expect(getCount(snapshot, "GET /api/laws/:id/tree")).toBeLessThanOrEqual(1);
-    expect(getCount(snapshot, "GET /api/laws/:id/stats")).toBeLessThanOrEqual(1);
+    expect(getCount(snapshot, "GET /api/laws/:id/stats")).toBeLessThanOrEqual(
+      1,
+    );
     expect(getCount(snapshot, "GET /api/subjects")).toBeLessThanOrEqual(1);
   });
 
@@ -139,7 +141,9 @@ test.describe.serial("frontend API request metrics", () => {
     scenarioReports.push(snapshot);
 
     expect(snapshot.totalRequests).toBeGreaterThan(0);
-    expect(getCount(snapshot, "GET /api/laws/:id/articles/:num")).toBeLessThanOrEqual(1);
+    expect(
+      getCount(snapshot, "GET /api/laws/:id/articles/:num"),
+    ).toBeLessThanOrEqual(1);
     expect(getCount(snapshot, "GET /api/subjects")).toBeLessThanOrEqual(1);
     expect(getCount(snapshot, "GET /api/laws")).toBeLessThanOrEqual(2);
   });

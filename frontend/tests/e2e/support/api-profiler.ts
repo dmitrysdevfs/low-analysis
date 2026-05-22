@@ -168,7 +168,11 @@ export async function writeApiMetricsReport(
   reportName: string,
   scenarios: ApiScenarioMetrics[],
 ) {
-  const targetDirectory = path.resolve(process.cwd(), "test-results", "api-request-metrics");
+  const targetDirectory = path.resolve(
+    process.cwd(),
+    "test-results",
+    "api-request-metrics",
+  );
   await mkdir(targetDirectory, { recursive: true });
   const targetFile = path.join(targetDirectory, reportName);
 

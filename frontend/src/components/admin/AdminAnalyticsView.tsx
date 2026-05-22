@@ -308,7 +308,9 @@ export function AdminAnalyticsView() {
           ) : lawStatsMap.size === 0 ? (
             <div className={styles.emptyState}>
               Статистика недоступна — ендпоінт{" "}
-              <code style={{ fontFamily: "var(--font-mono)", color: "#c8a843" }}>
+              <code
+                style={{ fontFamily: "var(--font-mono)", color: "#c8a843" }}
+              >
                 /api/laws/:id/stats
               </code>{" "}
               не відповідає. Дані будуть тут коли бекенд поверне stats.
@@ -459,11 +461,7 @@ export function AdminAnalyticsView() {
             </div>
 
             {source === "live" && (
-              <button
-                type="button"
-                className={styles.clearBtn}
-                onClick={clear}
-              >
+              <button type="button" className={styles.clearBtn} onClick={clear}>
                 Очистити
               </button>
             )}
