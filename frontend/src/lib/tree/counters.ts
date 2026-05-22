@@ -28,7 +28,19 @@ export function limitLawSections(sections: TreeBranch[], limit: number | null) {
     const sectionArticles = countSectionArticles(section);
     const hasChildren = section.children.length > 0;
 
-    if (!hasChildren || remaining <= 0) {
+    if (!hasChildren) {
+      return result;
+    }
+
+    // If this section has 0 articles but has other children (like Section XVII),
+    // it should be included regardless of whether remaining articles limit has been reached.
+    if (sectionArticles === 0) {
+      result.push(section);
+      return result;
+    }
+
+    // For sections with articles, only include them if we still have remaining articles to show.
+    if (remaining <= 0) {
       return result;
     }
 

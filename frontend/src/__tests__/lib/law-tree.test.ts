@@ -133,6 +133,17 @@ describe("law tree helpers", () => {
       depth: 1,
       order: 11,
     };
+    const article2: TreeNode = {
+      _id: "art-2",
+      lawId: "law-1",
+      parentId: "sec-articles",
+      type: "article",
+      code: "law-1.rz1.st2",
+      number: "2",
+      title: "Article 2",
+      depth: 1,
+      order: 12,
+    };
     const sectionNoArticles: TreeNode = {
       _id: "sec-no-articles",
       lawId: "law-1",
@@ -158,14 +169,17 @@ describe("law tree helpers", () => {
     const sections = buildLawSections([
       sectionWithArticles,
       article,
+      article2,
       sectionNoArticles,
       directPart,
     ]);
 
-    const limitedSections = limitLawSections(sections, 5);
+    const limitedSections = limitLawSections(sections, 1);
 
     expect(limitedSections).toHaveLength(2);
     expect(limitedSections[0]._id).toBe("sec-articles");
+    expect(limitedSections[0].children).toHaveLength(1);
+    expect(limitedSections[0].children[0]._id).toBe("art-1");
     expect(limitedSections[1]._id).toBe("sec-no-articles");
     expect(limitedSections[1].children).toHaveLength(1);
     expect(limitedSections[1].children[0]._id).toBe("part-direct");
