@@ -16,6 +16,18 @@ const SECTION_SPAN = 'rvts15'; // <span class="rvts15"> — section text
 const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
 
 /**
+ * Checks if a table element represents a signatory block (like President, Prime Minister, etc.).
+ * @param {import('cheerio').Cheerio<import('domhandler').Element>} $table - The table element wrapper
+ * @returns {boolean} True if this table is a signatory table, false otherwise
+ */
+export const isSignatoryTable = ($table) => {
+  const tableText = $table.text().toLowerCase();
+  const signatoryKeywordsRegex =
+    /(президент|голова верховної ради|прем['’\-—]міністр)/i;
+  return signatoryKeywordsRegex.test(tableText);
+};
+
+/**
  * Parses the .frame HTML from zakon.rada.gov.ua into a structured law object.
  *
  * @param {string} html - Raw HTML content of the .frame page
@@ -73,6 +85,14 @@ export const parseLawHtml = (html, mainHtml = null) => {
   // We iterate over all <p> tags inside #article
   $('#article p').each((_, el) => {
     const $p = $(el);
+
+    // Skip paragraphs nested inside table elements to prevent table cell text leaking into signatory or elements,
+    // EXCEPT when the table is a signatory block (contains President, Chairman, PM, etc.)
+    const $table = $p.closest('table');
+    if ($table.length > 0 && !isSignatoryTable($table)) {
+      return;
+    }
+
     const anchor = $p.find('a[data-tree]').first();
     const text = $p.text().trim();
 

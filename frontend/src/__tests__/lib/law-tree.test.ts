@@ -111,6 +111,66 @@ describe("law tree helpers", () => {
     expect(limitedSections[0].children[0].children[0].text).toBe(part.text);
   });
 
+  it("does not filter out sections with direct children but zero articles", () => {
+    const sectionWithArticles: TreeNode = {
+      _id: "sec-articles",
+      lawId: "law-1",
+      type: "section",
+      code: "law-1.rz1",
+      number: "1",
+      title: "Section I",
+      depth: 0,
+      order: 10,
+    };
+    const article: TreeNode = {
+      _id: "art-1",
+      lawId: "law-1",
+      parentId: "sec-articles",
+      type: "article",
+      code: "law-1.rz1.st1",
+      number: "1",
+      title: "Article 1",
+      depth: 1,
+      order: 11,
+    };
+    const sectionNoArticles: TreeNode = {
+      _id: "sec-no-articles",
+      lawId: "law-1",
+      type: "section",
+      code: "law-1.rz2",
+      number: "2",
+      title: "Section II (Direct child only)",
+      depth: 0,
+      order: 20,
+    };
+    const directPart: TreeNode = {
+      _id: "part-direct",
+      lawId: "law-1",
+      parentId: "sec-no-articles",
+      type: "part",
+      code: "law-1.rz2.pu1",
+      number: "1",
+      text: "Direct part text",
+      depth: 1,
+      order: 21,
+    };
+
+    const sections = buildLawSections([
+      sectionWithArticles,
+      article,
+      sectionNoArticles,
+      directPart,
+    ]);
+
+    const limitedSections = limitLawSections(sections, 5);
+
+    expect(limitedSections).toHaveLength(2);
+    expect(limitedSections[0]._id).toBe("sec-articles");
+    expect(limitedSections[1]._id).toBe("sec-no-articles");
+    expect(limitedSections[1].children).toHaveLength(1);
+    expect(limitedSections[1].children[0]._id).toBe("part-direct");
+  });
+
   it("derives stable article labels and readable text", () => {
     expect(getArticleBadge(articleOne)).toBe("Стаття 1");
     expect(getArticleRouteNumber(articleOne)).toBe("1");

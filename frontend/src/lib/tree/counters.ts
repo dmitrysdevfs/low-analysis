@@ -26,8 +26,9 @@ export function limitLawSections(sections: TreeBranch[], limit: number | null) {
 
   return sections.reduce<TreeBranch[]>((result, section) => {
     const sectionArticles = countSectionArticles(section);
+    const hasChildren = section.children.length > 0;
 
-    if (sectionArticles === 0 || remaining <= 0) {
+    if (!hasChildren || remaining <= 0) {
       return result;
     }
 
