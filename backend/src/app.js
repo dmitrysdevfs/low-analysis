@@ -5,6 +5,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import lawRoutes from './routes/lawRoutes.js';
 import subjectRoutes from './routes/subjectRoutes.js';
+import taxonomyRoutes from './routes/taxonomyRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import {
   swaggerCustomCss,
@@ -68,6 +69,7 @@ app.use(
 
 app.use('/api/laws', lawRoutes);
 app.use('/api/subjects', subjectRoutes);
+app.use('/api/taxonomies', taxonomyRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

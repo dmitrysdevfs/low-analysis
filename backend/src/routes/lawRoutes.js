@@ -5,6 +5,8 @@ import {
   getLawStats,
   getArticle,
   parseLawFromUrl,
+  getElement,
+  getLawHeatmap,
 } from '../controllers/lawController.js';
 
 const router = express.Router();
@@ -126,9 +128,27 @@ router.get('/', getAllLaws);
  *   get:
  *     tags: [Laws]
  *     summary: Дерево елементів закону
- *     description: Повертає закон разом із плоским масивом усіх його елементів (розділи, статті, частини, пункти, підпункти, абзаци). Клієнт будує ієрархію самостійно за полями parentId та depth.
+ *     description: Повертає закон разом із плоским масивом усіх його елементів (розділи, статті, частини, пункти, підпункти, абзаци). Клієнт будує ієрархію самостійно за полями parentId та depth. Підтримує фільтрацію за функцією, доменом та суб'єктом.
  *     parameters:
  *       - $ref: '#/components/parameters/LawId'
+ *       - in: query
+ *         name: function
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Фільтрація за типом норми (right, obligation тощо)
+ *       - in: query
+ *         name: domain
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Фільтрація за доменом (labor, finance тощо)
+ *       - in: query
+ *         name: subjectId
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Фільтрація за ID суб'єкта регулювання
  *     responses:
  *       200:
  *         description: Закон із деревом елементів
@@ -175,6 +195,38 @@ router.get('/:id/tree', getLawTree);
  *         description: Помилка сервера
  */
 router.get('/:id/stats', getLawStats);
+
+/**
+ * @swagger
+ * /api/laws/{id}/heatmap:
+ *   get:
+ *     tags: [Laws]
+ *     summary: Дані для теплової карти закону
+ *     parameters:
+ *       - $ref: '#/components/parameters/LawId'
+ *     responses:
+ *       200:
+ *         description: Список елементів для візуалізації складності
+ */
+router.get('/:id/heatmap', getLawHeatmap);
+
+/**
+ * @swagger
+ * /api/elements/{id}:
+ *   get:
+ *     tags: [Elements]
+ *     summary: Отримати конкретний елемент за ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Елемент знайдено
+ */
+router.get('/elements/:id', getElement);
 
 /**
  * @swagger

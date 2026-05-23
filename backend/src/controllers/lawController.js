@@ -89,10 +89,16 @@ export const getAllLaws = async (req, res, next) => {
 export const getLawTree = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { function: legalFunction, domain, subjectId } = req.query;
+
     const law = await lawService.getLawById(id);
     if (!law) return res.status(404).json({ message: 'Law not found' });
 
-    const elements = await lawService.getLawTree(id);
+    const elements = await lawService.getLawTree(id, {
+      legalFunction,
+      domain,
+      subjectId,
+    });
     res.json({ law, elements });
   } catch (error) {
     next(error);
@@ -124,6 +130,29 @@ export const getArticle = async (req, res, next) => {
   }
 };
 
+export const getElement = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const element = await lawService.getElement(id);
+    if (!element) return res.status(404).json({ message: 'Element not found' });
+    res.json(element);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLawHeatmap = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const heatmap = await lawService.getLawHeatmap(id);
+    if (!heatmap)
+      return res.status(404).json({ message: 'Heatmap data not found' });
+    res.json(heatmap);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const parseLawFromUrl = async (req, res, next) => {
   try {
     const { url } = req.body;
@@ -143,6 +172,7 @@ export const parseLawFromUrl = async (req, res, next) => {
 
     // 2. Parse HTML
     const parsedData = parseLawHtml(frameHtml, mainHtml);
+
     if (!parsedData.code) parsedData.code = code;
     if (!parsedData.title || !parsedData.code) {
       return res
