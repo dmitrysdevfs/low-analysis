@@ -23,6 +23,11 @@ const seedTaxonomy = async () => {
           { name: 'Кредитні спілки', slug: 'credit-unions' },
           { name: 'Ломбарди', slug: 'pawn-shops' },
           { name: 'Фінансові компанії', slug: 'finance-companies' },
+          { name: 'Оператори поштового зв’язку', slug: 'postal-operators' },
+          {
+            name: 'Філії іноземних фінансових установ',
+            slug: 'foreign-branches',
+          },
         ],
       },
       {
@@ -34,10 +39,54 @@ const seedTaxonomy = async () => {
         ],
       },
       {
-        name: 'Клієнти',
-        slug: 'clients',
+        name: 'Клієнти та отримувачі послуг',
+        slug: 'clients-and-recipients',
         children: [
-          { name: 'Споживачі', slug: 'consumers' },
+          { name: 'Споживачі (фізичні особи)', slug: 'consumers-individuals' },
+          {
+            name: 'Клієнти (юридичні особи, ФОП та фізичні особи)',
+            slug: 'clients-all',
+          },
+        ],
+      },
+      {
+        name: "Посередники та суміжні суб'єкти",
+        slug: 'intermediaries-and-related',
+        children: [
+          { name: 'Кредитні посередники', slug: 'credit-intermediaries' },
+          { name: 'Страхові посередники', slug: 'insurance-intermediaries' },
+          { name: 'Аудитори та аудиторські фірми', slug: 'auditors' },
+          {
+            name: 'Особи, які надають супровідні послуги',
+            slug: 'supporting-services',
+          },
+        ],
+      },
+      {
+        name: 'Об’єднання та структури',
+        slug: 'associations-and-structures',
+        children: [
+          {
+            name: 'Професійні об’єднання надавачів фінансових послуг',
+            slug: 'professional-associations',
+          },
+          { name: 'Саморегулівні організації (СРО)', slug: 'sro' },
+          { name: 'Учасники фінансових груп', slug: 'financial-group-members' },
+        ],
+      },
+      {
+        name: 'Державні органи',
+        slug: 'government-bodies',
+        children: [
+          { name: 'Міністерства', slug: 'ministries' },
+          { name: 'Судові органи', slug: 'judicial-bodies' },
+        ],
+      },
+      {
+        name: 'Бізнес',
+        slug: 'business',
+        children: [
+          { name: 'ФОП', slug: 'fop' },
           { name: 'Юридичні особи', slug: 'legal-entities' },
         ],
       },

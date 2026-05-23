@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import Law from '../models/Law.js';
 import Element from '../models/Element.js';
-import { classifyElement } from './taxonomyService.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
@@ -156,13 +155,19 @@ export const getLawTree = async (
   allElements.forEach((el) => {
     let matches = true;
 
-    if (legalFunction && !el.taxonomy?.legalFunctions?.includes(legalFunction)) {
+    if (
+      legalFunction &&
+      !el.taxonomy?.legalFunctions?.includes(legalFunction)
+    ) {
       matches = false;
     }
     if (domain && !el.taxonomy?.domains?.includes(domain)) {
       matches = false;
     }
-    if (subjectId && !el.subjects?.some((s) => String(s.subject_id) === String(subjectId))) {
+    if (
+      subjectId &&
+      !el.subjects?.some((s) => String(s.subject_id) === String(subjectId))
+    ) {
       matches = false;
     }
 
@@ -171,7 +176,9 @@ export const getLawTree = async (
       let current = el;
       while (current) {
         filteredSet.add(String(current._id));
-        current = current.parentId ? elementMap.get(String(current.parentId)) : null;
+        current = current.parentId
+          ? elementMap.get(String(current.parentId))
+          : null;
       }
     }
   });

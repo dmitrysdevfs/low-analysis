@@ -19,8 +19,7 @@ export const getTaxonomyTree = async (req, res, next) => {
     const buildTree = (items, parentId = null) => {
       return items
         .filter(
-          (item) =>
-            String(item.parentId || null) === String(parentId || null),
+          (item) => String(item.parentId || null) === String(parentId || null),
         )
         .map((item) => ({
           ...item,
@@ -43,7 +42,9 @@ export const analyzeLaw = async (req, res, next) => {
 
     const elements = await Element.find({ lawId });
     if (!elements || elements.length === 0) {
-      return res.status(404).json({ message: 'No elements found for this law' });
+      return res
+        .status(404)
+        .json({ message: 'No elements found for this law' });
     }
 
     const bulkOps = elements.map((el) => {

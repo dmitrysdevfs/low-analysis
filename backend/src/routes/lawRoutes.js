@@ -228,7 +228,6 @@ router.get('/:id/heatmap', getLawHeatmap);
  */
 router.get('/elements/:id', getElement);
 
-
 /**
  * @swagger
  * /api/laws/{id}/articles/{num}:
