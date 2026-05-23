@@ -23,6 +23,7 @@ async function run() {
     const paragraphCount = await Element.countDocuments({
       lawId: law._id,
       type: 'paragraph',
+      $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
     });
 
     console.log(`Law: "${law.title}" (${law.code})`);

@@ -165,7 +165,11 @@ export const updateLawStatsFromDb = async (lawId) => {
       $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
     }),
     Element.countDocuments({ lawId, type: 'section' }),
-    Element.countDocuments({ lawId, type: 'paragraph' }),
+    Element.countDocuments({
+      lawId,
+      type: 'paragraph',
+      $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
+    }),
   ]);
 
   await Law.findByIdAndUpdate(lawId, {
