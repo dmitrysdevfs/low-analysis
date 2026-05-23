@@ -53,7 +53,9 @@ export const parseLawHtml = (html, mainHtml = null) => {
     const dateMatch = titleText.match(/від (\d{2})\.(\d{2})\.(\d{4})/);
     if (dateMatch) {
       const [, day, month, year] = dateMatch;
-      adoptedDate = new Date(`${year}-${month}-${day}`);
+      adoptedDate = new Date(
+        Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)),
+      );
     }
 
     // Extract document types from .doc-card — clone to strip date/number nodes

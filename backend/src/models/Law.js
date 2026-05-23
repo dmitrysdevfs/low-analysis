@@ -65,6 +65,11 @@ const lawSchema = new mongoose.Schema(
   },
 );
 
+lawSchema.index({ title: 1 });
+lawSchema.index({ status: 1 });
+lawSchema.index({ documentType: 1 });
+lawSchema.index({ adoptedDate: -1 });
+
 const Law = mongoose.model('Law', lawSchema);
 
 export default Law;
