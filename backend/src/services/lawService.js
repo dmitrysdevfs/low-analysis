@@ -168,7 +168,11 @@ export const updateLawStatsFromDb = async (lawId) => {
     Element.countDocuments({ lawId, type: 'paragraph' }),
   ]);
 
-  await Law.findByIdAndUpdate(lawId, { totalArticles, totalSections, totalParagraphs });
+  await Law.findByIdAndUpdate(lawId, {
+    totalArticles,
+    totalSections,
+    totalParagraphs,
+  });
 };
 
 /**

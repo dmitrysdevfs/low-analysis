@@ -8,7 +8,9 @@ dotenv.config();
 async function run() {
   console.log('Connecting to DB...');
   if (!process.env.MONGODB_URI) {
-    console.error('Error: MONGODB_URI is not defined in environment variables.');
+    console.error(
+      'Error: MONGODB_URI is not defined in environment variables.',
+    );
     process.exit(1);
   }
   await mongoose.connect(process.env.MONGODB_URI);
@@ -24,8 +26,12 @@ async function run() {
     });
 
     console.log(`Law: "${law.title}" (${law.code})`);
-    console.log(`  Current totalParagraphs in metadata: ${law.totalParagraphs ?? 'undefined'}`);
-    console.log(`  Actual elements of type "paragraph" in DB: ${paragraphCount}`);
+    console.log(
+      `  Current totalParagraphs in metadata: ${law.totalParagraphs ?? 'undefined'}`,
+    );
+    console.log(
+      `  Actual elements of type "paragraph" in DB: ${paragraphCount}`,
+    );
 
     law.totalParagraphs = paragraphCount;
     await law.save();
