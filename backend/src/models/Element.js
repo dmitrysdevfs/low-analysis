@@ -56,6 +56,17 @@ const elementSchema = new mongoose.Schema(
       enum: ['green', 'yellow', 'red', null],
       default: null,
     },
+    taxonomy: {
+      legalFunctions: [{ type: String }],
+      domains: [{ type: String }],
+      keywords: [{ type: String, trim: true }],
+      confidence: { type: Number, default: 1.0 },
+      source: {
+        type: String,
+        enum: ['rules', 'llm', 'manual'],
+        default: 'rules',
+      },
+    },
     /**
      * Regulatory subjects identified by LLM (Semantic Role Labeling).
      * Each entry references the global Subject registry.

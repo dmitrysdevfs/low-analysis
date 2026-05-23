@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Law from '../models/Law.js';
 import Element from '../models/Element.js';
+import { classifyElement } from './taxonomyService.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
@@ -131,13 +132,62 @@ export const getLawStats = async (lawId) => {
 
 /**
  * Returns all Elements for a given law, sorted by order.
- * The tree structure is flat here; callers can build hierarchy client-side
- * or via buildTree() helper if needed.
+ * Supports filtering by function, domain, and subject.
+ * If filtered, recursively includes parent elements.
  */
-export const getLawTree = async (lawId) => {
-  return await Element.find({ lawId })
+export const getLawTree = async (
+  lawId,
+  { legalFunction, domain, subjectId } = {},
+) => {
+  const allElements = await Element.find({ lawId })
     .select('-__v')
-    .sort({ depth: 1, order: 1 });
+    .sort({ depth: 1, order: 1 })
+    .lean();
+
+  if (!legalFunction && !domain && !subjectId) {
+    return allElements;
+  }
+
+  // Filtering logic
+  const filteredSet = new Set();
+  const elementMap = new Map();
+  allElements.forEach((el) => elementMap.set(String(el._id), el));
+
+  allElements.forEach((el) => {
+    let matches = true;
+
+    if (legalFunction && !el.taxonomy?.legalFunctions?.includes(legalFunction)) {
+      matches = false;
+    }
+    if (domain && !el.taxonomy?.domains?.includes(domain)) {
+      matches = false;
+    }
+    if (subjectId && !el.subjects?.some((s) => String(s.subject_id) === String(subjectId))) {
+      matches = false;
+    }
+
+    if (matches && (legalFunction || domain || subjectId)) {
+      // Add this element and all its parents recursively
+      let current = el;
+      while (current) {
+        filteredSet.add(String(current._id));
+        current = current.parentId ? elementMap.get(String(current.parentId)) : null;
+      }
+    }
+  });
+
+  return allElements.filter((el) => filteredSet.has(String(el._id)));
+};
+
+export const getElement = async (id) => {
+  return await Element.findById(id).select('-__v').lean();
+};
+
+export const getLawHeatmap = async (lawId) => {
+  return await Element.find({ lawId })
+    .select('code type number title chars_count z_score risk_level taxonomy')
+    .sort({ order: 1 })
+    .lean();
 };
 
 /**

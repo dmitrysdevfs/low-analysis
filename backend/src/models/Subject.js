@@ -34,6 +34,12 @@ const subjectSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    taxonomies: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Taxonomy',
+      },
+    ],
   },
   {
     timestamps: true,
