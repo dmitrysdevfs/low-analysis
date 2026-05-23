@@ -1,76 +1,98 @@
-.wrapper {
+.container {
   position: fixed;
-  bottom: 0;
-  right: 0;
+  bottom: 24px;
+  right: 24px;
   z-index: 100;
   display: flex;
-  align-items: flex-start;
-
-  transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-direction: column;
+  align-items: flex-end;
 }
 
-.wrapperOpen {
-  transform: translateX(0);
-}
-
-.tabTrigger {
-  position: absolute;
-  right: 100%;
-  bottom: 20px;
-
+.circleTrigger {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #0d2460 0%, #080f20 100%);
+  border: 1px solid rgba(200, 168, 67, 0.28);
+  color: var(--color-gold);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 10px 10px 10px 14px;
-
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-right: none;
-  border-radius: 12px 0 0 12px;
-
-  cursor: pointer;
-  box-shadow: -8px 4px 20px rgba(0, 0, 0, 0.25);
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--color-gold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  line-height: normal;
-  transition: all 0.2s ease;
+  justify-content: center;
+  z-index: 102;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: var(--color-raised);
-    color: #e8c840;
+    background: linear-gradient(180deg, #1a3e8a 0%, #0d2460 100%);
+    color: #c8a843;
+    border-color: rgba(200, 168, 67, 0.5);
   }
 
   &:focus-visible {
-    background-color: var(--color-raised);
-    color: #e8c840;
     outline: 1px solid #e8c840;
     outline-offset: 2px;
   }
 }
 
-.arrowIcon {
-  transition: transform 0.3s ease;
-  color: var(--color-smoke-light);
+.iconBase {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.3s ease;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  line-height: 1;
+}
 
-  &.arrowRotate {
-    transform: rotate(180deg);
-  }
+.iconAi {
+  font-size: 15px;
+  opacity: 1;
+}
+
+.iconAiHidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-180deg) scale(0.3);
+}
+
+.iconCross {
+  font-size: 32px;
+  font-family: "Courier New", monospace;
+  font-weight: 300;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(180deg) scale(0.3);
+}
+
+.iconCrossVisible {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
 }
 
 .dialog {
+  position: absolute;
+  z-index: 101;
+  background-color: var(--color-surface);
+  border: 1px solid rgba(200, 168, 67, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+
+  transform-origin: bottom right;
+}
+
+.dialogInner {
   width: 380px;
   height: 550px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
 .dialogHeader {
@@ -113,17 +135,6 @@
     border-color: var(--color-gold);
   }
 
-  &:focus-visible {
-    color: var(--color-gold);
-    border-color: var(--color-gold);
-    outline: 1px solid #e8c840;
-    outline-offset: 2px;
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
@@ -143,9 +154,6 @@
   &::-webkit-scrollbar {
     width: 4px;
   }
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
   &::-webkit-scrollbar-thumb {
     background-color: var(--color-line);
     border-radius: 999px;
@@ -155,11 +163,9 @@
 .messageRow {
   display: flex;
   width: 100%;
-
   &.userRow {
     justify-content: flex-end;
   }
-
   &.aiRow {
     justify-content: flex-start;
   }
@@ -172,21 +178,18 @@
   line-height: 1.5;
   word-break: break-word;
   white-space: pre-wrap;
-  transition: font-size 0.2s ease;
 }
 
 .userBubble {
   background-color: var(--color-line);
   color: var(--color-ink);
   border-bottom-right-radius: 4px;
-  border: 1px solid rgba(74, 128, 212, 0.2);
 }
 
 .aiBubble {
   background-color: rgba(200, 168, 67, 0.05);
   color: var(--color-ink-soft);
   border-bottom-left-radius: 4px;
-  border: 1px solid rgba(200, 168, 67, 0.15);
 }
 
 .inputArea {
