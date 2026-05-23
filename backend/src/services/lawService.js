@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Law from '../models/Law.js';
 import Element from '../models/Element.js';
+import { classifyElement } from './taxonomyService.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
@@ -352,12 +353,13 @@ export const resolveElementHierarchy = async (lawId, rawElements) => {
     return { ...el, code: uniqueCode, _id: id };
   });
 
-  // 3. Resolve parentId
+  // 3. Resolve parentId & apply taxonomy classification
   const elementsToSave = elementsWithIds.map((el) => {
     return {
       ...el,
       lawId,
       parentId: el.parentCode ? codeToIdMap[el.parentCode] || null : null,
+      taxonomy: el.taxonomy || classifyElement(el),
     };
   });
 

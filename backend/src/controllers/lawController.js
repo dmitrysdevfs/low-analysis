@@ -2,7 +2,6 @@ import * as lawService from '../services/lawService.js';
 import * as fetchService from '../services/fetchService.js';
 import { parseLawHtml } from '../services/parserService.js';
 import { performStatisticalAnalysis } from '../services/statisticalAnalysisService.js';
-import { classifyElement } from '../services/taxonomyService.js';
 
 const VALID_SORT_BY = ['date', 'title'];
 const VALID_SORT_ORDER = ['asc', 'desc'];
@@ -173,14 +172,6 @@ export const parseLawFromUrl = async (req, res, next) => {
 
     // 2. Parse HTML
     const parsedData = parseLawHtml(frameHtml, mainHtml);
-
-    // Apply rule-based taxonomy classification
-    if (parsedData.elements) {
-      parsedData.elements = parsedData.elements.map((el) => ({
-        ...el,
-        taxonomy: classifyElement(el),
-      }));
-    }
 
     if (!parsedData.code) parsedData.code = code;
     if (!parsedData.title || !parsedData.code) {
