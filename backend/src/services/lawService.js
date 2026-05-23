@@ -4,15 +4,82 @@ import Element from '../models/Element.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
-export const getAllLaws = async (q = '') => {
-  const filter = q
-    ? {
-        title: {
-          $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
-        },
-      }
-    : {};
-  return await Law.find(filter).select('-__v').sort({ adoptedDate: -1 });
+export const getAllLaws = async ({
+  q = '',
+  sortBy = 'date',
+  sortOrder = 'desc',
+  status,
+  dateFrom,
+  dateTo,
+  documentType,
+  page = 1,
+  limit = 10,
+} = {}) => {
+  const filter = {};
+
+  if (q) {
+    filter.title = {
+      $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
+    };
+  }
+
+  if (status) {
+    filter.status = {
+      $regex: new RegExp(
+        `^${status.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+        'i',
+      ),
+    };
+  }
+
+  if (documentType) {
+    filter.documentType = {
+      $elemMatch: {
+        $regex: new RegExp(
+          `^${documentType.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+          'i',
+        ),
+      },
+    };
+  }
+
+  if (dateFrom || dateTo) {
+    filter.adoptedDate = {};
+    if (dateFrom) filter.adoptedDate.$gte = dateFrom;
+    if (dateTo) {
+      const endOfDay = new Date(dateTo);
+      endOfDay.setHours(23, 59, 59, 999);
+      filter.adoptedDate.$lte = endOfDay;
+    }
+  }
+
+  const sortField = sortBy === 'title' ? 'title' : 'adoptedDate';
+  const sortDirection = sortOrder === 'asc' ? 1 : -1;
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await Promise.all([
+    Law.find(filter)
+      .select('-__v')
+      .sort({ [sortField]: sortDirection })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Law.countDocuments(filter),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
 };
 
 export const getLawById = async (id) => {
@@ -107,11 +174,27 @@ export const getArticle = async (lawId, articleNumber) => {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export const upsertLaw = async (lawData) => {
-  const { code, title, source, status, preamble, signatory, global_context } =
-    lawData;
+  const {
+    code,
+    title,
+    source,
+    status,
+    preamble,
+    signatory,
+    adoptedDate,
+    documentType,
+    global_context,
+  } = lawData;
+  const update = { title, source, status, preamble, signatory };
+
+  if (adoptedDate != null) update.adoptedDate = adoptedDate;
+  if (documentType != null && documentType.length > 0)
+    update.documentType = documentType;
+  if (global_context !== undefined) update.global_context = global_context;
+
   const law = await Law.findOneAndUpdate(
     { code },
-    { $set: { title, source, status, preamble, signatory, global_context } },
+    { $set: update },
     { new: true, upsert: true },
   );
   return law;

@@ -34,6 +34,13 @@ export const schemas = {
         nullable: true,
         description: 'Поточний статус документа',
       },
+      documentType: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['Постанова Кабінету Міністрів України', 'Порядок', 'Акт'],
+        description:
+          'Типи документа з блоку .doc-card на zakon.rada.gov.ua. Для простих законів — один елемент ["Закон України"]. Для складених актів — кілька: основний тип + підтипи через ";" та ",".',
+      },
       source: {
         type: 'string',
         example: 'https://zakon.rada.gov.ua/laws/show/254к/96-вр',
@@ -229,6 +236,28 @@ export const schemas = {
         type: 'string',
         format: 'date-time',
         example: '2026-05-13T02:30:00.000Z',
+      },
+    },
+  },
+
+  PaginatedLaws: {
+    type: 'object',
+    description: 'Пагінований список законів',
+    properties: {
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/Law' },
+      },
+      pagination: {
+        type: 'object',
+        properties: {
+          page: { type: 'integer', example: 1 },
+          limit: { type: 'integer', example: 20 },
+          total: { type: 'integer', example: 150 },
+          totalPages: { type: 'integer', example: 8 },
+          hasNextPage: { type: 'boolean', example: true },
+          hasPrevPage: { type: 'boolean', example: false },
+        },
       },
     },
   },

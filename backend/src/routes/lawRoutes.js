@@ -15,7 +15,7 @@ const router = express.Router();
  *   get:
  *     tags: [Laws]
  *     summary: Список всіх законів
- *     description: Повертає масив усіх законів збережених у базі даних
+ *     description: Повертає масив законів з підтримкою пошуку, фільтрації та сортування
  *     parameters:
  *       - in: query
  *         name: q
@@ -24,15 +24,93 @@ const router = express.Router();
  *         schema:
  *           type: string
  *           example: конституція
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         description: Фільтр за станом документа (регістронезалежний)
+ *         schema:
+ *           type: string
+ *           example: Чинний
+ *       - in: query
+ *         name: documentType
+ *         required: false
+ *         description: Фільтр за типом документа — точний збіг з одним з елементів масиву (регістронезалежний)
+ *         schema:
+ *           type: string
+ *           example: Закон України
+ *       - in: query
+ *         name: dateFrom
+ *         required: false
+ *         description: Фільтр за датою прийняття — від (включно)
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: '2020-01-01'
+ *       - in: query
+ *         name: dateTo
+ *         required: false
+ *         description: Фільтр за датою прийняття — до (включно, до кінця дня)
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: '2023-12-31'
+ *       - in: query
+ *         name: sortBy
+ *         required: false
+ *         description: Поле сортування
+ *         schema:
+ *           type: string
+ *           enum: [date, title]
+ *           default: date
+ *       - in: query
+ *         name: sortOrder
+ *         required: false
+ *         description: Напрямок сортування
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: desc
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         description: Номер сторінки (починаючи з 1)
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         description: Кількість результатів на сторінку (максимум 100)
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 20
+ *           example: 20
  *     responses:
  *       200:
- *         description: Масив законів (відфільтрований якщо переданий q)
+ *         description: Пагінований список законів
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Law'
+ *               $ref: '#/components/schemas/PaginatedLaws'
+ *       400:
+ *         description: Невалідні параметри запиту
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               invalidSortBy:
+ *                 summary: Невалідний sortBy
+ *                 value:
+ *                   message: 'Invalid sortBy value. Allowed: date, title'
+ *               invalidDateFrom:
+ *                 summary: Невалідна дата
+ *                 value:
+ *                   message: 'Invalid dateFrom value. Expected ISO date (e.g. 2020-01-01)'
  *       500:
  *         description: Помилка сервера
  *         content:

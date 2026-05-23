@@ -48,8 +48,17 @@ const ingestLaw = async (filePath) => {
     );
   }
 
-  const { title, code, elements, preamble, status, signatory, global_context } =
-    parseLawHtml(html, mainHtml);
+  const {
+    title,
+    code,
+    elements,
+    preamble,
+    status,
+    signatory,
+    adoptedDate,
+    documentType,
+    global_context,
+  } = parseLawHtml(html, mainHtml);
 
   if (!title || !code) {
     throw new Error(
@@ -78,6 +87,8 @@ const ingestLaw = async (filePath) => {
     status,
     preamble,
     signatory,
+    adoptedDate,
+    documentType,
     global_context,
   });
 
