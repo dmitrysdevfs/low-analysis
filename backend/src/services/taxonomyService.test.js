@@ -95,4 +95,16 @@ describe('taxonomyService', () => {
     expect(result.legalFunctions).toContain('right');
     expect(result.domains).not.toContain('finance');
   });
+
+  test('should return empty arrays for empty or whitespace-only text', () => {
+    const elEmpty = { text: '' };
+    const resultEmpty = classifyElement(elEmpty);
+    expect(resultEmpty.legalFunctions).toEqual([]);
+    expect(resultEmpty.domains).toEqual([]);
+
+    const elWhitespace = { text: '   \n\t ' };
+    const resultWhitespace = classifyElement(elWhitespace);
+    expect(resultWhitespace.legalFunctions).toEqual([]);
+    expect(resultWhitespace.domains).toEqual([]);
+  });
 });
