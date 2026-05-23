@@ -14,8 +14,22 @@ const analyzeTaxonomy = async () => {
     const laws = await Law.find();
     console.log(`Found ${laws.length} laws to analyze`);
 
+    // Fetch only required fields in one query to avoid N+1 and minimize memory usage
+    const allElements = await Element.find({}, '_id lawId text').lean();
+
+    // Group elements by lawId string
+    const elementsByLawId = allElements.reduce((acc, el) => {
+      if (el.lawId) {
+        const lawIdStr = el.lawId.toString();
+        acc[lawIdStr] = acc[lawIdStr] || [];
+        acc[lawIdStr].push(el);
+      }
+      return acc;
+    }, {});
+
     for (const law of laws) {
-      const elements = await Element.find({ lawId: law._id });
+      const lawIdStr = law._id.toString();
+      const elements = elementsByLawId[lawIdStr] || [];
       console.log(`Analyzing Law: ${law.title} (${elements.length} elements)`);
 
       const bulkOps = elements.map((el) => {
