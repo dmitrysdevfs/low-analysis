@@ -1,7 +1,8 @@
 /**
  * Classifies a legal element based on its text content using rule-based regex.
  * @param {object} element - The element object with 'text' property.
- * @returns {object} - Classified taxonomy tags, confidence and source.
+ * @param {string} element.text - The text content of the element.
+ * @returns {{legalFunctions: string[], domains: string[], keywords: string[], confidence: number, source: string}} - Classified taxonomy tags, confidence and source.
  */
 export const classifyElement = (element) => {
   const text = element.text || '';
@@ -62,7 +63,7 @@ export const classifyElement = (element) => {
     {
       domain: 'business',
       regex:
-        /ліцензія|дозвіл|підприємець|господарська діяльність|фізична особа - підприємець|тов|ат/iu,
+        /ліцензія|дозвіл|підприємець|господарська діяльність|фізична особа\s*-\s*підприємець|(?:\s|^)тов(?:\s|$|[.,])|(?:\s|^)ат(?:\s|$|[.,])/iu,
     },
     {
       domain: 'finance',
@@ -70,7 +71,7 @@ export const classifyElement = (element) => {
     },
     {
       domain: 'education',
-      regex: /освіта|навчання|студент|школа|університет|викладач/iu,
+      regex: /освіт|навчання|студент|школа|університет|викладач/iu,
     },
     {
       domain: 'healthcare',

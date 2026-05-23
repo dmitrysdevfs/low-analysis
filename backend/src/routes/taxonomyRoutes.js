@@ -1,5 +1,6 @@
 import express from 'express';
 import * as taxonomyController from '../controllers/taxonomyController.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -34,6 +35,11 @@ router.get('/tree', taxonomyController.getTaxonomyTree);
  *         schema:
  *           type: string
  */
-router.post('/analyze/:lawId', taxonomyController.analyzeLaw);
+router.post(
+  '/analyze/:lawId',
+  protect,
+  authorize(['admin']),
+  taxonomyController.analyzeLaw,
+);
 
 export default router;
