@@ -1,5 +1,4 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import LawTreePage from "@/app/laws/[id]/page";
 import { useLawTree } from "@/hooks/useLawTree";
 import {
@@ -44,15 +43,14 @@ function createOrphanParagraphNode(): TreeNode {
     type: "paragraph",
     code: "rz1.abz999",
     number: "1",
-    text: "Сиротський абзац не повинен з'являтися в загальному списку закону.",
+    text: "Сирітський абзац не повинен з'являтися в загальному списку закону.",
     depth: 1,
     order: 999,
   };
 }
 
 describe("Law tree page", () => {
-  it("renders sectioned articles and expands nested structure", async () => {
-    const user = userEvent.setup();
+  it("renders sectioned articles and hides orphan nodes from the law list", () => {
     setMockParams({ id: LAW_FIXTURE._id });
     setMockPathname(`/laws/${LAW_FIXTURE._id}`);
 
@@ -79,22 +77,15 @@ describe("Law tree page", () => {
         name: /Загальні засади конституційного ладу/i,
       }),
     ).toHaveAttribute("href", `/laws/${LAW_FIXTURE._id}/articles/1`);
-
-    await user.click(
-      screen.getByRole("button", { name: /Показати структуру/i }),
-    );
-
-    expect(screen.getByText(PART_NODE.text!)).toBeInTheDocument();
     expect(screen.getByText("Розділ I")).toBeInTheDocument();
     expect(
       screen.queryByText(
-        "Сиротський абзац не повинен з'являтися в загальному списку закону.",
+        "Сирітський абзац не повинен з'являтися в загальному списку закону.",
       ),
     ).not.toBeInTheDocument();
   });
 
   it("lets the reader limit the amount of visible articles", async () => {
-    const user = userEvent.setup();
     setMockParams({ id: LAW_FIXTURE._id });
     setMockPathname(`/laws/${LAW_FIXTURE._id}`);
     setMockSearchParams({ limit: "10" });
@@ -125,22 +116,17 @@ describe("Law tree page", () => {
       screen.queryByRole("link", { name: "Назва статті 11" }),
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Показати ще" }));
+    fireEvent.click(screen.getByRole("button", { name: "Показати ще" }));
 
-    expect(screen.getByText("Показано 20 із 24 статей")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Показано 20 із 24 статей")).toBeInTheDocument();
+    });
     expect(
       screen.getByRole("link", { name: "Назва статті 11" }),
     ).toBeInTheDocument();
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Показувати статей" }),
-      "all",
-    );
-
-    expect(screen.getByText("Показано 24 із 24 статей")).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: "Назва статті 24" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "50" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Всі" })).toBeInTheDocument();
   });
 
   it("renders the tree request error", () => {

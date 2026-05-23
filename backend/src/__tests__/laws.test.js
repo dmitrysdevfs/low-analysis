@@ -7,6 +7,8 @@ vi.mock('../services/lawService.js', () => ({
   getLawById: vi.fn(),
   getLawTree: vi.fn(),
   getArticle: vi.fn(),
+  getLawStats: vi.fn(),
+  updateLawStatsFromDb: vi.fn(),
 }));
 
 import * as lawService from '../services/lawService.js';
@@ -260,5 +262,34 @@ describe('GET /api/laws/:id/articles/:num', () => {
 
     expect(res.status).toBe(404);
     expect(res.body.message).toBe('Article not found');
+  });
+});
+
+describe('GET /api/laws/:id/stats', () => {
+  it('returns 200 with stats object', async () => {
+    const mockStats = {
+      totalElements: 10,
+      meanChars: 150,
+      standardDeviation: 50,
+      riskLevels: { green: 8, yellow: 1, red: 1, null: 0 },
+    };
+    lawService.getLawStats.mockResolvedValue(mockStats);
+
+    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/stats`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.totalElements).toBe(10);
+    expect(res.body.meanChars).toBe(150);
+    expect(res.body.standardDeviation).toBe(50);
+    expect(res.body.riskLevels.green).toBe(8);
+  });
+
+  it('returns 404 when stats not found', async () => {
+    lawService.getLawStats.mockResolvedValue(null);
+
+    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/stats`);
+
+    expect(res.status).toBe(404);
+    expect(res.body.message).toBe('Stats not found for this law');
   });
 });

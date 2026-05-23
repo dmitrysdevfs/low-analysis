@@ -41,6 +41,10 @@ const lawSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    totalParagraphs: {
+      type: Number,
+      default: 0,
+    },
     /**
      * Structured context extracted for LLM prompts.
      * Especially critical for laws without a preamble or with a malformed one.

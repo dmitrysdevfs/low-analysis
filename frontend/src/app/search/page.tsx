@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Layout } from "@/components/Layout";
-import { SearchForm } from "@/components/SearchForm";
+import { Layout } from "@/components/layout/Layout";
+import { SearchForm } from "@/components/search/SearchForm";
 import { SearchParams } from "@/hooks/useSearch";
 import styles from "./page.module.scss";
 

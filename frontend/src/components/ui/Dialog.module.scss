@@ -8,11 +8,11 @@
 
 .content {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 16px;
+  margin: auto;
   z-index: 51;
-  max-height: 85vh;
+  height: fit-content;
+  max-height: calc(100vh - 32px);
   overflow-y: auto;
   background: #0d1c3a;
   border: 1px solid #1c3260;

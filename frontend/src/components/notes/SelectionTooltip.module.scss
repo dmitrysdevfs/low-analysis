@@ -1,0 +1,29 @@
+.tooltip {
+  position: fixed;
+  z-index: 200;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1a3e8a, #0d2460);
+  border: 1px solid rgba(200, 168, 67, 0.5);
+  color: #f7f7fb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  user-select: none;
+
+  &:hover {
+    border-color: #c8a843;
+    background: linear-gradient(135deg, #1f4aa0, #0f2b70);
+  }
+}
+
+.icon {
+  font-size: 1rem;
+  line-height: 1;
+}

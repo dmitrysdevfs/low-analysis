@@ -1,15 +1,17 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { AppHeader } from "@/components/AppHeader";
-import { Dialog } from "@/components/Dialog";
-import { LawStructureList } from "@/components/LawStructureList";
-import { SearchForm } from "@/components/SearchForm";
-import { SearchResults } from "@/components/SearchResults";
-import { SkeletonCard } from "@/components/SkeletonCard";
-import { TreeNode } from "@/components/TreeNode";
-import { buildLawSections } from "@/lib/lawTree";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { Dialog } from "@/components/ui/Dialog";
+import { LawStructureList } from "@/components/law/LawStructureList";
+import { SearchForm } from "@/components/search/SearchForm";
+import { SearchResults } from "@/components/search/SearchResults";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { NestedNodeList } from "@/components/article/ArticleTreeNode";
+import type { TreeBranch } from "@/lib/tree";
+import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
+import { buildLawSections } from "@/lib/tree";
 import {
-  ARTICLE_NODE,
   LAW_FIXTURE,
   LAW_FIXTURE_2,
   PART_NODE,
@@ -19,18 +21,67 @@ import {
 import { setMockPathname } from "@/test/mocks/next-navigation";
 
 describe("interactive frontend components", () => {
-  it("highlights the active nav item in AppHeader", () => {
+  it("highlights the active nav item in AppHeader for guest view", () => {
     setMockPathname("/subjects/subject-1");
 
     render(<AppHeader />);
 
-    expect(screen.getByRole("link", { name: "Low Analysis" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Law Analysis" })).toHaveAttribute(
       "href",
       "/",
+    );
+    expect(screen.getByRole("link", { name: /Вхід/i })).toHaveAttribute(
+      "href",
+      "/auth",
     );
     expect(screen.getByRole("link", { name: "Суб'єкти" })).toHaveClass(
       "active",
     );
+  });
+
+  it("shows admin switch and logout controls for administrator session", async () => {
+    const user = userEvent.setup();
+    window.localStorage.setItem(
+      AUTH_SESSION_STORAGE_KEY,
+      JSON.stringify({
+        id: "admin-1",
+        displayName: "Root Admin",
+        email: "admin@low.test",
+        roles: ["admin", "client"],
+        accountType: "admin",
+        lastLoginAt: "2026-05-17T10:00:00.000Z",
+      }),
+    );
+    setMockPathname("/laws");
+
+    render(
+      <AuthProvider>
+        <AppHeader />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("link", { name: "Панель адміна" }),
+      ).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: "Сайт" })).toHaveAttribute(
+        "href",
+        "/",
+      );
+    });
+
+    await user.click(
+      screen.getByRole("button", { name: "Відкрити меню акаунту" }),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("menuitem", { name: "Вийти з акаунту" }),
+      ).toBeInTheDocument();
+    });
   });
 
   it("renders skeleton card shell", () => {
@@ -38,51 +89,52 @@ describe("interactive frontend components", () => {
     expect(container.firstChild).toHaveClass("panel");
   });
 
-  it("toggles section children and selects leaf nodes in TreeNode", async () => {
-    const user = userEvent.setup();
-    const onSelect = vi.fn();
+  it("NestedNodeList renders charCount when node.text is non-empty", () => {
+    const branch: TreeBranch = {
+      ...PART_NODE,
+      key: PART_NODE.code ?? "part-1",
+      children: [],
+    };
 
-    render(
-      <TreeNode node={SECTION_NODE} activeCode={null} onSelect={onSelect}>
-        {[ARTICLE_NODE]}
-      </TreeNode>,
-    );
+    render(<NestedNodeList nodes={[branch]} />);
 
-    expect(screen.getByText(ARTICLE_NODE.title!)).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: /Розділ I/i }));
-    expect(screen.queryByText(ARTICLE_NODE.title!)).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: /Розділ I/i }));
-    await user.click(screen.getByRole("button", { name: /Стаття 1/i }));
-
-    expect(onSelect).toHaveBeenCalledWith(ARTICLE_NODE);
+    expect(
+      screen.getByText(String(PART_NODE.text!.length)),
+    ).toBeInTheDocument();
   });
 
-  it("submits and resets search form parameters", async () => {
-    const user = userEvent.setup();
+  it("NestedNodeList does not render charCount when node.text is absent", () => {
+    const branch: TreeBranch = {
+      ...SECTION_NODE,
+      key: SECTION_NODE.code ?? "section-1",
+      children: [],
+    };
+
+    const { container } = render(<NestedNodeList nodes={[branch]} />);
+
+    expect(container.querySelector(".charCount")).toBeNull();
+  });
+
+  it("submits and resets search form parameters", () => {
     const onSearch = vi.fn();
     const onReset = vi.fn();
 
     render(<SearchForm onSearch={onSearch} onReset={onReset} />);
 
     const selects = screen.getAllByRole("combobox");
+    fireEvent.change(screen.getByPlaceholderText("Введіть ключові слова..."), {
+      target: { value: "конституція" },
+    });
 
-    await user.type(
-      screen.getByPlaceholderText("Введіть ключові слова..."),
-      "конституція",
-    );
     const dateInputs = screen.getAllByPlaceholderText("дд.мм.рррр");
-
-    await user.type(dateInputs[0], "10052026");
-    await user.type(dateInputs[1], "11052026");
-    await user.type(
-      screen.getByPlaceholderText("Код або номер акта..."),
-      "254",
-    );
-    await user.selectOptions(selects[1], "ЗАКОН УКРАЇНИ");
-    await user.selectOptions(selects[4], "title");
-    await user.click(screen.getByRole("button", { name: /Шукати/i }));
+    fireEvent.change(dateInputs[0], { target: { value: "10.05.2026" } });
+    fireEvent.change(dateInputs[1], { target: { value: "11.05.2026" } });
+    fireEvent.change(screen.getByPlaceholderText("Код або номер акта..."), {
+      target: { value: "254" },
+    });
+    fireEvent.change(selects[1], { target: { value: "ЗАКОН УКРАЇНИ" } });
+    fireEvent.change(selects[4], { target: { value: "title" } });
+    fireEvent.submit(screen.getByRole("button", { name: /Шукати/i }));
 
     expect(onSearch).toHaveBeenCalledWith({
       q: "конституція",
@@ -96,7 +148,7 @@ describe("interactive frontend components", () => {
       sort: "title",
     });
 
-    await user.click(screen.getByRole("button", { name: /Очистити/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Очистити/i }));
     expect(onReset).toHaveBeenCalledTimes(1);
   });
 

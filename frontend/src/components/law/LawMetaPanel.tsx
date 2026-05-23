@@ -1,14 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import type { Law } from "@/types";
-
+import type { Law, LawStats } from "@/types";
 import {
   ARTICLE_LIMIT_OPTIONS,
+  getNextLimitValue,
   parseLimitValue,
   toLimitParam,
-  getNextLimitValue,
-} from "@/lib/pageLimits";
+} from "@/lib/utils/pageLimits";
+import { getRoleColor } from "@/lib/tree";
+import { LawRiskBar } from "./LawRiskBar";
+import type { RiskLevel } from "@/lib/tree";
+
+const RISK_DOT_COLOR: Record<RiskLevel, string> = {
+  green: "#4a9e6b",
+  yellow: "#c8a843",
+  red: "#c0392b",
+};
+const RISK_LEVEL_LABEL: Record<RiskLevel, string> = {
+  green: "Норма",
+  yellow: "Помірна складність",
+  red: "Об’ємні статті",
+};
 import styles from "./LawMetaPanel.module.scss";
 
 interface LawMetaPanelProps {
@@ -20,6 +34,18 @@ interface LawMetaPanelProps {
   canLoadMore: boolean;
   selectedLimit: number | "all";
   onLimitChange: (value: number | "all") => void;
+  lawSubjects: Array<{
+    subject_id: string;
+    name: string;
+    role: string;
+    count: number;
+  }>;
+  selectedSubjectId: string | null;
+  onSubjectSelect: (value: string | null) => void;
+  stats?: LawStats | null;
+  activeRiskLevel?: RiskLevel | null;
+  onRiskLevelClick?: (level: RiskLevel) => void;
+  riskFilterCount?: number;
 }
 
 export function LawMetaPanel({
@@ -31,7 +57,16 @@ export function LawMetaPanel({
   canLoadMore,
   selectedLimit,
   onLimitChange,
+  lawSubjects,
+  selectedSubjectId,
+  onSubjectSelect,
+  stats,
+  activeRiskLevel,
+  onRiskLevelClick,
+  riskFilterCount,
 }: LawMetaPanelProps) {
+  const [subjectsQuery, setSubjectsQuery] = useState("");
+  const [showAllSubjects, setShowAllSubjects] = useState(false);
   return (
     <motion.section
       initial={{ opacity: 0, y: 14 }}
@@ -52,10 +87,148 @@ export function LawMetaPanel({
           {sectionsCount} розділів · {articleCount} статей
         </span>
       </div>
+      {stats && (
+        <LawRiskBar
+          stats={stats}
+          activeLevel={activeRiskLevel}
+          onLevelClick={onRiskLevelClick}
+        />
+      )}
+      {activeRiskLevel && riskFilterCount !== undefined && (
+        <div className={styles.riskFilterBadge}>
+          <span
+            className={styles.riskFilterDot}
+            style={{ background: RISK_DOT_COLOR[activeRiskLevel] }}
+          />
+          <span className={`mono ${styles.riskFilterLabel}`}>
+            {RISK_LEVEL_LABEL[activeRiskLevel]} · {riskFilterCount} статей
+          </span>
+          <button
+            type="button"
+            className={styles.riskFilterReset}
+            onClick={() => onRiskLevelClick?.(activeRiskLevel)}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {law?.status && (
         <div className={styles.lawStatus}>
           {law.status.charAt(0).toUpperCase() +
             law.status.slice(1).toLowerCase()}
+        </div>
+      )}
+      {lawSubjects.length > 0 && (
+        <div className={styles.subjectsBlock}>
+          <div className={styles.subjectsHeader}>
+            <div className={`eyebrow ${styles.subjectsLabel}`}>
+              Суб&apos;єкти · {lawSubjects.length}
+            </div>
+            <div className={styles.subjectsHeaderActions}>
+              <button
+                type="button"
+                className={styles.showAllSubjectsBtn}
+                onClick={() => setShowAllSubjects((v) => !v)}
+              >
+                {showAllSubjects
+                  ? "Скасувати"
+                  : `Показати всі · ${lawSubjects.length}`}
+              </button>
+              <div className={styles.subjectsSearchPill}>
+                <span className={styles.subjectsSearchIcon}>⌕</span>
+                <input
+                  type="text"
+                  className={styles.subjectsSearchInput}
+                  placeholder="Пошук..."
+                  value={subjectsQuery}
+                  onChange={(e) => setSubjectsQuery(e.target.value)}
+                />
+                {subjectsQuery && (
+                  <button
+                    type="button"
+                    className={styles.subjectsSearchClear}
+                    onClick={() => setSubjectsQuery("")}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          {(() => {
+            const DEFAULT_N = 8;
+            const filtered = subjectsQuery
+              ? lawSubjects.filter((s) =>
+                  s.name.toLowerCase().includes(subjectsQuery.toLowerCase()),
+                )
+              : lawSubjects;
+            const visible =
+              !showAllSubjects && !subjectsQuery
+                ? filtered.slice(0, DEFAULT_N)
+                : filtered;
+            return (
+              <>
+                <div className={styles.subjectsGrid}>
+                  {visible.map(({ subject_id, name, role }) => {
+                    const c = getRoleColor(role);
+                    const isActive = selectedSubjectId === subject_id;
+                    return (
+                      <button
+                        key={subject_id}
+                        type="button"
+                        className={`directory-chip mono ${styles.subjectChip} ${isActive ? styles.subjectChipActive : ""}`}
+                        style={{
+                          color: isActive ? c : c,
+                          background: isActive ? `${c}20` : `${c}0d`,
+                          borderColor: isActive ? `${c}c0` : `${c}40`,
+                        }}
+                        onClick={() =>
+                          onSubjectSelect(
+                            selectedSubjectId === subject_id
+                              ? null
+                              : subject_id,
+                          )
+                        }
+                      >
+                        {name}
+                      </button>
+                    );
+                  })}
+                </div>
+                {subjectsQuery && filtered.length === 0 && (
+                  <p className={styles.subjectsEmpty}>Нічого не знайдено</p>
+                )}
+                {selectedSubjectId && (
+                  <div className={styles.subjectsActions}>
+                    <button
+                      type="button"
+                      className={styles.scrollToArticlesBtn}
+                      onClick={() => {
+                        const el = document.querySelector(
+                          ".law-structure-list",
+                        );
+                        if (el)
+                          el.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
+                      }}
+                    >
+                      Перейти ↓
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.resetSubjectBtn}
+                      onClick={() => onSubjectSelect(null)}
+                    >
+                      ✕ скинути фільтр
+                    </button>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
       <p className={styles.lawDesc}>

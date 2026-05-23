@@ -464,6 +464,8 @@ input {
 .directory-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 8px;
   padding: 2px 8px;
   border-radius: 999px;
@@ -652,7 +654,25 @@ input {
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    color 0.14s ease,
+    opacity 0.14s ease;
+
+  &:hover {
+    color: #79a7ee;
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 1px solid rgba(121, 167, 238, 0.7);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .law-structure-node-text {

@@ -87,6 +87,49 @@ export const getLawById = async (id) => {
 };
 
 /**
+ * Returns general statistics for a law based on its elements.
+ * @param {string} lawId
+ * @returns {Promise<object>}
+ */
+export const getLawStats = async (lawId) => {
+  const elements = await Element.find({ lawId });
+  if (!elements || elements.length === 0) return null;
+
+  const totalElements = elements.length;
+  const totalChars = elements.reduce(
+    (acc, el) => acc + (el.chars_count || 0),
+    0,
+  );
+  const meanChars = totalChars / totalElements;
+
+  const variance =
+    elements.reduce(
+      (acc, el) => acc + Math.pow((el.chars_count || 0) - meanChars, 2),
+      0,
+    ) / totalElements;
+  const standardDeviation = Math.sqrt(variance);
+
+  // Group by risk level
+  const riskLevels = {
+    green: 0,
+    yellow: 0,
+    red: 0,
+    null: 0,
+  };
+  elements.forEach((el) => {
+    const level = el.risk_level || 'null';
+    riskLevels[level] = (riskLevels[level] || 0) + 1;
+  });
+
+  return {
+    totalElements,
+    meanChars,
+    standardDeviation,
+    riskLevels,
+  };
+};
+
+/**
  * Returns all Elements for a given law, sorted by order.
  * The tree structure is flat here; callers can build hierarchy client-side
  * or via buildTree() helper if needed.
@@ -140,11 +183,15 @@ export const upsertLaw = async (lawData) => {
     signatory,
     adoptedDate,
     documentType,
+    global_context,
   } = lawData;
   const update = { title, source, status, preamble, signatory };
+
   if (adoptedDate != null) update.adoptedDate = adoptedDate;
   if (documentType != null && documentType.length > 0)
     update.documentType = documentType;
+  if (global_context !== undefined) update.global_context = global_context;
+
   const law = await Law.findOneAndUpdate(
     { code },
     { $set: update },
@@ -178,6 +225,40 @@ export const deleteMissingElements = async (lawId, activeCodes) => {
   return await Element.deleteMany({
     lawId,
     code: { $nin: activeCodes },
+  });
+};
+
+/**
+ * BE-2 + BE-4: Recalculates law statistics from the actual DB state and
+ * updates the Law document. Excludes articles with "{...виключено...}" placeholder
+ * texts so that totalArticles reflects only currently active provisions.
+ *
+ * Must be called AFTER bulkUpsertElements + deleteMissingElements are complete.
+ *
+ * @param {string|mongoose.Types.ObjectId} lawId
+ * @returns {Promise<void>}
+ */
+export const updateLawStatsFromDb = async (lawId) => {
+  // Count only active articles — exclude records whose text is a "{...виключено...}"
+  // or "{...вилучено...}" placeholder left by the official amendment process.
+  const [totalArticles, totalSections, totalParagraphs] = await Promise.all([
+    Element.countDocuments({
+      lawId,
+      type: 'article',
+      $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
+    }),
+    Element.countDocuments({ lawId, type: 'section' }),
+    Element.countDocuments({
+      lawId,
+      type: 'paragraph',
+      $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
+    }),
+  ]);
+
+  await Law.findByIdAndUpdate(lawId, {
+    totalArticles,
+    totalSections,
+    totalParagraphs,
   });
 };
 

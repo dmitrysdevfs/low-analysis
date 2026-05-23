@@ -11,6 +11,7 @@ const MOTION_PROP_NAMES = new Set([
   "whileInView",
   "variants",
   "layout",
+  "layoutId",
   "drag",
   "dragConstraints",
   "dragElastic",

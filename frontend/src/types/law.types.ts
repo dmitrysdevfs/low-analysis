@@ -11,6 +11,18 @@ export interface Law {
   createdAt: string;
 }
 
+export interface LawStats {
+  totalElements: number;
+  meanChars: number;
+  standardDeviation: number;
+  riskLevels: {
+    green: number;
+    yellow: number;
+    red: number;
+    null: number;
+  };
+}
+
 export interface LawTreeResponse {
   law: Law;
   elements: TreeNode[];
@@ -36,4 +48,9 @@ export interface TreeNode {
   depth: number;
   order?: number;
   subjects?: { subject_id: string; role: string }[];
+  chars_count?: number;
+  subjects_count?: number;
+  z_score?: number;
+  factor?: number | null;
+  risk_level?: "green" | "yellow" | "red" | null;
 }

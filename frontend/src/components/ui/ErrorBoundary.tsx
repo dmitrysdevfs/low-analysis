@@ -1,6 +1,7 @@
 "use client";
 
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, Fragment, type ErrorInfo, type ReactNode } from "react";
+import styles from "./ErrorBoundary.module.scss";
 
 interface Props {
   children: ReactNode;
@@ -10,15 +11,16 @@ interface Props {
 interface State {
   hasError: boolean;
   message: string;
+  resetKey: number;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, message: "" };
+    this.state = { hasError: false, message: "", resetKey: 0 };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, message: error.message || "Невідома помилка" };
   }
 
@@ -27,7 +29,11 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, message: "" });
+    this.setState((s) => ({
+      hasError: false,
+      message: "",
+      resetKey: s.resetKey + 1,
+    }));
   };
 
   render() {
@@ -35,57 +41,16 @@ export class ErrorBoundary extends Component<Props, State> {
       if (this.props.fallback) return this.props.fallback;
 
       return (
-        <div
-          role="alert"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "40vh",
-            gap: "16px",
-            padding: "32px",
-            textAlign: "center",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "2.5rem",
-              color: "#c85a5a",
-              fontFamily: "var(--font-mono)",
-            }}
-          >
-            !
-          </span>
-          <p
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.9rem",
-              color: "#7a98c0",
-              maxWidth: "480px",
-            }}
-          >
-            {this.state.message}
-          </p>
-          <button
-            onClick={this.handleReset}
-            style={{
-              background: "transparent",
-              border: "1px solid #1c3260",
-              borderRadius: "8px",
-              color: "#d6e0f0",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.82rem",
-              padding: "8px 20px",
-              cursor: "pointer",
-            }}
-          >
+        <div role="alert" className={styles.shell}>
+          <span className={styles.icon}>!</span>
+          <p className={styles.message}>{this.state.message}</p>
+          <button onClick={this.handleReset} className={styles.resetButton}>
             Спробувати знову
           </button>
         </div>
       );
     }
 
-    return this.props.children;
+    return <Fragment key={this.state.resetKey}>{this.props.children}</Fragment>;
   }
 }

@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { roadmap } from "@/constants/homeContent";
 import { ROUTES } from "@/constants/routes";
@@ -11,19 +10,19 @@ import styles from "@/app/page.module.scss";
 export function RoadmapSection({
   laws,
   loading,
+  error,
 }: {
   laws: Law[];
   loading: boolean;
+  error?: string | null;
 }) {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.2 });
-
   return (
-    <section ref={ref} className={styles.roadmapSection}>
+    <section className={styles.roadmapSection}>
       <div className={styles.roadmapInner}>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.4 }}
           className={styles.roadmapHeader}
         >
@@ -38,25 +37,18 @@ export function RoadmapSection({
             <motion.div
               key={item.text}
               initial={{ opacity: 0, x: -16 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: index * 0.08, duration: 0.35 }}
-              className={styles.roadmapItem}
-              style={{
-                background: item.done ? "rgba(200,168,67,0.04)" : "transparent",
-                border: item.done
-                  ? "1px solid rgba(200,168,67,0.12)"
-                  : "1px solid transparent",
-              }}
+              className={`${styles.roadmapItem} ${item.done ? styles.roadmapItemDone : styles.roadmapItemPending}`}
             >
               <span
-                className={`mono ${styles.roadmapCheckmark}`}
-                style={{ color: item.done ? "#C8A843" : "#1C3260" }}
+                className={`mono ${styles.roadmapCheckmark} ${item.done ? styles.roadmapCheckmarkDone : styles.roadmapCheckmarkPending}`}
               >
                 {item.done ? "✓" : "○"}
               </span>
               <span
-                className={styles.roadmapItemText}
-                style={{ color: item.done ? "#D6E0F0" : "#7A98C0" }}
+                className={`${styles.roadmapItemText} ${item.done ? styles.roadmapItemTextDone : styles.roadmapItemTextPending}`}
               >
                 {item.text}
               </span>
@@ -66,7 +58,8 @@ export function RoadmapSection({
 
         <motion.div
           initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ delay: 0.7, duration: 0.4 }}
           className={styles.roadmapFooter}
         >
@@ -74,10 +67,16 @@ export function RoadmapSection({
             <p className={`display ${styles.roadmapFooterTitle}`}>
               {loading
                 ? "Завантаження…"
-                : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
+                : error
+                  ? "Не вдалося завантажити"
+                  : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
             </p>
             <p className={`mono ${styles.roadmapFooterMono}`}>
-              {loading ? "…" : laws.map((law) => law.code).join(" · ")}
+              {loading
+                ? "…"
+                : error
+                  ? "—"
+                  : laws.map((law) => law.code).join(" · ")}
             </p>
           </div>
           <Link href={ROUTES.laws} className={styles.roadmapFooterLink}>

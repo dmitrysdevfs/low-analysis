@@ -104,6 +104,32 @@
   letter-spacing: 0.07em;
 }
 
+.guestNotice {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 168, 67, 0.18);
+  background:
+    linear-gradient(135deg, rgba(200, 168, 67, 0.08), rgba(26, 62, 138, 0.12)),
+    rgba(8, 16, 32, 0.4);
+}
+
+.guestNoticeTitle {
+  font-family: var(--font-mono);
+  color: #f6df89;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.guestNoticeText {
+  color: #eef3fb;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
 .list {
   list-style: none;
   padding: 0;

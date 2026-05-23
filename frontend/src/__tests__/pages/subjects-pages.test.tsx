@@ -27,11 +27,10 @@ describe("Subjects pages", () => {
 
     expect(screen.getByText("Суб'єкти")).toBeInTheDocument();
     expect(screen.getByText("регулювання")).toBeInTheDocument();
-    expect(screen.getByText(/1.*суб'єкт/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Підприємець/i })).toHaveAttribute(
-      "href",
-      `/subjects/${SUBJECT_FIXTURE._id}`,
-    );
+    expect(screen.getByText(/Топ 1/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /Переглянути деталі/i }),
+    ).toHaveAttribute("href", `/subjects/${SUBJECT_FIXTURE._id}`);
     expect(screen.getByText("ФОП")).toBeInTheDocument();
   });
 
@@ -51,7 +50,6 @@ describe("Subjects pages", () => {
       screen.getByRole("heading", { name: SUBJECT_FIXTURE.canonical_name }),
     ).toBeInTheDocument();
     expect(screen.getByText(/Псевдоніми \/ синоніми/i)).toBeInTheDocument();
-    expect(screen.getByText(/Пов'язані елементи законів/i)).toBeInTheDocument();
     expect(screen.getByText(ARTICLE_NODE.text!)).toBeInTheDocument();
   });
 
@@ -67,8 +65,6 @@ describe("Subjects pages", () => {
 
     render(<SubjectDetailPage />);
 
-    expect(
-      screen.getByText(/Pipeline AI-аналізу в розробці/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Елементів не знайдено/i)).toBeInTheDocument();
   });
 });

@@ -1,6 +1,7 @@
 import * as lawService from '../services/lawService.js';
 import * as fetchService from '../services/fetchService.js';
 import { parseLawHtml } from '../services/parserService.js';
+import { performStatisticalAnalysis } from '../services/statisticalAnalysisService.js';
 
 const VALID_SORT_BY = ['date', 'title'];
 const VALID_SORT_ORDER = ['asc', 'desc'];
@@ -98,6 +99,19 @@ export const getLawTree = async (req, res, next) => {
   }
 };
 
+export const getLawStats = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const stats = await lawService.getLawStats(id);
+    if (!stats)
+      return res.status(404).json({ message: 'Stats not found for this law' });
+
+    res.json(stats);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getArticle = async (req, res, next) => {
   try {
     const { id, num } = req.params;
@@ -146,6 +160,7 @@ export const parseLawFromUrl = async (req, res, next) => {
       signatory: parsedData.signatory,
       adoptedDate: parsedData.adoptedDate,
       documentType: parsedData.documentType,
+      global_context: parsedData.global_context,
     });
 
     // 4. Attach lawId, generate _id, and link parentId
@@ -155,19 +170,19 @@ export const parseLawFromUrl = async (req, res, next) => {
     await lawService.bulkUpsertElements(elementsToSave);
     await lawService.deleteMissingElements(law._id, activeCodes);
 
-    // 5. Update law stats
-    let articleCount = 0;
-    let sectionCount = 0;
-    for (const el of parsedData.elements) {
-      if (el.type === 'article') {
-        articleCount++;
-      } else if (el.type === 'section') {
-        sectionCount++;
-      }
+    // 5. Update law stats from the actual DB state (BE-2).
+    // This runs AFTER bulk write + delete so counts reflect reality,
+    // and filters out "{...виключено...}" placeholders (BE-4 Option B).
+    await lawService.updateLawStatsFromDb(law._id);
+
+    // 6. Calculate statistical metrics
+    try {
+      await performStatisticalAnalysis(law._id);
+    } catch (statsError) {
+      console.warn(
+        `[WARN] Failed to calculate statistics for law ${law._id}: ${statsError.message}`,
+      );
     }
-    law.totalArticles = articleCount;
-    law.totalSections = sectionCount;
-    await law.save();
 
     res.json({
       message: 'Law successfully parsed and saved',

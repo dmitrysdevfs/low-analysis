@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   countNestedNodes,
@@ -9,33 +9,71 @@ import {
   getArticleRouteNumber,
   getArticleTitle,
   type TreeBranch,
-} from "@/lib/lawTree";
+} from "@/lib/tree";
 import { ROUTES } from "@/constants/routes";
 import { NestedNodeList } from "./LawStructureListNodes";
+import { useNotes } from "@/hooks/useNotes";
+import type { Subject } from "@/types";
+import styles from "./LawStructureList.module.scss";
 
 export function ArticleEntry({
   article,
   lawId,
+  lawTitle,
   highlightSubjectId,
+  subjectsMap,
 }: {
   article: TreeBranch;
   lawId: string;
+  lawTitle?: string;
   highlightSubjectId?: string | null;
+  subjectsMap?: Map<string, Subject>;
 }) {
   const [open, setOpen] = useState(!!highlightSubjectId);
-  const [prevHighlightId, setPrevHighlightId] = useState(highlightSubjectId);
+  const articleRef = useRef<HTMLElement>(null);
 
-  if (highlightSubjectId !== prevHighlightId) {
-    setPrevHighlightId(highlightSubjectId);
+  useEffect(() => {
     if (highlightSubjectId) {
       setOpen(true);
     }
-  }
+  }, [highlightSubjectId]);
+
+  const { hasArticleNote } = useNotes();
   const nestedCount = countNestedNodes(article);
   const routeNumber = getArticleRouteNumber(article);
+  const riskLevel = article.risk_level ?? null;
+  const hasNote = hasArticleNote(lawId, String(routeNumber ?? ""));
+
+  // Native addEventListener bypasses Framer Motion's pointer capture
+  useEffect(() => {
+    const el = articleRef.current;
+    if (!el) return;
+
+    el.setAttribute("draggable", "true");
+
+    function handleDragStart(e: DragEvent) {
+      if (!e.dataTransfer) return;
+      e.dataTransfer.setData(
+        "application/law-article",
+        JSON.stringify({
+          lawId,
+          lawTitle: lawTitle ?? "",
+          articleNum: String(routeNumber ?? ""),
+          articleTitle: article.title ?? "",
+        }),
+      );
+      e.dataTransfer.effectAllowed = "copy";
+    }
+
+    el.addEventListener("dragstart", handleDragStart);
+    return () => {
+      el.removeEventListener("dragstart", handleDragStart);
+    };
+  }, [lawId, lawTitle, routeNumber, article.title]);
 
   return (
     <motion.article
+      ref={articleRef}
       layout
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -48,16 +86,44 @@ export function ArticleEntry({
           <div className="law-structure-article-label mono">
             {getArticleBadge(article)}
           </div>
+          {riskLevel && (
+            <span
+              className={`${styles.riskDot} ${styles[`risk${riskLevel.charAt(0).toUpperCase()}${riskLevel.slice(1)}`]}`}
+              title={
+                riskLevel === "red"
+                  ? "Об'ємна стаття"
+                  : riskLevel === "yellow"
+                    ? "Помірна складність"
+                    : "Норма"
+              }
+            />
+          )}
           {routeNumber ? (
             <Link
               className="law-structure-article-link display"
               href={ROUTES.article(lawId, routeNumber)}
             >
               {getArticleTitle(article)}
+              {hasNote ? (
+                <span
+                  title="Є нотатка"
+                  style={{ marginLeft: 6, fontSize: "0.75rem" }}
+                >
+                  📝
+                </span>
+              ) : null}
             </Link>
           ) : (
             <div className="law-structure-article-link display">
               {getArticleTitle(article)}
+              {hasNote ? (
+                <span
+                  title="Є нотатка"
+                  style={{ marginLeft: 6, fontSize: "0.75rem" }}
+                >
+                  📝
+                </span>
+              ) : null}
             </div>
           )}
         </div>
@@ -87,6 +153,10 @@ export function ArticleEntry({
             <NestedNodeList
               nodes={article.children}
               highlightSubjectId={highlightSubjectId}
+              subjectsMap={subjectsMap}
+              lawId={lawId}
+              lawTitle={lawTitle}
+              articleNum={String(routeNumber ?? "")}
             />
           </motion.div>
         ) : null}

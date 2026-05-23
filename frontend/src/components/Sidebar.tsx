@@ -1,6 +1,7 @@
 import { useSubjects } from "@/hooks/useSubjects";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { highlightMatch } from "@/lib/utils/highlightMatch";
 
 export interface SidebarSubject {
   _id: string;
@@ -28,8 +29,8 @@ export default function Sidebar({
     error: fetchError,
   } = useSubjects();
 
-  const subjects = subjectsList ?? fetchedSubjects;
-  const loading = isLoading ?? (subjectsList ? false : fetchLoading);
+  const loading = isLoading ?? fetchLoading;
+  const subjects = subjectsList !== undefined ? subjectsList : fetchedSubjects;
   const error = subjectsList ? null : fetchError;
 
   const sortedSubjects = useMemo(() => {
@@ -54,26 +55,9 @@ export default function Sidebar({
         ? sortedSubjects
         : sortedSubjects.slice(0, 10);
 
-  const highlightMatch = (text: string, query: string) => {
-    if (!query.trim()) return text;
-
-    const regex = new RegExp(`(${query})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} className="font-semibold text-[#c8a843]">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
   if (loading) {
     return (
-      <aside className="sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
+      <aside className="sm:sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
         <div className="text-sm text-gray-400 animate-pulse">
           Завантаження...
         </div>
@@ -83,7 +67,7 @@ export default function Sidebar({
 
   if (error) {
     return (
-      <aside className="sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
+      <aside className="sm:sticky top-[120px] self-start w-full sm:max-w-80 pl-10 pt-10">
         <div className="text-sm text-red-500">
           Сталась помилка при завантаженні даних
         </div>
@@ -92,7 +76,7 @@ export default function Sidebar({
   }
 
   return (
-    <aside className="sticky top-[120px] self-start w-full sm:max-w-70 lg:max-w-80 shrink-0 lg:pt-18 md:pt-14 pt-10 lg:pl-10 md:pl-8 pl-6 pr-6 sm:pr-1">
+    <aside className="sm:sticky  self-start w-full sm:max-w-70 lg:max-w-80 shrink-0 lg:pt-18 md:pt-14 pt-10 lg:pl-10 md:pl-8 pl-6 pr-6 sm:pr-1">
       <div className="relative">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -149,7 +133,7 @@ export default function Sidebar({
                     : "text-[#7a98c0] hover:text-[#c8a843] hover:bg-[#1c3260]"
                 }`}
               >
-                {highlightMatch(subject.canonical_name, search)}
+                {highlightMatch(subject.canonical_name, search ? [search] : [])}
               </li>
             ))}
           </ul>

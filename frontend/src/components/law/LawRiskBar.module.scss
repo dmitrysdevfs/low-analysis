@@ -1,0 +1,170 @@
+.wrap {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(28, 50, 96, 0.55);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.label {
+  margin-bottom: 0;
+}
+
+.meta {
+  font-size: 0.6rem;
+  color: var(--color-smoke);
+  letter-spacing: 0.05em;
+}
+
+/* ── Bar ── */
+.bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  gap: 2px;
+  background: rgba(28, 50, 96, 0.4);
+}
+
+.seg {
+  height: 100%;
+  border-radius: 2px;
+  transition:
+    width 0.4s ease,
+    filter 0.2s,
+    opacity 0.2s;
+  border: none;
+  padding: 0;
+  outline: none;
+}
+
+.segGreen {
+  background: #4a9e6b;
+}
+.segYellow {
+  background: var(--color-gold, #c8a843);
+}
+.segRed {
+  background: #c0392b;
+}
+
+.segClickable {
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.25);
+  }
+}
+
+.segActive {
+  filter: brightness(1.3);
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 1px;
+  border-radius: 3px;
+}
+
+.segDimmed {
+  opacity: 0.35;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* Non-interactive legend item */
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Interactive legend button */
+.legendBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    opacity 0.15s;
+
+  &:hover {
+    border-color: rgba(122, 152, 192, 0.5);
+    background: rgba(255, 255, 255, 0.055);
+  }
+}
+
+.legendBtnActive {
+  border-color: rgba(200, 168, 67, 0.55);
+  background: rgba(200, 168, 67, 0.07);
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.8);
+  }
+}
+
+.legendBtnDimmed {
+  opacity: 0.45;
+}
+
+.dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotGreen {
+  background: #4a9e6b;
+}
+.dotYellow {
+  background: var(--color-gold, #c8a843);
+}
+.dotRed {
+  background: #c0392b;
+}
+
+.legendLabel {
+  font-size: 0.65rem;
+  color: #c7d5ea;
+  font-weight: 500;
+}
+
+.legendCount {
+  font-size: 0.62rem;
+  color: var(--color-smoke);
+  background: rgba(122, 152, 192, 0.1);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.legendHint {
+  font-size: 0.58rem;
+  color: var(--color-smoke);
+  opacity: 0.7;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 480px) {
+  .legendHint {
+    display: none;
+  }
+}

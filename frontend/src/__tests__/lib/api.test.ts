@@ -33,7 +33,10 @@ describe("frontend API client", () => {
     });
 
     await expect(getLaws()).resolves.toEqual([LAW_FIXTURE]);
-    expect(fetchMock).toHaveBeenCalledWith("/api/laws");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/laws",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it("trims and encodes the search query when requesting laws", async () => {
@@ -46,6 +49,7 @@ describe("frontend API client", () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       `/api/laws?q=${encodeURIComponent("конституція україни")}`,
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
   });
 
@@ -70,7 +74,10 @@ describe("frontend API client", () => {
     await expect(getLawTree(LAW_FIXTURE._id)).resolves.toEqual(
       LAW_TREE_RESPONSE_FIXTURE,
     );
-    expect(fetchMock).toHaveBeenCalledWith(`/api/laws/${LAW_FIXTURE._id}/tree`);
+    expect(fetchMock).toHaveBeenCalledWith(
+      `/api/laws/${LAW_FIXTURE._id}/tree`,
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it("requests a single article by law id and article number", async () => {
@@ -82,7 +89,10 @@ describe("frontend API client", () => {
     await expect(getArticle("law-1", "1")).resolves.toEqual(
       ARTICLE_RESPONSE_FIXTURE,
     );
-    expect(fetchMock).toHaveBeenCalledWith("/api/laws/law-1/articles/1");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/laws/law-1/articles/1",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it("requests subjects and subject elements", async () => {
@@ -101,10 +111,15 @@ describe("frontend API client", () => {
       SUBJECT_ELEMENTS_FIXTURE,
     );
 
-    expect(fetchMock).toHaveBeenNthCalledWith(1, "/api/subjects");
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      "/api/subjects",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
       `/api/subjects/${SUBJECT_FIXTURE._id}/elements`,
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
   });
 

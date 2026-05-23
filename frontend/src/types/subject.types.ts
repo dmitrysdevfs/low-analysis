@@ -5,6 +5,9 @@ export interface Subject {
   canonical_name: string;
   legal_status: string;
   aliases: string[];
+  description?: string | null;
+  laws_count?: number;
+  elements_count?: number;
   createdAt: string;
 }
 

@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { extractDefinitions } from '../utils/definitionExtractor.js';
 
 // ─── CSS class → element type mapping ────────────────────────────────────────
 // Based on analysis of zakon.rada.gov.ua HTML structure:
@@ -13,6 +14,18 @@ const ARTICLE_CLASS = 'rvps2'; // <p class="rvps2"> — Стаття + част�
 const TITLE_SPAN = 'rvts78'; // <span class="rvts78"> — law title
 const SECTION_SPAN = 'rvts15'; // <span class="rvts15"> — section text
 const ARTICLE_SPAN = 'rvts9'; // <span class="rvts9"> — "Стаття N."
+
+/**
+ * Checks if a table element represents a signatory block (like President, Prime Minister, etc.).
+ * @param {import('cheerio').Cheerio<import('domhandler').Element>} $table - The table element wrapper
+ * @returns {boolean} True if this table is a signatory table, false otherwise
+ */
+export const isSignatoryTable = ($table) => {
+  const tableText = $table.text().toLowerCase();
+  const signatoryKeywordsRegex =
+    /(президент|голова верховної ради|прем['’\-—]міністр)/i;
+  return signatoryKeywordsRegex.test(tableText);
+};
 
 /**
  * Parses the .frame HTML from zakon.rada.gov.ua into a structured law object.
@@ -97,32 +110,95 @@ export const parseLawHtml = (html, mainHtml = null) => {
   // We iterate over all <p> tags inside #article
   $('#article p').each((_, el) => {
     const $p = $(el);
-    const anchor = $p.find('a[data-tree]').first();
-    const text = $p.text().trim();
 
-    if (!anchor.length) {
-      if (text && text.length > 0 && !text.startsWith('{')) {
-        if (!hasHitFirstDataTree) {
-          // It's before the first structured element, might be preamble
-          preambleText.push(text);
-        } else {
-          // It's after the first structured element but has no data-tree.
-          // We keep a rolling buffer of the last few elements for the signatory block.
-          // If a new valid element comes, we clear this buffer.
-          signatoryText.push(text);
-        }
-      }
+    // Skip paragraphs nested inside table elements to prevent table cell text leaking into signatory or elements,
+    // EXCEPT when the table is a signatory block (contains President, Chairman, PM, etc.)
+    const $table = $p.closest('table');
+    if ($table.length > 0 && !isSignatoryTable($table)) {
       return;
     }
 
-    const dataTree = anchor.attr('data-tree') || '';
-    const anchorName = anchor.attr('name') || '';
+    const anchor = $p.find('a[data-tree]').first();
+    const text = $p.text().trim();
 
-    // Skip editorial comments (cm_N:...)
-    if (dataTree.startsWith('cm_') || dataTree.startsWith('nz_')) return;
+    const dataTree = anchor.length ? anchor.attr('data-tree') || '' : '';
+    const anchorName = anchor.length ? anchor.attr('name') || '' : '';
 
-    hasHitFirstDataTree = true;
-    signatoryText = []; // Clear signatory buffer because we found a real element
+    // A real body element (section, article, or sub-element) signals the end of the preamble zone
+    const isBodyElement =
+      dataTree.startsWith('rz') ||
+      dataTree.startsWith('st') ||
+      dataTree.startsWith('kg') ||
+      dataTree.startsWith('kn') || // Book structures like kn_1 or knpersha_1
+      dataTree.startsWith('gl') ||
+      dataTree.includes(':st') ||
+      text.toLowerCase().startsWith('книга ') ||
+      text.toLowerCase().startsWith('глава ') ||
+      text.toLowerCase().startsWith('розділ ') ||
+      text.toLowerCase().startsWith('загальна частина') ||
+      text.toLowerCase().startsWith('особлива частина');
+
+    if (isBodyElement) {
+      hasHitFirstDataTree = true;
+      signatoryText = []; // Clear signatory buffer because we found a real body element
+    }
+
+    if (!hasHitFirstDataTree) {
+      // In the preamble zone, we collect descriptive text paragraphs.
+      // We skip editorial remarks, law title, and law type header.
+      const isEditorial = text.startsWith('{') || dataTree.startsWith('cm_');
+      const isLawTitleOrType =
+        dataTree.startsWith('ty') || dataTree.startsWith('nz');
+
+      // Skip generic document type headers, law titles, and publication metadata
+      const lowerText = text.toLowerCase().trim();
+      const cleanTitle = title ? title.toLowerCase().trim() : '';
+      const normalizedText = lowerText.replace(/\s+/g, ' ');
+      const normalizedTitle = cleanTitle.replace(/\s+/g, ' ');
+
+      const isDocHeader =
+        normalizedText === 'закон україни' ||
+        normalizedText === 'конституція україни' ||
+        normalizedText === 'кодекс україни' ||
+        normalizedText.endsWith('кодекс україни') ||
+        normalizedText.startsWith('кодекс україни') ||
+        normalizedText === normalizedTitle ||
+        (normalizedTitle &&
+          normalizedText.replace('закон україни', '').trim() ===
+            normalizedTitle);
+
+      const isPublicationInfo =
+        text.startsWith('(') &&
+        (lowerText.includes('відомості верховної ради') ||
+          lowerText.includes('офіційний вісник') ||
+          lowerText.includes('урядовий кур'));
+
+      if (
+        text &&
+        text.length > 0 &&
+        !isEditorial &&
+        !isLawTitleOrType &&
+        !isDocHeader &&
+        !isPublicationInfo
+      ) {
+        preambleText.push(text);
+      }
+      // Non-body elements in this zone (like headers, comments, or actual preamble text)
+      // are not part of the structured sections/articles list.
+      if (!isBodyElement) {
+        return;
+      }
+    } else {
+      // Once we are in the body zone:
+      if (!anchor.length) {
+        if (text && text.length > 0 && !text.startsWith('{')) {
+          signatoryText.push(text);
+        }
+        return;
+      }
+
+      if (dataTree.startsWith('cm_') || dataTree.startsWith('nz_')) return;
+    }
 
     const pClass = $p.attr('class') || '';
 
@@ -196,10 +272,13 @@ export const parseLawHtml = (html, mainHtml = null) => {
     }
 
     // ── Generic Child Element (Частини, Пункти, Підпункти, Абзаци) ───────────
-    if (pClass === ARTICLE_CLASS && dataTree.includes(':st')) {
+    // BE-3: Use dataTree.includes(':') instead of ':st' to also capture elements
+    // that belong directly to sections (e.g., Розділ XVII of the Market Law has
+    // data-tree like "pu1:rz17", "ch_1:pu1:rz17" — no ":st" prefix).
+    if (pClass === ARTICLE_CLASS && dataTree.includes(':')) {
       const parts = dataTree.split(':');
-      const articleStr = parts.pop(); // typically 'st5' or 'st129'
-      const childParts = parts.reverse(); // e.g. ['pu1', 'pp1']
+      const articleStr = parts.pop(); // last segment: 'st5', 'rz17', 'pu1', etc.
+      const childParts = parts.reverse(); // e.g. ['pu1', 'pp1'] or ['ch_1', 'pu1']
       const text = $p.text().trim();
       if (!text) return;
 
@@ -212,7 +291,13 @@ export const parseLawHtml = (html, mainHtml = null) => {
           : code
             ? code
             : '';
-        baseCode = sectionBase ? `${sectionBase}.${articleStr}` : articleStr;
+        // BE-3: Avoid double-prefix when sectionBase already ends with articleStr
+        // e.g. sectionBase = '2019-19.rz17', articleStr = 'rz17' → keep sectionBase as-is
+        if (sectionBase && sectionBase.endsWith(`.${articleStr}`)) {
+          baseCode = sectionBase;
+        } else {
+          baseCode = sectionBase ? `${sectionBase}.${articleStr}` : articleStr;
+        }
       }
 
       const partCode = [baseCode, ...childParts].join('.');
@@ -247,9 +332,13 @@ export const parseLawHtml = (html, mainHtml = null) => {
         } else {
           elementType = 'paragraph';
         }
-        const numberMatch = leafNodeStr.match(/\d+/);
+        const numberMatch = leafNodeStr ? leafNodeStr.match(/\d+/) : null;
         partNumber = numberMatch ? numberMatch[0] : '';
       }
+
+      // BE-1: Increment global order counter for every child element so that
+      // each element in the law gets a unique, strictly-increasing sequence number.
+      order++;
       elements.push({
         type: elementType,
         code: partCode,
@@ -267,6 +356,12 @@ export const parseLawHtml = (html, mainHtml = null) => {
   const preamble = preambleText.length > 0 ? preambleText.join('\n') : null;
   const signatory = signatoryText.length > 0 ? signatoryText.join('\n') : null;
 
+  const definitions = extractDefinitions(elements);
+  const global_context = {
+    preamble,
+    definitions,
+  };
+
   return {
     title,
     code,
@@ -276,5 +371,6 @@ export const parseLawHtml = (html, mainHtml = null) => {
     signatory,
     adoptedDate,
     documentType,
+    global_context,
   };
 };

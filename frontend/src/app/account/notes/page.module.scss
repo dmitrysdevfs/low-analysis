@@ -1,0 +1,385 @@
+.wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.heading {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #7a98c0;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+/* ── Filter chips ──────────────────────────────────────── */
+
+.filterBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #1c3260;
+  background: transparent;
+  color: #d6e0f0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.4);
+    color: #fff;
+  }
+}
+
+.chipActive {
+  border-color: #c8a843;
+  color: #c8a843;
+  background: rgba(200, 168, 67, 0.08);
+}
+
+/* ── Note list ─────────────────────────────────────────── */
+
+.noteList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: stretch;
+}
+
+.noteCard {
+  background: #0d1c3a;
+  border: 1px solid #1c3260;
+  border-left: 4px solid var(--note-color, #c8a843);
+  border-radius: 12px;
+  padding: 16px 20px;
+  position: relative;
+  transition: border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.3);
+    border-left-color: var(--note-color, #c8a843);
+  }
+
+  &:hover .deleteBtn {
+    opacity: 1;
+  }
+}
+
+.noteBody {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Note content ──────────────────────────────────────── */
+
+.noteType {
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7a98c0;
+  margin: 0 0 6px;
+}
+
+.noteArticleTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #d6e0f0;
+  margin: 0 0 8px;
+}
+
+.noteSource {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #7a98c0;
+  margin: 0 0 8px;
+}
+
+.noteSourceLabel {
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4a6080;
+  white-space: nowrap;
+}
+
+.noteBlockquote {
+  border-left: 2px solid currentColor;
+  padding-left: 10px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0 0 8px;
+}
+
+.noteText {
+  color: #eef3fb;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.expandBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--note-color, #c8a843);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.75;
+  }
+}
+
+/* ── Note footer ───────────────────────────────────────── */
+
+.noteFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+/* ── Expand modal ──────────────────────────────────────── */
+
+.expandOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(4, 10, 24, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.expandModal {
+  background: #0d1c3a;
+  border: 1px solid #1c3260;
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 620px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+.expandModalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: 1px solid #1c3260;
+  color: #7a98c0;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: #c8a843;
+    color: #c8a843;
+  }
+}
+
+.expandModalText {
+  color: #eef3fb;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin: 12px 0 0;
+}
+
+.confirmModal {
+  background: #0d1c3a;
+  border: 1px solid #1c3260;
+  border-radius: 14px;
+  padding: 28px 32px;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+.confirmText {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.confirmSub {
+  font-size: 0.82rem;
+  color: #7a98c0;
+  margin: 0 0 24px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.confirmCancel {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid #1c3260;
+  background: transparent;
+  color: #d6e0f0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: #4a6080;
+    color: #fff;
+  }
+}
+
+.confirmDelete {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  background: rgba(255, 80, 80, 0.08);
+  color: #ff7070;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(255, 80, 80, 0.18);
+    border-color: #ff5050;
+  }
+}
+
+.expandModalBlockquote {
+  border-left: 3px solid var(--note-color, #c8a843);
+  padding-left: 14px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--note-color, #c8a843);
+  margin: 8px 0 0;
+}
+
+.noteDate {
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+  font-size: 0.68rem;
+  color: #7a98c0;
+}
+
+.openBtn {
+  font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+  font-size: 0.68rem;
+  color: #c8a843;
+  text-decoration: none;
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  border-radius: 6px;
+  padding: 3px 10px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.1);
+    border-color: #c8a843;
+    color: #e0bc5a;
+  }
+}
+
+/* ── Delete button ─────────────────────────────────────── */
+
+.deleteBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  opacity: 0;
+  background: transparent;
+  border: none;
+  color: #7a98c0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+  padding: 4px 6px;
+  line-height: 1;
+
+  &:hover {
+    color: #ff7070;
+  }
+}
+
+/* ── Empty state ───────────────────────────────────────── */
+
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+  color: #7a98c0;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+  color: #1c3260;
+}
+
+.emptyText {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 40ch;
+  margin: 0 auto;
+
+  a {
+    color: #c8a843;
+    text-decoration: underline;
+
+    &:hover {
+      color: #e0bc5a;
+    }
+  }
+}

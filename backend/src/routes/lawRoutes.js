@@ -2,6 +2,7 @@ import express from 'express';
 import {
   getAllLaws,
   getLawTree,
+  getLawStats,
   getArticle,
   parseLawFromUrl,
 } from '../controllers/lawController.js';
@@ -151,6 +152,29 @@ router.get('/', getAllLaws);
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/:id/tree', getLawTree);
+
+/**
+ * @swagger
+ * /api/laws/{id}/stats:
+ *   get:
+ *     tags: [Laws]
+ *     summary: Загальна статистика закону
+ *     description: Повертає загальну статистику закону (кількість елементів, середню кількість символів, стандартне відхилення та розподіл за рівнями ризику)
+ *     parameters:
+ *       - $ref: '#/components/parameters/LawId'
+ *     responses:
+ *       200:
+ *         description: Статистика закону
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LawStats'
+ *       404:
+ *         description: Статистика не знайдена
+ *       500:
+ *         description: Помилка сервера
+ */
+router.get('/:id/stats', getLawStats);
 
 /**
  * @swagger

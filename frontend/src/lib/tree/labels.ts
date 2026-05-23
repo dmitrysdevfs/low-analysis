@@ -1,6 +1,20 @@
 import type { TreeNode } from "@/types";
 import { normalizeText, stripLeadingArticleLabel } from "./helpers";
 
+export const ROLE_COLORS: Record<string, string> = {
+  actor: "#c8a843",
+  regulator: "#4a80d4",
+  target_of_control: "#d4874a",
+  recipient: "#4aad7a",
+  protected_party: "#9b5cd4",
+  issuer_of_regulations: "#4ab8d4",
+  other: "#7a98c0",
+};
+
+export function getRoleColor(role: string): string {
+  return ROLE_COLORS[role.toLowerCase()] ?? ROLE_COLORS.other;
+}
+
 const ROLE_LABELS: Record<string, string> = {
   actor: "Суб'єкт",
   target_of_control: "Об'єкт контролю",
@@ -108,8 +122,72 @@ export function getRoleLabel(role: string): string {
   return ROLE_LABELS[role.toLowerCase()] ?? role;
 }
 
+export const LEGAL_STATUS_LABELS: Record<string, string> = {
+  executive_body: "Виконавчий орган",
+  official: "Посадова особа",
+  legal_entity: "Юридична особа",
+  individual: "Фізична особа",
+  self_regulatory_org: "Саморегулівна організація",
+  other: "Інше",
+};
+
+export const LEGAL_STATUS_COLORS: Record<string, string> = {
+  executive_body: "#4a80d4",
+  official: "#c8a843",
+  legal_entity: "#4aad7a",
+  individual: "#9b5cd4",
+  self_regulatory_org: "#4ab8d4",
+  other: "#7a98c0",
+};
+
+export function getLegalStatusLabel(status: string): string {
+  return LEGAL_STATUS_LABELS[status] ?? status;
+}
+
+export function getLegalStatusColor(status: string): string {
+  return LEGAL_STATUS_COLORS[status] ?? LEGAL_STATUS_COLORS.other;
+}
+
 export function getTypeLabel(type: string): string {
   return TYPE_LABELS[type as TreeNode["type"]] ?? type;
+}
+
+export function sanitizeAnchor(code: string): string {
+  return code.replace(/[.:]/g, "-");
+}
+
+export function formatCitation(opts: {
+  badge: string;
+  text: string;
+  charCount: number;
+  subjectLinks: { name: string; id: string }[];
+  lawId: string;
+  articleNum: string;
+  lawTitle: string;
+  code: string;
+}): string {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const anchor = sanitizeAnchor(opts.code);
+  const url = `${origin}/laws/${opts.lawId}/articles/${opts.articleNum}#${anchor}`;
+
+  const subjectsLine = opts.subjectLinks.length
+    ? `Суб'єкти: ${opts.subjectLinks.map((s) => s.name).join(", ")}`
+    : "Суб'єктів не знайдено";
+
+  const lines = [
+    `§ ${opts.badge} — ${opts.text}`,
+    `Символів: ${opts.charCount}`,
+    subjectsLine,
+  ];
+
+  if (opts.subjectLinks.length) {
+    lines.push(
+      `Профілі: ${opts.subjectLinks.map((s) => `${origin}/subjects/${s.id}`).join(", ")}`,
+    );
+  }
+
+  lines.push(`Посилання: ${url}`, `Закон: ${opts.lawTitle}`);
+  return lines.join("\n");
 }
 
 export function parseElementCode(code: string): {
