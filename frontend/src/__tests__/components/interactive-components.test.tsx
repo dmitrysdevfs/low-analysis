@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { AuthProvider } from "@/components/auth/AuthProvider";
@@ -112,34 +112,30 @@ describe("interactive frontend components", () => {
 
     const { container } = render(<NestedNodeList nodes={[branch]} />);
 
-    // charCount span has mono class — should not appear for nodes without text
     expect(container.querySelector(".charCount")).toBeNull();
   });
 
-  it("submits and resets search form parameters", async () => {
-    const user = userEvent.setup();
+  it("submits and resets search form parameters", () => {
     const onSearch = vi.fn();
     const onReset = vi.fn();
 
     render(<SearchForm onSearch={onSearch} onReset={onReset} />);
 
     const selects = screen.getAllByRole("combobox");
-
-    await user.type(
+    fireEvent.change(
       screen.getByPlaceholderText("Введіть ключові слова..."),
-      "конституція",
+      { target: { value: "конституція" } },
     );
-    const dateInputs = screen.getAllByPlaceholderText("дд.мм.рррр");
 
-    await user.type(dateInputs[0], "10052026");
-    await user.type(dateInputs[1], "11052026");
-    await user.type(
-      screen.getByPlaceholderText("Код або номер акта..."),
-      "254",
-    );
-    await user.selectOptions(selects[1], "ЗАКОН УКРАЇНИ");
-    await user.selectOptions(selects[4], "title");
-    await user.click(screen.getByRole("button", { name: /Шукати/i }));
+    const dateInputs = screen.getAllByPlaceholderText("дд.мм.рррр");
+    fireEvent.change(dateInputs[0], { target: { value: "10.05.2026" } });
+    fireEvent.change(dateInputs[1], { target: { value: "11.05.2026" } });
+    fireEvent.change(screen.getByPlaceholderText("Код або номер акта..."), {
+      target: { value: "254" },
+    });
+    fireEvent.change(selects[1], { target: { value: "ЗАКОН УКРАЇНИ" } });
+    fireEvent.change(selects[4], { target: { value: "title" } });
+    fireEvent.submit(screen.getByRole("button", { name: /Шукати/i }));
 
     expect(onSearch).toHaveBeenCalledWith({
       q: "конституція",
@@ -153,7 +149,7 @@ describe("interactive frontend components", () => {
       sort: "title",
     });
 
-    await user.click(screen.getByRole("button", { name: /Очистити/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Очистити/i }));
     expect(onReset).toHaveBeenCalledTimes(1);
   });
 

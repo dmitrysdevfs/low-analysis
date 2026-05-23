@@ -1,6 +1,7 @@
 export const ROUTES = {
   home: "/",
   laws: "/laws",
+  analysis: "/analysis",
   subjects: "/subjects",
   search: "/search",
   admin: "/admin",
@@ -20,6 +21,11 @@ export const ROUTES = {
   accountNotes: "/account/notes",
   legal: "/legal",
   law: (id: string) => `/laws/${id}`,
+  analysisLaw: (id: string) => `/analysis/laws/${id}`,
   article: (id: string, num: string) => `/laws/${id}/articles/${num}`,
   subject: (id: string) => `/subjects/${id}`,
+  help: "/help",
+  helpArticle: (slug: string) => `/help/${slug}`,
+  adminHelp: "/admin/help",
+  adminHelpArticle: (slug: string) => `/admin/help/${slug}`,
 } as const;
