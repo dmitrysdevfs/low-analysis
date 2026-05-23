@@ -17,8 +17,17 @@ interface Filters {
 }
 
 export function useLawAnalysis(lawId?: string, filters?: Filters) {
-  const { law, tree, loading: treeLoading, error: treeError } = useLawTree(lawId);
-  const { stats, loading: statsLoading, error: statsError } = useLawStats(lawId);
+  const {
+    law,
+    tree,
+    loading: treeLoading,
+    error: treeError,
+  } = useLawTree(lawId);
+  const {
+    stats,
+    loading: statsLoading,
+    error: statsError,
+  } = useLawStats(lawId);
   const {
     subjectsMap,
     loading: subjectsLoading,

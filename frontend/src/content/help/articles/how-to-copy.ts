@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "how-to-copy",
   title: "Як скопіювати цитату з пункту",
-  summary: "Кнопка ⧉ копіює текст елемента разом із посиланням на закон та список суб'єктів.",
+  summary:
+    "Кнопка ⧉ копіює текст елемента разом із посиланням на закон та список суб'єктів.",
   category: "Статті",
   audience: "user",
   updatedAt: "2026-05-23",

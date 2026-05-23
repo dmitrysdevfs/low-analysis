@@ -37,7 +37,12 @@ function CustomTooltip({
   label,
 }: {
   active?: boolean;
-  payload?: Array<{ name?: string; value?: number; payload?: unknown; color?: string }>;
+  payload?: Array<{
+    name?: string;
+    value?: number;
+    payload?: unknown;
+    color?: string;
+  }>;
   label?: string;
 }) {
   if (!active || !payload?.length) return null;
@@ -130,11 +135,7 @@ export function GlobalTimelineChart({
   );
 }
 
-export function GlobalTopLawsChart({
-  rows,
-}: {
-  rows: GlobalTopLawRow[];
-}) {
+export function GlobalTopLawsChart({ rows }: { rows: GlobalTopLawRow[] }) {
   if (!rows.length) return null;
 
   return (
@@ -175,11 +176,7 @@ export function SubjectDistributionChart({
   );
 }
 
-export function HistogramChart({
-  data,
-}: {
-  data: AnalysisHistogramBucket[];
-}) {
+export function HistogramChart({ data }: { data: AnalysisHistogramBucket[] }) {
   if (!data.length) return null;
 
   return (
@@ -202,11 +199,7 @@ export function HistogramChart({
   );
 }
 
-export function ScatterFactorChart({
-  data,
-}: {
-  data: AnalysisScatterPoint[];
-}) {
+export function ScatterFactorChart({ data }: { data: AnalysisScatterPoint[] }) {
   if (!data.length) return null;
 
   return (

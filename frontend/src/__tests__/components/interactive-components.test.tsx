@@ -122,10 +122,9 @@ describe("interactive frontend components", () => {
     render(<SearchForm onSearch={onSearch} onReset={onReset} />);
 
     const selects = screen.getAllByRole("combobox");
-    fireEvent.change(
-      screen.getByPlaceholderText("Введіть ключові слова..."),
-      { target: { value: "конституція" } },
-    );
+    fireEvent.change(screen.getByPlaceholderText("Введіть ключові слова..."), {
+      target: { value: "конституція" },
+    });
 
     const dateInputs = screen.getAllByPlaceholderText("дд.мм.рррр");
     fireEvent.change(dateInputs[0], { target: { value: "10.05.2026" } });

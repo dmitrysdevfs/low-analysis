@@ -38,7 +38,9 @@ function buildTopLaws(laws: Law[]): GlobalTopLawRow[] {
   return [...laws]
     .sort((left, right) => {
       const leftWeight =
-        left.totalArticles * 3 + left.totalSections + (left.totalParagraphs ?? 0);
+        left.totalArticles * 3 +
+        left.totalSections +
+        (left.totalParagraphs ?? 0);
       const rightWeight =
         right.totalArticles * 3 +
         right.totalSections +
@@ -80,7 +82,9 @@ function buildLawSpotlights(laws: Law[]): GlobalLawSpotlight[] {
     .slice(0, 5);
 }
 
-function buildSubjectDistribution(subjects: Subject[]): GlobalDistributionSegment[] {
+function buildSubjectDistribution(
+  subjects: Subject[],
+): GlobalDistributionSegment[] {
   const counts = new Map<string, number>();
 
   for (const subject of subjects) {
@@ -125,7 +129,9 @@ export function deriveGlobalAnalysis(
     totalSections,
     totalParagraphs,
     totalSubjects: subjects.length,
-    meanArticlesPerLaw: laws.length ? Math.round(totalArticles / laws.length) : 0,
+    meanArticlesPerLaw: laws.length
+      ? Math.round(totalArticles / laws.length)
+      : 0,
     meanParagraphsPerLaw: laws.length
       ? Math.round(totalParagraphs / laws.length)
       : 0,

@@ -27,7 +27,9 @@ export function AnalysisLawPicker({
     const value = deferredQuery.trim().toLowerCase();
     const base = [...laws].sort((left, right) => {
       const leftWeight =
-        left.totalArticles * 3 + left.totalSections + (left.totalParagraphs ?? 0);
+        left.totalArticles * 3 +
+        left.totalSections +
+        (left.totalParagraphs ?? 0);
       const rightWeight =
         right.totalArticles * 3 +
         right.totalSections +
@@ -40,9 +42,7 @@ export function AnalysisLawPicker({
     }
 
     return base
-      .filter((law) =>
-        `${law.title} ${law.code}`.toLowerCase().includes(value),
-      )
+      .filter((law) => `${law.title} ${law.code}`.toLowerCase().includes(value))
       .slice(0, 8);
   }, [deferredQuery, laws]);
 
@@ -88,7 +88,8 @@ export function AnalysisLawPicker({
             <span className={styles.lawPickerBody}>
               <span className={styles.lawPickerTitle}>{law.title}</span>
               <span className={styles.lawPickerMeta}>
-                {law.code} · {law.totalArticles} статей · {law.totalSections} розділів
+                {law.code} · {law.totalArticles} статей · {law.totalSections}{" "}
+                розділів
               </span>
             </span>
             <span className={styles.lawPickerArrow}>→</span>

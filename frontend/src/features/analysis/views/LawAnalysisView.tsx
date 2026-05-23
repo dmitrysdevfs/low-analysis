@@ -106,7 +106,10 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
                 Вся база
               </Link>
               {currentLaw ? (
-                <Link href={ROUTES.law(currentLaw._id)} className={styles.heroLink}>
+                <Link
+                  href={ROUTES.law(currentLaw._id)}
+                  className={styles.heroLink}
+                >
                   До структури закону
                 </Link>
               ) : null}
@@ -116,7 +119,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
           <aside className={styles.heroAside}>
             <span className={styles.metaTag}>Теплова карта</span>
             <div className={styles.heroValue}>
-              {dataset ? `${dataset.highRiskCount} елементів в зоні уваги` : "..." }
+              {dataset
+                ? `${dataset.highRiskCount} елементів в зоні уваги`
+                : "..."}
             </div>
             <p className={styles.heroMeta}>{filterSummary}</p>
             {currentLaw ? (
@@ -127,7 +132,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
                 </div>
                 <div className={styles.summaryTile}>
                   <span className={styles.mutedMono}>Сер. factor</span>
-                  <span className={styles.summaryValue}>{dataset?.averageFactor ?? 0}</span>
+                  <span className={styles.summaryValue}>
+                    {dataset?.averageFactor ?? 0}
+                  </span>
                 </div>
               </div>
             ) : null}
@@ -198,7 +205,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
               <div className={styles.panelHeader}>
                 <div>
                   <span className={styles.panelEyebrow}>Фільтри</span>
-                  <h2 className={styles.panelTitle}>Точне налаштування зрізу</h2>
+                  <h2 className={styles.panelTitle}>
+                    Точне налаштування зрізу
+                  </h2>
                 </div>
               </div>
 
@@ -276,7 +285,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
               </div>
 
               <div className={styles.filterBlock}>
-                <span className={styles.filterHeading}>Суб'єкти в елементі</span>
+                <span className={styles.filterHeading}>
+                  Суб'єкти в елементі
+                </span>
                 <select
                   className={`form-control form-select ${styles.select}`}
                   value={subjectsThreshold}
@@ -299,7 +310,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
               <div className={styles.panelHeader}>
                 <div>
                   <span className={styles.panelEyebrow}>Heatmap</span>
-                  <h2 className={styles.panelTitle}>Теплова карта по статтях</h2>
+                  <h2 className={styles.panelTitle}>
+                    Теплова карта по статтях
+                  </h2>
                   <p className={styles.panelDescription}>
                     Кожен осередок відображає окремий елемент. Клік по осередку
                     підсвічує відповідний запис у реєстрі нижче.
@@ -334,7 +347,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
                     red={dataset.stats.riskLevels.red}
                   />
                 ) : (
-                  <div className={styles.emptyState}>Рахуємо ризиковий профіль…</div>
+                  <div className={styles.emptyState}>
+                    Рахуємо ризиковий профіль…
+                  </div>
                 )}
               </article>
 
@@ -356,18 +371,22 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
             <article className={styles.panel}>
               <div className={styles.panelHeader}>
                 <div>
-                  <span className={styles.panelEyebrow}>Фактор vs суб'єкти</span>
+                  <span className={styles.panelEyebrow}>
+                    Фактор vs суб'єкти
+                  </span>
                   <h2 className={styles.panelTitle}>Діаграма навантаження</h2>
                   <p className={styles.panelDescription}>
-                    Допомагає швидко побачити довгі та перенасичені суб&apos;єктами
-                    елементи.
+                    Допомагає швидко побачити довгі та перенасичені
+                    суб&apos;єктами елементи.
                   </p>
                 </div>
               </div>
               {dataset ? (
                 <ScatterFactorChart data={dataset.scatter} />
               ) : (
-                <div className={styles.emptyState}>Готуємо точки для розсіювання…</div>
+                <div className={styles.emptyState}>
+                  Готуємо точки для розсіювання…
+                </div>
               )}
             </article>
 
@@ -391,7 +410,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
                   selectedId={selectedId}
                 />
               ) : (
-                <div className={styles.emptyState}>Збираємо реєстр елементів…</div>
+                <div className={styles.emptyState}>
+                  Збираємо реєстр елементів…
+                </div>
               )}
             </article>
           </main>
@@ -417,7 +438,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
                     </span>
                   </div>
                 )) ?? (
-                  <div className={styles.emptyState}>Немає даних про суб&apos;єкти.</div>
+                  <div className={styles.emptyState}>
+                    Немає даних про суб&apos;єкти.
+                  </div>
                 )}
               </div>
             </article>
@@ -448,7 +471,9 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
                     <span className={styles.insightText}>{item.excerpt}</span>
                   </button>
                 )) ?? (
-                  <div className={styles.emptyState}>Аномалії ще не зібрані.</div>
+                  <div className={styles.emptyState}>
+                    Аномалії ще не зібрані.
+                  </div>
                 )}
               </div>
             </article>
@@ -475,7 +500,8 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
                     Жовтий
                   </span>
                   <span className={styles.insightText}>
-                    Є помітне відхилення за довжиною або концентрацією суб&apos;єктів.
+                    Є помітне відхилення за довжиною або концентрацією
+                    суб&apos;єктів.
                   </span>
                 </div>
                 <div className={styles.insightRow}>

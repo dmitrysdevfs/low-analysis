@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "admin-audit",
   title: "Журнал аудиту",
-  summary: "Що фіксується в журналі, як знайти дії конкретного користувача та фільтрувати події.",
+  summary:
+    "Що фіксується в журналі, як знайти дії конкретного користувача та фільтрувати події.",
   category: "Аудит",
   audience: "admin",
   updatedAt: "2026-05-23",

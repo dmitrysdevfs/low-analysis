@@ -68,7 +68,10 @@ function buildFactor(
     ),
   );
 
-  return Math.max(factor, riskLevel === "red" ? 65 : riskLevel === "yellow" ? 40 : 12);
+  return Math.max(
+    factor,
+    riskLevel === "red" ? 65 : riskLevel === "yellow" ? 40 : 12,
+  );
 }
 
 function getFactorBand(factor: number): FactorBand {
@@ -114,7 +117,8 @@ function flattenBranches(
     const nextArticleLabel =
       node.type === "article" ? getArticleBadge(node) : articleLabel;
 
-    const text = getNodeContent(node) ?? node.title?.trim() ?? node.text?.trim() ?? "";
+    const text =
+      getNodeContent(node) ?? node.title?.trim() ?? node.text?.trim() ?? "";
     const charsCount = getCharsCount(node);
     const subjectsCount = getSubjectsCount(node);
     const zScore = node.z_score ?? 0;
@@ -143,7 +147,14 @@ function flattenBranches(
     const factor =
       typeof node.factor === "number" && Number.isFinite(node.factor)
         ? Math.round(Math.max(0, Math.min(100, node.factor)))
-        : buildFactor(node, stats, charsCount, subjectsCount, riskLevel, zScore);
+        : buildFactor(
+            node,
+            stats,
+            charsCount,
+            subjectsCount,
+            riskLevel,
+            zScore,
+          );
 
     records.push({
       id: node._id ?? node.key,
@@ -172,12 +183,16 @@ function flattenBranches(
     );
   };
 
-  branches.forEach((branch) => visit(branch, "Поза розділом", null, "Без статті"));
+  branches.forEach((branch) =>
+    visit(branch, "Поза розділом", null, "Без статті"),
+  );
 
   return records.filter((record) => record.type !== "section");
 }
 
-function buildHeatmap(records: AnalysisElementRecord[]): AnalysisHeatmapArticle[] {
+function buildHeatmap(
+  records: AnalysisElementRecord[],
+): AnalysisHeatmapArticle[] {
   const map = new Map<string, AnalysisElementRecord[]>();
 
   for (const record of records) {
@@ -216,7 +231,9 @@ function buildHeatmap(records: AnalysisElementRecord[]): AnalysisHeatmapArticle[
   });
 }
 
-function buildTopSubjects(records: AnalysisElementRecord[]): AnalysisTopSubject[] {
+function buildTopSubjects(
+  records: AnalysisElementRecord[],
+): AnalysisTopSubject[] {
   const map = new Map<
     string,
     { name: string; mentions: number; roles: Set<string>; color: string }
@@ -251,7 +268,9 @@ function buildTopSubjects(records: AnalysisElementRecord[]): AnalysisTopSubject[
     .slice(0, 8);
 }
 
-function buildHistogram(records: AnalysisElementRecord[]): AnalysisHistogramBucket[] {
+function buildHistogram(
+  records: AnalysisElementRecord[],
+): AnalysisHistogramBucket[] {
   const buckets = [
     { label: `0–${HISTOGRAM_BUCKETS[0]}`, count: 0 },
     { label: `${HISTOGRAM_BUCKETS[0] + 1}–${HISTOGRAM_BUCKETS[1]}`, count: 0 },
@@ -274,7 +293,9 @@ function buildHistogram(records: AnalysisElementRecord[]): AnalysisHistogramBuck
   return buckets;
 }
 
-function buildScatter(records: AnalysisElementRecord[]): AnalysisScatterPoint[] {
+function buildScatter(
+  records: AnalysisElementRecord[],
+): AnalysisScatterPoint[] {
   return records.slice(0, 160).map((record) => ({
     id: record.id,
     label: `${record.badge} · ${record.articleLabel}`,
@@ -303,7 +324,8 @@ function buildAnomalies(records: AnalysisElementRecord[]): AnalysisAnomaly[] {
 function fallbackStats(records: AnalysisElementRecord[]): LawStats {
   const totalElements = records.length;
   const meanChars = totalElements
-    ? records.reduce((sum, record) => sum + record.charsCount, 0) / totalElements
+    ? records.reduce((sum, record) => sum + record.charsCount, 0) /
+      totalElements
     : 0;
 
   const standardDeviation = totalElements
@@ -355,7 +377,9 @@ export function deriveLawAnalysis(
 
   const records = flattenBranches(branches, subjectsMap, provisionalStats);
   const finalStats = stats ?? fallbackStats(records);
-  const normalizedRecords = stats ? records : flattenBranches(branches, subjectsMap, finalStats);
+  const normalizedRecords = stats
+    ? records
+    : flattenBranches(branches, subjectsMap, finalStats);
   const query = filters?.query?.trim().toLowerCase() ?? "";
   const riskFilter = filters?.risk ?? "all";
   const factorBand = filters?.factorBand ?? "all";
@@ -365,7 +389,8 @@ export function deriveLawAnalysis(
   const filteredRecords = normalizedRecords.filter((record) => {
     if (riskFilter !== "all" && record.riskLevel !== riskFilter) return false;
     if (factorBand !== "all" && record.factorBand !== factorBand) return false;
-    if (articleFilter !== "all" && record.articleLabel !== articleFilter) return false;
+    if (articleFilter !== "all" && record.articleLabel !== articleFilter)
+      return false;
     if (record.subjectsCount < subjectsThreshold) return false;
     if (!query) return true;
 
@@ -387,7 +412,9 @@ export function deriveLawAnalysis(
     0,
   );
   const uniqueSubjects = new Set(
-    normalizedRecords.flatMap((record) => record.subjectLinks.map((item) => item.id)),
+    normalizedRecords.flatMap((record) =>
+      record.subjectLinks.map((item) => item.id),
+    ),
   ).size;
   const highRiskCount = normalizedRecords.filter(
     (record) => record.riskLevel === "red" || record.factor >= 68,
@@ -398,7 +425,9 @@ export function deriveLawAnalysis(
           normalizedRecords.length,
       )
     : 0;
-  const articleOptions = [...new Set(normalizedRecords.map((record) => record.articleLabel))];
+  const articleOptions = [
+    ...new Set(normalizedRecords.map((record) => record.articleLabel)),
+  ];
 
   return {
     law,

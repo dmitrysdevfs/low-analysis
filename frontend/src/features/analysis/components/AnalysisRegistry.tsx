@@ -81,8 +81,12 @@ export function AnalysisRegistry({
           <div className={styles.registryHead}>
             <div className={styles.registryHeading}>
               <span className={styles.registryBadge}>{record.badge}</span>
-              <span className={styles.registryArticle}>{record.articleLabel}</span>
-              <span className={`${styles.riskPill} ${resolveRiskClass(record.riskLevel)}`}>
+              <span className={styles.registryArticle}>
+                {record.articleLabel}
+              </span>
+              <span
+                className={`${styles.riskPill} ${resolveRiskClass(record.riskLevel)}`}
+              >
                 {record.riskLevel === "red"
                   ? "Високий ризик"
                   : record.riskLevel === "yellow"

@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "admin-analytics",
   title: "Аналітика та навантаження на API",
-  summary: "Як читати таблицю складності норм, живий моніторинг API-запитів та перемикання джерел.",
+  summary:
+    "Як читати таблицю складності норм, живий моніторинг API-запитів та перемикання джерел.",
   category: "Аналітика",
   audience: "admin",
   updatedAt: "2026-05-23",

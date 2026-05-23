@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "how-to-laws-page",
   title: "Як користуватися сторінкою законів",
-  summary: "Перегляд каталогу, фільтрація за статусом, картки законів та нещодавно переглянуті.",
+  summary:
+    "Перегляд каталогу, фільтрація за статусом, картки законів та нещодавно переглянуті.",
   category: "Закони",
   audience: "user",
   updatedAt: "2026-05-23",

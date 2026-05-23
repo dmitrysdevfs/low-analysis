@@ -28,7 +28,9 @@ export function GlobalAnalysisView() {
     [laws],
   );
 
-  const timelineLawTrend = dataset.timeline.map((point) => point.cumulativeLaws);
+  const timelineLawTrend = dataset.timeline.map(
+    (point) => point.cumulativeLaws,
+  );
   const timelineArticleTrend = dataset.timeline.map(
     (point) => point.cumulativeArticles,
   );
@@ -63,7 +65,10 @@ export function GlobalAnalysisView() {
             </p>
 
             <div className={styles.heroActions}>
-              <Link href={ROUTES.laws} className={`${styles.heroLink} ${styles.heroPrimary}`}>
+              <Link
+                href={ROUTES.laws}
+                className={`${styles.heroLink} ${styles.heroPrimary}`}
+              >
                 Каталог законів
               </Link>
               <Link href={ROUTES.search} className={styles.heroLink}>
@@ -75,12 +80,15 @@ export function GlobalAnalysisView() {
           <aside className={styles.heroAside}>
             <span className={styles.metaTag}>Охоплення бази</span>
             <div className={styles.heroValue}>
-              {dataset.totalSections + dataset.totalArticles + dataset.totalSubjects} структурних
-              та регуляторних одиниць
+              {dataset.totalSections +
+                dataset.totalArticles +
+                dataset.totalSubjects}{" "}
+              структурних та регуляторних одиниць
             </div>
             <p className={styles.heroMeta}>
               {laws.length} законів · {dataset.totalArticles} статей ·{" "}
-              {dataset.totalParagraphs} абзаців · {dataset.totalSubjects} суб&apos;єктів.
+              {dataset.totalParagraphs} абзаців · {dataset.totalSubjects}{" "}
+              суб&apos;єктів.
             </p>
 
             <div className={styles.stepList}>
@@ -175,7 +183,9 @@ export function GlobalAnalysisView() {
             <article className={styles.panel}>
               <div className={styles.panelHeader}>
                 <div>
-                  <span className={styles.panelEyebrow}>Ландшафт суб'єктів</span>
+                  <span className={styles.panelEyebrow}>
+                    Ландшафт суб'єктів
+                  </span>
                   <h2 className={styles.panelTitle}>Розподіл за статусами</h2>
                 </div>
               </div>
@@ -224,7 +234,9 @@ export function GlobalAnalysisView() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.panelEyebrow}>Топ законів</span>
-                <h2 className={styles.panelTitle}>Найбільш структурно насичені акти</h2>
+                <h2 className={styles.panelTitle}>
+                  Найбільш структурно насичені акти
+                </h2>
               </div>
             </div>
             <GlobalTopLawsChart rows={dataset.topLaws} />
@@ -251,7 +263,9 @@ export function GlobalAnalysisView() {
                     {item.law.code} · {item.meanPerArticle} абз./статтю · слід{" "}
                     {item.footprint}
                   </div>
-                  <div className={styles.spotlightValue}>{item.densityScore}</div>
+                  <div className={styles.spotlightValue}>
+                    {item.densityScore}
+                  </div>
                 </button>
               ))}
             </div>
@@ -275,7 +289,8 @@ export function GlobalAnalysisView() {
                   <span className={styles.lawPickerBody}>
                     <span className={styles.lawPickerTitle}>{law.title}</span>
                     <span className={styles.lawPickerMeta}>
-                      {law.code} · {law.totalArticles} статей · {law.totalParagraphs ?? 0} абзаців
+                      {law.code} · {law.totalArticles} статей ·{" "}
+                      {law.totalParagraphs ?? 0} абзаців
                     </span>
                   </span>
                   <span className={styles.lawPickerArrow}>→</span>

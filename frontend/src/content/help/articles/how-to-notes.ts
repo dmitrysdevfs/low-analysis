@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "how-to-notes",
   title: "Як зберігати та переглядати нотатки",
-  summary: "Виділіть текст на сторінці статті → збережіть нотатку → знайдіть у розділі Нотатки.",
+  summary:
+    "Виділіть текст на сторінці статті → збережіть нотатку → знайдіть у розділі Нотатки.",
   category: "Нотатки",
   audience: "user",
   updatedAt: "2026-05-23",

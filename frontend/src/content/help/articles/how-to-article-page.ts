@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "how-to-article-page",
   title: "Як читати сторінку статті",
-  summary: "Структура статті, ієрархія елементів, підсвічування, кнопки та навігація.",
+  summary:
+    "Структура статті, ієрархія елементів, підсвічування, кнопки та навігація.",
   category: "Статті",
   audience: "user",
   updatedAt: "2026-05-23",

@@ -323,7 +323,10 @@
 .shell {
   display: grid;
   gap: 16px;
-  grid-template-columns: minmax(260px, 0.76fr) minmax(0, 1.35fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(260px, 0.76fr) minmax(0, 1.35fr) minmax(
+      280px,
+      0.8fr
+    );
   align-items: start;
 }
 

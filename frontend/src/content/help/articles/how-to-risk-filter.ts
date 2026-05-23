@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "how-to-risk-filter",
   title: "Фільтр ризику (Світлофор)",
-  summary: "Що означають кольори зелений / жовтий / червоний та як фільтрувати статті за складністю.",
+  summary:
+    "Що означають кольори зелений / жовтий / червоний та як фільтрувати статті за складністю.",
   category: "Фільтри",
   audience: "user",
   updatedAt: "2026-05-23",

@@ -3,7 +3,8 @@ import type { HelpArticle } from "../types";
 const article: HelpArticle = {
   slug: "admin-users",
   title: "Керування користувачами",
-  summary: "Перегляд списку, пошук, блокування та управління квотами користувачів.",
+  summary:
+    "Перегляд списку, пошук, блокування та управління квотами користувачів.",
   category: "Користувачі",
   audience: "admin",
   updatedAt: "2026-05-23",
