@@ -49,6 +49,8 @@ export interface TreeNode {
   order?: number;
   subjects?: { subject_id: string; role: string }[];
   chars_count?: number;
+  subjects_count?: number;
   z_score?: number;
+  factor?: number | null;
   risk_level?: "green" | "yellow" | "red" | null;
 }

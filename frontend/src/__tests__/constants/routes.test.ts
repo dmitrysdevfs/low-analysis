@@ -6,6 +6,7 @@ describe("frontend route and config constants", () => {
   it("builds static and dynamic routes", () => {
     expect(ROUTES.home).toBe("/");
     expect(ROUTES.laws).toBe("/laws");
+    expect(ROUTES.analysis).toBe("/analysis");
     expect(ROUTES.subjects).toBe("/subjects");
     expect(ROUTES.search).toBe("/search");
     expect(ROUTES.admin).toBe("/admin");
@@ -19,6 +20,7 @@ describe("frontend route and config constants", () => {
     expect(ROUTES.accountSaved).toBe("/account/saved");
     expect(ROUTES.accountNotes).toBe("/account/notes");
     expect(ROUTES.law("law-42")).toBe("/laws/law-42");
+    expect(ROUTES.analysisLaw("law-42")).toBe("/analysis/laws/law-42");
     expect(ROUTES.article("law-42", "12")).toBe("/laws/law-42/articles/12");
     expect(ROUTES.subject("subject-1")).toBe("/subjects/subject-1");
   });
@@ -27,8 +29,10 @@ describe("frontend route and config constants", () => {
     expect(NAV_ITEMS).toEqual([
       { label: "Головна", href: ROUTES.home },
       { label: "Закони", href: ROUTES.laws },
+      { label: "Аналіз", href: ROUTES.analysis },
       { label: "Суб'єкти", href: ROUTES.subjects },
       { label: "Пошук", href: ROUTES.search },
+      { label: "Довідка", href: ROUTES.help },
     ]);
   });
 

@@ -158,16 +158,25 @@ export const deleteMissingElements = async (lawId, activeCodes) => {
 export const updateLawStatsFromDb = async (lawId) => {
   // Count only active articles — exclude records whose text is a "{...виключено...}"
   // or "{...вилучено...}" placeholder left by the official amendment process.
-  const [totalArticles, totalSections] = await Promise.all([
+  const [totalArticles, totalSections, totalParagraphs] = await Promise.all([
     Element.countDocuments({
       lawId,
       type: 'article',
       $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
     }),
     Element.countDocuments({ lawId, type: 'section' }),
+    Element.countDocuments({
+      lawId,
+      type: 'paragraph',
+      $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
+    }),
   ]);
 
-  await Law.findByIdAndUpdate(lawId, { totalArticles, totalSections });
+  await Law.findByIdAndUpdate(lawId, {
+    totalArticles,
+    totalSections,
+    totalParagraphs,
+  });
 };
 
 /**
