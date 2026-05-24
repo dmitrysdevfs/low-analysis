@@ -112,10 +112,10 @@ export function ClientWorkspaceHome() {
     return null;
   }
 
-  function handleProfileSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleProfileSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const result = updateProfile(displayName);
+    const result = await updateProfile(displayName);
 
     if (!result.ok) {
       notify.warning(result.error ?? "Profile update failed.");
@@ -135,7 +135,7 @@ export function ClientWorkspaceHome() {
     notify.success("Display name updated.");
   }
 
-  function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (nextPassword.length < 8) {
@@ -148,7 +148,7 @@ export function ClientWorkspaceHome() {
       return;
     }
 
-    const result = changePassword(currentPassword, nextPassword);
+    const result = await changePassword(currentPassword, nextPassword);
 
     if (!result.ok) {
       notify.warning(result.error ?? "Password change failed.");
@@ -523,8 +523,8 @@ export function ClientWorkspaceHome() {
             </label>
 
             <p className={styles.subtleNote}>
-              Зміни пароля залишаються лише на фронтенді в цьому попередньому
-              перегляді та зберігаються в локальному сховищі браузера.
+              Пароль оновлюється безпосередньо у вашому обліковому записі на
+              бекенді.
             </p>
 
             <div className={styles.actionRow}>

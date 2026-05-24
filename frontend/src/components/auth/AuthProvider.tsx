@@ -15,6 +15,8 @@ import {
   readStoredSession,
   registerUser,
   getProfile,
+  updateUserProfile,
+  changeUserPassword as changePasswordApi,
 } from "@/lib/auth/authClient";
 import type { AuthSession, LoginPayload, RegisterPayload } from "@/types";
 
@@ -32,11 +34,11 @@ type AuthContextValue = {
   user: AuthSession | null;
   login: (payload: LoginPayload) => Promise<AuthActionResult>;
   register: (payload: RegisterPayload) => Promise<AuthActionResult>;
-  updateProfile: (displayName: string) => AuthActionResult;
+  updateProfile: (displayName: string) => Promise<AuthActionResult>;
   changePassword: (
     currentPassword: string,
     nextPassword: string,
-  ) => AuthActionResult;
+  ) => Promise<AuthActionResult>;
   logout: () => void;
 };
 
@@ -47,8 +49,14 @@ const AUTH_CONTEXT_DEFAULT: AuthContextValue = {
   user: null,
   login: async () => ({ ok: false, error: "Auth provider is unavailable." }),
   register: async () => ({ ok: false, error: "Auth provider is unavailable." }),
-  updateProfile: () => ({ ok: false, error: "Auth provider is unavailable." }),
-  changePassword: () => ({ ok: false, error: "Auth provider is unavailable." }),
+  updateProfile: async () => ({
+    ok: false,
+    error: "Auth provider is unavailable.",
+  }),
+  changePassword: async () => ({
+    ok: false,
+    error: "Auth provider is unavailable.",
+  }),
   logout: () => {},
 };
 
@@ -90,21 +98,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return registerUser(payload);
   }, []);
 
-  const updateProfile = useCallback((displayName: string) => {
-    // Mock for now as backend endpoint is not specified in Stage 4 checklist
-    return {
-      ok: false,
-      error: "Update profile not yet implemented on backend.",
-    };
+  const updateProfile = useCallback(async (displayName: string) => {
+    const result = await updateUserProfile(displayName);
+
+    if (result.ok && result.session) {
+      setUser(result.session);
+    }
+
+    return result;
   }, []);
 
   const changePassword = useCallback(
-    (currentPassword: string, nextPassword: string) => {
-      // Mock for now as backend endpoint is not specified in Stage 4 checklist
-      return {
-        ok: false,
-        error: "Change password not yet implemented on backend.",
-      };
+    async (currentPassword: string, nextPassword: string) => {
+      return changePasswordApi(currentPassword, nextPassword);
     },
     [],
   );

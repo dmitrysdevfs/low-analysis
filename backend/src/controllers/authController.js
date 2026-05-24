@@ -7,7 +7,13 @@ import generateToken from '../utils/generateToken.js';
  * @access  Public
  */
 export const registerUser = async (req, res) => {
-  const { email, password, fullName } = req.body;
+  const { email, password, fullName, displayName, accountType, superCode } =
+    req.body;
+
+  const finalFullName = fullName || displayName;
+  if (!finalFullName) {
+    return res.status(400).json({ message: 'Please add a full name' });
+  }
 
   const userExists = await User.findOne({ email });
 
@@ -15,10 +21,21 @@ export const registerUser = async (req, res) => {
     return res.status(400).json({ message: 'User already exists' });
   }
 
+  let role = 'user';
+  if (accountType === 'admin') {
+    if (!superCode || superCode !== process.env.ADMIN_SUPER_CODE) {
+      return res
+        .status(400)
+        .json({ message: 'Недійсний супер-код для реєстрації адміністратора' });
+    }
+    role = 'admin';
+  }
+
   const user = await User.create({
     email,
     password,
-    fullName,
+    fullName: finalFullName,
+    role,
   });
 
   if (user) {
@@ -42,7 +59,16 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email }).select('+password');
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: 'Please provide email or username and password' });
+  }
+
+  const identifier = email.toLowerCase();
+  const user = await User.findOne({
+    $or: [{ email: identifier }, { username: identifier }],
+  }).select('+password');
 
   if (user && (await user.comparePassword(password))) {
     res.json({
@@ -72,6 +98,72 @@ export const getUserProfile = async (req, res) => {
       email: user.email,
       role: user.role,
     });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+};
+
+/**
+ * @desc    Update user profile
+ * @route   PUT /api/auth/profile
+ * @access  Private
+ */
+export const updateUserProfile = async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    const { displayName, fullName } = req.body;
+    const finalFullName = fullName || displayName;
+
+    if (finalFullName) {
+      user.fullName = finalFullName.trim();
+    }
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      fullName: updatedUser.fullName,
+      email: updatedUser.email,
+      role: updatedUser.role,
+    });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+};
+
+/**
+ * @desc    Update user password
+ * @route   PUT /api/auth/password
+ * @access  Private
+ */
+export const updateUserPassword = async (req, res) => {
+  const user = await User.findById(req.user._id).select('+password');
+
+  if (user) {
+    const { currentPassword, nextPassword } = req.body;
+
+    if (!currentPassword || !nextPassword) {
+      return res
+        .status(400)
+        .json({ message: 'Please provide current and next password' });
+    }
+
+    if (nextPassword.length < 8) {
+      return res
+        .status(400)
+        .json({ message: 'Password must be at least 8 characters' });
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    user.password = nextPassword;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
   } else {
     res.status(404).json({ message: 'User not found' });
   }

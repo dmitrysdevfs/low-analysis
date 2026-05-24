@@ -4,6 +4,8 @@ import {
   loginUser,
   getUserProfile,
   logoutUser,
+  updateUserProfile,
+  updateUserPassword,
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -83,6 +85,69 @@ router.post('/login', loginUser);
  *         description: Not authorized
  */
 router.get('/me', protect, getUserProfile);
+
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   put:
+ *     summary: Update user profile (name)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               displayName:
+ *                 type: string
+ *               fullName:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       401:
+ *         description: Not authorized
+ *       404:
+ *         description: User not found
+ */
+router.put('/profile', protect, updateUserProfile);
+
+/**
+ * @swagger
+ * /api/auth/password:
+ *   put:
+ *     summary: Update user password
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - nextPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               nextPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Invalid inputs or incorrect current password
+ *       401:
+ *         description: Not authorized
+ *       404:
+ *         description: User not found
+ */
+router.put('/password', protect, updateUserPassword);
 
 /**
  * @swagger

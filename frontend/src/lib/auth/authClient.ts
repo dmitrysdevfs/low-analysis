@@ -90,7 +90,7 @@ export async function loginUser(
       redirectTo: session.accountType === "admin" ? ROUTES.admin : ROUTES.home,
       session,
     };
-  } catch (error) {
+  } catch {
     return { ok: false, error: "Помилка з'єднання з сервером" };
   }
 }
@@ -115,7 +115,7 @@ export async function registerUser(
       ok: true,
       redirectTo: ROUTES.authLogin,
     };
-  } catch (error) {
+  } catch {
     return { ok: false, error: "Помилка з'єднання з сервером" };
   }
 }
@@ -145,7 +145,78 @@ export async function getProfile(): Promise<AuthSession | null> {
       accountType: data.role === "admin" ? "admin" : "client",
       lastLoginAt: new Date().toISOString(),
     };
-  } catch (error) {
+  } catch {
     return null;
+  }
+}
+
+export async function updateUserProfile(
+  displayName: string,
+): Promise<AuthActionResult> {
+  const token = readStoredToken();
+  if (!token) return { ok: false, error: "Користувач не авторизований" };
+
+  try {
+    const res = await fetch(`${API_BASE}/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ displayName }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { ok: false, error: data.message || "Помилка оновлення профілю" };
+    }
+
+    const currentSession = readStoredSession();
+    if (currentSession) {
+      const nextSession: AuthSession = {
+        ...currentSession,
+        displayName: data.fullName,
+      };
+
+      const isLocal = !!window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
+      const storage = isLocal ? window.localStorage : window.sessionStorage;
+      storage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(nextSession));
+
+      return { ok: true, session: nextSession };
+    }
+
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Помилка з'єднання з сервером" };
+  }
+}
+
+export async function changeUserPassword(
+  currentPassword: string,
+  nextPassword: string,
+): Promise<AuthActionResult> {
+  const token = readStoredToken();
+  if (!token) return { ok: false, error: "Користувач не авторизований" };
+
+  try {
+    const res = await fetch(`${API_BASE}/password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ currentPassword, nextPassword }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { ok: false, error: data.message || "Помилка зміни пароля" };
+    }
+
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Помилка з'єднання з сервером" };
   }
 }
