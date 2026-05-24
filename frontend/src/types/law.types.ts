@@ -9,6 +9,14 @@ export interface Law {
   totalArticles: number;
   totalParagraphs?: number;
   createdAt: string;
+  adoptedDate?: string | null;
+  documentType?: string[] | null;
+  source?: string | null;
+  updatedAt?: string;
+  global_context?: {
+    preamble?: string | null;
+    definitions: Array<{ term: string; definition: string }>;
+  } | null;
 }
 
 export interface LawStats {
@@ -53,4 +61,25 @@ export interface TreeNode {
   z_score?: number;
   factor?: number | null;
   risk_level?: "green" | "yellow" | "red" | null;
+  taxonomy?: {
+    legalFunctions: string[];
+    domains: string[];
+    keywords: string[];
+    confidence: number;
+    source: 'rules' | 'llm' | 'manual';
+  } | null;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface PaginatedLawsResponse {
+  data: Law[];
+  pagination: Pagination;
 }

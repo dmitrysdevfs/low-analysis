@@ -6,7 +6,9 @@ export function applySearchFilters(laws: Law[], params: SearchParams): Law[] {
 
   if (params.docType) {
     filtered = filtered.filter((law) =>
-      (law.preamble ?? "").toUpperCase().includes(params.docType.toUpperCase()),
+      law.documentType?.some((t) =>
+        t.toLowerCase().includes(params.docType.toLowerCase()),
+      ) ?? false,
     );
   }
 
@@ -26,14 +28,14 @@ export function applySearchFilters(laws: Law[], params: SearchParams): Law[] {
   if (params.dateFrom) {
     const from = new Date(params.dateFrom).getTime();
     filtered = filtered.filter(
-      (law) => new Date(law.createdAt).getTime() >= from,
+      (law) => new Date(law.adoptedDate ?? law.createdAt).getTime() >= from,
     );
   }
 
   if (params.dateTo) {
     const to = new Date(params.dateTo + "T23:59:59.999").getTime();
     filtered = filtered.filter(
-      (law) => new Date(law.createdAt).getTime() <= to,
+      (law) => new Date(law.adoptedDate ?? law.createdAt).getTime() <= to,
     );
   }
 
@@ -54,7 +56,8 @@ export function sortLaws(laws: Law[], sort: SearchParams["sort"]): Law[] {
   } else if (sort === "date") {
     sorted.sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        new Date(b.adoptedDate ?? b.createdAt).getTime() -
+        new Date(a.adoptedDate ?? a.createdAt).getTime(),
     );
   }
 
