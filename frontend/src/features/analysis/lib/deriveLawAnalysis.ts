@@ -366,22 +366,20 @@ export function deriveLawAnalysis(
   },
 ): AnalysisLawDataset {
   const branches = buildTreeBranches(tree);
-  const provisionalStats =
-    stats ??
-    fallbackStats(
-      flattenBranches(branches, subjectsMap, {
-        totalElements: 0,
-        meanChars: 0,
-        standardDeviation: 0,
-        riskLevels: { green: 0, yellow: 0, red: 0, null: 0 },
-      }),
-    );
 
-  const records = flattenBranches(branches, subjectsMap, provisionalStats);
-  const finalStats = stats ?? fallbackStats(records);
-  const normalizedRecords = stats
-    ? records
-    : flattenBranches(branches, subjectsMap, finalStats);
+  // When stats is null: first pass measures the tree (charsCount/riskLevel don't depend on stats),
+  // second pass applies correct factor values using the real meanChars/stdDev.
+  const normalizedRecords = (() => {
+    if (stats) return flattenBranches(branches, subjectsMap, stats);
+    const measured = flattenBranches(branches, subjectsMap, {
+      totalElements: 0,
+      meanChars: 0,
+      standardDeviation: 0,
+      riskLevels: { green: 0, yellow: 0, red: 0, null: 0 },
+    });
+    return flattenBranches(branches, subjectsMap, fallbackStats(measured));
+  })();
+  const finalStats = stats ?? fallbackStats(normalizedRecords);
   const query = filters?.query?.trim().toLowerCase() ?? "";
   const riskFilter = filters?.risk ?? "all";
   const factorBand = filters?.factorBand ?? "all";
