@@ -1,7 +1,8 @@
-export const schemas = {
+﻿export const schemas = {
   Law: {
     type: 'object',
     description: 'Закон або нормативний акт України',
+    required: ['_id', 'title', 'code', 'createdAt'],
     properties: {
       _id: { type: 'string', example: '69f84aa7395f1789bc7b2b89' },
       title: { type: 'string', example: 'КОНСТИТУЦІЯ УКРАЇНИ' },
@@ -48,6 +49,7 @@ export const schemas = {
       },
       totalArticles: { type: 'integer', example: 166 },
       totalSections: { type: 'integer', example: 14 },
+      totalParagraphs: { type: 'integer', example: 994 },
       global_context: {
         type: 'object',
         description: 'Глобальний контекст закону (преамбула та визначення)',
@@ -89,6 +91,7 @@ export const schemas = {
     type: 'object',
     description:
       'Атомарний елемент закону (розділ, стаття, частина, пункт, підпункт, абзац)',
+    required: ['_id', 'lawId', 'type', 'code', 'depth', 'order'],
     properties: {
       _id: { type: 'string', example: '69f84aa7395f1789bc7b2b8a' },
       lawId: {
@@ -137,7 +140,7 @@ export const schemas = {
       subjects_count: {
         type: 'integer',
         example: 2,
-        description: 'Кількість визначених суб’єктів у цьому елементі',
+        description: "Кількість визначених суб'єктів у цьому елементі",
       },
       z_score: {
         type: 'number',
@@ -160,7 +163,7 @@ export const schemas = {
             subject_id: {
               type: 'string',
               example: '507f1f77bcf86cd799439022',
-              description: 'ID суб’єкта з глобального реєстру',
+              description: "ID суб'єкта з глобального реєстру",
             },
             role: {
               type: 'string',
@@ -174,8 +177,36 @@ export const schemas = {
                 'other',
               ],
               example: 'actor',
-              description: 'Роль суб’єкта в контексті даного елемента',
+              description: "Роль суб'єкта в контексті даного елемента",
             },
+          },
+        },
+      },
+      taxonomy: {
+        type: 'object',
+        nullable: true,
+        description: 'Результат класифікації елемента',
+        properties: {
+          legalFunctions: {
+            type: 'array',
+            items: { type: 'string' },
+            example: ['obligation', 'right'],
+          },
+          domains: {
+            type: 'array',
+            items: { type: 'string' },
+            example: ['labor', 'finance'],
+          },
+          keywords: {
+            type: 'array',
+            items: { type: 'string' },
+            example: ['контракт', 'послуга'],
+          },
+          confidence: { type: 'number', example: 0.87 },
+          source: {
+            type: 'string',
+            enum: ['rule_based', 'llm', 'manual'],
+            example: 'rule_based',
           },
         },
       },
@@ -195,12 +226,13 @@ export const schemas = {
   Subject: {
     type: 'object',
     description: "Суб'єкт регулювання (студент, лікар, підприємець тощо)",
+    required: ['_id', 'canonical_name', 'legal_status'],
     properties: {
       _id: { type: 'string', example: '507f1f77bcf86cd799439022' },
       canonical_name: {
         type: 'string',
         example: 'підприємець',
-        description: 'Канонічна назва суб’єкта в називному відмінку однини',
+        description: "Канонічна назва суб'єкта в називному відмінку однини",
       },
       legal_status: {
         type: 'string',
@@ -213,19 +245,26 @@ export const schemas = {
           'other',
         ],
         example: 'individual',
-        description: 'Юридичний статус суб’єкта регулювання',
+        description: "Юридичний статус суб'єкта регулювання",
       },
       aliases: {
         type: 'array',
         items: { type: 'string' },
         example: ['фоп', "суб'єкт підприємницької діяльності"],
-        description: 'Альтернативні назви та синоніми суб’єкта',
+        description: "Альтернативні назви та синоніми суб'єкта",
       },
       description: {
         type: 'string',
         example: 'Фізична особа, яка здійснює підприємницьку діяльність...',
         nullable: true,
-        description: 'Короткий опис суб’єкта або його функцій',
+        description: "Короткий опис суб'єкта або його функцій",
+      },
+      taxonomies: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['individual', 'labor'],
+        description: "Класифікаційні теги суб'єкта",
+        nullable: true,
       },
       createdAt: {
         type: 'string',
@@ -243,6 +282,7 @@ export const schemas = {
   PaginatedLaws: {
     type: 'object',
     description: 'Пагінований список законів',
+    required: ['data', 'pagination'],
     properties: {
       data: {
         type: 'array',
@@ -265,6 +305,7 @@ export const schemas = {
   LawTree: {
     type: 'object',
     description: 'Закон із повним плоским деревом елементів',
+    required: ['law', 'elements'],
     properties: {
       law: { $ref: '#/components/schemas/Law' },
       elements: {
@@ -309,6 +350,7 @@ export const schemas = {
 
   Error: {
     type: 'object',
+    required: ['message'],
     properties: {
       message: { type: 'string', example: 'Law not found' },
       stack: {
@@ -330,6 +372,7 @@ export const schemas = {
   LawStats: {
     type: 'object',
     description: 'Статистика закону та його елементів',
+    required: ['totalElements', 'meanChars', 'standardDeviation', 'riskLevels'],
     properties: {
       totalElements: {
         type: 'integer',
@@ -352,9 +395,285 @@ export const schemas = {
           green: { type: 'integer', example: 850 },
           yellow: { type: 'integer', example: 110 },
           red: { type: 'integer', example: 34 },
-          null: { type: 'integer', example: 0 },
+          nullCount: {
+            type: 'integer',
+            example: 0,
+            description: 'Елементи без визначеного рівня ризику',
+          },
         },
         description: 'Розподіл елементів за рівнями ризику',
+      },
+    },
+  },
+
+  ElementLite: {
+    type: 'object',
+    description:
+      'Полегшена версія елемента для heatmap (без повного тексту та subjects[])',
+    required: ['_id', 'type', 'code', 'depth', 'chars_count', 'risk_level'],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439033' },
+      type: {
+        type: 'string',
+        enum: [
+          'section',
+          'article',
+          'part',
+          'point',
+          'sub_point',
+          'paragraph',
+        ],
+      },
+      code: { type: 'string', example: 'rz1.st2.ch1' },
+      number: { type: 'string', nullable: true, example: '1' },
+      depth: { type: 'integer', example: 2 },
+      chars_count: { type: 'integer', example: 320 },
+      subjects_count: { type: 'integer', example: 3 },
+      z_score: { type: 'number', example: 1.8 },
+      risk_level: {
+        type: 'string',
+        enum: ['green', 'yellow', 'red'],
+        nullable: true,
+        example: 'yellow',
+      },
+      factor: {
+        type: 'integer',
+        example: 54,
+        description: 'Аналітичний фактор навантаження (0–100)',
+      },
+    },
+  },
+
+  HeatmapResponse: {
+    type: 'array',
+    description: 'Масив полегшених елементів для побудови теплової карти',
+    items: { $ref: '#/components/schemas/ElementLite' },
+  },
+
+  User: {
+    type: 'object',
+    description: 'Профіль користувача',
+    required: ['_id', 'email', 'fullName', 'role'],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439044' },
+      email: { type: 'string', format: 'email', example: 'user@example.com' },
+      fullName: { type: 'string', example: 'Іван Петренко' },
+      role: {
+        type: 'string',
+        enum: ['user', 'paid_user', 'admin'],
+        example: 'user',
+      },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+
+  AuthTokenResponse: {
+    type: 'object',
+    description: 'Відповідь після успішної реєстрації або входу',
+    required: ['_id', 'email', 'fullName', 'role', 'token'],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439044' },
+      email: { type: 'string', format: 'email', example: 'user@example.com' },
+      fullName: { type: 'string', example: 'Іван Петренко' },
+      role: {
+        type: 'string',
+        enum: ['user', 'paid_user', 'admin'],
+        example: 'user',
+      },
+      token: {
+        type: 'string',
+        example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+      },
+    },
+  },
+
+  RegisterRequest: {
+    type: 'object',
+    required: ['email', 'password'],
+    properties: {
+      email: { type: 'string', format: 'email', example: 'user@example.com' },
+      password: { type: 'string', minLength: 8, example: 'SecurePass1!' },
+      displayName: {
+        type: 'string',
+        example: 'Іван Петренко',
+        description: "Ім'я користувача (приймається і як fullName)",
+      },
+      fullName: {
+        type: 'string',
+        example: 'Іван Петренко',
+        description: 'Альтернатива displayName',
+      },
+      accountType: {
+        type: 'string',
+        enum: ['client', 'admin'],
+        example: 'client',
+        description: 'client — звичайний користувач, admin — потребує superCode',
+      },
+      superCode: {
+        type: 'string',
+        example: 'SUPER_SECRET',
+        description: "Обов'язковий якщо accountType=admin",
+      },
+    },
+  },
+
+  LoginRequest: {
+    type: 'object',
+    required: ['email', 'password'],
+    properties: {
+      email: {
+        type: 'string',
+        example: 'user@example.com',
+        description: 'Email або username',
+      },
+      password: { type: 'string', example: 'SecurePass1!' },
+    },
+  },
+
+  UpdateProfileRequest: {
+    type: 'object',
+    properties: {
+      displayName: {
+        type: 'string',
+        example: 'Новий Іван',
+        description: "Нове ім'я (також приймається як fullName)",
+      },
+      fullName: { type: 'string', example: 'Новий Іван' },
+    },
+  },
+
+  UpdatePasswordRequest: {
+    type: 'object',
+    required: ['currentPassword', 'nextPassword'],
+    properties: {
+      currentPassword: { type: 'string', example: 'OldPass1!' },
+      nextPassword: {
+        type: 'string',
+        minLength: 8,
+        example: 'NewPass1!',
+        description: 'Мінімум 8 символів',
+      },
+    },
+  },
+
+  Taxonomy: {
+    type: 'object',
+    description: 'Категорія таксономії',
+    required: ['_id', 'name'],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439055' },
+      name: { type: 'string', example: 'obligation' },
+      label: { type: 'string', example: "Зобов'язання", nullable: true },
+      description: { type: 'string', nullable: true },
+      parentId: { type: 'string', nullable: true },
+      createdAt: { type: 'string', format: 'date-time' },
+    },
+  },
+
+  TaxonomyTreeNode: {
+    type: 'object',
+    description: 'Вузол ієрархії таксономії',
+    required: ['_id', 'name'],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439055' },
+      name: { type: 'string', example: 'obligation' },
+      label: { type: 'string', nullable: true },
+      children: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/TaxonomyTreeNode' },
+        description: 'Дочірні вузли (рекурсивно)',
+      },
+    },
+  },
+
+  ParseLawRequest: {
+    type: 'object',
+    required: ['url'],
+    properties: {
+      url: {
+        type: 'string',
+        example: 'https://zakon.rada.gov.ua/laws/show/580-19',
+        description: 'URL або код закону',
+      },
+    },
+  },
+
+  ParseLawResponse: {
+    type: 'object',
+    required: ['message', 'lawId', 'elementsCount'],
+    properties: {
+      message: { type: 'string', example: 'Law parsed successfully' },
+      lawId: { type: 'string', example: '507f1f77bcf86cd799439011' },
+      elementsCount: { type: 'integer', example: 994 },
+    },
+  },
+
+  AnalyzeElementResponse: {
+    type: 'object',
+    properties: {
+      message: { type: 'string', example: 'Element analyzed' },
+      elementId: { type: 'string', example: '507f1f77bcf86cd799439033' },
+      subjectsFound: { type: 'integer', example: 3 },
+      subjects: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            subject_id: { type: 'string' },
+            role: {
+              type: 'string',
+              enum: [
+                'actor',
+                'target_of_control',
+                'recipient',
+                'regulator',
+                'protected_party',
+                'issuer_of_regulations',
+                'other',
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
+
+  BatchAnalyzeResponse: {
+    type: 'object',
+    properties: {
+      message: { type: 'string', example: 'Batch analysis complete' },
+      lawId: { type: 'string', example: '507f1f77bcf86cd799439011' },
+      processed: { type: 'integer', example: 850 },
+      subjectsFound: { type: 'integer', example: 2340 },
+      skipped: { type: 'integer', example: 144 },
+      errors: { type: 'integer', example: 0 },
+    },
+  },
+
+  UnauthorizedError: {
+    type: 'object',
+    required: ['message'],
+    properties: {
+      message: { type: 'string', example: 'Not authorized, no token' },
+    },
+  },
+
+  ForbiddenError: {
+    type: 'object',
+    required: ['message'],
+    properties: {
+      message: { type: 'string', example: 'Not authorized as admin' },
+    },
+  },
+
+  ValidationError: {
+    type: 'object',
+    required: ['message'],
+    properties: {
+      message: {
+        type: 'string',
+        example: 'Please provide email and password',
       },
     },
   },
