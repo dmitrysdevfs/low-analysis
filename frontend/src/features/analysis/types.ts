@@ -30,6 +30,8 @@ export interface AnalysisElementRecord {
   factor: number;
   factorBand: FactorBand;
   subjectLinks: AnalysisSubjectLink[];
+  legalFunctions: string[];
+  domains: string[];
 }
 
 export interface AnalysisHeatmapArticle {

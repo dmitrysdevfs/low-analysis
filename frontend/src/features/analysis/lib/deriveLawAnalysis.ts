@@ -176,6 +176,8 @@ function flattenBranches(
       factor,
       factorBand: getFactorBand(factor),
       subjectLinks,
+      legalFunctions: node.taxonomy?.legalFunctions ?? [],
+      domains: node.taxonomy?.domains ?? [],
     });
 
     node.children.forEach((child) =>

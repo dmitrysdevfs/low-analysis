@@ -153,6 +153,8 @@ describe("Analysis pages", () => {
                 color: "#c8a843",
               },
             ],
+            legalFunctions: [],
+            domains: [],
           },
         ],
         filteredRecords: [
@@ -183,6 +185,8 @@ describe("Analysis pages", () => {
                 color: "#c8a843",
               },
             ],
+            legalFunctions: [],
+            domains: [],
           },
         ],
         heatmap: [

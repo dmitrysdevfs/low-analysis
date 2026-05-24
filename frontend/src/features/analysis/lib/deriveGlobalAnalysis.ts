@@ -8,10 +8,13 @@ import type {
   GlobalTopLawRow,
 } from "../types";
 
-function sortByCreatedAtAsc<T extends { createdAt: string }>(items: T[]) {
+function sortByDateAsc<
+  T extends { createdAt: string; adoptedDate?: string | null },
+>(items: T[]) {
   return [...items].sort(
     (left, right) =>
-      new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime(),
+      new Date(left.adoptedDate ?? left.createdAt).getTime() -
+      new Date(right.adoptedDate ?? right.createdAt).getTime(),
   );
 }
 
@@ -20,7 +23,7 @@ function buildCorpusTimeline(laws: Law[]): GlobalTimelinePoint[] {
   let cumulativeArticles = 0;
   let cumulativeParagraphs = 0;
 
-  return sortByCreatedAtAsc(laws).map((law) => {
+  return sortByDateAsc(laws).map((law) => {
     cumulativeLaws += 1;
     cumulativeArticles += law.totalArticles;
     cumulativeParagraphs += law.totalParagraphs ?? 0;
