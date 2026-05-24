@@ -82,7 +82,10 @@ export function SubjectMentionsModal() {
   );
   const { laws } = useLaws();
 
-  const lawsMap = useMemo(() => new Map(laws.map((l) => [l._id, l])), [laws]);
+  const lawsMap = useMemo(
+    () => new Map((laws || []).map((l) => [l._id, l])),
+    [laws],
+  );
   const articleMentions = useMemo(
     () => buildMentions(elements, lawsMap),
     [elements, lawsMap],
