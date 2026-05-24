@@ -305,6 +305,35 @@
   opacity: 0.55;
 }
 
+/* Back stats */
+.backStats {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.backStatRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backStatLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #7a98c0);
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.backStatValue {
+  font-size: 0.9rem;
+  color: var(--color-text-primary, #d6e0f0);
+  font-weight: 500;
+}
+
 /* Footer */
 .cardFooter {
   border-top: 1px solid #1c3260;

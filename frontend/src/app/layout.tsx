@@ -12,6 +12,7 @@ import { RouteAccessGate } from "@/components/auth/RouteAccessGate";
 import { BillingProvider } from "@/components/billing/BillingProvider";
 import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { AppQueryProvider } from "@/providers/AppQueryProvider";
 import { AiAssistant } from "@/components/ai/AiAssistant";
 import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
@@ -88,6 +89,7 @@ export default function RootLayout({
       className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        <AppQueryProvider>
         <ErrorBoundary>
           <AuthProvider>
             <BillingProvider>
@@ -109,6 +111,7 @@ export default function RootLayout({
             </BillingProvider>
           </AuthProvider>
         </ErrorBoundary>
+        </AppQueryProvider>
         <ToastContainer />
       </body>
     </html>
