@@ -9,25 +9,11 @@ import { LawParseForm } from "@/components/parse/LawParseForm";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { useLaws } from "@/hooks/useLaws";
 import { ROUTES } from "@/constants/routes";
+import {
+  loadRecentlyViewed,
+  type RecentLaw,
+} from "@/lib/storage/recentlyViewed";
 import styles from "./page.module.scss";
-
-const RECENTLY_VIEWED_KEY = "law-analysis.recently-viewed";
-
-interface RecentLaw {
-  _id: string;
-  title: string;
-  code: string;
-}
-
-function loadRecentlyViewed(): RecentLaw[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(RECENTLY_VIEWED_KEY);
-    return raw ? (JSON.parse(raw) as RecentLaw[]) : [];
-  } catch {
-    return [];
-  }
-}
 
 export default function LawsPage() {
   const [query, setQuery] = useState("");

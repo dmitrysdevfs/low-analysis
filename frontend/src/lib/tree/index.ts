@@ -4,6 +4,7 @@ export {
   buildTreeBranches,
   buildLawSections,
   getSortedArticles,
+  filterTreeBySubject,
 } from "./builders";
 export {
   countSectionArticles,
