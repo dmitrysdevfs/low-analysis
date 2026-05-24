@@ -1,3 +1,4 @@
+export { hexToRgb } from "./helpers";
 export type { TreeBranch } from "./builders";
 export {
   compareTreeNodes,
