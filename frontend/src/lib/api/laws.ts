@@ -32,8 +32,8 @@ export async function getJson<T>(
 export async function getLaws(q = "", options?: RequestInit): Promise<Law[]> {
   const qs = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "";
   const res = await getJson<{ data: Law[] } | Law[]>(`/laws${qs}`, options);
-  // Backend returns paginated { data, pagination } shape
-  return Array.isArray(res) ? res : (res as { data: Law[] }).data;
+  if (!res) return [];
+  return Array.isArray(res) ? res : (res as { data: Law[] }).data || [];
 }
 
 export async function getLawTree(
