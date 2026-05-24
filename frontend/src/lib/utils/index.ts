@@ -1,4 +1,4 @@
-export { DATE_PLACEHOLDER, formatDateInput, toIsoDate } from "./dateUtils";
+export { DATE_PLACEHOLDER, formatDateInput, toIsoDate } from "./dateInput";
 export {
   DEFAULT_ARTICLE_LIMIT,
   ARTICLE_LIMIT_OPTIONS,
