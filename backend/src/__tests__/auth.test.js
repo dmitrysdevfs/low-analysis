@@ -127,4 +127,149 @@ describe('Auth API', () => {
       expect(res.status).toBe(401);
     });
   });
+
+  describe('POST /api/auth/register with admin role', () => {
+    it('should register an admin if correct superCode is provided', async () => {
+      const userData = {
+        email: 'admin_test@example.com',
+        password: 'password123',
+        displayName: 'Test Admin',
+        accountType: 'admin',
+        superCode: 'SUPER-001',
+      };
+
+      process.env.ADMIN_SUPER_CODE = 'SUPER-001';
+
+      User.findOne.mockResolvedValue(null);
+      User.create.mockResolvedValue({
+        _id: 'mock-admin-id',
+        email: userData.email,
+        fullName: userData.displayName,
+        role: 'admin',
+      });
+
+      const res = await request(app).post('/api/auth/register').send(userData);
+
+      expect(res.status).toBe(201);
+      expect(res.body.role).toBe('admin');
+      expect(User.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          role: 'admin',
+          fullName: 'Test Admin',
+        }),
+      );
+    });
+
+    it('should return 400 if incorrect superCode is provided', async () => {
+      const userData = {
+        email: 'admin_test@example.com',
+        password: 'password123',
+        displayName: 'Test Admin',
+        accountType: 'admin',
+        superCode: 'WRONG-CODE',
+      };
+
+      process.env.ADMIN_SUPER_CODE = 'SUPER-001';
+
+      const res = await request(app).post('/api/auth/register').send(userData);
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toContain('супер-код');
+    });
+  });
+
+  describe('PUT /api/auth/profile', () => {
+    it('should update user profile if authorized', async () => {
+      const mockUser = {
+        _id: 'mock-user-id',
+        email: 'test@example.com',
+        fullName: 'Original Name',
+        role: 'user',
+        save: vi.fn().mockResolvedValue({
+          _id: 'mock-user-id',
+          email: 'test@example.com',
+          fullName: 'Updated Name',
+          role: 'user',
+        }),
+      };
+
+      User.findById.mockReturnValue({
+        select: vi.fn().mockReturnThis(),
+        then: vi.fn((resolve) => resolve(mockUser)),
+        catch: vi.fn(),
+      });
+
+      const token = jwt.sign({ id: 'mock-user-id' }, process.env.JWT_SECRET);
+
+      const res = await request(app)
+        .put('/api/auth/profile')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ displayName: 'Updated Name' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.fullName).toBe('Updated Name');
+      expect(mockUser.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('PUT /api/auth/password', () => {
+    it('should update password with correct current password', async () => {
+      const mockUser = {
+        _id: 'mock-user-id',
+        email: 'test@example.com',
+        fullName: 'Original Name',
+        role: 'user',
+        password: 'hashedpassword',
+        comparePassword: vi.fn().mockResolvedValue(true),
+        save: vi.fn().mockResolvedValue(true),
+      };
+
+      User.findById.mockReturnValue({
+        select: vi.fn().mockReturnValue(mockUser),
+      });
+
+      const token = jwt.sign({ id: 'mock-user-id' }, process.env.JWT_SECRET);
+
+      const res = await request(app)
+        .put('/api/auth/password')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          currentPassword: 'password123',
+          nextPassword: 'newpassword123',
+        });
+
+      expect(res.status).toBe(200);
+      expect(mockUser.comparePassword).toHaveBeenCalledWith('password123');
+      expect(mockUser.password).toBe('newpassword123');
+      expect(mockUser.save).toHaveBeenCalled();
+    });
+
+    it('should return 400 with incorrect current password', async () => {
+      const mockUser = {
+        _id: 'mock-user-id',
+        email: 'test@example.com',
+        fullName: 'Original Name',
+        role: 'user',
+        password: 'hashedpassword',
+        comparePassword: vi.fn().mockResolvedValue(false),
+      };
+
+      User.findById.mockReturnValue({
+        select: vi.fn().mockReturnValue(mockUser),
+      });
+
+      const token = jwt.sign({ id: 'mock-user-id' }, process.env.JWT_SECRET);
+
+      const res = await request(app)
+        .put('/api/auth/password')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          currentPassword: 'wrongpassword',
+          nextPassword: 'newpassword123',
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe('Current password is incorrect');
+    });
+  });
 });
