@@ -90,27 +90,27 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <AppQueryProvider>
-        <ErrorBoundary>
-          <AuthProvider>
-            <BillingProvider>
-              <GuestLimitsProvider>
-                <SidebarDataProvider>
-                  <div className="site-shell">
-                    <ApiMetricsTracker />
-                    <BackendWarmup />
-                    <ScrollRestore />
-                    <Header />
-                    <div className="site-content">
-                      <RouteAccessGate>{children}</RouteAccessGate>
+          <ErrorBoundary>
+            <AuthProvider>
+              <BillingProvider>
+                <GuestLimitsProvider>
+                  <SidebarDataProvider>
+                    <div className="site-shell">
+                      <ApiMetricsTracker />
+                      <BackendWarmup />
+                      <ScrollRestore />
+                      <Header />
+                      <div className="site-content">
+                        <RouteAccessGate>{children}</RouteAccessGate>
+                      </div>
+                      <AiAssistant />
+                      <Footer />
                     </div>
-                    <AiAssistant />
-                    <Footer />
-                  </div>
-                </SidebarDataProvider>
-              </GuestLimitsProvider>
-            </BillingProvider>
-          </AuthProvider>
-        </ErrorBoundary>
+                  </SidebarDataProvider>
+                </GuestLimitsProvider>
+              </BillingProvider>
+            </AuthProvider>
+          </ErrorBoundary>
         </AppQueryProvider>
         <ToastContainer />
       </body>
