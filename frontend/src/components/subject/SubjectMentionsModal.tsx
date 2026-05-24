@@ -6,7 +6,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
 import { useLawsMap } from "@/hooks/useLawsMap";
 import { getNodeBadge, sanitizeAnchor } from "@/lib/tree";
-import { buildMentions, buildArticlePartsMap, type ArticleMention } from "@/lib/subject/mentionHelpers";
+import {
+  buildMentions,
+  buildArticlePartsMap,
+  type ArticleMention,
+} from "@/lib/subject/mentionHelpers";
 import { ROUTES } from "@/constants/routes";
 import type { TreeNode } from "@/types";
 import styles from "./SubjectMentionsModal.module.scss";
@@ -17,7 +21,6 @@ interface PartMention {
   snippet: string;
   globalIdx: number;
 }
-
 
 export function SubjectMentionsModal() {
   const searchParams = useSearchParams();
