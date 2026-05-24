@@ -1,6 +1,13 @@
 "use client";
 
-import type { Law, LawStats, LawTreeResponse, ArticleResponse, PaginatedLawsResponse, TreeNode } from "@/types";
+import type {
+  Law,
+  LawStats,
+  LawTreeResponse,
+  ArticleResponse,
+  PaginatedLawsResponse,
+  TreeNode,
+} from "@/types";
 import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
 import { readStoredToken } from "@/lib/auth/authClient";
 
@@ -30,9 +37,12 @@ export async function getJson<T>(
 }
 
 export async function getLaws(q = "", options?: RequestInit): Promise<Law[]> {
-  const params = new URLSearchParams({ limit: "200" });
+  const params = new URLSearchParams({ limit: "100" });
   if (q.trim()) params.set("q", q.trim());
-  const res = await getJson<{ data: Law[] } | Law[]>(`/laws?${params}`, options);
+  const res = await getJson<{ data: Law[] } | Law[]>(
+    `/laws?${params}`,
+    options,
+  );
   if (!res) return [];
   return Array.isArray(res) ? res : (res as { data: Law[] }).data || [];
 }
@@ -43,8 +53,8 @@ export interface LawsQuery {
   documentType?: string;
   dateFrom?: string;
   dateTo?: string;
-  sortBy?: 'date' | 'title';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "date" | "title";
+  sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
 }
