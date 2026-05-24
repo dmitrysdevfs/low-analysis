@@ -22,7 +22,6 @@ export async function parseLaw(url: string): Promise<ParseLawResponse> {
     body: JSON.stringify({ url }),
   });
 
-
   if (!res.ok) {
     let errorMessage = `HTTP ${res.status}: ${res.statusText}`;
 

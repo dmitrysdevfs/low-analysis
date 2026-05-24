@@ -29,7 +29,6 @@ export async function getJson<T>(
   return res.json() as Promise<T>;
 }
 
-
 export async function getLaws(q = "", options?: RequestInit): Promise<Law[]> {
   const qs = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "";
   const res = await getJson<{ data: Law[] } | Law[]>(`/laws${qs}`, options);

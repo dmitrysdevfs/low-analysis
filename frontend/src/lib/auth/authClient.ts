@@ -1,11 +1,7 @@
 "use client";
 
 import { ROUTES } from "@/constants/routes";
-import type {
-  AuthSession,
-  LoginPayload,
-  RegisterPayload,
-} from "@/types";
+import type { AuthSession, LoginPayload, RegisterPayload } from "@/types";
 
 export const AUTH_SESSION_STORAGE_KEY = "low-analysis.auth.session";
 export const AUTH_TOKEN_STORAGE_KEY = "low-analysis.auth.token";
@@ -25,8 +21,9 @@ function isBrowser() {
 
 export function readStoredSession(): AuthSession | null {
   if (!isBrowser()) return null;
-  const raw = window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY) || 
-              window.sessionStorage.getItem(AUTH_SESSION_STORAGE_KEY);
+  const raw =
+    window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY) ||
+    window.sessionStorage.getItem(AUTH_SESSION_STORAGE_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as AuthSession;
@@ -37,11 +34,17 @@ export function readStoredSession(): AuthSession | null {
 
 export function readStoredToken(): string | null {
   if (!isBrowser()) return null;
-  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) || 
-         window.sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+  return (
+    window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) ||
+    window.sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY)
+  );
 }
 
-function storeSession(session: AuthSession, token: string, rememberMe: boolean = true) {
+function storeSession(
+  session: AuthSession,
+  token: string,
+  rememberMe: boolean = true,
+) {
   const storage = rememberMe ? window.localStorage : window.sessionStorage;
   storage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(session));
   storage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
@@ -55,7 +58,9 @@ export function clearStoredSession() {
   window.sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
 }
 
-export async function loginUser(payload: LoginPayload): Promise<AuthActionResult> {
+export async function loginUser(
+  payload: LoginPayload,
+): Promise<AuthActionResult> {
   try {
     const res = await fetch(`${API_BASE}/login`, {
       method: "POST",
@@ -74,7 +79,7 @@ export async function loginUser(payload: LoginPayload): Promise<AuthActionResult
       displayName: data.fullName,
       email: data.email,
       roles: [data.role],
-      accountType: data.role === 'admin' ? 'admin' : 'client',
+      accountType: data.role === "admin" ? "admin" : "client",
       lastLoginAt: new Date().toISOString(),
     };
 
@@ -90,7 +95,9 @@ export async function loginUser(payload: LoginPayload): Promise<AuthActionResult
   }
 }
 
-export async function registerUser(payload: RegisterPayload): Promise<AuthActionResult> {
+export async function registerUser(
+  payload: RegisterPayload,
+): Promise<AuthActionResult> {
   try {
     const res = await fetch(`${API_BASE}/register`, {
       method: "POST",
@@ -135,7 +142,7 @@ export async function getProfile(): Promise<AuthSession | null> {
       displayName: data.fullName,
       email: data.email,
       roles: [data.role],
-      accountType: data.role === 'admin' ? 'admin' : 'client',
+      accountType: data.role === "admin" ? "admin" : "client",
       lastLoginAt: new Date().toISOString(),
     };
   } catch (error) {

@@ -90,22 +90,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return registerUser(payload);
   }, []);
 
-  const updateProfile = useCallback(
-    (displayName: string) => {
-      // Mock for now as backend endpoint is not specified in Stage 4 checklist
-      return { ok: false, error: "Update profile not yet implemented on backend." };
-    },
-    [],
-  );
+  const updateProfile = useCallback((displayName: string) => {
+    // Mock for now as backend endpoint is not specified in Stage 4 checklist
+    return {
+      ok: false,
+      error: "Update profile not yet implemented on backend.",
+    };
+  }, []);
 
   const changePassword = useCallback(
     (currentPassword: string, nextPassword: string) => {
       // Mock for now as backend endpoint is not specified in Stage 4 checklist
-      return { ok: false, error: "Change password not yet implemented on backend." };
+      return {
+        ok: false,
+        error: "Change password not yet implemented on backend.",
+      };
     },
     [],
   );
-
 
   const logout = useCallback(() => {
     clearStoredSession();

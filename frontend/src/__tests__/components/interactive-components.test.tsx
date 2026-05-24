@@ -23,7 +23,6 @@ vi.mock("@/lib/auth/authClient", async (importOriginal) => {
   };
 });
 
-
 import { buildLawSections } from "@/lib/tree";
 import {
   LAW_FIXTURE,
