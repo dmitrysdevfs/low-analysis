@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import { Layout } from "@/components/layout/Layout";
 import { LawCard } from "@/components/law/LawCard";
 import { LawParseForm } from "@/components/parse/LawParseForm";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
-import { useLaws } from "@/hooks/useLaws";
+import { useLawsPaginated } from "@/hooks/useLawsPaginated";
 import { ROUTES } from "@/constants/routes";
 import {
   loadRecentlyViewed,
@@ -15,14 +15,37 @@ import {
 } from "@/lib/storage/recentlyViewed";
 import styles from "./page.module.scss";
 
+const STATUS_OPTIONS = ["Чинний", "Втратив чинність"];
+
 export default function LawsPage() {
   const [query, setQuery] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [, setRefreshKey] = useState(0);
   const [activeStatus, setActiveStatus] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const [recentlyViewed, setRecentlyViewed] = useState<RecentLaw[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const { laws, loading, error } = useLaws(query, refreshKey);
+  const {
+    laws: filteredLaws,
+    pagination,
+    loading,
+    error,
+  } = useLawsPaginated({
+    q: query || undefined,
+    status: activeStatus ?? undefined,
+    page,
+    limit: 20,
+  });
+
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
+    setPage(1);
+  };
+
+  const handleStatusChange = (status: string | null) => {
+    setActiveStatus(status);
+    setPage(1);
+  };
 
   // Load recently viewed on mount (client only)
   useEffect(() => {
@@ -48,16 +71,7 @@ export default function LawsPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Collect unique statuses from loaded laws
-  const statusOptions = Array.from(
-    new Set(laws.map((l) => l.status).filter(Boolean) as string[]),
-  );
-
-  // Filter laws by active status (client-side)
-  const filteredLaws =
-    activeStatus === null
-      ? laws
-      : laws.filter((l) => l.status === activeStatus);
+  const total = pagination?.total ?? filteredLaws.length;
 
   return (
     <Layout>
@@ -95,13 +109,13 @@ export default function LawsPage() {
               ref={searchRef}
               type="text"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => handleQueryChange(event.target.value)}
               placeholder="Пошук за назвою закону…"
               className={`form-control ${styles.searchInput}`}
             />
             {query ? (
               <button
-                onClick={() => setQuery("")}
+                onClick={() => handleQueryChange("")}
                 className={styles.clearButton}
               >
                 ✕
@@ -110,32 +124,30 @@ export default function LawsPage() {
           </motion.div>
 
           {/* Status filter chips */}
-          {!loading && !error && statusOptions.length > 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.35 }}
-              className={styles.chipsRow}
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.35 }}
+            className={styles.chipsRow}
+          >
+            <button
+              className={`${styles.chip} ${activeStatus === null ? styles.chipActive : ""}`}
+              onClick={() => handleStatusChange(null)}
             >
+              Всі
+            </button>
+            {STATUS_OPTIONS.map((status) => (
               <button
-                className={`${styles.chip} ${activeStatus === null ? styles.chipActive : ""}`}
-                onClick={() => setActiveStatus(null)}
+                key={status}
+                className={`${styles.chip} ${activeStatus === status ? styles.chipActive : ""}`}
+                onClick={() =>
+                  handleStatusChange(activeStatus === status ? null : status)
+                }
               >
-                Всі
+                {status}
               </button>
-              {statusOptions.map((status) => (
-                <button
-                  key={status}
-                  className={`${styles.chip} ${activeStatus === status ? styles.chipActive : ""}`}
-                  onClick={() =>
-                    setActiveStatus(activeStatus === status ? null : status)
-                  }
-                >
-                  {status}
-                </button>
-              ))}
-            </motion.div>
-          ) : null}
+            ))}
+          </motion.div>
 
           <LawParseForm onSuccess={() => setRefreshKey((prev) => prev + 1)} />
 
@@ -168,7 +180,7 @@ export default function LawsPage() {
           <AnimatePresence mode="wait">
             {!loading && !error ? (
               <motion.div
-                key={`count-${filteredLaws.length}`}
+                key={`count-${total}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -176,8 +188,8 @@ export default function LawsPage() {
                 className={`mono ${styles.countLine}`}
               >
                 {query
-                  ? `${filteredLaws.length} результат${filteredLaws.length === 1 ? "" : "ів"} для «${query}»`
-                  : `${filteredLaws.length} документ${filteredLaws.length === 1 ? "" : "ів"} у базі`}
+                  ? `${total} результат${total === 1 ? "" : "ів"} для «${query}»`
+                  : `${total} документ${total === 1 ? "" : "ів"} у базі`}
               </motion.div>
             ) : null}
           </AnimatePresence>
@@ -220,6 +232,28 @@ export default function LawsPage() {
                 ))}
               </div>
             </AnimatePresence>
+          ) : null}
+
+          {pagination && (pagination.hasPrevPage || pagination.hasNextPage) ? (
+            <div className={styles.pagination}>
+              <button
+                className={styles.pageBtn}
+                disabled={!pagination.hasPrevPage}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                ← Назад
+              </button>
+              <span className={styles.pageInfo}>
+                {pagination.page} / {pagination.totalPages}
+              </span>
+              <button
+                className={styles.pageBtn}
+                disabled={!pagination.hasNextPage}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Далі →
+              </button>
+            </div>
           ) : null}
         </div>
       </div>
