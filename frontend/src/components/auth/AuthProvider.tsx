@@ -17,6 +17,7 @@ import {
   getProfile,
   updateUserProfile,
   changeUserPassword as changePasswordApi,
+  logoutUserApi,
 } from "@/lib/auth/authClient";
 import type { AuthSession, LoginPayload, RegisterPayload } from "@/types";
 
@@ -116,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(() => {
+    logoutUserApi(); // Trigger API logout asynchronously
     clearStoredSession();
     setUser(null);
   }, []);

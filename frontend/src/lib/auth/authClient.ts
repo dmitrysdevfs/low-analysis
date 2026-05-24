@@ -220,3 +220,20 @@ export async function changeUserPassword(
     return { ok: false, error: "Помилка з'єднання з сервером" };
   }
 }
+
+export async function logoutUserApi(): Promise<AuthActionResult> {
+  const token = readStoredToken();
+  if (!token) return { ok: true };
+
+  try {
+    await fetch(`${API_BASE}/logout`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Помилка з'єднання з сервером під час виходу" };
+  }
+}

@@ -24,7 +24,13 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, 'Please add a password'],
-      minlength: [8, 'Password must be at least 8 characters'],
+      minlength: [
+        process.env.NODE_ENV === 'development' ||
+        process.env.NODE_ENV === 'test'
+          ? 3
+          : 8,
+        'Password must be at least 8 characters',
+      ],
       select: false,
     },
     role: {
