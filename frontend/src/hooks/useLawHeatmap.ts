@@ -12,7 +12,11 @@ interface State {
 }
 
 export function useLawHeatmap(id: string | null | undefined) {
-  const [state, setState] = useState<State>({ heatmap: [], loading: false, error: null });
+  const [state, setState] = useState<State>({
+    heatmap: [],
+    loading: false,
+    error: null,
+  });
 
   useEffect(() => {
     if (!id) return;

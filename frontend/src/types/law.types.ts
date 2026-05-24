@@ -66,7 +66,7 @@ export interface TreeNode {
     domains: string[];
     keywords: string[];
     confidence: number;
-    source: 'rules' | 'llm' | 'manual';
+    source: "rules" | "llm" | "manual";
   } | null;
 }
 

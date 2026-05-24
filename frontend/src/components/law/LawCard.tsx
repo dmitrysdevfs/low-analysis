@@ -109,7 +109,8 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
             </div>
           </div>
 
-          {(law.adoptedDate || (law.documentType && law.documentType.length > 0)) ? (
+          {law.adoptedDate ||
+          (law.documentType && law.documentType.length > 0) ? (
             <div className={styles.frontMeta}>
               {law.adoptedDate ? (
                 <span className={styles.metaDate}>
@@ -117,7 +118,9 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
                 </span>
               ) : null}
               {law.documentType && law.documentType.length > 0 ? (
-                <span className={styles.metaDocType}>{law.documentType[0]}</span>
+                <span className={styles.metaDocType}>
+                  {law.documentType[0]}
+                </span>
               ) : null}
             </div>
           ) : null}

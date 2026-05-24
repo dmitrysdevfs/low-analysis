@@ -5,10 +5,11 @@ export function applySearchFilters(laws: Law[], params: SearchParams): Law[] {
   let filtered = [...laws];
 
   if (params.docType) {
-    filtered = filtered.filter((law) =>
-      law.documentType?.some((t) =>
-        t.toLowerCase().includes(params.docType.toLowerCase()),
-      ) ?? false,
+    filtered = filtered.filter(
+      (law) =>
+        law.documentType?.some((t) =>
+          t.toLowerCase().includes(params.docType.toLowerCase()),
+        ) ?? false,
     );
   }
 

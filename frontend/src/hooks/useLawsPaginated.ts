@@ -6,7 +6,10 @@ import { parseApiError } from "@/lib/utils";
 import type { Law, Pagination } from "@/types";
 import type { LawsQuery } from "@/lib/api/laws";
 
-const cache = new Map<string, { data: Law[]; pagination: Pagination; ts: number }>();
+const cache = new Map<
+  string,
+  { data: Law[]; pagination: Pagination; ts: number }
+>();
 const CACHE_TTL = 60_000;
 
 interface State {
@@ -33,7 +36,12 @@ export function useLawsPaginated(query: LawsQuery = {}) {
       () => {
         const cached = cache.get(cacheKey);
         if (cached && Date.now() - cached.ts < CACHE_TTL) {
-          setState({ laws: cached.data, pagination: cached.pagination, loading: false, error: null });
+          setState({
+            laws: cached.data,
+            pagination: cached.pagination,
+            loading: false,
+            error: null,
+          });
           return;
         }
 
@@ -42,13 +50,27 @@ export function useLawsPaginated(query: LawsQuery = {}) {
         getLawsPaginated(query, { signal: controller.signal })
           .then((res) => {
             if (cache.size >= 20) cache.delete(cache.keys().next().value!);
-            cache.set(cacheKey, { data: res.data, pagination: res.pagination, ts: Date.now() });
-            setState({ laws: res.data, pagination: res.pagination, loading: false, error: null });
+            cache.set(cacheKey, {
+              data: res.data,
+              pagination: res.pagination,
+              ts: Date.now(),
+            });
+            setState({
+              laws: res.data,
+              pagination: res.pagination,
+              loading: false,
+              error: null,
+            });
           })
           .catch((err: unknown) => {
             const msg = parseApiError(err);
             if (msg === "__ABORT__") return;
-            setState({ laws: [], pagination: null, loading: false, error: msg });
+            setState({
+              laws: [],
+              pagination: null,
+              loading: false,
+              error: msg,
+            });
           });
       },
       hasQuery ? 250 : 0,
@@ -58,7 +80,7 @@ export function useLawsPaginated(query: LawsQuery = {}) {
       clearTimeout(timer);
       controller.abort();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey]);
 
   return state;
