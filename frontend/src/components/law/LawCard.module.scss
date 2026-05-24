@@ -339,6 +339,33 @@
   text-transform: uppercase;
 }
 
+/* ── Front metadata row ── */
+.frontMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.metaDate {
+  font-size: 11px;
+  color: #7a98c0;
+  font-family: var(--font-mono);
+  opacity: 0.6;
+}
+
+.metaDocType {
+  font-size: 10px;
+  color: #c8a843;
+  background: rgba(200, 168, 67, 0.08);
+  border: 1px solid rgba(200, 168, 67, 0.18);
+  border-radius: 3px;
+  padding: 1px 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+}
+
 @media (max-width: 640px) {
   .cardFront {
     padding: 18px 16px;
