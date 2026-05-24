@@ -23,6 +23,21 @@ const users = [
     email: 'paid@lowanalysis.com',
     password: 'password123',
     role: 'paid_user',
+    username: 'paid',
+  },
+  {
+    fullName: 'Dev Client',
+    email: 'user@low-analysis.dev',
+    password: '777',
+    role: 'user',
+    username: 'user',
+  },
+  {
+    fullName: 'Dev Admin',
+    email: 'admin@low-analysis.dev',
+    password: '888',
+    role: 'admin',
+    username: 'admin',
   },
 ];
 
@@ -30,7 +45,16 @@ const seedUsers = async () => {
   try {
     await connectDB();
 
-    await User.deleteMany({ email: { $in: users.map((u) => u.email) } });
+    await User.deleteMany({
+      $or: [
+        { email: { $in: users.map((u) => u.email) } },
+        {
+          username: {
+            $in: users.filter((u) => u.username).map((u) => u.username),
+          },
+        },
+      ],
+    });
 
     await User.create(users);
 
