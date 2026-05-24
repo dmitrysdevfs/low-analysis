@@ -415,14 +415,7 @@
       _id: { type: 'string', example: '507f1f77bcf86cd799439033' },
       type: {
         type: 'string',
-        enum: [
-          'section',
-          'article',
-          'part',
-          'point',
-          'sub_point',
-          'paragraph',
-        ],
+        enum: ['section', 'article', 'part', 'point', 'sub_point', 'paragraph'],
       },
       code: { type: 'string', example: 'rz1.st2.ch1' },
       number: { type: 'string', nullable: true, example: '1' },
@@ -508,7 +501,8 @@
         type: 'string',
         enum: ['client', 'admin'],
         example: 'client',
-        description: 'client — звичайний користувач, admin — потребує superCode',
+        description:
+          'client — звичайний користувач, admin — потребує superCode',
       },
       superCode: {
         type: 'string',
