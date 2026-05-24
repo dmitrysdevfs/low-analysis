@@ -10,6 +10,20 @@ import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { NestedNodeList } from "@/components/article/ArticleTreeNode";
 import type { TreeBranch } from "@/lib/tree";
 import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
+import * as authClient from "@/lib/auth/authClient";
+
+vi.mock("@/lib/auth/authClient", async (importOriginal) => {
+  const actual = await importOriginal<typeof authClient>();
+  return {
+    ...actual,
+    getProfile: vi.fn().mockImplementation(async () => {
+      const stored = actual.readStoredSession();
+      return stored;
+    }),
+  };
+});
+
+
 import { buildLawSections } from "@/lib/tree";
 import {
   LAW_FIXTURE,

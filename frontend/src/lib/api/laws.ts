@@ -2,6 +2,7 @@
 
 import type { Law, LawStats, LawTreeResponse, ArticleResponse } from "@/types";
 import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
+import { readStoredToken } from "@/lib/auth/authClient";
 
 const API_BASE = "/api";
 
@@ -9,7 +10,17 @@ export async function getJson<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
-  const res = await fetchWithTimeout(`${API_BASE}${path}`, options);
+  const token = readStoredToken();
+  const headers = new Headers(options?.headers);
+
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const res = await fetchWithTimeout(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
 
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}: ${res.statusText}`);
@@ -18,9 +29,12 @@ export async function getJson<T>(
   return res.json() as Promise<T>;
 }
 
+
 export async function getLaws(q = "", options?: RequestInit): Promise<Law[]> {
   const qs = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "";
-  return getJson<Law[]>(`/laws${qs}`, options);
+  const res = await getJson<{ data: Law[] } | Law[]>(`/laws${qs}`, options);
+  // Backend returns paginated { data, pagination } shape
+  return Array.isArray(res) ? res : (res as { data: Law[] }).data;
 }
 
 export async function getLawTree(
