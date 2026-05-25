@@ -1,93 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import {
-  deleteWorkspaceNote,
-  readClientWorkspace,
-  toggleWorkspaceNotePin,
-  upsertWorkspaceNote,
-  type ClientWorkspace,
-} from "@/lib/auth/clientWorkspace";
+import { useNotes } from "@/hooks/useNotes";
 import { notify } from "@/lib/toast";
 import { formatDateShort } from "@/lib/utils";
 import styles from "./ClientWorkspace.module.scss";
 
 export function ClientWorkspaceNotes() {
   const { user } = useAuth();
-  const userId = user?.id;
-  const [workspace, setWorkspace] = useState<ClientWorkspace | null>(null);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  const { notes, addNote, removeNote, togglePin } = useNotes();
+  const [text, setText] = useState("");
 
-  useEffect(() => {
-    if (!userId) {
-      return;
-    }
+  const orderedNotes = useMemo(
+    () =>
+      [...notes].sort((a, b) => {
+        if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+        return b.updatedAt.localeCompare(a.updatedAt);
+      }),
+    [notes],
+  );
 
-    setWorkspace(readClientWorkspace(userId));
-  }, [userId]);
+  if (!user) return null;
 
-  const orderedNotes = useMemo(() => {
-    if (!workspace) {
-      return [];
-    }
-
-    return [...workspace.notes].sort((left, right) => {
-      if (left.pinned !== right.pinned) {
-        return left.pinned ? -1 : 1;
-      }
-
-      return right.updatedAt.localeCompare(left.updatedAt);
-    });
-  }, [workspace]);
-
-  if (!user || !workspace) {
-    return null;
-  }
-
-  function handleCreateNote(event: FormEvent<HTMLFormElement>) {
+  function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (!userId) {
+    if (text.trim().length < 10) {
+      notify.warning("Нотатка має містити щонайменше 10 символів.");
       return;
     }
-
-    if (title.trim().length < 3 || body.trim().length < 10) {
-      notify.warning("Додайте заголовок та текст нотатки перед збереженням.");
-      return;
-    }
-
-    const nextWorkspace = upsertWorkspaceNote(userId, {
-      title,
-      body,
-    });
-
-    setWorkspace(nextWorkspace);
-    setTitle("");
-    setBody("");
-    notify.success("Нотатку збережено до кабінету.");
-  }
-
-  function handleDelete(noteId: string) {
-    if (!userId) {
-      return;
-    }
-
-    const nextWorkspace = deleteWorkspaceNote(userId, noteId);
-    setWorkspace(nextWorkspace);
-    notify.info("Нотатку видалено з кабінету.");
-  }
-
-  function handlePin(noteId: string) {
-    if (!userId) {
-      return;
-    }
-
-    const nextWorkspace = toggleWorkspaceNotePin(userId, noteId);
-    setWorkspace(nextWorkspace);
+    addNote({ type: "manual", color: "gold", noteText: text.trim() });
+    setText("");
+    notify.success("Нотатку збережено.");
   }
 
   return (
@@ -106,7 +52,7 @@ export function ClientWorkspaceNotes() {
           <div className={styles.heroIdentity}>
             <span className={styles.rolePill}>Дошка нотаток</span>
             <div className={styles.identityName}>
-              {workspace.notes.length} активних нотаток
+              {notes.length} активних нотаток
             </div>
             <div className={styles.identityEmail}>
               Організовано для {user.displayName}
@@ -130,22 +76,13 @@ export function ClientWorkspaceNotes() {
             </div>
           </div>
 
-          <form className={styles.fieldGrid} onSubmit={handleCreateNote}>
-            <label className={styles.field}>
-              <span className={styles.label}>Заголовок</span>
-              <input
-                className={styles.input}
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-              />
-            </label>
-
+          <form className={styles.fieldGrid} onSubmit={handleCreate}>
             <label className={styles.textareaField}>
-              <span className={styles.label}>Текст</span>
+              <span className={styles.label}>Текст нотатки</span>
               <textarea
                 className={styles.textarea}
-                value={body}
-                onChange={(event) => setBody(event.target.value)}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
               />
             </label>
 
@@ -178,7 +115,7 @@ export function ClientWorkspaceNotes() {
             <div className={styles.statusRow}>
               <div className={styles.statusLabel}>Посилання</div>
               <div className={styles.statusMeta}>
-                Який закон, стаття або суб'єкт спричинили цю нотатку?
+                Який закон, стаття або суб&apos;єкт спричинили цю нотатку?
               </div>
             </div>
             <div className={styles.statusRow}>
@@ -204,7 +141,13 @@ export function ClientWorkspaceNotes() {
                 <div key={note.id} className={styles.noteCard}>
                   <div className={styles.noteTopRow}>
                     <div>
-                      <div className={styles.noteTitle}>{note.title}</div>
+                      <div className={styles.noteTitle}>
+                        {note.type === "article"
+                          ? `Ст. ${note.articleNum}${note.articleTitle ? ` — ${note.articleTitle}` : ""}`
+                          : note.type === "selection" && note.selectedText
+                            ? note.selectedText.slice(0, 60)
+                            : (note.noteText.slice(0, 60) ?? "Нотатка")}
+                      </div>
                       <div className={styles.noteMeta}>
                         Оновлено {formatDateShort(note.updatedAt)}
                       </div>
@@ -217,20 +160,22 @@ export function ClientWorkspaceNotes() {
                     )}
                   </div>
 
-                  <div className={styles.noteBody}>{note.body}</div>
+                  {note.noteText ? (
+                    <div className={styles.noteBody}>{note.noteText}</div>
+                  ) : null}
 
                   <div className={styles.noteActions}>
                     <button
                       type="button"
                       className={styles.miniButton}
-                      onClick={() => handlePin(note.id)}
+                      onClick={() => togglePin(note.id)}
                     >
                       {note.pinned ? "Відкріпити" : "Закріпити"}
                     </button>
                     <button
                       type="button"
                       className={styles.miniButton}
-                      onClick={() => handleDelete(note.id)}
+                      onClick={() => removeNote(note.id)}
                     >
                       Видалити
                     </button>

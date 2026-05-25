@@ -18,6 +18,52 @@
   margin-bottom: 24px;
 }
 
+/* ── Create form ───────────────────────────────────────── */
+
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.createTextarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e8e8e8;
+  font-size: 0.9rem;
+  padding: 12px 14px;
+  resize: vertical;
+  font-family: inherit;
+
+  &::placeholder {
+    color: #5a7a9a;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba(200, 168, 67, 0.4);
+  }
+}
+
+.createBtn {
+  align-self: flex-start;
+  background: rgba(200, 168, 67, 0.12);
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  border-radius: 6px;
+  color: #c8a843;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.2);
+  }
+}
+
 /* ── Filter chips ──────────────────────────────────────── */
 
 .filterBar {
@@ -177,6 +223,26 @@
   align-items: center;
   margin-top: auto;
   padding-top: 12px;
+}
+
+.noteFooterActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pinBtn {
+  background: none;
+  border: none;
+  color: #7a98c0;
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+
+  &:hover {
+    color: #c8a843;
+  }
 }
 
 /* ── Expand modal ──────────────────────────────────────── */
