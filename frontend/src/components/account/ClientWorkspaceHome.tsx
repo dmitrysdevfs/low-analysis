@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useBilling } from "@/components/billing/BillingProvider";
+import { useNotes } from "@/hooks/useNotes";
 import { ROUTES } from "@/constants/routes";
 import {
   addWorkspaceFocusTopic,
@@ -50,6 +51,7 @@ const PREFERENCE_COPY: Array<{
 export function ClientWorkspaceHome() {
   const { user, updateProfile, changePassword } = useAuth();
   const { subscription } = useBilling();
+  const { notes } = useNotes();
   const userId = user?.id;
   const [workspace, setWorkspace] = useState<ClientWorkspace | null>(null);
   const [displayName, setDisplayName] = useState("");
@@ -80,7 +82,7 @@ export function ClientWorkspaceHome() {
       },
       {
         label: "Нотатки",
-        value: workspace.notes.length,
+        value: notes.length,
         note: "Робочі спостереження, запитання та завдання для подальшого дослідження.",
       },
       {
@@ -104,8 +106,17 @@ export function ClientWorkspaceHome() {
   }, [subscription?.description, subscription?.plan?.label, user, workspace]);
 
   const latestSaved = workspace?.savedArticles[0] ?? null;
-  const pinnedNote =
-    workspace?.notes.find((note) => note.pinned) ?? workspace?.notes[0] ?? null;
+  const pinnedNote = notes.find((note) => note.pinned) ?? notes[0] ?? null;
+
+  const pinnedNoteTitle = useMemo(() => {
+    if (!pinnedNote) return "";
+    return pinnedNote.type === "article"
+      ? `Ст. ${pinnedNote.articleNum}${pinnedNote.articleTitle ? ` — ${pinnedNote.articleTitle}` : ""}`
+      : pinnedNote.type === "selection" && pinnedNote.selectedText
+        ? pinnedNote.selectedText.slice(0, 60)
+        : (pinnedNote.noteText.slice(0, 60) ?? "Нотатка");
+  }, [pinnedNote]);
+
   const recentActivity = workspace?.activity.slice(0, 6) ?? [];
 
   if (!user || !workspace) {
@@ -434,7 +445,7 @@ export function ClientWorkspaceHome() {
                 <div className={styles.workspaceTitle}>Закріплена нотатка</div>
                 <div className={styles.workspaceHint}>
                   {pinnedNote
-                    ? pinnedNote.title
+                    ? pinnedNoteTitle
                     : "Зафіксуйте наступне юридичне питання та перетворіть його на дослідницький шлях."}
                 </div>
               </div>
@@ -685,7 +696,7 @@ export function ClientWorkspaceHome() {
               </div>
               <div className={styles.workspaceActions}>
                 <span className={styles.badgeAccent}>
-                  {workspace.notes.length} нотат.
+                  {notes.length} нотат.
                 </span>
                 <Link href={ROUTES.accountNotes} className={styles.linkText}>
                   Відкрити нотатник

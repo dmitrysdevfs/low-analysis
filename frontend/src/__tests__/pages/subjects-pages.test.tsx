@@ -26,7 +26,6 @@ vi.mock("@/hooks/useLawsMap", () => ({
 describe("Subjects pages", () => {
   it("renders the subjects list and linked aliases", () => {
     vi.mocked(useSubjects).mockReturnValue({
-      fetched: true,
       subjects: [SUBJECT_FIXTURE],
       error: null,
       loading: false,
