@@ -134,7 +134,7 @@ export const swaggerOptions = {
 
 export const swaggerCustomCss = readFileSync(
   join(__dirname, 'swagger.css'),
-  'utf-8'
+  'utf-8',
 );
 
 export const swaggerCustomJs = `
