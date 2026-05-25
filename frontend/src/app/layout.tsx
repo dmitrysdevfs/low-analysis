@@ -12,6 +12,7 @@ import { RouteAccessGate } from "@/components/auth/RouteAccessGate";
 import { BillingProvider } from "@/components/billing/BillingProvider";
 import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { AppQueryProvider } from "@/providers/AppQueryProvider";
 import { AiAssistant } from "@/components/ai/AiAssistant";
 import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
@@ -88,27 +89,29 @@ export default function RootLayout({
       className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <ErrorBoundary>
-          <AuthProvider>
-            <BillingProvider>
-              <GuestLimitsProvider>
-                <SidebarDataProvider>
-                  <div className="site-shell">
-                    <ApiMetricsTracker />
-                    <BackendWarmup />
-                    <ScrollRestore />
-                    <Header />
-                    <div className="site-content">
-                      <RouteAccessGate>{children}</RouteAccessGate>
+        <AppQueryProvider>
+          <ErrorBoundary>
+            <AuthProvider>
+              <BillingProvider>
+                <GuestLimitsProvider>
+                  <SidebarDataProvider>
+                    <div className="site-shell">
+                      <ApiMetricsTracker />
+                      <BackendWarmup />
+                      <ScrollRestore />
+                      <Header />
+                      <div className="site-content">
+                        <RouteAccessGate>{children}</RouteAccessGate>
+                      </div>
+                      <AiAssistant />
+                      <Footer />
                     </div>
-                    <AiAssistant />
-                    <Footer />
-                  </div>
-                </SidebarDataProvider>
-              </GuestLimitsProvider>
-            </BillingProvider>
-          </AuthProvider>
-        </ErrorBoundary>
+                  </SidebarDataProvider>
+                </GuestLimitsProvider>
+              </BillingProvider>
+            </AuthProvider>
+          </ErrorBoundary>
+        </AppQueryProvider>
         <ToastContainer />
       </body>
     </html>

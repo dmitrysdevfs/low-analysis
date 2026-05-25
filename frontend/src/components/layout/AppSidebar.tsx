@@ -11,17 +11,11 @@ import { useNotes } from "@/hooks/useNotes";
 import { TryzubMark } from "@/components/ui/TryzubMark";
 import { NoteModal } from "@/components/notes/NoteModal";
 import type { NoteDraft } from "@/lib/notes/types";
-import { getRoleColor } from "@/lib/tree";
+import { getRoleColor, hexToRgb } from "@/lib/tree";
 import { SessionMenu } from "./SessionMenu";
 import { useSidebarData } from "./SidebarDataContext";
 import { SubjectMentionsModal } from "@/components/subject/SubjectMentionsModal";
 import styles from "./AppSidebar.module.scss";
-
-function hexToRgb(hex: string): string {
-  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!r) return "122,152,192";
-  return [parseInt(r[1], 16), parseInt(r[2], 16), parseInt(r[3], 16)].join(",");
-}
 
 export function AppSidebar({ visible }: { visible: boolean }) {
   const pathname = usePathname();

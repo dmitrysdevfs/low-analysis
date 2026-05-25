@@ -9,6 +9,8 @@ export interface Subject {
   laws_count?: number;
   elements_count?: number;
   createdAt: string;
+  taxonomies?: string[];
+  updatedAt?: string;
 }
 
 export interface SubjectElements {

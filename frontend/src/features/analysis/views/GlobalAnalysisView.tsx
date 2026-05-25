@@ -23,7 +23,11 @@ export function GlobalAnalysisView() {
   const recentLaws = useMemo(
     () =>
       [...laws]
-        .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+        .sort((left, right) =>
+          (right.adoptedDate ?? right.createdAt).localeCompare(
+            left.adoptedDate ?? left.createdAt,
+          ),
+        )
         .slice(0, 5),
     [laws],
   );

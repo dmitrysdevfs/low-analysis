@@ -119,3 +119,34 @@ export function getSortedArticles(elements: TreeNode[]) {
     .filter((node) => node.type === "article")
     .sort(compareTreeNodes);
 }
+
+export function filterTreeBySubject(
+  tree: TreeNode[],
+  subjectId: string | null,
+): TreeNode[] {
+  if (!subjectId) return tree;
+
+  const matchingNodeIds = new Set<string>();
+  const parentMap = new Map<string, string | null>();
+
+  tree.forEach((node) => {
+    if (node._id) parentMap.set(node._id, node.parentId || null);
+    if (node.subjects?.some((s) => s.subject_id === subjectId)) {
+      if (node._id) matchingNodeIds.add(node._id);
+    }
+  });
+
+  const nodesToKeep = new Set<string>(matchingNodeIds);
+  matchingNodeIds.forEach((id) => {
+    let currentId: string | null = id;
+    while (currentId) {
+      const parentId = parentMap.get(currentId);
+      if (parentId) {
+        nodesToKeep.add(parentId);
+      }
+      currentId = parentId || null;
+    }
+  });
+
+  return tree.filter((node) => node._id && nodesToKeep.has(node._id));
+}

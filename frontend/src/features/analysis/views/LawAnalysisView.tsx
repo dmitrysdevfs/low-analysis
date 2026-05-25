@@ -11,6 +11,7 @@ import { useLawAnalysis } from "../hooks/useLawAnalysis";
 import { AnalysisLawPicker } from "../components/AnalysisLawPicker";
 import { AnalysisHeatmap } from "../components/AnalysisHeatmap";
 import { AnalysisRegistry } from "../components/AnalysisRegistry";
+import { AnalysisFilterPanel } from "../components/AnalysisFilterPanel";
 import {
   HistogramChart,
   RiskMixChart,
@@ -19,20 +20,6 @@ import {
 import styles from "../Analysis.module.scss";
 import type { FactorBand } from "../types";
 import type { RiskLevel } from "@/lib/tree";
-
-const RISK_FILTERS: Array<{ label: string; value: "all" | RiskLevel }> = [
-  { label: "Всі", value: "all" },
-  { label: "Норма", value: "green" },
-  { label: "Увага", value: "yellow" },
-  { label: "Викид", value: "red" },
-];
-
-const FACTOR_FILTERS: Array<{ label: string; value: "all" | FactorBand }> = [
-  { label: "Весь factor", value: "all" },
-  { label: "Низький", value: "low" },
-  { label: "Середній", value: "medium" },
-  { label: "Високий", value: "high" },
-];
 
 export function LawAnalysisView({ lawId }: { lawId: string }) {
   const router = useRouter();
@@ -201,108 +188,19 @@ export function LawAnalysisView({ lawId }: { lawId: string }) {
               hint="Можна швидко переключитися на інший закон без виходу з аналізатора."
             />
 
-            <section className={styles.panel}>
-              <div className={styles.panelHeader}>
-                <div>
-                  <span className={styles.panelEyebrow}>Фільтри</span>
-                  <h2 className={styles.panelTitle}>
-                    Точне налаштування зрізу
-                  </h2>
-                </div>
-              </div>
-
-              <div className={styles.filterBlock}>
-                <span className={styles.filterHeading}>Пошук по елементах</span>
-                <div className={styles.searchField}>
-                  <span className={styles.searchIcon}>⌕</span>
-                  <input
-                    className={styles.searchInput}
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Код, текст, суб'єкт…"
-                    aria-label="Пошук по елементах"
-                  />
-                  {query ? (
-                    <button
-                      type="button"
-                      className={styles.clearButton}
-                      onClick={() => setQuery("")}
-                      aria-label="Очистити фільтр елементів"
-                    >
-                      ×
-                    </button>
-                  ) : null}
-                </div>
-              </div>
-
-              <div className={styles.filterBlock}>
-                <span className={styles.filterHeading}>Рівень ризику</span>
-                <div className={styles.filterChips}>
-                  {RISK_FILTERS.map((item) => (
-                    <button
-                      key={item.value}
-                      type="button"
-                      className={`${styles.filterChip} ${risk === item.value ? styles.filterChipActive : ""}`}
-                      onClick={() => setRisk(item.value)}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.filterBlock}>
-                <span className={styles.filterHeading}>Factor</span>
-                <div className={styles.filterChips}>
-                  {FACTOR_FILTERS.map((item) => (
-                    <button
-                      key={item.value}
-                      type="button"
-                      className={`${styles.filterChip} ${factorBand === item.value ? styles.filterChipActive : ""}`}
-                      onClick={() => setFactorBand(item.value)}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.filterBlock}>
-                <span className={styles.filterHeading}>Стаття</span>
-                <select
-                  className={`form-control form-select ${styles.select}`}
-                  value={article}
-                  onChange={(event) => setArticle(event.target.value)}
-                  aria-label="Фільтр за статтею"
-                >
-                  <option value="all">Усі статті</option>
-                  {dataset?.articleOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={styles.filterBlock}>
-                <span className={styles.filterHeading}>
-                  Суб'єкти в елементі
-                </span>
-                <select
-                  className={`form-control form-select ${styles.select}`}
-                  value={subjectsThreshold}
-                  onChange={(event) =>
-                    setSubjectsThreshold(Number(event.target.value))
-                  }
-                  aria-label="Мінімум суб'єктів"
-                >
-                  <option value={0}>Без порогу</option>
-                  <option value={1}>Від 1 суб&apos;єкта</option>
-                  <option value={2}>Від 2 суб&apos;єктів</option>
-                  <option value={3}>Від 3 суб&apos;єктів</option>
-                </select>
-              </div>
-            </section>
+            <AnalysisFilterPanel
+              query={query}
+              onQueryChange={setQuery}
+              risk={risk}
+              onRiskChange={setRisk}
+              factorBand={factorBand}
+              onFactorBandChange={setFactorBand}
+              article={article}
+              articleOptions={dataset?.articleOptions ?? []}
+              onArticleChange={setArticle}
+              subjectsThreshold={subjectsThreshold}
+              onSubjectsThresholdChange={setSubjectsThreshold}
+            />
           </aside>
 
           <main className={styles.shellMain}>

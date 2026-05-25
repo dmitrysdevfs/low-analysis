@@ -1,5 +1,5 @@
 export type NoteColor = "gold" | "blue" | "green";
-export type NoteType = "article" | "selection";
+export type NoteType = "article" | "selection" | "manual";
 
 export interface Note {
   id: string;
@@ -8,6 +8,7 @@ export interface Note {
   type: NoteType;
   color: NoteColor;
   noteText: string;
+  pinned?: boolean;
   // for article-type notes
   lawId?: string;
   lawTitle?: string;

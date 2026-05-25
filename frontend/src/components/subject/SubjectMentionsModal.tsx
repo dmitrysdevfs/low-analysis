@@ -4,61 +4,22 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
-import { useLaws } from "@/hooks/useLaws";
-import { parseElementCode, getNodeBadge, sanitizeAnchor } from "@/lib/tree";
+import { useLawsMap } from "@/hooks/useLawsMap";
+import { getNodeBadge, sanitizeAnchor } from "@/lib/tree";
+import {
+  buildMentions,
+  buildArticlePartsMap,
+  type ArticleMention,
+} from "@/lib/subject/mentionHelpers";
 import { ROUTES } from "@/constants/routes";
 import type { TreeNode } from "@/types";
-import type { Law } from "@/types";
 import styles from "./SubjectMentionsModal.module.scss";
-
-interface ArticleMention {
-  lawId: string;
-  articleNum: string;
-  lawTitle: string;
-  snippet: string;
-  globalIdx: number;
-}
 
 interface PartMention {
   code: string;
   badge: string;
   snippet: string;
   globalIdx: number;
-}
-
-function buildMentions(
-  elements: TreeNode[],
-  lawsMap: Map<string, Law>,
-): ArticleMention[] {
-  const map = new Map<string, Omit<ArticleMention, "globalIdx">>();
-  for (const el of elements) {
-    if (!el.lawId) continue;
-    const { articleNumber } = parseElementCode(el.code);
-    if (!articleNumber) continue;
-    const key = `${el.lawId}/${articleNumber}`;
-    if (!map.has(key)) {
-      map.set(key, {
-        lawId: el.lawId,
-        articleNum: articleNumber,
-        lawTitle: lawsMap.get(el.lawId)?.title ?? el.lawId,
-        snippet: el.text?.slice(0, 90) ?? el.title ?? "",
-      });
-    }
-  }
-  return Array.from(map.values()).map((m, i) => ({ ...m, globalIdx: i }));
-}
-
-function buildArticlePartsMap(elements: TreeNode[]): Map<string, TreeNode[]> {
-  const map = new Map<string, TreeNode[]>();
-  for (const el of elements) {
-    if (!el.lawId || el.type === "article" || el.type === "section") continue;
-    const { articleNumber } = parseElementCode(el.code);
-    if (!articleNumber) continue;
-    const key = `${el.lawId}/${articleNumber}`;
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(el);
-  }
-  return map;
 }
 
 export function SubjectMentionsModal() {
@@ -80,12 +41,8 @@ export function SubjectMentionsModal() {
   const { subject, elements, loading } = useSubjectDetail(
     subjectId ?? undefined,
   );
-  const { laws } = useLaws();
+  const { lawsMap } = useLawsMap();
 
-  const lawsMap = useMemo(
-    () => new Map((laws || []).map((l) => [l._id, l])),
-    [laws],
-  );
   const articleMentions = useMemo(
     () => buildMentions(elements, lawsMap),
     [elements, lawsMap],
@@ -158,6 +115,8 @@ export function SubjectMentionsModal() {
 
   const handleReset = () => {
     router.replace(pathname);
+    // Wait for router.replace to settle before scrolling — the target element
+    // is conditionally rendered and may not exist until navigation completes.
     setTimeout(() => {
       document.getElementById("articleSubjectsBlock")?.scrollIntoView({
         behavior: "smooth",

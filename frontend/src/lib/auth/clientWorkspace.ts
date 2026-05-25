@@ -25,14 +25,6 @@ export type SavedArticleItem = {
   tags?: string[];
 };
 
-export type ClientNoteItem = {
-  id: string;
-  title: string;
-  body: string;
-  updatedAt: string;
-  pinned: boolean;
-};
-
 export type ClientFocusTopic = {
   id: string;
   label: string;
@@ -44,7 +36,6 @@ export type ClientActivityType =
   | "profile"
   | "security"
   | "preference"
-  | "note"
   | "saved"
   | "focus"
   | "export"
@@ -62,7 +53,6 @@ export type ClientActivityItem = {
 export type ClientWorkspace = {
   preferences: ClientWorkspacePreferences;
   savedArticles: SavedArticleItem[];
-  notes: ClientNoteItem[];
   focusTopics: ClientFocusTopic[];
   activity: ClientActivityItem[];
   lastViewedLawId?: string;
@@ -120,15 +110,6 @@ function createDefaultWorkspace(): ClientWorkspace {
       weeklyDigest: true,
     },
     savedArticles: [],
-    notes: [
-      {
-        id: "welcome-note",
-        title: "Research focus",
-        body: "Track laws, compare articles, and keep notes for your legal review workflow.",
-        updatedAt: now,
-        pinned: true,
-      },
-    ],
     focusTopics: [],
     activity: [
       {
@@ -176,7 +157,6 @@ export function readClientWorkspace(userId: string) {
       ...storedWorkspace.preferences,
     },
     savedArticles: storedWorkspace.savedArticles ?? fallback.savedArticles,
-    notes: storedWorkspace.notes ?? fallback.notes,
     focusTopics: storedWorkspace.focusTopics ?? fallback.focusTopics,
     activity: storedWorkspace.activity ?? fallback.activity,
   };
@@ -226,85 +206,6 @@ export function updateWorkspacePreferences(
             .join(" · "),
         })
       : next;
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function upsertWorkspaceNote(
-  userId: string,
-  payload: Pick<ClientNoteItem, "title" | "body"> & {
-    noteId?: string;
-    pinned?: boolean;
-  },
-) {
-  const current = readClientWorkspace(userId);
-  const note: ClientNoteItem = {
-    id: payload.noteId ?? `note-${Date.now()}`,
-    title: payload.title.trim(),
-    body: payload.body.trim(),
-    updatedAt: new Date().toISOString(),
-    pinned: payload.pinned ?? false,
-  };
-  const otherNotes = current.notes.filter((item) => item.id !== note.id);
-  const next = {
-    ...current,
-    notes: [note, ...otherNotes],
-  };
-
-  const nextWithActivity = appendActivity(next, {
-    type: "note",
-    title: payload.noteId ? "Note updated" : "Note created",
-    detail: note.title,
-  });
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function deleteWorkspaceNote(userId: string, noteId: string) {
-  const current = readClientWorkspace(userId);
-  const next = {
-    ...current,
-    notes: current.notes.filter((note) => note.id !== noteId),
-  };
-
-  const deletedNote = current.notes.find((note) => note.id === noteId);
-  const nextWithActivity = deletedNote
-    ? appendActivity(next, {
-        type: "note",
-        title: "Note deleted",
-        detail: deletedNote.title,
-      })
-    : next;
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function toggleWorkspaceNotePin(userId: string, noteId: string) {
-  const current = readClientWorkspace(userId);
-  const next = {
-    ...current,
-    notes: current.notes.map((note) =>
-      note.id === noteId
-        ? {
-            ...note,
-            pinned: !note.pinned,
-            updatedAt: new Date().toISOString(),
-          }
-        : note,
-    ),
-  };
-
-  const toggledNote = next.notes.find((note) => note.id === noteId);
-  const nextWithActivity = toggledNote
-    ? appendActivity(next, {
-        type: "note",
-        title: toggledNote.pinned ? "Note pinned" : "Note unpinned",
-        detail: toggledNote.title,
-      })
-    : next;
 
   writeClientWorkspace(userId, nextWithActivity);
   return nextWithActivity;
@@ -501,7 +402,6 @@ export function exportClientWorkspaceSnapshot(userId: string) {
       exportedAt: new Date().toISOString(),
       summary: {
         savedArticles: workspace.savedArticles.length,
-        notes: workspace.notes.length,
         focusTopics: workspace.focusTopics.length,
       },
       workspace,

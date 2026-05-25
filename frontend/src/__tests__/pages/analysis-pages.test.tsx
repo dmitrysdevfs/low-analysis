@@ -98,8 +98,6 @@ describe("Analysis pages", () => {
     setMockParams({ id: LAW_FIXTURE._id });
 
     vi.mocked(useLaws).mockReturnValue({
-      fetchedQ: "",
-      fetchedRefreshKey: 0,
       laws: [LAW_FIXTURE, LAW_FIXTURE_2],
       error: null,
       loading: false,
@@ -153,6 +151,8 @@ describe("Analysis pages", () => {
                 color: "#c8a843",
               },
             ],
+            legalFunctions: [],
+            domains: [],
           },
         ],
         filteredRecords: [
@@ -183,6 +183,8 @@ describe("Analysis pages", () => {
                 color: "#c8a843",
               },
             ],
+            legalFunctions: [],
+            domains: [],
           },
         ],
         heatmap: [

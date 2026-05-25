@@ -16,7 +16,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleLawCard } from "@/components/article/ArticleLawCard";
 import { ROUTES } from "@/constants/routes";
-import { useLaws } from "@/hooks/useLaws";
+import { useLawsMap } from "@/hooks/useLawsMap";
 import { useArticle } from "@/hooks/useArticle";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
 import {
@@ -44,12 +44,12 @@ export default function ArticlePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const subjectModalId = searchParams.get("subjectModal");
-  const { laws } = useLaws();
+  const { lawsMap } = useLawsMap();
   const { article, children, loading, error } = useArticle(
     lawId,
     articleNumber,
   );
-  const law = laws.find((item) => item._id === lawId);
+  const law = lawId ? lawsMap.get(lawId) : undefined;
 
   const lawTitle = law?.title ?? "Закон";
   const lawCode = law?.code ?? "";

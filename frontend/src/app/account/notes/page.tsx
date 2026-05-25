@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useNotes } from "@/hooks/useNotes";
+import { notify } from "@/lib/toast";
 import type { Note } from "@/lib/notes/types";
 import { ROUTES } from "@/constants/routes";
 import styles from "./page.module.scss";
@@ -31,17 +32,28 @@ const QUOTE_LIMIT = 120;
 
 export default function AccountNotesPage() {
   const { user } = useAuth();
-  const { notes, removeNote } = useNotes();
+  const { notes, addNote, removeNote, togglePin } = useNotes();
   const [activeFilter, setActiveFilter] = useState<FilterValue>("all");
   const [expandedNote, setExpandedNote] = useState<Note | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [newText, setNewText] = useState("");
 
   const filtered = notes
     .filter((n) => activeFilter === "all" || n.color === activeFilter)
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    );
+    .sort((a, b) => {
+      if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+  function handleCreate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (newText.trim().length < 10) {
+      notify.warning("Нотатка має містити щонайменше 10 символів.");
+      return;
+    }
+    addNote({ type: "manual", color: "gold", noteText: newText.trim() });
+    setNewText("");
+  }
 
   function confirmDelete() {
     if (!deleteId) return;
@@ -71,6 +83,19 @@ export default function AccountNotesPage() {
         </div>
       ) : (
         <>
+          <form className={styles.createForm} onSubmit={handleCreate}>
+            <textarea
+              className={styles.createTextarea}
+              placeholder="Нова нотатка..."
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
+              rows={3}
+            />
+            <button type="submit" className={styles.createBtn}>
+              Додати нотатку
+            </button>
+          </form>
+
           <div className={styles.filterBar}>
             {FILTER_OPTIONS.map((opt) => (
               <button
@@ -179,20 +204,30 @@ export default function AccountNotesPage() {
                         <span className={styles.noteDate}>
                           {dateFormatter.format(new Date(note.createdAt))}
                         </span>
-                        {(note.lawId && note.articleNum) || note.pageUrl ? (
-                          <a
-                            href={
-                              note.lawId && note.articleNum
-                                ? ROUTES.article(note.lawId, note.articleNum)
-                                : (note.pageUrl ?? "#")
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.openBtn}
+                        <div className={styles.noteFooterActions}>
+                          <button
+                            type="button"
+                            className={styles.pinBtn}
+                            onClick={() => togglePin(note.id)}
+                            title={note.pinned ? "Відкріпити" : "Закріпити"}
                           >
-                            ↗ Відкрити
-                          </a>
-                        ) : null}
+                            {note.pinned ? "📌 Відкріпити" : "📌 Закріпити"}
+                          </button>
+                          {(note.lawId && note.articleNum) || note.pageUrl ? (
+                            <a
+                              href={
+                                note.lawId && note.articleNum
+                                  ? ROUTES.article(note.lawId, note.articleNum)
+                                  : (note.pageUrl ?? "#")
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={styles.openBtn}
+                            >
+                              ↗ Відкрити
+                            </a>
+                          ) : null}
+                        </div>
                       </div>
                     </motion.li>
                   );

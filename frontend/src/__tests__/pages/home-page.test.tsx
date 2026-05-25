@@ -10,8 +10,6 @@ vi.mock("@/hooks/useLaws", () => ({
 describe("Home page", () => {
   it("renders the ukrainian hero and roadmap content", () => {
     vi.mocked(useLaws).mockReturnValue({
-      fetchedQ: "",
-      fetchedRefreshKey: null,
       laws: [LAW_FIXTURE, LAW_FIXTURE_2],
       error: null,
       loading: false,
@@ -36,8 +34,6 @@ describe("Home page", () => {
 
   it("shows loading copy in the CTA summary while laws are loading", () => {
     vi.mocked(useLaws).mockReturnValue({
-      fetchedQ: "",
-      fetchedRefreshKey: null,
       laws: [],
       error: null,
       loading: true,

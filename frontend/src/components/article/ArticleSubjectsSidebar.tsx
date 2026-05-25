@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getRoleLabel, getRoleColor } from "@/lib/tree";
+import { getRoleLabel, getRoleColor, hexToRgb } from "@/lib/tree";
 import styles from "./ArticleSubjectsSidebar.module.scss";
 
 interface Subject {
@@ -27,16 +27,6 @@ interface Props {
 }
 
 const MOBILE_PREVIEW = 9;
-
-function hexToRgb(hex: string): string {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!result) return "122,152,192";
-  return [
-    parseInt(result[1], 16),
-    parseInt(result[2], 16),
-    parseInt(result[3], 16),
-  ].join(",");
-}
 
 export function ArticleSubjectsSidebar({
   subjects,

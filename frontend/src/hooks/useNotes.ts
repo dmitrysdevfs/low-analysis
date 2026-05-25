@@ -8,6 +8,7 @@ import {
   saveNote,
   deleteNote,
   updateNote as storageUpdateNote,
+  toggleNotePin as storageTogglePin,
 } from "@/lib/notes/storage";
 
 function generateId(): string {
@@ -28,6 +29,7 @@ export function useNotes(): {
     id: string,
     patch: Partial<Pick<Note, "noteText" | "color">>,
   ) => void;
+  togglePin: (id: string) => void;
   hasArticleNote: (lawId: string, articleNum: string) => boolean;
 } {
   const { user } = useAuth();
@@ -65,6 +67,11 @@ export function useNotes(): {
     setNotes(getNotes(userId));
   }
 
+  function togglePin(id: string): void {
+    storageTogglePin(userId, id);
+    setNotes(getNotes(userId));
+  }
+
   function hasArticleNote(lawId: string, articleNum: string): boolean {
     return notes.some(
       (n) =>
@@ -74,5 +81,5 @@ export function useNotes(): {
     );
   }
 
-  return { notes, addNote, removeNote, updateNote, hasArticleNote };
+  return { notes, addNote, removeNote, updateNote, togglePin, hasArticleNote };
 }

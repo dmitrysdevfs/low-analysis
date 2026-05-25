@@ -1,4 +1,5 @@
 ﻿import { render, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { LawCard } from "@/components/law/LawCard";
 import { Layout } from "@/components/layout/Layout";
@@ -7,6 +8,17 @@ import Footer from "@/layout/Footer/Footer";
 import { LAW_FIXTURE } from "@/test/fixtures";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+  };
+}
 
 describe("shell components", () => {
   it("renders breadcrumb items with links and a current item", () => {
@@ -61,7 +73,8 @@ describe("shell components", () => {
   });
 
   it("renders footer branding", () => {
-    render(<Footer />);
+    const Wrapper = createWrapper();
+    render(<Footer />, { wrapper: Wrapper });
     expect(screen.getAllByText(/law\s+analysis/i).length).toBeGreaterThan(0);
   });
 
@@ -78,10 +91,12 @@ describe("shell components", () => {
       }),
     );
 
+    const Wrapper = createWrapper();
     render(
       <AuthProvider>
         <Footer />
       </AuthProvider>,
+      { wrapper: Wrapper },
     );
 
     await waitFor(() => {

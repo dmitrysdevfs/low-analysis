@@ -1,9 +1,11 @@
+export { hexToRgb } from "./helpers";
 export type { TreeBranch } from "./builders";
 export {
   compareTreeNodes,
   buildTreeBranches,
   buildLawSections,
   getSortedArticles,
+  filterTreeBySubject,
 } from "./builders";
 export {
   countSectionArticles,
