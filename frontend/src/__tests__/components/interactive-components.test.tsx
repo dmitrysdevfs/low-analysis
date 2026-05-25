@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Dialog } from "@/components/ui/Dialog";
@@ -33,11 +34,23 @@ import {
 } from "@/test/fixtures";
 import { setMockPathname } from "@/test/mocks/next-navigation";
 
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+  };
+}
+
 describe("interactive frontend components", () => {
   it("highlights the active nav item in AppHeader for guest view", () => {
     setMockPathname("/subjects/subject-1");
 
-    render(<AppHeader />);
+    const Wrapper = createWrapper();
+    render(<AppHeader />, { wrapper: Wrapper });
 
     expect(screen.getByRole("link", { name: "Law Analysis" })).toHaveAttribute(
       "href",
@@ -67,10 +80,12 @@ describe("interactive frontend components", () => {
     );
     setMockPathname("/laws");
 
+    const Wrapper = createWrapper();
     render(
       <AuthProvider>
         <AppHeader />
       </AuthProvider>,
+      { wrapper: Wrapper },
     );
 
     await waitFor(() => {

@@ -1,27 +1,34 @@
 import { render, screen } from "@testing-library/react";
 import ArticlePage from "@/app/laws/[id]/articles/[num]/page";
 import { useArticle } from "@/hooks/useArticle";
-import { useLaws } from "@/hooks/useLaws";
+import { useLawsMap } from "@/hooks/useLawsMap";
 import { ARTICLE_RESPONSE_FIXTURE, LAW_FIXTURE } from "@/test/fixtures";
 import { setMockParams } from "@/test/mocks/next-navigation";
-
-vi.mock("@/hooks/useLaws", () => ({
-  useLaws: vi.fn(),
-}));
 
 vi.mock("@/hooks/useArticle", () => ({
   useArticle: vi.fn(),
 }));
 
+vi.mock("@/hooks/useLawsMap", () => ({
+  useLawsMap: vi.fn(),
+}));
+
+vi.mock("@/hooks/useSubjectsMap", () => ({
+  useSubjectsMap: vi.fn(() => ({
+    subjectsMap: new Map(),
+    loading: false,
+    error: null,
+  })),
+}));
+
 describe("Article page", () => {
   beforeEach(() => {
     setMockParams({ id: LAW_FIXTURE._id, num: "1" });
-    vi.mocked(useLaws).mockReturnValue({
-      fetchedQ: "",
-      fetchedRefreshKey: null,
+    vi.mocked(useLawsMap).mockReturnValue({
+      lawsMap: new Map([[LAW_FIXTURE._id, LAW_FIXTURE]]),
       laws: [LAW_FIXTURE],
-      error: null,
       loading: false,
+      error: null,
     });
   });
 

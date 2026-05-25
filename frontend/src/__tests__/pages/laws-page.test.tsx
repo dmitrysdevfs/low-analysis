@@ -2,34 +2,41 @@ import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LawsPage from "@/app/laws/page";
-import { useLaws } from "@/hooks/useLaws";
+import { useLawsPaginated } from "@/hooks/useLawsPaginated";
 import { LAW_FIXTURE } from "@/test/fixtures";
 
-vi.mock("@/hooks/useLaws", () => ({
-  useLaws: vi.fn(),
+vi.mock("@/hooks/useLawsPaginated", () => ({
+  useLawsPaginated: vi.fn(),
 }));
+
+const DEFAULT_PAGINATION = {
+  total: 1,
+  page: 1,
+  limit: 20,
+  totalPages: 1,
+  hasPrevPage: false,
+  hasNextPage: false,
+};
 
 describe("Laws page", () => {
   it("renders the laws catalogue and reacts to search input", async () => {
     const user = userEvent.setup();
 
-    vi.mocked(useLaws).mockImplementation((query = "", refreshKey = 0) => {
-      void refreshKey;
+    vi.mocked(useLawsPaginated).mockImplementation((query = {}) => {
+      const q = query.q ?? "";
 
-      if (query === "zzz") {
+      if (q === "zzz") {
         return {
-          fetchedQ: "zzz",
-          fetchedRefreshKey: null,
           laws: [],
+          pagination: { ...DEFAULT_PAGINATION, total: 0 },
           error: null,
           loading: false,
         };
       }
 
       return {
-        fetchedQ: query,
-        fetchedRefreshKey: null,
         laws: [LAW_FIXTURE],
+        pagination: DEFAULT_PAGINATION,
         error: null,
         loading: false,
       };
@@ -56,7 +63,6 @@ describe("Laws page", () => {
       target: { value: "zzz" },
     });
 
-    await vi.waitFor(() => expect(useLaws).toHaveBeenLastCalledWith("zzz", 0));
     await vi.waitFor(() =>
       expect(
         screen.getByText(/Нічого не знайдено за запитом «zzz»/i),
@@ -65,10 +71,9 @@ describe("Laws page", () => {
   });
 
   it("renders the request error state", () => {
-    vi.mocked(useLaws).mockReturnValue({
-      fetchedQ: "",
-      fetchedRefreshKey: null,
+    vi.mocked(useLawsPaginated).mockReturnValue({
       laws: [],
+      pagination: null,
       error: "Помилка завантаження",
       loading: false,
     });
