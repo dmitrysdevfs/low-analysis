@@ -3,7 +3,10 @@ import AdminProjectPage from "@/app/admin/project-page/page";
 import ProjectInfoPage from "@/app/project-info/page";
 import { getPublicPage } from "@/lib/api";
 import { useProjectPageBuilder } from "@/features/page-builder/hooks/useProjectPageBuilder";
-import type { ManagedPageAdminResponse, ManagedPagePublicResponse } from "@/types";
+import type {
+  ManagedPageAdminResponse,
+  ManagedPagePublicResponse,
+} from "@/types";
 
 vi.mock("@/features/page-builder/hooks/useProjectPageBuilder", () => ({
   useProjectPageBuilder: vi.fn(),
@@ -104,7 +107,8 @@ describe("Project page builder routes", () => {
 
     await waitFor(() => {
       expect(
-        screen.getAllByRole("heading", { name: "Інформація про проєкт" }).length,
+        screen.getAllByRole("heading", { name: "Інформація про проєкт" })
+          .length,
       ).toBeGreaterThan(0);
     });
 

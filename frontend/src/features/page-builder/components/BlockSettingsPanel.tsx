@@ -260,7 +260,10 @@ export function BlockSettingsPanel({
               }
             />
             {stats.data.items.map((item, index) => (
-              <div key={`${item.label}-${index}`} className={styles.listEditorCard}>
+              <div
+                key={`${item.label}-${index}`}
+                className={styles.listEditorCard}
+              >
                 <div className={styles.listEditorHeader}>
                   <strong>Картка #{index + 1}</strong>
                   <button
@@ -287,10 +290,14 @@ export function BlockSettingsPanel({
                       ...stats,
                       data: {
                         ...stats.data,
-                        items: updateListItem(stats.data.items, index, (current) => ({
-                          ...current,
-                          label,
-                        })),
+                        items: updateListItem(
+                          stats.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            label,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -303,10 +310,14 @@ export function BlockSettingsPanel({
                       ...stats,
                       data: {
                         ...stats.data,
-                        items: updateListItem(stats.data.items, index, (current) => ({
-                          ...current,
-                          value,
-                        })),
+                        items: updateListItem(
+                          stats.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            value,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -319,10 +330,14 @@ export function BlockSettingsPanel({
                       ...stats,
                       data: {
                         ...stats.data,
-                        items: updateListItem(stats.data.items, index, (current) => ({
-                          ...current,
-                          caption,
-                        })),
+                        items: updateListItem(
+                          stats.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            caption,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -335,7 +350,10 @@ export function BlockSettingsPanel({
               onClick={() =>
                 updateBlock({
                   ...stats,
-                  data: { ...stats.data, items: [...stats.data.items, createStatsItem()] },
+                  data: {
+                    ...stats.data,
+                    items: [...stats.data.items, createStatsItem()],
+                  },
                 })
               }
             >
@@ -357,7 +375,10 @@ export function BlockSettingsPanel({
               }
             />
             {cards.data.items.map((item, index) => (
-              <div key={`${item.title}-${index}`} className={styles.listEditorCard}>
+              <div
+                key={`${item.title}-${index}`}
+                className={styles.listEditorCard}
+              >
                 <div className={styles.listEditorHeader}>
                   <strong>Картка #{index + 1}</strong>
                   <button
@@ -384,10 +405,14 @@ export function BlockSettingsPanel({
                       ...cards,
                       data: {
                         ...cards.data,
-                        items: updateListItem(cards.data.items, index, (current) => ({
-                          ...current,
-                          badge,
-                        })),
+                        items: updateListItem(
+                          cards.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            badge,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -400,10 +425,14 @@ export function BlockSettingsPanel({
                       ...cards,
                       data: {
                         ...cards.data,
-                        items: updateListItem(cards.data.items, index, (current) => ({
-                          ...current,
-                          title,
-                        })),
+                        items: updateListItem(
+                          cards.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            title,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -416,10 +445,14 @@ export function BlockSettingsPanel({
                       ...cards,
                       data: {
                         ...cards.data,
-                        items: updateListItem(cards.data.items, index, (current) => ({
-                          ...current,
-                          body,
-                        })),
+                        items: updateListItem(
+                          cards.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            body,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -432,10 +465,14 @@ export function BlockSettingsPanel({
                       ...cards,
                       data: {
                         ...cards.data,
-                        items: updateListItem(cards.data.items, index, (current) => ({
-                          ...current,
-                          linkLabel,
-                        })),
+                        items: updateListItem(
+                          cards.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            linkLabel,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -448,10 +485,14 @@ export function BlockSettingsPanel({
                       ...cards,
                       data: {
                         ...cards.data,
-                        items: updateListItem(cards.data.items, index, (current) => ({
-                          ...current,
-                          linkHref,
-                        })),
+                        items: updateListItem(
+                          cards.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            linkHref,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -464,7 +505,10 @@ export function BlockSettingsPanel({
               onClick={() =>
                 updateBlock({
                   ...cards,
-                  data: { ...cards.data, items: [...cards.data.items, createCardItem()] },
+                  data: {
+                    ...cards.data,
+                    items: [...cards.data.items, createCardItem()],
+                  },
                 })
               }
             >
@@ -486,7 +530,10 @@ export function BlockSettingsPanel({
               }
             />
             {steps.data.items.map((item, index) => (
-              <div key={`${item.title}-${index}`} className={styles.listEditorCard}>
+              <div
+                key={`${item.title}-${index}`}
+                className={styles.listEditorCard}
+              >
                 <div className={styles.listEditorHeader}>
                   <strong>Крок #{index + 1}</strong>
                   <button
@@ -513,10 +560,14 @@ export function BlockSettingsPanel({
                       ...steps,
                       data: {
                         ...steps.data,
-                        items: updateListItem(steps.data.items, index, (current) => ({
-                          ...current,
-                          title,
-                        })),
+                        items: updateListItem(
+                          steps.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            title,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -529,10 +580,14 @@ export function BlockSettingsPanel({
                       ...steps,
                       data: {
                         ...steps.data,
-                        items: updateListItem(steps.data.items, index, (current) => ({
-                          ...current,
-                          body,
-                        })),
+                        items: updateListItem(
+                          steps.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            body,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -545,7 +600,10 @@ export function BlockSettingsPanel({
               onClick={() =>
                 updateBlock({
                   ...steps,
-                  data: { ...steps.data, items: [...steps.data.items, createStepItem()] },
+                  data: {
+                    ...steps.data,
+                    items: [...steps.data.items, createStepItem()],
+                  },
                 })
               }
             >
@@ -567,7 +625,10 @@ export function BlockSettingsPanel({
               }
             />
             {faq.data.items.map((item, index) => (
-              <div key={`${item.question}-${index}`} className={styles.listEditorCard}>
+              <div
+                key={`${item.question}-${index}`}
+                className={styles.listEditorCard}
+              >
                 <div className={styles.listEditorHeader}>
                   <strong>FAQ #{index + 1}</strong>
                   <button
@@ -594,10 +655,14 @@ export function BlockSettingsPanel({
                       ...faq,
                       data: {
                         ...faq.data,
-                        items: updateListItem(faq.data.items, index, (current) => ({
-                          ...current,
-                          question,
-                        })),
+                        items: updateListItem(
+                          faq.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            question,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -610,10 +675,14 @@ export function BlockSettingsPanel({
                       ...faq,
                       data: {
                         ...faq.data,
-                        items: updateListItem(faq.data.items, index, (current) => ({
-                          ...current,
-                          answer,
-                        })),
+                        items: updateListItem(
+                          faq.data.items,
+                          index,
+                          (current) => ({
+                            ...current,
+                            answer,
+                          }),
+                        ),
                       },
                     })
                   }
@@ -626,7 +695,10 @@ export function BlockSettingsPanel({
               onClick={() =>
                 updateBlock({
                   ...faq,
-                  data: { ...faq.data, items: [...faq.data.items, createFaqItem()] },
+                  data: {
+                    ...faq.data,
+                    items: [...faq.data.items, createFaqItem()],
+                  },
                 })
               }
             >
@@ -717,7 +789,10 @@ export function BlockSettingsPanel({
               }
             />
             {radioGroup.data.options.map((item, index) => (
-              <div key={`${item.value}-${index}`} className={styles.listEditorCard}>
+              <div
+                key={`${item.value}-${index}`}
+                className={styles.listEditorCard}
+              >
                 <div className={styles.listEditorHeader}>
                   <strong>Опція #{index + 1}</strong>
                   <button
@@ -728,7 +803,9 @@ export function BlockSettingsPanel({
                         ...radioGroup,
                         data: {
                           ...radioGroup.data,
-                          options: radioGroup.data.options.filter((_, i) => i !== index),
+                          options: radioGroup.data.options.filter(
+                            (_, i) => i !== index,
+                          ),
                         },
                       })
                     }
@@ -895,10 +972,18 @@ export function BlockSettingsPanel({
           <h3>{block.type}</h3>
         </div>
         <div className={styles.inspectorActions}>
-          <button type="button" className={styles.ghostButton} onClick={onDuplicate}>
+          <button
+            type="button"
+            className={styles.ghostButton}
+            onClick={onDuplicate}
+          >
             Дублювати
           </button>
-          <button type="button" className={styles.ghostButtonDanger} onClick={onRemove}>
+          <button
+            type="button"
+            className={styles.ghostButtonDanger}
+            onClick={onRemove}
+          >
             Видалити
           </button>
         </div>

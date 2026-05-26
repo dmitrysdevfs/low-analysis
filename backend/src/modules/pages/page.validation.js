@@ -166,7 +166,9 @@ export function normalizePageSnapshot(input = {}) {
   const blocks = asArray(input.blocks).map((block, index) => {
     const type = asString(block?.type);
     if (!PAGE_BLOCK_TYPES.includes(type)) {
-      const error = new Error(`Unsupported block type at index ${index}: ${type}`);
+      const error = new Error(
+        `Unsupported block type at index ${index}: ${type}`,
+      );
       error.statusCode = 400;
       throw error;
     }

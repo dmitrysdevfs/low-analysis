@@ -160,7 +160,9 @@ export async function unpublishPage(slug, userId) {
 export async function restorePageVersion(slug, versionNumber, userId) {
   const page = await getOrCreateManagedPage(slug);
   const numericVersion = Number(versionNumber);
-  const matchedVersion = page.versions.find((item) => item.version === numericVersion);
+  const matchedVersion = page.versions.find(
+    (item) => item.version === numericVersion,
+  );
 
   if (!matchedVersion) {
     const error = new Error(`Version ${versionNumber} not found`);
@@ -171,12 +173,7 @@ export async function restorePageVersion(slug, versionNumber, userId) {
   page.draft = cloneSnapshot(matchedVersion.snapshot);
   page.title = matchedVersion.snapshot.title;
   page.updatedBy = userId ?? null;
-  appendVersion(
-    page,
-    PAGE_VERSION_KINDS.restore,
-    page.draft,
-    userId ?? null,
-  );
+  appendVersion(page, PAGE_VERSION_KINDS.restore, page.draft, userId ?? null);
   await page.save();
 
   return toAdminPayload(page);

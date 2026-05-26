@@ -19,8 +19,8 @@ export function FeaturesSection() {
           <div className={styles.label}>Можливості</div>
           <h2 className={`display ${styles.h2}`}>Що вміє платформа</h2>
           <p className={styles.sub}>
-            Від сирого HTML до структурованих даних — з аналітикою, пошуком і
-            AI прямо в інтерфейсі.
+            Від сирого HTML до структурованих даних — з аналітикою, пошуком і AI
+            прямо в інтерфейсі.
           </p>
         </motion.div>
 
@@ -47,7 +47,11 @@ export function FeaturesSection() {
                 Відкрити{" "}
                 <motion.span
                   animate={{ x: [0, 4, 0] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 1.6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
                   →
                 </motion.span>

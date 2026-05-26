@@ -44,7 +44,9 @@ export function ProjectPageBuilderView() {
     restoring,
   } = useProjectPageBuilder(PAGE_SLUG);
 
-  const [draft, setDraft] = useState<PageBuilderSnapshot>(createEmptySnapshot());
+  const [draft, setDraft] = useState<PageBuilderSnapshot>(
+    createEmptySnapshot(),
+  );
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -139,7 +141,8 @@ export function ProjectPageBuilderView() {
       if (index === -1) return current;
 
       const targetIndex = direction === "up" ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= current.blocks.length) return current;
+      if (targetIndex < 0 || targetIndex >= current.blocks.length)
+        return current;
 
       const nextBlocks = [...current.blocks];
       const [block] = nextBlocks.splice(index, 1);
@@ -396,14 +399,20 @@ export function ProjectPageBuilderView() {
                     if (!draggedBlockId) return;
                     setSnapshot((current) => ({
                       ...current,
-                      blocks: moveBlock(current.blocks, draggedBlockId, block.id),
+                      blocks: moveBlock(
+                        current.blocks,
+                        draggedBlockId,
+                        block.id,
+                      ),
                     }));
                     setDraggedBlockId(null);
                   }}
                 >
                   <div className={styles.canvasBlockButton}>
                     <div className={styles.canvasBlockMeta}>
-                      <span className={styles.canvasBlockType}>{block.type}</span>
+                      <span className={styles.canvasBlockType}>
+                        {block.type}
+                      </span>
                       <button
                         type="button"
                         className={styles.canvasBlockSelect}

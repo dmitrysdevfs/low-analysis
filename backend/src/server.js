@@ -2,7 +2,8 @@ import './bootstrap/loadEnv.js';
 
 const { default: app } = await import('./app.js');
 const { default: connectDB } = await import('./config/db.js');
-const { ensureLocalDevAdmin } = await import('./bootstrap/ensureLocalDevAdmin.js');
+const { ensureLocalDevAdmin } =
+  await import('./bootstrap/ensureLocalDevAdmin.js');
 
 const PORT = process.env.PORT || 3000;
 

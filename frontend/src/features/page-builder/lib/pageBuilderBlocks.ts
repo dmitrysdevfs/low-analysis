@@ -172,7 +172,11 @@ function createRadioGroupBlock(): RadioGroupBlock {
       title: "Radio-група",
       question: "Оберіть опцію:",
       options: [
-        { label: "Опція 1", value: "option-1", description: "Коментар до опції" },
+        {
+          label: "Опція 1",
+          value: "option-1",
+          description: "Коментар до опції",
+        },
       ],
     },
   };

@@ -52,9 +52,15 @@ API for parsing, structuring and analysing Ukrainian legislation.
   tags: [
     { name: 'Health', description: 'Server health and readiness' },
     { name: 'Auth', description: 'Authentication and account management' },
-    { name: 'Laws', description: 'Laws, tree data, articles, stats and parsing' },
+    {
+      name: 'Laws',
+      description: 'Laws, tree data, articles, stats and parsing',
+    },
     { name: 'Elements', description: 'Atomic law elements' },
-    { name: 'Subjects', description: 'Regulatory subjects and related elements' },
+    {
+      name: 'Subjects',
+      description: 'Regulatory subjects and related elements',
+    },
     { name: 'Taxonomy', description: 'Taxonomy categories and classification' },
     { name: 'Pages', description: 'Managed public pages and page builder API' },
   ],

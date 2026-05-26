@@ -54,7 +54,11 @@ export function RoadmapSection({
               initial={{ width: 0 }}
               whileInView={{ width: `${progress}%` }}
               viewport={{ once: true, amount: 0.1 }}
-              transition={{ delay: 0.4, duration: 1.1, ease: [0.25, 0.1, 0.25, 1] }}
+              transition={{
+                delay: 0.4,
+                duration: 1.1,
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
             />
           </div>
         </motion.div>
@@ -125,7 +129,11 @@ export function RoadmapSection({
                   : `${laws.length} закон${laws.length === 1 ? "" : "ів"} у базі`}
             </p>
             <p className={`mono ${styles.footerMono}`}>
-              {loading ? "…" : error ? "—" : laws.map((law) => law.code).join(" · ")}
+              {loading
+                ? "…"
+                : error
+                  ? "—"
+                  : laws.map((law) => law.code).join(" · ")}
             </p>
           </div>
           <Link href={ROUTES.laws} className={styles.footerLink}>

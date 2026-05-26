@@ -102,7 +102,9 @@ function renderBlock(block: PageBuilderBlock) {
     case "hero": {
       const hero = block as HeroBlock;
       return (
-        <div className={`${styles.heroBlock} ${styles[`theme_${hero.style.theme}`] ?? ""}`}>
+        <div
+          className={`${styles.heroBlock} ${styles[`theme_${hero.style.theme}`] ?? ""}`}
+        >
           <div className={styles.heroCopy}>
             {hero.data.eyebrow && (
               <span className={styles.heroEyebrow}>{hero.data.eyebrow}</span>
@@ -131,7 +133,9 @@ function renderBlock(block: PageBuilderBlock) {
       const text = block as RichTextBlock;
       return (
         <div className={styles.textBlock}>
-          {text.data.title && <h3 className={styles.blockTitle}>{text.data.title}</h3>}
+          {text.data.title && (
+            <h3 className={styles.blockTitle}>{text.data.title}</h3>
+          )}
           <div className={styles.prose}>
             {renderParagraphs(text.data.body).map((paragraph, index) => (
               <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>
@@ -145,13 +149,20 @@ function renderBlock(block: PageBuilderBlock) {
       const stats = block as StatsGridBlock;
       return (
         <div className={styles.panelBlock}>
-          {stats.data.title && <h3 className={styles.blockTitle}>{stats.data.title}</h3>}
+          {stats.data.title && (
+            <h3 className={styles.blockTitle}>{stats.data.title}</h3>
+          )}
           <div className={styles.statsGrid}>
             {stats.data.items.map((item, index) => (
-              <article key={`${item.label}-${index}`} className={styles.statCard}>
+              <article
+                key={`${item.label}-${index}`}
+                className={styles.statCard}
+              >
                 <span className={styles.statValue}>{item.value}</span>
                 <strong className={styles.statLabel}>{item.label}</strong>
-                {item.caption && <p className={styles.statCaption}>{item.caption}</p>}
+                {item.caption && (
+                  <p className={styles.statCaption}>{item.caption}</p>
+                )}
               </article>
             ))}
           </div>
@@ -163,11 +174,18 @@ function renderBlock(block: PageBuilderBlock) {
       const cards = block as CardsBlock;
       return (
         <div className={styles.panelBlock}>
-          {cards.data.title && <h3 className={styles.blockTitle}>{cards.data.title}</h3>}
+          {cards.data.title && (
+            <h3 className={styles.blockTitle}>{cards.data.title}</h3>
+          )}
           <div className={styles.cardsGrid}>
             {cards.data.items.map((item, index) => (
-              <article key={`${item.title}-${index}`} className={styles.infoCard}>
-                {item.badge && <span className={styles.cardBadge}>{item.badge}</span>}
+              <article
+                key={`${item.title}-${index}`}
+                className={styles.infoCard}
+              >
+                {item.badge && (
+                  <span className={styles.cardBadge}>{item.badge}</span>
+                )}
                 <h4>{item.title}</h4>
                 <p>{item.body}</p>
                 <ActionLink
@@ -186,11 +204,18 @@ function renderBlock(block: PageBuilderBlock) {
       const steps = block as StepsBlock;
       return (
         <div className={styles.panelBlock}>
-          {steps.data.title && <h3 className={styles.blockTitle}>{steps.data.title}</h3>}
+          {steps.data.title && (
+            <h3 className={styles.blockTitle}>{steps.data.title}</h3>
+          )}
           <div className={styles.stepsList}>
             {steps.data.items.map((item, index) => (
-              <article key={`${item.title}-${index}`} className={styles.stepCard}>
-                <span className={styles.stepIndex}>{String(index + 1).padStart(2, "0")}</span>
+              <article
+                key={`${item.title}-${index}`}
+                className={styles.stepCard}
+              >
+                <span className={styles.stepIndex}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <div>
                   <h4>{item.title}</h4>
                   <p>{item.body}</p>
@@ -206,10 +231,15 @@ function renderBlock(block: PageBuilderBlock) {
       const faq = block as FaqBlock;
       return (
         <div className={styles.panelBlock}>
-          {faq.data.title && <h3 className={styles.blockTitle}>{faq.data.title}</h3>}
+          {faq.data.title && (
+            <h3 className={styles.blockTitle}>{faq.data.title}</h3>
+          )}
           <div className={styles.faqList}>
             {faq.data.items.map((item, index) => (
-              <details key={`${item.question}-${index}`} className={styles.faqItem}>
+              <details
+                key={`${item.question}-${index}`}
+                className={styles.faqItem}
+              >
                 <summary>{item.question}</summary>
                 <p>{item.answer}</p>
               </details>
@@ -228,7 +258,10 @@ function renderBlock(block: PageBuilderBlock) {
             <p className={styles.blockDescription}>{cta.data.body}</p>
           </div>
           <div className={styles.actionRow}>
-            <ActionLink href={cta.data.buttonHref} label={cta.data.buttonLabel} />
+            <ActionLink
+              href={cta.data.buttonHref}
+              label={cta.data.buttonLabel}
+            />
             <ActionLink
               href={cta.data.secondaryButtonHref}
               label={cta.data.secondaryButtonLabel}
@@ -259,7 +292,9 @@ function renderBlock(block: PageBuilderBlock) {
       const image = block as ImageBlock;
       return (
         <div className={styles.imageBlock}>
-          {image.data.title && <h3 className={styles.blockTitle}>{image.data.title}</h3>}
+          {image.data.title && (
+            <h3 className={styles.blockTitle}>{image.data.title}</h3>
+          )}
           {image.data.src && (
             <img
               src={image.data.src}
@@ -295,10 +330,14 @@ export function ProjectPageRenderer({
   );
 
   return (
-    <div className={`${styles.publicPage} ${embedded ? styles.publicPageEmbedded : ""}`}>
+    <div
+      className={`${styles.publicPage} ${embedded ? styles.publicPageEmbedded : ""}`}
+    >
       {!embedded && (
         <header className={styles.publicPageHeader}>
-          <span className={styles.publicPageEyebrow}>Інформація про платформу</span>
+          <span className={styles.publicPageEyebrow}>
+            Інформація про платформу
+          </span>
           <h1>{page.title}</h1>
           {page.description && <p>{page.description}</p>}
         </header>

@@ -135,7 +135,10 @@ interface PageBuilderBlockBase<TType extends PageBuilderBlockType, TData> {
 
 export type HeroBlock = PageBuilderBlockBase<"hero", HeroBlockData>;
 export type RichTextBlock = PageBuilderBlockBase<"richText", RichTextBlockData>;
-export type StatsGridBlock = PageBuilderBlockBase<"statsGrid", StatsGridBlockData>;
+export type StatsGridBlock = PageBuilderBlockBase<
+  "statsGrid",
+  StatsGridBlockData
+>;
 export type CardsBlock = PageBuilderBlockBase<"cards", CardsBlockData>;
 export type StepsBlock = PageBuilderBlockBase<"steps", StepsBlockData>;
 export type FaqBlock = PageBuilderBlockBase<"faq", FaqBlockData>;
