@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useInView, type Variants } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { useLaws } from "@/hooks/useLaws";
-import { useCountUp } from "@/hooks/useCountUp";
+import { motion, type Variants } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
 import styles from "./Footer.module.scss";
@@ -48,26 +46,6 @@ function CursorBlink({
   return <span className={`${className} ${tick ? onClass : ""}`}>▌</span>;
 }
 
-function StatCounter({
-  value,
-  label,
-  active,
-}: {
-  value: number;
-  label: string;
-  active: boolean;
-}) {
-  const count = useCountUp(value, 1400, active);
-  return (
-    <div className={styles.statItem}>
-      <div className={`mono ${styles.statValue}`}>
-        {count.toLocaleString("uk-UA")}
-      </div>
-      <div className={`mono ${styles.statLabel}`}>{label}</div>
-    </div>
-  );
-}
-
 export default function Footer() {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith(ROUTES.admin);
@@ -85,15 +63,6 @@ function PublicFooter() {
   useEffect(() => {
     setMounted(true);
   }, []);
-  const { laws, loading, error: lawsError } = useLaws();
-  const statsRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(statsRef, { once: true, amount: 0.4 });
-
-  const stats = [
-    { value: laws.length, label: "законів у базі" },
-    { value: laws.reduce((s, l) => s + l.totalSections, 0), label: "розділів" },
-    { value: laws.reduce((s, l) => s + l.totalArticles, 0), label: "статей" },
-  ];
 
   return (
     <footer className={styles.footer}>
@@ -111,58 +80,6 @@ function PublicFooter() {
           <div className={`${styles.face} ${styles.left}`}>LEX</div>
           <div className={`${styles.face} ${styles.top}`}>•</div>
           <div className={`${styles.face} ${styles.bottom}`}>▣</div>
-        </div>
-      </div>
-
-      {/* Stats band */}
-      <div ref={statsRef} className={styles.statsBand}>
-        <div className={styles.statsInner}>
-          {lawsError ? (
-            <div
-              className={`mono ${styles.statsLoading}`}
-              style={{ color: "rgba(200,100,100,0.7)", fontSize: "0.75rem" }}
-            >
-              Не вдалося завантажити статистику
-            </div>
-          ) : loading ? (
-            <div className={styles.statsLoading}>
-              {[90, 60, 72].map((w, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ opacity: [0.2, 0.5, 0.2] }}
-                  transition={{
-                    duration: 1.4,
-                    repeat: Infinity,
-                    delay: i * 0.15,
-                  }}
-                  className={styles.statSkeleton}
-                  style={{ width: w }}
-                />
-              ))}
-            </div>
-          ) : (
-            <motion.div
-              className={styles.statsRow}
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4 }}
-            >
-              {stats.map((s, i) => (
-                <motion.div
-                  key={s.label}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: i * 0.1, duration: 0.4 }}
-                >
-                  <StatCounter
-                    value={s.value}
-                    label={s.label}
-                    active={inView}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
         </div>
       </div>
 

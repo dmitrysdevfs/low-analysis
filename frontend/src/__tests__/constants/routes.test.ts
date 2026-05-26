@@ -7,10 +7,12 @@ describe("frontend route and config constants", () => {
     expect(ROUTES.home).toBe("/");
     expect(ROUTES.laws).toBe("/laws");
     expect(ROUTES.analysis).toBe("/analysis");
+    expect(ROUTES.projectInfo).toBe("/project-info");
     expect(ROUTES.subjects).toBe("/subjects");
     expect(ROUTES.search).toBe("/search");
     expect(ROUTES.admin).toBe("/admin");
     expect(ROUTES.adminAnalytics).toBe("/admin/analytics");
+    expect(ROUTES.adminProjectPage).toBe("/admin/project-page");
     expect(ROUTES.auth).toBe("/auth");
     expect(ROUTES.authLogin).toBe("/auth/login");
     expect(ROUTES.authRegister).toBe("/auth/register");
@@ -30,6 +32,7 @@ describe("frontend route and config constants", () => {
       { label: "Головна", href: ROUTES.home },
       { label: "Закони", href: ROUTES.laws },
       { label: "Аналіз", href: ROUTES.analysis },
+      { label: "Проєкт", href: ROUTES.projectInfo },
       { label: "Суб'єкти", href: ROUTES.subjects },
       { label: "Пошук", href: ROUTES.search },
       { label: "Довідка", href: ROUTES.help },

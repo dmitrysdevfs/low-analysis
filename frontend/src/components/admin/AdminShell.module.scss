@@ -273,6 +273,11 @@
   margin-inline: auto;
 }
 
+.mainWide > * {
+  width: 100%;
+  margin-inline: 0;
+}
+
 @media (max-width: 1180px) {
   .shell {
     grid-template-columns: 1fr;

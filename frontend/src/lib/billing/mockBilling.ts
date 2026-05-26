@@ -25,74 +25,74 @@ const PREVIEW_LIMITS = {
 export const BILLING_PLAN_CATALOG: BillingPlanDefinition[] = [
   {
     id: "trial",
-    label: "Starter Week",
-    badge: "$1 / 7 days",
+    label: "Стартер",
+    badge: "$1 / 7 днів",
     description:
-      "One-week premium access for client research flows with no search or view caps.",
+      "Тижневий преміум-доступ для клієнтських досліджень без обмежень пошуку та переглядів.",
     priceUsd: 1,
     durationDays: 7,
-    periodLabel: "7-day trial",
+    periodLabel: "7-денний пробний",
     isUnlimited: true,
     searchLimit: null,
     viewLimit: null,
     features: [
-      "Full client access for one week",
-      "Unlimited searches and detail views",
-      "Saved laws, notes, and personal workspace",
+      "Повний доступ на один тиждень",
+      "Необмежена кількість пошуків і детальних переглядів",
+      "Збережені закони, нотатки та особистий кабінет",
     ],
   },
   {
     id: "user",
-    label: "User",
-    badge: "$9 / month",
+    label: "Базовий",
+    badge: "$9 / місяць",
     description:
-      "Monthly client plan with controlled usage for personal legal research.",
+      "Щомісячний план для особистих юридичних досліджень з контрольованим використанням.",
     priceUsd: 9,
     durationDays: 30,
-    periodLabel: "Monthly plan",
+    periodLabel: "Щомісячний план",
     isUnlimited: false,
     searchLimit: 350,
     viewLimit: 120,
     features: [
-      "Moderate monthly request volume",
-      "Great for focused solo research",
-      "Keeps all client workspace tools enabled",
+      "Помірний обсяг щомісячних запитів",
+      "Ідеально для самостійних цілеспрямованих досліджень",
+      "Усі інструменти клієнтського кабінету включені",
     ],
   },
   {
     id: "plus",
-    label: "Plus",
-    badge: "$19 / month",
+    label: "Розширений",
+    badge: "$19 / місяць",
     description:
-      "Expanded monthly client plan for active researchers handling broader legal reviews.",
+      "Розширений щомісячний план для активних дослідників, що охоплюють ширші правові огляди.",
     priceUsd: 19,
     durationDays: 30,
-    periodLabel: "Monthly plan",
+    periodLabel: "Щомісячний план",
     isUnlimited: false,
     searchLimit: 1600,
     viewLimit: 620,
     features: [
-      "Higher monthly quota for search and deep reads",
-      "Better fit for recurring legal monitoring",
-      "Extended room for saved material workflows",
+      "Підвищена щомісячна квота пошуку та детального перегляду",
+      "Підходить для регулярного моніторингу законодавства",
+      "Більше простору для збережених матеріалів",
     ],
   },
   {
     id: "pro",
-    label: "Pro",
-    badge: "$39 / month",
+    label: "Про",
+    badge: "$39 / місяць",
     description:
-      "Unlimited monthly client plan with no usage caps across search and deep document review.",
+      "Безлімітний щомісячний план без обмежень на пошук та детальний перегляд документів.",
     priceUsd: 39,
     durationDays: 30,
-    periodLabel: "Monthly plan",
+    periodLabel: "Щомісячний план",
     isUnlimited: true,
     searchLimit: null,
     viewLimit: null,
     features: [
-      "Unlimited research requests",
-      "Unlimited detailed document access",
-      "Designed for power users and legal teams",
+      "Необмежена кількість дослідницьких запитів",
+      "Необмежений доступ до деталей документів",
+      "Для активних користувачів і юридичних команд",
     ],
   },
 ];
@@ -218,18 +218,18 @@ function buildAccessLabel(
   plan: BillingPlanDefinition | null,
 ) {
   if (accountType === "admin") {
-    return "Admin access";
+    return "Адмін-доступ";
   }
 
   if (plan) {
-    return `${plan.label} plan`;
+    return `План «${plan.label}»`;
   }
 
   if (record.status === "expired") {
-    return "Expired plan";
+    return "План завершився";
   }
 
-  return "Preview access";
+  return "Preview-доступ";
 }
 
 function buildDescription(
@@ -238,7 +238,7 @@ function buildDescription(
   plan: BillingPlanDefinition | null,
 ) {
   if (accountType === "admin") {
-    return "Administrative access is managed separately from client subscriptions.";
+    return "Адміністративний доступ керується окремо від клієнтських підписок.";
   }
 
   if (plan) {
@@ -246,10 +246,10 @@ function buildDescription(
   }
 
   if (record.status === "expired") {
-    return "Your last client plan expired. Preview limits remain available until you renew.";
+    return "Ваш останній план завершився. Preview-ліміти доступні до поновлення.";
   }
 
-  return "You are using the local preview tier. Activate a paid plan to unlock fuller client access.";
+  return "Ви використовуєте локальний preview-рівень. Активуйте платний план для повного доступу.";
 }
 
 function resolveLimits(
@@ -354,8 +354,8 @@ function createPaymentRecord(
     paidAt: getNowIso(),
     summary:
       method === "admin_override"
-        ? `${plan.label} plan assigned by admin`
-        : `${plan.label} plan activated via ${method.replace("_", " ")}`,
+        ? `План «${plan.label}» призначено адміністратором`
+        : `План «${plan.label}» активовано через ${method.replace("_", " ")}`,
     actor,
   };
 
@@ -498,8 +498,8 @@ export function consumeBillingQuota(
   if (limit !== null && used >= limit) {
     const message =
       snapshot.previewMode || snapshot.status === "expired"
-        ? "Your preview access quota is exhausted. Activate or renew a plan to continue without interruptions."
-        : `Your ${snapshot.plan?.label ?? "client"} plan hit its ${type} quota. Upgrade or renew to continue.`;
+        ? "Ліміт preview-доступу вичерпано. Активуйте або поновіть план для продовження без обмежень."
+        : `План «${snapshot.plan?.label ?? "клієнт"}» вичерпав ліміт ${type === "search" ? "пошуку" : "перегляду"}. Оновіть або поновіть план.`;
 
     return {
       allowed: false,

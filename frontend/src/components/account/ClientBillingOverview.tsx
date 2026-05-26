@@ -10,15 +10,15 @@ import styles from "./ClientBilling.module.scss";
 
 function formatPlanStatus(status: string) {
   if (status === "trialing") {
-    return "Trial active";
+    return "Пробний активний";
   }
 
   if (status === "expired") {
-    return "Expired";
+    return "Закінчився";
   }
 
   if (status === "active") {
-    return "Active";
+    return "Активний";
   }
 
   return "Preview";
@@ -30,10 +30,10 @@ function formatUsageValue(
   remaining: number | null,
 ) {
   if (limit === null || remaining === null) {
-    return "Unlimited";
+    return "Безліміт";
   }
 
-  return `${remaining} left of ${limit}`;
+  return `${remaining} з ${limit}`;
 }
 
 function formatUsagePercent(limit: number | null, used: number) {
@@ -62,29 +62,29 @@ export function ClientBillingOverview() {
     <section className={styles.page}>
       <div className={styles.hero}>
         <div>
-          <span className={styles.eyebrow}>Client billing</span>
-          <h1 className={styles.title}>Plan, quota, and demo checkout</h1>
+          <span className={styles.eyebrow}>Клієнтський білінг</span>
+          <h1 className={styles.title}>Тариф, квоти та тестова оплата</h1>
           <p className={styles.description}>
-            This local billing layer lives only in the browser. It lets the
-            client activate a weekly trial, renew a monthly plan, and track
-            current request quotas without storing card data on the backend.
+            Цей локальний білінг живе лише в браузері. Він дає змогу клієнту
+            активувати пробний тиждень, поновити щомісячний план і
+            відстежувати квоти запитів — без збереження даних картки на бекенді.
           </p>
           <div className={styles.actions}>
             <Link
               href={ROUTES.accountCheckout}
               className={styles.primaryAction}
             >
-              Open checkout
+              Перейти до оплати
             </Link>
             <Link href={ROUTES.account} className={styles.secondaryAction}>
-              Back to workspace
+              До кабінету
             </Link>
           </div>
         </div>
 
         <aside className={styles.heroAside}>
           <div className={styles.heroStat}>
-            <span className={styles.metaLabel}>Current access</span>
+            <span className={styles.metaLabel}>Поточний доступ</span>
             <div className={styles.heroValue}>{subscription.accessLabel}</div>
             <div className={styles.metaText}>{subscription.description}</div>
           </div>
@@ -101,8 +101,8 @@ export function ClientBillingOverview() {
             </span>
             <span className={styles.pill}>
               {subscription.daysRemaining === null
-                ? "No expiry"
-                : `${subscription.daysRemaining} days left`}
+                ? "Без терміну"
+                : `Залишилось ${subscription.daysRemaining} дн.`}
             </span>
           </div>
         </aside>
@@ -112,8 +112,8 @@ export function ClientBillingOverview() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.sectionLabel}>Current subscription</span>
-              <h2 className={styles.panelTitle}>Live demo access state</h2>
+              <span className={styles.sectionLabel}>Поточна підписка</span>
+              <h2 className={styles.panelTitle}>Стан demo-доступу</h2>
             </div>
           </div>
 
@@ -121,10 +121,10 @@ export function ClientBillingOverview() {
             <div className={styles.planTopRow}>
               <div>
                 <h3 className={styles.planLabel}>
-                  {currentPlan?.label ?? "Preview access"}
+                  {currentPlan?.label ?? "Preview-доступ"}
                 </h3>
                 <div className={styles.planBadge}>
-                  {currentPlan?.badge ?? "Local starter quota"}
+                  {currentPlan?.badge ?? "Стартова квота"}
                 </div>
               </div>
               <div className={styles.price}>
@@ -134,13 +134,13 @@ export function ClientBillingOverview() {
 
             <div className={styles.note}>
               {subscription.endsAt
-                ? `Renews manually. Current cycle ends ${formatDateFull(subscription.endsAt)}.`
-                : "No paid plan is active yet. Preview quotas remain available until you upgrade."}
+                ? `Поновлення вручну. Цикл закінчується ${formatDateFull(subscription.endsAt)}.`
+                : "Платного плану ще немає. Preview-квоти активні до оновлення."}
             </div>
 
             <ul className={styles.summaryList}>
               <li className={styles.summaryItem}>
-                Search quota:{" "}
+                Квота пошуку:{" "}
                 {formatUsageValue(
                   subscription.searchLimit,
                   subscription.searchUsed,
@@ -148,7 +148,7 @@ export function ClientBillingOverview() {
                 )}
               </li>
               <li className={styles.summaryItem}>
-                Deep-view quota:{" "}
+                Квота переглядів:{" "}
                 {formatUsageValue(
                   subscription.viewLimit,
                   subscription.viewUsed,
@@ -156,7 +156,7 @@ export function ClientBillingOverview() {
                 )}
               </li>
               <li className={styles.summaryItem}>
-                Card data stays in local form state only and is never persisted.
+                Дані картки зберігаються лише в локальному стані форми.
               </li>
             </ul>
           </div>
@@ -165,15 +165,15 @@ export function ClientBillingOverview() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.sectionLabel}>Usage</span>
-              <h2 className={styles.panelTitle}>Current request quotas</h2>
+              <span className={styles.sectionLabel}>Використання</span>
+              <h2 className={styles.panelTitle}>Поточні квоти запитів</h2>
             </div>
           </div>
 
           <div className={styles.usageGrid}>
             <div className={styles.usageCard}>
               <div className={styles.usageTopRow}>
-                <span className={styles.metaLabel}>Search requests</span>
+                <span className={styles.metaLabel}>Запити пошуку</span>
                 <span className={styles.methodPill}>
                   {formatUsageValue(
                     subscription.searchLimit,
@@ -183,7 +183,7 @@ export function ClientBillingOverview() {
                 </span>
               </div>
               <div className={styles.usageValue}>
-                {subscription.searchUsed} used
+                {subscription.searchUsed} використано
               </div>
               <div className={styles.progressTrack}>
                 <span
@@ -197,14 +197,13 @@ export function ClientBillingOverview() {
                 />
               </div>
               <div className={styles.usageMeta}>
-                Search runs through the same frontend limit gates as the live
-                app.
+                Пошук проходить через ті самі ліміт-гейти, що й у живому застосунку.
               </div>
             </div>
 
             <div className={styles.usageCard}>
               <div className={styles.usageTopRow}>
-                <span className={styles.metaLabel}>Deep views</span>
+                <span className={styles.metaLabel}>Глибокі перегляди</span>
                 <span className={styles.methodPill}>
                   {formatUsageValue(
                     subscription.viewLimit,
@@ -214,7 +213,7 @@ export function ClientBillingOverview() {
                 </span>
               </div>
               <div className={styles.usageValue}>
-                {subscription.viewUsed} used
+                {subscription.viewUsed} використано
               </div>
               <div className={styles.progressTrack}>
                 <span
@@ -228,8 +227,7 @@ export function ClientBillingOverview() {
                 />
               </div>
               <div className={styles.usageMeta}>
-                Detailed law trees, articles, and subject pages spend this
-                quota.
+                Дерева законів, статті та сторінки суб&apos;єктів витрачають цю квоту.
               </div>
             </div>
           </div>
@@ -238,8 +236,8 @@ export function ClientBillingOverview() {
         <article className={`${styles.panel} ${styles.panelWide}`}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.sectionLabel}>Upgrade path</span>
-              <h2 className={styles.panelTitle}>Available client plans</h2>
+              <span className={styles.sectionLabel}>Оновлення плану</span>
+              <h2 className={styles.panelTitle}>Доступні плани</h2>
             </div>
           </div>
 
@@ -269,7 +267,7 @@ export function ClientBillingOverview() {
                     href={`${ROUTES.accountCheckout}?plan=${plan.id}`}
                     className={styles.primaryAction}
                   >
-                    Choose {plan.label}
+                    Обрати {plan.label}
                   </Link>
                 </div>
               </article>
@@ -280,8 +278,8 @@ export function ClientBillingOverview() {
         <article className={`${styles.panel} ${styles.panelWide}`}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.sectionLabel}>Payment history</span>
-              <h2 className={styles.panelTitle}>Local demo transactions</h2>
+              <span className={styles.sectionLabel}>Історія платежів</span>
+              <h2 className={styles.panelTitle}>Демо-транзакції</h2>
             </div>
           </div>
 
@@ -295,7 +293,7 @@ export function ClientBillingOverview() {
                         {payment.summary}
                       </div>
                       <div className={styles.historyMeta}>
-                        {formatDateFull(payment.paidAt)} · actor {payment.actor}
+                        {formatDateFull(payment.paidAt)} · від {payment.actor}
                       </div>
                     </div>
                     <span className={styles.methodPill}>
@@ -307,8 +305,8 @@ export function ClientBillingOverview() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              No local payment events yet. Once a client activates a trial or
-              monthly plan, the demo checkout log appears here.
+              Платіжних подій ще немає. Після активації пробного або щомісячного
+              плану журнал demo-оплати з&apos;явиться тут.
             </div>
           )}
         </article>

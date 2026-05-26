@@ -9,6 +9,11 @@ import styles from "./AdminTopbar.module.scss";
 
 const PAGE_TITLES = [
   {
+    href: ROUTES.adminProjectPage,
+    title: "Сторінка проєкту",
+    subtitle: "Builder для сторінки «Інформація про проєкт»",
+  },
+  {
     href: ROUTES.adminAnalytics,
     title: "Аналітика",
     subtitle: "Поглиблений зріз даних сайту",
@@ -95,6 +100,9 @@ export function AdminTopbar({
           )}
         </nav>
         <h1 className={styles.title}>{pageCopy.title}</h1>
+        {pageCopy.subtitle && (
+          <p className={styles.subtitle}>{pageCopy.subtitle}</p>
+        )}
       </div>
 
       <div className={styles.actions}>

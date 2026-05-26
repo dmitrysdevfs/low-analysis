@@ -171,10 +171,13 @@ export function getGuestLimitSnapshot(now = Date.now()): GuestLimitSnapshot {
 export function formatRemainingCooldown(ms: number) {
   const totalMinutes = Math.max(1, Math.ceil(ms / 60000));
   if (totalMinutes === 1) {
-    return "1 minute";
+    return "1 хвилину";
+  }
+  if (totalMinutes < 5) {
+    return `${totalMinutes} хвилини`;
   }
 
-  return `${totalMinutes} minutes`;
+  return `${totalMinutes} хвилин`;
 }
 
 export function attemptGuestAction(
@@ -208,12 +211,12 @@ export function attemptGuestAction(
       reason: "cooldown",
       message:
         type === "search"
-          ? `Guest search cooldown is active. Please wait ${formatRemainingCooldown(
+          ? `Кулдаун пошуку активний. Зачекайте ${formatRemainingCooldown(
               snapshot.search.cooldownRemainingMs,
-            )} or register for continuous access.`
-          : `Guest preview cooldown is active. Please wait ${formatRemainingCooldown(
+            )} або зареєструйтесь для необмеженого доступу.`
+          : `Кулдаун перегляду активний. Зачекайте ${formatRemainingCooldown(
               snapshot.view.cooldownRemainingMs,
-            )} or register for continuous access.`,
+            )} або зареєструйтесь для необмеженого доступу.`,
       snapshot,
     };
   }
@@ -230,8 +233,8 @@ export function attemptGuestAction(
       reason: "limit",
       message:
         type === "search"
-          ? "Guest search limit reached. Please register to keep searching without interruptions."
-          : "Guest deep-view limit reached. Please register to continue opening detailed records.",
+          ? "Ліміт пошуку вичерпано. Зареєструйтесь, щоб продовжувати пошук без обмежень."
+          : "Ліміт перегляду вичерпано. Зареєструйтесь, щоб продовжувати відкривати детальні записи.",
       snapshot,
     };
   }

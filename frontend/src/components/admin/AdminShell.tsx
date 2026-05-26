@@ -1,14 +1,18 @@
 "use client";
 
 import { type ReactNode, useCallback, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { ROUTES } from "@/constants/routes";
 import { AdminSidebarNav } from "@/admin/layout/AdminSidebarNav";
 import { AdminTopbar } from "@/admin/layout/AdminTopbar";
 import styles from "./AdminShell.module.scss";
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const pathname = usePathname();
   const [refreshKey, setRefreshKey] = useState(0);
+  const isWideCanvasRoute = pathname.startsWith(ROUTES.adminProjectPage);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((k) => k + 1);
@@ -23,7 +27,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
           userEmail={user?.email}
           onRefresh={handleRefresh}
         />
-        <main className={styles.main}>{children}</main>
+        <main
+          className={`${styles.main} ${isWideCanvasRoute ? styles.mainWide : ""}`}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

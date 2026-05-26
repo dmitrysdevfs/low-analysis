@@ -137,6 +137,7 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   }, []);
 
   function handleLogout() {
+    if (!mounted) return;
     logout();
     setMobileOpen(false);
     router.push(ROUTES.home);

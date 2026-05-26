@@ -100,7 +100,7 @@ export function ClientWorkspaceHome() {
         value: subscription?.plan?.label ?? "Preview",
         note:
           subscription?.description ??
-          "Local billing preview is active for this account.",
+          "Локальний preview-білінг активний для цього акаунта.",
       },
     ];
   }, [subscription?.description, subscription?.plan?.label, user, workspace]);
@@ -129,7 +129,7 @@ export function ClientWorkspaceHome() {
     const result = await updateProfile(displayName);
 
     if (!result.ok) {
-      notify.warning(result.error ?? "Profile update failed.");
+      notify.warning(result.error ?? "Не вдалося оновити профіль.");
       return;
     }
 
@@ -137,36 +137,36 @@ export function ClientWorkspaceHome() {
       setWorkspace(
         appendWorkspaceActivity(userId, {
           type: "profile",
-          title: "Profile updated",
-          detail: `Display name changed to ${displayName.trim()}.`,
+          title: "Профіль оновлено",
+          detail: `Відображуване ім'я змінено на ${displayName.trim()}.`,
         }),
       );
     }
 
-    notify.success("Display name updated.");
+    notify.success("Ім'я оновлено.");
   }
 
   async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (nextPassword.length < 8) {
-      notify.warning("Use at least 8 characters for the new password.");
+      notify.warning("Пароль має містити щонайменше 8 символів.");
       return;
     }
 
     if (nextPassword !== confirmPassword) {
-      notify.warning("The new password and confirmation do not match.");
+      notify.warning("Новий пароль і підтвердження не збігаються.");
       return;
     }
 
     const result = await changePassword(currentPassword, nextPassword);
 
     if (!result.ok) {
-      notify.warning(result.error ?? "Password change failed.");
+      notify.warning(result.error ?? "Не вдалося змінити пароль.");
       return;
     }
 
-    notify.success("Password updated successfully.");
+    notify.success("Пароль успішно оновлено.");
     setCurrentPassword("");
     setNextPassword("");
     setConfirmPassword("");
@@ -175,8 +175,8 @@ export function ClientWorkspaceHome() {
       setWorkspace(
         appendWorkspaceActivity(userId, {
           type: "security",
-          title: "Password changed",
-          detail: "Security credentials were refreshed for this workspace.",
+          title: "Пароль змінено",
+          detail: "Облікові дані оновлено.",
         }),
       );
     }
@@ -202,20 +202,20 @@ export function ClientWorkspaceHome() {
     }
 
     if (focusTopic.trim().length < 2) {
-      notify.warning("Add a more specific legal topic before saving it.");
+      notify.warning("Введіть конкретнішу юридичну тему перед збереженням.");
       return;
     }
 
     const nextWorkspace = addWorkspaceFocusTopic(userId, focusTopic);
 
     if (nextWorkspace.focusTopics.length === workspace.focusTopics.length) {
-      notify.info("This topic is already tracked in your workspace.");
+      notify.info("Ця тема вже відстежується в кабінеті.");
       return;
     }
 
     setWorkspace(nextWorkspace);
     setFocusTopic("");
-    notify.success("Research focus added.");
+    notify.success("Тему досліджень додано.");
   }
 
   function handleRemoveFocusTopic(topicId: string) {
@@ -225,7 +225,7 @@ export function ClientWorkspaceHome() {
 
     const nextWorkspace = removeWorkspaceFocusTopic(userId, topicId);
     setWorkspace(nextWorkspace);
-    notify.info("Research focus removed.");
+    notify.info("Тему досліджень видалено.");
   }
 
   function handleExportWorkspace() {
@@ -246,11 +246,11 @@ export function ClientWorkspaceHome() {
     setWorkspace(
       appendWorkspaceActivity(userId, {
         type: "export",
-        title: "Workspace exported",
-        detail: "A local JSON snapshot of the client workspace was downloaded.",
+        title: "Кабінет експортовано",
+        detail: "Знімок кабінету завантажено як JSON-файл.",
       }),
     );
-    notify.success("Workspace export downloaded.");
+    notify.success("Експорт кабінету завантажено.");
   }
 
   return (
@@ -347,7 +347,7 @@ export function ClientWorkspaceHome() {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.panelEyebrow}>Billing</span>
+              <span className={styles.panelEyebrow}>Білінг</span>
               <h2 className={styles.panelTitle}>План та квоти доступу</h2>
             </div>
           </div>
@@ -360,7 +360,7 @@ export function ClientWorkspaceHome() {
                 </div>
                 <div className={styles.workspaceHint}>
                   {subscription?.description ??
-                    "Manage trial, monthly plans, and checkout directly in the client cabinet."}
+                    "Керуйте пробним доступом, місячними планами та оплатою в кабінеті."}
                 </div>
               </div>
               <div className={styles.workspaceActions}>
@@ -377,21 +377,21 @@ export function ClientWorkspaceHome() {
               <div>
                 <div className={styles.workspaceTitle}>Квоти запитів</div>
                 <div className={styles.workspaceHint}>
-                  Search:{" "}
+                  Пошук:{" "}
                   {subscription?.searchRemaining === null
-                    ? "unlimited"
+                    ? "безліміт"
                     : `${subscription?.searchRemaining ?? 0} / ${subscription?.searchLimit ?? 0}`}{" "}
-                  · Views:{" "}
+                  · Перегляди:{" "}
                   {subscription?.viewRemaining === null
-                    ? "unlimited"
+                    ? "безліміт"
                     : `${subscription?.viewRemaining ?? 0} / ${subscription?.viewLimit ?? 0}`}
                 </div>
               </div>
               <div className={styles.workspaceActions}>
                 <span className={styles.badgeAccent}>
                   {subscription?.daysRemaining === null
-                    ? "no expiry"
-                    : `${subscription?.daysRemaining} d left`}
+                    ? "без терміну"
+                    : `${subscription?.daysRemaining} дн. до кінця`}
                 </span>
                 <Link href={ROUTES.accountCheckout} className={styles.linkText}>
                   Перейти до checkout
