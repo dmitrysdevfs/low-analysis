@@ -36,6 +36,7 @@ export const LAW_FIXTURE_3: Law = {
   title: "ЗАКОН ПРО ОСВІТУ",
   code: "2145-19",
   preamble: "ЗАКОН УКРАЇНИ",
+  documentType: ["ЗАКОН УКРАЇНИ"],
   status: "чинний",
   totalSections: 3,
   totalArticles: 12,

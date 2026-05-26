@@ -1,79 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 
 import { ROUTES } from "@/constants/routes";
-import { getLawTree } from "@/lib/api";
-import { getSortedArticles } from "@/lib/tree";
-import { notify } from "@/lib/toast";
-import type { Law, TreeNode } from "@/types";
+import type { Law } from "@/types";
 import styles from "./LawCard.module.scss";
 import { LawCardStat } from "./LawCardStat";
-import { LawCardArticlesList } from "./LawCardArticlesList";
 
 const CARD_HEIGHT = 148;
-const BACK_HEIGHT = 460;
-const PAGE_SIZE = 5;
-
-function normalizeArticleNumberQuery(value: string) {
-  return value.toLowerCase().replace(/ст\.?/giu, "").replace(/\s+/g, "").trim();
-}
+const BACK_HEIGHT = 280;
 
 export function LawCard({ law, index }: { law: Law; index: number }) {
   const [flipped, setFlipped] = useState(false);
-  const [allArticles, setAllArticles] = useState<TreeNode[]>([]);
-  const [loadingArticles, setLoadingArticles] = useState(false);
-  const [query, setQuery] = useState("");
-  const [subjectCount, setSubjectCount] = useState(0);
-  const fetched = useRef(false);
 
-  const filtered = useMemo(() => {
-    if (!query.trim()) return allArticles;
-    const q = normalizeArticleNumberQuery(query);
-    if (!q) return allArticles;
-
-    return allArticles.filter((a) =>
-      (a.number ?? "").toLowerCase().replace(/\s+/g, "").includes(q),
-    );
-  }, [allArticles, query]);
-
-  const visible = filtered.slice(0, PAGE_SIZE);
-
-  const handleFlip = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (!flipped && !fetched.current) {
-        fetched.current = true;
-        setLoadingArticles(true);
-        getLawTree(law._id)
-          .then((data) => {
-            const elements = data.elements;
-
-            const arts: TreeNode[] = getSortedArticles(elements);
-            setAllArticles(arts);
-
-            const uniqueSubjectIds = new Set(
-              elements.flatMap(
-                (el) => el.subjects?.map((s) => s.subject_id) ?? [],
-              ),
-            );
-            setSubjectCount(uniqueSubjectIds.size);
-          })
-          .catch(() => {
-            fetched.current = false;
-            notify.error("Не вдалося завантажити статті закону");
-          })
-          .finally(() => setLoadingArticles(false));
-      }
-
-      setFlipped((prev) => !prev);
-    },
-    [flipped, law._id],
-  );
+  const handleFlip = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setFlipped((prev) => !prev);
+  }, []);
 
   return (
     <motion.div
@@ -108,6 +54,22 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
               ) : null}
             </div>
           </div>
+
+          {law.adoptedDate ||
+          (law.documentType && law.documentType.length > 0) ? (
+            <div className={styles.frontMeta}>
+              {law.adoptedDate ? (
+                <span className={styles.metaDate}>
+                  {new Date(law.adoptedDate).toLocaleDateString("uk-UA")}
+                </span>
+              ) : null}
+              {law.documentType && law.documentType.length > 0 ? (
+                <span className={styles.metaDocType}>
+                  {law.documentType[0]}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         {/* ── BACK ── */}
@@ -116,49 +78,47 @@ export function LawCard({ law, index }: { law: Law; index: number }) {
           <div className={styles.backHeader}>
             <div className={styles.backTitleWrap}>
               <span className={`display ${styles.backTitle}`}>{law.title}</span>
-              <span className={`mono ${styles.backSubtitle}`}>
-                Статті закону · {allArticles.length || law.totalArticles} всього
-              </span>
-              {subjectCount > 0 && (
-                <span className={`mono ${styles.backSubtitle}`}>
-                  {" · "}
-                  {subjectCount} {"суб'єктів"}
-                </span>
-              )}
             </div>
             <button onClick={handleFlip} className={styles.collapseBtn}>
               ↩ Згорнути
             </button>
           </div>
 
-          {/* Search input */}
-          <div className={styles.searchRow}>
-            <span className={styles.searchIcon}>⌕</span>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Пошук за номером статті..."
-              className={styles.searchInput}
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className={styles.searchClear}
-              >
-                ✕
-              </button>
-            )}
+          {/* Back stats */}
+          <div className={styles.backStats}>
+            <div className={styles.backStatRow}>
+              <span className={styles.backStatLabel}>Розділів</span>
+              <span className={styles.backStatValue}>{law.totalSections}</span>
+            </div>
+            <div className={styles.backStatRow}>
+              <span className={styles.backStatLabel}>Статей</span>
+              <span className={styles.backStatValue}>{law.totalArticles}</span>
+            </div>
+            {law.totalParagraphs ? (
+              <div className={styles.backStatRow}>
+                <span className={styles.backStatLabel}>Абзаців</span>
+                <span className={styles.backStatValue}>
+                  {law.totalParagraphs}
+                </span>
+              </div>
+            ) : null}
+            {law.adoptedDate ? (
+              <div className={styles.backStatRow}>
+                <span className={styles.backStatLabel}>Прийнято</span>
+                <span className={styles.backStatValue}>
+                  {new Date(law.adoptedDate).toLocaleDateString("uk-UA")}
+                </span>
+              </div>
+            ) : null}
+            {law.documentType && law.documentType.length > 0 ? (
+              <div className={styles.backStatRow}>
+                <span className={styles.backStatLabel}>Тип</span>
+                <span className={styles.backStatValue}>
+                  {law.documentType[0]}
+                </span>
+              </div>
+            ) : null}
           </div>
-
-          {/* Articles list — no scrollbar */}
-          <LawCardArticlesList
-            loading={loadingArticles}
-            visible={visible}
-            isEmpty={filtered.length === 0}
-            lawId={law._id}
-            query={query}
-          />
 
           {/* Footer */}
           <div className={styles.cardFooter}>

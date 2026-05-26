@@ -1,4 +1,5 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useArticle } from "@/hooks/useArticle";
 import { __resetLawsCacheForTests, useLaws } from "@/hooks/useLaws";
 import { useLawTree } from "@/hooks/useLawTree";
@@ -27,6 +28,17 @@ vi.mock("@/lib/api", () => ({
   getSubjectElements: vi.fn(),
 }));
 
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+  };
+}
+
 describe("frontend data hooks", () => {
   beforeEach(() => {
     vi.mocked(getLaws).mockReset();
@@ -45,7 +57,9 @@ describe("frontend data hooks", () => {
   it("useLaws fetches immediately for empty queries", async () => {
     vi.mocked(getLaws).mockResolvedValue([LAW_FIXTURE]);
 
-    const { result } = renderHook(() => useLaws());
+    const { result } = renderHook(() => useLaws(), {
+      wrapper: createWrapper(),
+    });
 
     expect(result.current.loading).toBe(true);
 
@@ -59,37 +73,30 @@ describe("frontend data hooks", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("useLaws debounces non-empty queries", async () => {
-    vi.useFakeTimers();
+  it("useLaws fetches immediately for non-empty queries", async () => {
     vi.mocked(getLaws).mockResolvedValue([LAW_FIXTURE]);
 
-    const { result } = renderHook(() => useLaws("конституція"));
+    const { result } = renderHook(() => useLaws("конституція"), {
+      wrapper: createWrapper(),
+    });
 
     expect(result.current.loading).toBe(true);
-    expect(getLaws).not.toHaveBeenCalled();
 
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(249);
-    });
-    expect(getLaws).not.toHaveBeenCalled();
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(1);
-    });
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(getLaws).toHaveBeenCalledWith(
       "конституція",
       expect.objectContaining({ signal: expect.any(Object) }),
     );
-
-    vi.useRealTimers();
-    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.laws).toEqual([LAW_FIXTURE]);
   });
 
   it("useLaws exposes request errors", async () => {
     vi.mocked(getLaws).mockRejectedValue(new Error("laws failed"));
 
-    const { result } = renderHook(() => useLaws("boom"));
+    const { result } = renderHook(() => useLaws("boom"), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe("laws failed");
@@ -99,7 +106,9 @@ describe("frontend data hooks", () => {
   it("useLaws maps HTTP 404 to Ukrainian message", async () => {
     vi.mocked(getLaws).mockRejectedValue(new Error("HTTP 404 Not Found"));
 
-    const { result } = renderHook(() => useLaws());
+    const { result } = renderHook(() => useLaws(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe("Дані не знайдено.");
@@ -109,7 +118,9 @@ describe("frontend data hooks", () => {
   it("useLaws maps network TypeError to Ukrainian message", async () => {
     vi.mocked(getLaws).mockRejectedValue(new TypeError("Failed to fetch"));
 
-    const { result } = renderHook(() => useLaws());
+    const { result } = renderHook(() => useLaws(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toMatch(/зв'язку з сервером/);
@@ -121,26 +132,27 @@ describe("frontend data hooks", () => {
       new Error("HTTP 500 Internal Server Error"),
     );
 
-    const { result } = renderHook(() => useLaws());
+    const { result } = renderHook(() => useLaws(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe("Помилка сервера. Спробуйте пізніше.");
     expect(result.current.laws).toEqual([]);
   });
 
-  it("useLaws does not update state when request is aborted", async () => {
+  it("useLaws surfaces abort as __ABORT__ sentinel", async () => {
     const abortErr = new DOMException("Aborted", "AbortError");
     vi.mocked(getLaws).mockRejectedValue(abortErr);
 
-    const { result } = renderHook(() => useLaws());
-
-    await act(async () => {
-      await Promise.resolve();
+    const { result } = renderHook(() => useLaws(), {
+      wrapper: createWrapper(),
     });
 
-    // parseApiError returns "__ABORT__" → setState is skipped
-    expect(result.current.loading).toBe(true);
-    expect(result.current.error).toBeNull();
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    // parseApiError returns "__ABORT__" for abort errors
+    expect(result.current.error).toBe("__ABORT__");
     expect(result.current.laws).toEqual([]);
   });
 
@@ -198,7 +210,9 @@ describe("frontend data hooks", () => {
   it("useSubjects returns subject lists and loading state", async () => {
     vi.mocked(getSubjects).mockResolvedValue([SUBJECT_FIXTURE]);
 
-    const { result } = renderHook(() => useSubjects());
+    const { result } = renderHook(() => useSubjects(), {
+      wrapper: createWrapper(),
+    });
 
     expect(result.current.loading).toBe(true);
 
@@ -211,7 +225,9 @@ describe("frontend data hooks", () => {
   it("useSubjects reports errors", async () => {
     vi.mocked(getSubjects).mockRejectedValue(new Error("subjects failed"));
 
-    const { result } = renderHook(() => useSubjects());
+    const { result } = renderHook(() => useSubjects(), {
+      wrapper: createWrapper(),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 

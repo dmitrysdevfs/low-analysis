@@ -305,6 +305,35 @@
   opacity: 0.55;
 }
 
+/* Back stats */
+.backStats {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.backStatRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backStatLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #7a98c0);
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.backStatValue {
+  font-size: 0.9rem;
+  color: var(--color-text-primary, #d6e0f0);
+  font-weight: 500;
+}
+
 /* Footer */
 .cardFooter {
   border-top: 1px solid #1c3260;
@@ -337,6 +366,33 @@
   color: #7a98c0;
   font-size: 0.62rem;
   text-transform: uppercase;
+}
+
+/* ── Front metadata row ── */
+.frontMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.metaDate {
+  font-size: 11px;
+  color: #7a98c0;
+  font-family: var(--font-mono);
+  opacity: 0.6;
+}
+
+.metaDocType {
+  font-size: 10px;
+  color: #c8a843;
+  background: rgba(200, 168, 67, 0.08);
+  border: 1px solid rgba(200, 168, 67, 0.18);
+  border-radius: 3px;
+  padding: 1px 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
 }
 
 @media (max-width: 640px) {

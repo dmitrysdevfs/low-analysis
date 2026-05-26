@@ -1,18 +1,86 @@
 import mongoose from 'mongoose';
 import Law from '../models/Law.js';
 import Element from '../models/Element.js';
+import { classifyElement } from './taxonomyService.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
-export const getAllLaws = async (q = '') => {
-  const filter = q
-    ? {
-        title: {
-          $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
-        },
-      }
-    : {};
-  return await Law.find(filter).select('-__v').sort({ adoptedDate: -1 });
+export const getAllLaws = async ({
+  q = '',
+  sortBy = 'date',
+  sortOrder = 'desc',
+  status,
+  dateFrom,
+  dateTo,
+  documentType,
+  page = 1,
+  limit = 10,
+} = {}) => {
+  const filter = {};
+
+  if (q) {
+    filter.title = {
+      $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
+    };
+  }
+
+  if (status) {
+    filter.status = {
+      $regex: new RegExp(
+        `^${status.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+        'i',
+      ),
+    };
+  }
+
+  if (documentType) {
+    filter.documentType = {
+      $elemMatch: {
+        $regex: new RegExp(
+          `^${documentType.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+          'i',
+        ),
+      },
+    };
+  }
+
+  if (dateFrom || dateTo) {
+    filter.adoptedDate = {};
+    if (dateFrom) filter.adoptedDate.$gte = dateFrom;
+    if (dateTo) {
+      const endOfDay = new Date(dateTo);
+      endOfDay.setHours(23, 59, 59, 999);
+      filter.adoptedDate.$lte = endOfDay;
+    }
+  }
+
+  const sortField = sortBy === 'title' ? 'title' : 'adoptedDate';
+  const sortDirection = sortOrder === 'asc' ? 1 : -1;
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await Promise.all([
+    Law.find(filter)
+      .select('-__v')
+      .sort({ [sortField]: sortDirection })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Law.countDocuments(filter),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
 };
 
 export const getLawById = async (id) => {
@@ -64,13 +132,70 @@ export const getLawStats = async (lawId) => {
 
 /**
  * Returns all Elements for a given law, sorted by order.
- * The tree structure is flat here; callers can build hierarchy client-side
- * or via buildTree() helper if needed.
+ * Supports filtering by function, domain, and subject.
+ * If filtered, recursively includes parent elements.
  */
-export const getLawTree = async (lawId) => {
-  return await Element.find({ lawId })
+export const getLawTree = async (
+  lawId,
+  { legalFunction, domain, subjectId } = {},
+) => {
+  const allElements = await Element.find({ lawId })
     .select('-__v')
-    .sort({ depth: 1, order: 1 });
+    .sort({ depth: 1, order: 1 })
+    .lean();
+
+  if (!legalFunction && !domain && !subjectId) {
+    return allElements;
+  }
+
+  // Filtering logic
+  const filteredSet = new Set();
+  const elementMap = new Map();
+  allElements.forEach((el) => elementMap.set(String(el._id), el));
+
+  allElements.forEach((el) => {
+    let matches = true;
+
+    if (
+      legalFunction &&
+      !el.taxonomy?.legalFunctions?.includes(legalFunction)
+    ) {
+      matches = false;
+    }
+    if (domain && !el.taxonomy?.domains?.includes(domain)) {
+      matches = false;
+    }
+    if (
+      subjectId &&
+      !el.subjects?.some((s) => String(s.subject_id) === String(subjectId))
+    ) {
+      matches = false;
+    }
+
+    if (matches && (legalFunction || domain || subjectId)) {
+      // Add this element and all its parents recursively
+      let current = el;
+      while (current) {
+        filteredSet.add(String(current._id));
+        current = current.parentId
+          ? elementMap.get(String(current.parentId))
+          : null;
+      }
+    }
+  });
+
+  return allElements.filter((el) => filteredSet.has(String(el._id)));
+};
+
+export const getElement = async (id) => {
+  return await Element.findById(id).select('-__v').lean();
+};
+
+export const getLawHeatmap = async (lawId) => {
+  return await Element.find({ lawId })
+    .select('code type number title chars_count z_score risk_level taxonomy')
+    .sort({ order: 1 })
+    .lean();
 };
 
 /**
@@ -107,11 +232,27 @@ export const getArticle = async (lawId, articleNumber) => {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export const upsertLaw = async (lawData) => {
-  const { code, title, source, status, preamble, signatory, global_context } =
-    lawData;
+  const {
+    code,
+    title,
+    source,
+    status,
+    preamble,
+    signatory,
+    adoptedDate,
+    documentType,
+    global_context,
+  } = lawData;
+  const update = { title, source, status, preamble, signatory };
+
+  if (adoptedDate != null) update.adoptedDate = adoptedDate;
+  if (documentType != null && documentType.length > 0)
+    update.documentType = documentType;
+  if (global_context !== undefined) update.global_context = global_context;
+
   const law = await Law.findOneAndUpdate(
     { code },
-    { $set: { title, source, status, preamble, signatory, global_context } },
+    { $set: update },
     { new: true, upsert: true },
   );
   return law;
@@ -158,16 +299,25 @@ export const deleteMissingElements = async (lawId, activeCodes) => {
 export const updateLawStatsFromDb = async (lawId) => {
   // Count only active articles — exclude records whose text is a "{...виключено...}"
   // or "{...вилучено...}" placeholder left by the official amendment process.
-  const [totalArticles, totalSections] = await Promise.all([
+  const [totalArticles, totalSections, totalParagraphs] = await Promise.all([
     Element.countDocuments({
       lawId,
       type: 'article',
       $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
     }),
     Element.countDocuments({ lawId, type: 'section' }),
+    Element.countDocuments({
+      lawId,
+      type: 'paragraph',
+      $nor: [{ text: /^\{[^}]*виключено/i }, { text: /^\{[^}]*вилучено/i }],
+    }),
   ]);
 
-  await Law.findByIdAndUpdate(lawId, { totalArticles, totalSections });
+  await Law.findByIdAndUpdate(lawId, {
+    totalArticles,
+    totalSections,
+    totalParagraphs,
+  });
 };
 
 /**
@@ -203,12 +353,13 @@ export const resolveElementHierarchy = async (lawId, rawElements) => {
     return { ...el, code: uniqueCode, _id: id };
   });
 
-  // 3. Resolve parentId
+  // 3. Resolve parentId & apply taxonomy classification
   const elementsToSave = elementsWithIds.map((el) => {
     return {
       ...el,
       lawId,
       parentId: el.parentCode ? codeToIdMap[el.parentCode] || null : null,
+      taxonomy: el.taxonomy || classifyElement(el),
     };
   });
 

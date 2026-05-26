@@ -11,6 +11,7 @@ import {
   KeyRound,
   ScrollText,
   BarChart3,
+  HelpCircle,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
@@ -60,6 +61,12 @@ const NAV_ITEMS = [
     label: "Аналітика",
     icon: BarChart3,
     note: "Поглиблений зріз даних",
+  },
+  {
+    href: ROUTES.adminHelp,
+    label: "Довідка",
+    icon: HelpCircle,
+    note: "Керівництво адміна",
   },
 ] as const;
 

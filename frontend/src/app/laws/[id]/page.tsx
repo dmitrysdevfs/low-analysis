@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { LawMetaPanel } from "@/components/law/LawMetaPanel";
 import { LawStructureList } from "@/components/law/LawStructureList";
-import type { TreeNode } from "@/types";
 import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useLawTree } from "@/hooks/useLawTree";
@@ -22,6 +21,7 @@ import {
   limitLawSections,
   computeArticleRiskMap,
   computeStatsFromTree,
+  filterTreeBySubject,
   type RiskLevel,
   type TreeBranch,
 } from "@/lib/tree";
@@ -34,37 +34,7 @@ import {
 } from "@/lib/utils/pageLimits";
 import { useSidebarData } from "@/components/layout/SidebarDataContext";
 import { useLawStats } from "@/hooks/useLawStats";
-
-function filterTreeBySubject(
-  tree: TreeNode[],
-  subjectId: string | null,
-): TreeNode[] {
-  if (!subjectId) return tree;
-
-  const matchingNodeIds = new Set<string>();
-  const parentMap = new Map<string, string | null>();
-
-  tree.forEach((node) => {
-    if (node._id) parentMap.set(node._id, node.parentId || null);
-    if (node.subjects?.some((s) => s.subject_id === subjectId)) {
-      if (node._id) matchingNodeIds.add(node._id);
-    }
-  });
-
-  const nodesToKeep = new Set<string>(matchingNodeIds);
-  matchingNodeIds.forEach((id) => {
-    let currentId: string | null = id;
-    while (currentId) {
-      const parentId = parentMap.get(currentId);
-      if (parentId) {
-        nodesToKeep.add(parentId);
-      }
-      currentId = parentId || null;
-    }
-  });
-
-  return tree.filter((node) => node._id && nodesToKeep.has(node._id));
-}
+import { saveRecentlyViewed } from "@/lib/storage/recentlyViewed";
 
 export default function LawTreePage() {
   const params = useParams<{ id: string }>();
@@ -88,21 +58,8 @@ export default function LawTreePage() {
 
   // Save to recently viewed in localStorage
   useEffect(() => {
-    if (!law || typeof window === "undefined") return;
-    const RECENTLY_VIEWED_KEY = "law-analysis.recently-viewed";
-    const MAX_RECENT = 5;
-    try {
-      const raw = localStorage.getItem(RECENTLY_VIEWED_KEY);
-      const current: Array<{ _id: string; title: string; code: string }> = raw
-        ? JSON.parse(raw)
-        : [];
-      const entry = { _id: law._id, title: law.title, code: law.code };
-      const filtered = current.filter((item) => item._id !== law._id);
-      const updated = [entry, ...filtered].slice(0, MAX_RECENT);
-      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
-    } catch {
-      // localStorage unavailable — skip silently
-    }
+    if (!law) return;
+    saveRecentlyViewed({ _id: law._id, title: law.title, code: law.code });
   }, [law]);
 
   const lawSubjects = useMemo(() => {
@@ -174,7 +131,10 @@ export default function LawTreePage() {
     () => countArticlesInSections(visibleSections),
     [visibleSections],
   );
-  const computedStats = useMemo(() => computeStatsFromTree(tree), [tree]);
+  const computedStats = useMemo(
+    () => (stats ? null : computeStatsFromTree(tree)),
+    [stats, tree],
+  );
 
   const articleRiskMap = useMemo(
     () => computeArticleRiskMap(sections),

@@ -55,3 +55,19 @@ export function updateNote(
     // fail silently
   }
 }
+
+export function toggleNotePin(userId: string, noteId: string): void {
+  try {
+    const notes = getNotes(userId);
+    const index = notes.findIndex((n) => n.id === noteId);
+    if (index === -1) return;
+    notes[index] = {
+      ...notes[index],
+      pinned: !notes[index].pinned,
+      updatedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(storageKey(userId), JSON.stringify(notes));
+  } catch {
+    // fail silently
+  }
+}

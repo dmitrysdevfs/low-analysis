@@ -32,12 +32,14 @@ export const isSignatoryTable = ($table) => {
  *
  * @param {string} html - Raw HTML content of the .frame page
  * @param {string} [mainHtml] - Raw HTML content of the main page (optional)
- * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null }} parsed data
+ * @returns {{ title: string, code: string, elements: Array, preamble: string|null, status: string|null, signatory: string|null, adoptedDate: Date|null, documentType: string[] }} parsed data
  */
 export const parseLawHtml = (html, mainHtml = null) => {
   const $ = cheerio.load(html);
 
   let status = null;
+  let adoptedDate = null;
+  let documentType = [];
   if (mainHtml) {
     const $main = cheerio.load(mainHtml);
     status =
@@ -45,6 +47,31 @@ export const parseLawHtml = (html, mainHtml = null) => {
       $main('span.valid').first().text().trim() ||
       $main('.doc-status').first().text().trim() ||
       null;
+
+    // Extract adoption date from <title>: "... від 28.06.1996 ..."
+    const titleText = $main('title').first().text();
+    const dateMatch = titleText.match(/від (\d{2})\.(\d{2})\.(\d{4})/);
+    if (dateMatch) {
+      const [, day, month, year] = dateMatch;
+      adoptedDate = new Date(
+        Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)),
+      );
+    }
+
+    // Extract document types from .doc-card — clone to strip date/number nodes
+    const docCard = $main('.doc-card').first().clone();
+    docCard.find('span, strong').remove();
+    const typePart = docCard
+      .text()
+      .trim()
+      .split(/\s+від\s+/)[0]
+      .trim();
+    if (typePart) {
+      documentType = typePart
+        .split(/[;,]/)
+        .map((t) => t.trim())
+        .filter(Boolean);
+    }
   }
 
   // ── 1. Extract law title ──────────────────────────────────────────────────
@@ -337,5 +364,15 @@ export const parseLawHtml = (html, mainHtml = null) => {
     definitions,
   };
 
-  return { title, code, elements, preamble, status, signatory, global_context };
+  return {
+    title,
+    code,
+    elements,
+    preamble,
+    status,
+    signatory,
+    adoptedDate,
+    documentType,
+    global_context,
+  };
 };

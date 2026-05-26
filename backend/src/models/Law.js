@@ -26,6 +26,10 @@ const lawSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    documentType: {
+      type: [String],
+      default: [],
+    },
     source: {
       type: String,
     },
@@ -34,6 +38,10 @@ const lawSchema = new mongoose.Schema(
       default: 0,
     },
     totalSections: {
+      type: Number,
+      default: 0,
+    },
+    totalParagraphs: {
       type: Number,
       default: 0,
     },
@@ -56,6 +64,11 @@ const lawSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+lawSchema.index({ title: 1 });
+lawSchema.index({ status: 1 });
+lawSchema.index({ documentType: 1 });
+lawSchema.index({ adoptedDate: -1 });
 
 const Law = mongoose.model('Law', lawSchema);
 

@@ -1,5 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Dialog } from "@/components/ui/Dialog";
@@ -10,6 +11,19 @@ import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { NestedNodeList } from "@/components/article/ArticleTreeNode";
 import type { TreeBranch } from "@/lib/tree";
 import { AUTH_SESSION_STORAGE_KEY } from "@/lib/auth/mockAuth";
+import * as authClient from "@/lib/auth/authClient";
+
+vi.mock("@/lib/auth/authClient", async (importOriginal) => {
+  const actual = await importOriginal<typeof authClient>();
+  return {
+    ...actual,
+    getProfile: vi.fn().mockImplementation(async () => {
+      const stored = actual.readStoredSession();
+      return stored;
+    }),
+  };
+});
+
 import { buildLawSections } from "@/lib/tree";
 import {
   LAW_FIXTURE,
@@ -20,11 +34,23 @@ import {
 } from "@/test/fixtures";
 import { setMockPathname } from "@/test/mocks/next-navigation";
 
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+  };
+}
+
 describe("interactive frontend components", () => {
   it("highlights the active nav item in AppHeader for guest view", () => {
     setMockPathname("/subjects/subject-1");
 
-    render(<AppHeader />);
+    const Wrapper = createWrapper();
+    render(<AppHeader />, { wrapper: Wrapper });
 
     expect(screen.getByRole("link", { name: "Law Analysis" })).toHaveAttribute(
       "href",
@@ -54,10 +80,12 @@ describe("interactive frontend components", () => {
     );
     setMockPathname("/laws");
 
+    const Wrapper = createWrapper();
     render(
       <AuthProvider>
         <AppHeader />
       </AuthProvider>,
+      { wrapper: Wrapper },
     );
 
     await waitFor(() => {
@@ -112,34 +140,29 @@ describe("interactive frontend components", () => {
 
     const { container } = render(<NestedNodeList nodes={[branch]} />);
 
-    // charCount span has mono class — should not appear for nodes without text
     expect(container.querySelector(".charCount")).toBeNull();
   });
 
-  it("submits and resets search form parameters", async () => {
-    const user = userEvent.setup();
+  it("submits and resets search form parameters", () => {
     const onSearch = vi.fn();
     const onReset = vi.fn();
 
     render(<SearchForm onSearch={onSearch} onReset={onReset} />);
 
     const selects = screen.getAllByRole("combobox");
+    fireEvent.change(screen.getByPlaceholderText("Введіть ключові слова..."), {
+      target: { value: "конституція" },
+    });
 
-    await user.type(
-      screen.getByPlaceholderText("Введіть ключові слова..."),
-      "конституція",
-    );
     const dateInputs = screen.getAllByPlaceholderText("дд.мм.рррр");
-
-    await user.type(dateInputs[0], "10052026");
-    await user.type(dateInputs[1], "11052026");
-    await user.type(
-      screen.getByPlaceholderText("Код або номер акта..."),
-      "254",
-    );
-    await user.selectOptions(selects[1], "ЗАКОН УКРАЇНИ");
-    await user.selectOptions(selects[4], "title");
-    await user.click(screen.getByRole("button", { name: /Шукати/i }));
+    fireEvent.change(dateInputs[0], { target: { value: "10.05.2026" } });
+    fireEvent.change(dateInputs[1], { target: { value: "11.05.2026" } });
+    fireEvent.change(screen.getByPlaceholderText("Код або номер акта..."), {
+      target: { value: "254" },
+    });
+    fireEvent.change(selects[1], { target: { value: "ЗАКОН УКРАЇНИ" } });
+    fireEvent.change(selects[4], { target: { value: "title" } });
+    fireEvent.submit(screen.getByRole("button", { name: /Шукати/i }));
 
     expect(onSearch).toHaveBeenCalledWith({
       q: "конституція",
@@ -153,7 +176,7 @@ describe("interactive frontend components", () => {
       sort: "title",
     });
 
-    await user.click(screen.getByRole("button", { name: /Очистити/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Очистити/i }));
     expect(onReset).toHaveBeenCalledTimes(1);
   });
 

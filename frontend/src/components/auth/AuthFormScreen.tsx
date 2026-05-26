@@ -165,7 +165,7 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
     setShowConfirmPassword(false);
   }
 
-  function submitForm(event: FormEvent<HTMLFormElement>) {
+  async function submitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (isRegister && !registerReady) {
@@ -181,7 +181,7 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
     }
 
     if (isRegister) {
-      const result = register(registerPayload);
+      const result = await register(registerPayload);
 
       if (!result.ok) {
         notify.warning(result.error ?? "Помилка реєстрації.");
@@ -204,7 +204,7 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
       return;
     }
 
-    const result = login(loginPayload);
+    const result = await login(loginPayload);
 
     if (!result.ok) {
       notify.warning(result.error ?? "Помилка входу.");

@@ -7,7 +7,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import { useSubjectDetail } from "@/hooks/useSubjectDetail";
-import { useLaws } from "@/hooks/useLaws";
+import { useLawsMap } from "@/hooks/useLawsMap";
 import { NoteModal } from "@/components/notes/NoteModal";
 import SelectionTooltip from "@/components/notes/SelectionTooltip";
 import { SubjectHero } from "@/components/subject/SubjectHero";
@@ -22,12 +22,10 @@ export default function SubjectDetailPage() {
   const { subject, elements, loading, error } = useSubjectDetail(
     subjectId || undefined,
   );
-  const { laws } = useLaws();
+  const { lawsMap } = useLawsMap();
   const containerRef = useRef<HTMLElement | null>(null);
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
   const [activeRole, setActiveRole] = useState<string | null>(null);
-
-  const lawsMap = useMemo(() => new Map(laws.map((l) => [l._id, l])), [laws]);
 
   const lawsCount = useMemo(
     () => new Set(elements.map((e) => e.lawId).filter(Boolean)).size,

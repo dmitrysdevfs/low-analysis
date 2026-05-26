@@ -62,6 +62,7 @@ describe("Account notes page", () => {
       addNote: vi.fn(),
       removeNote,
       updateNote: vi.fn(),
+      togglePin: vi.fn(),
       hasArticleNote: vi.fn(),
     });
   });

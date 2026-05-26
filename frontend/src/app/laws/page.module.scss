@@ -235,3 +235,42 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem 0 2rem;
+}
+
+.pageBtn {
+  padding: 0.5rem 1.25rem;
+  border: 1px solid var(--color-border, #1c3260);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-secondary, #a8bedd);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-gold, #c8a843);
+    color: var(--color-gold, #c8a843);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.pageInfo {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #7a98c0);
+  min-width: 4rem;
+  text-align: center;
+}

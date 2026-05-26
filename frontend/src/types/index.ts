@@ -4,6 +4,8 @@ export type {
   LawTreeResponse,
   TreeNode,
   TreeNodeType,
+  Pagination,
+  PaginatedLawsResponse,
 } from "./law.types";
 export type { Subject, SubjectElements } from "./subject.types";
 export type { ArticleResponse } from "./article.types";

@@ -66,7 +66,11 @@ export function AdminAnalyticsView() {
     ).length;
     const preambleCoverage = laws.filter((law) => Boolean(law.preamble)).length;
     const recentLaws = [...laws]
-      .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+      .sort((left, right) =>
+        (right.adoptedDate ?? right.createdAt).localeCompare(
+          left.adoptedDate ?? left.createdAt,
+        ),
+      )
       .slice(0, 5);
 
     return {

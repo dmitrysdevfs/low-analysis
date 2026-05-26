@@ -3,11 +3,84 @@ import * as fetchService from '../services/fetchService.js';
 import { parseLawHtml } from '../services/parserService.js';
 import { performStatisticalAnalysis } from '../services/statisticalAnalysisService.js';
 
+const VALID_SORT_BY = ['date', 'title'];
+const VALID_SORT_ORDER = ['asc', 'desc'];
+
 export const getAllLaws = async (req, res, next) => {
   try {
     const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
-    const laws = await lawService.getAllLaws(q);
-    res.json(laws);
+
+    const sortBy = req.query.sortBy ?? 'date';
+    const sortOrder = req.query.sortOrder ?? 'desc';
+
+    if (!VALID_SORT_BY.includes(sortBy)) {
+      return res.status(400).json({
+        message: `Invalid sortBy value. Allowed: ${VALID_SORT_BY.join(', ')}`,
+      });
+    }
+    if (!VALID_SORT_ORDER.includes(sortOrder)) {
+      return res.status(400).json({
+        message: `Invalid sortOrder value. Allowed: ${VALID_SORT_ORDER.join(', ')}`,
+      });
+    }
+
+    const status =
+      typeof req.query.status === 'string'
+        ? req.query.status.trim()
+        : undefined;
+
+    const documentType =
+      typeof req.query.documentType === 'string'
+        ? req.query.documentType.trim()
+        : undefined;
+
+    let dateFrom;
+    if (req.query.dateFrom !== undefined) {
+      dateFrom = new Date(req.query.dateFrom);
+      if (isNaN(dateFrom.getTime())) {
+        return res.status(400).json({
+          message:
+            'Invalid dateFrom value. Expected ISO date (e.g. 2020-01-01)',
+        });
+      }
+    }
+
+    let dateTo;
+    if (req.query.dateTo !== undefined) {
+      dateTo = new Date(req.query.dateTo);
+      if (isNaN(dateTo.getTime())) {
+        return res.status(400).json({
+          message: 'Invalid dateTo value. Expected ISO date (e.g. 2020-12-31)',
+        });
+      }
+    }
+
+    const page = parseInt(req.query.page ?? '1', 10);
+    const limit = parseInt(req.query.limit ?? '20', 10);
+
+    if (!Number.isInteger(page) || page < 1) {
+      return res.status(400).json({
+        message: 'Invalid page value. Must be a positive integer',
+      });
+    }
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+      return res.status(400).json({
+        message: 'Invalid limit value. Must be between 1 and 100',
+      });
+    }
+
+    const result = await lawService.getAllLaws({
+      q,
+      sortBy,
+      sortOrder,
+      status,
+      dateFrom,
+      dateTo,
+      documentType,
+      page,
+      limit,
+    });
+    res.json(result);
   } catch (error) {
     next(error);
   }
@@ -16,10 +89,16 @@ export const getAllLaws = async (req, res, next) => {
 export const getLawTree = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { function: legalFunction, domain, subjectId } = req.query;
+
     const law = await lawService.getLawById(id);
     if (!law) return res.status(404).json({ message: 'Law not found' });
 
-    const elements = await lawService.getLawTree(id);
+    const elements = await lawService.getLawTree(id, {
+      legalFunction,
+      domain,
+      subjectId,
+    });
     res.json({ law, elements });
   } catch (error) {
     next(error);
@@ -51,6 +130,29 @@ export const getArticle = async (req, res, next) => {
   }
 };
 
+export const getElement = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const element = await lawService.getElement(id);
+    if (!element) return res.status(404).json({ message: 'Element not found' });
+    res.json(element);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLawHeatmap = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const heatmap = await lawService.getLawHeatmap(id);
+    if (!heatmap)
+      return res.status(404).json({ message: 'Heatmap data not found' });
+    res.json(heatmap);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const parseLawFromUrl = async (req, res, next) => {
   try {
     const { url } = req.body;
@@ -70,6 +172,8 @@ export const parseLawFromUrl = async (req, res, next) => {
 
     // 2. Parse HTML
     const parsedData = parseLawHtml(frameHtml, mainHtml);
+
+    if (!parsedData.code) parsedData.code = code;
     if (!parsedData.title || !parsedData.code) {
       return res
         .status(500)
@@ -84,6 +188,8 @@ export const parseLawFromUrl = async (req, res, next) => {
       status: parsedData.status,
       preamble: parsedData.preamble,
       signatory: parsedData.signatory,
+      adoptedDate: parsedData.adoptedDate,
+      documentType: parsedData.documentType,
       global_context: parsedData.global_context,
     });
 
