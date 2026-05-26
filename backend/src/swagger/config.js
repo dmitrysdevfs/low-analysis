@@ -3,12 +3,12 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createRequire } from 'module';
 
+import { schemas } from './schemas.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 const pkg = require('../../../package.json');
-
-import { schemas } from './schemas.js';
 
 export const swaggerDefinition = {
   openapi: '3.0.0',
@@ -16,28 +16,26 @@ export const swaggerDefinition = {
     title: 'Low Analysis API',
     version: pkg.version,
     description: `
-## Система структурування та аналізу українського законодавства
+## Low Analysis API
 
-Перетворення лінійних текстів законів на ієрархічну базу атомарних елементів.
+API for parsing, structuring and analysing Ukrainian legislation.
 
-### Ієрархія елементів
-\`\`\`
-Закон
- └─ Розділ  (section)   depth: 0   code: rz1
-     └─ Стаття (article) depth: 1   code: rz1.st2
-         └─ Частина (part) depth: 2   code: rz1.st2.ch1
-\`\`\`
+### Core areas
+- laws catalogue and metadata
+- tree of atomic elements for every law
+- article and element drill-down
+- statistics and heatmap datasets
+- subjects and taxonomy
+- managed public pages for the project site
 
-### Авторизація
+### Authentication
+1. Register via \`POST /api/auth/register\` or login via \`POST /api/auth/login\`
+2. Copy the \`token\` field from the response
+3. Click **Authorize** in Swagger UI
+4. Paste the token as \`Bearer <token>\`
 
-1. Зареєструйтесь через \`POST /api/auth/register\` або увійдіть через \`POST /api/auth/login\`
-2. Скопіюйте поле \`token\` з відповіді
-3. Натисніть кнопку **Authorize** (🔒) вгорі сторінки
-4. Вставте токен у форматі: \`Bearer <token>\`
-
-### Пошук
-
-\`GET /api/laws?q=конституція\` — фільтрація за назвою (регістронезалежний MongoDB regex)
+### Search note
+\`GET /api/laws?q=...\` currently filters by title on the backend.
     `,
     contact: {
       name: 'Low Analysis',
@@ -48,16 +46,23 @@ export const swaggerDefinition = {
     },
   },
   servers: [
-    { url: 'https://low-analysis.onrender.com', description: 'Продакшн' },
-    { url: 'http://localhost:3000', description: 'Локальна розробка' },
+    { url: 'https://low-analysis.onrender.com', description: 'Production' },
+    { url: 'http://localhost:3000', description: 'Local development' },
   ],
   tags: [
-    { name: 'Health', description: 'Стан сервера' },
-    { name: 'Auth', description: 'Автентифікація та управління акаунтом' },
-    { name: 'Laws', description: 'Закони та їх структура' },
-    { name: 'Elements', description: 'Атомарні елементи законів' },
-    { name: 'Subjects', description: "Суб'єкти регулювання" },
-    { name: 'Taxonomy', description: 'Класифікація та таксономія норм' },
+    { name: 'Health', description: 'Server health and readiness' },
+    { name: 'Auth', description: 'Authentication and account management' },
+    {
+      name: 'Laws',
+      description: 'Laws, tree data, articles, stats and parsing',
+    },
+    { name: 'Elements', description: 'Atomic law elements' },
+    {
+      name: 'Subjects',
+      description: 'Regulatory subjects and related elements',
+    },
+    { name: 'Taxonomy', description: 'Taxonomy categories and classification' },
+    { name: 'Pages', description: 'Managed public pages and page builder API' },
   ],
   components: {
     schemas,
@@ -66,12 +71,12 @@ export const swaggerDefinition = {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        description: 'JWT токен отриманий після логіну. Формат: Bearer <token>',
+        description: 'JWT token received after login. Format: Bearer <token>',
       },
     },
     responses: {
       ServerError: {
-        description: 'Внутрішня помилка сервера',
+        description: 'Internal server error',
         content: {
           'application/json': {
             schema: { $ref: '#/components/schemas/Error' },
@@ -80,7 +85,7 @@ export const swaggerDefinition = {
         },
       },
       Unauthorized: {
-        description: 'Не авторизовано — JWT токен відсутній або недійсний',
+        description: 'Missing or invalid JWT token',
         content: {
           'application/json': {
             schema: { $ref: '#/components/schemas/Error' },
@@ -89,7 +94,7 @@ export const swaggerDefinition = {
         },
       },
       Forbidden: {
-        description: 'Доступ заборонено — недостатньо прав',
+        description: 'Authenticated, but without required role',
         content: {
           'application/json': {
             schema: { $ref: '#/components/schemas/Error' },
@@ -103,7 +108,7 @@ export const swaggerDefinition = {
         in: 'path',
         name: 'id',
         required: true,
-        description: 'MongoDB ObjectId закону',
+        description: 'MongoDB ObjectId of the law',
         schema: {
           type: 'string',
           example: '507f1f77bcf86cd799439011',
@@ -113,14 +118,14 @@ export const swaggerDefinition = {
         in: 'path',
         name: 'num',
         required: true,
-        description: 'Номер статті (рядок, напр. "1", "129-1")',
+        description: 'Article number as string, for example "1" or "129-1"',
         schema: { type: 'string', example: '1' },
       },
       SubjectId: {
         in: 'path',
         name: 'id',
         required: true,
-        description: "MongoDB ObjectId суб'єкта",
+        description: 'MongoDB ObjectId of the subject',
         schema: { type: 'string', example: '507f1f77bcf86cd799439022' },
       },
     },
@@ -129,7 +134,7 @@ export const swaggerDefinition = {
 
 export const swaggerOptions = {
   definition: swaggerDefinition,
-  apis: ['./src/routes/*.js'],
+  apis: ['./src/routes/*.js', './src/modules/pages/*.js'],
 };
 
 export const swaggerCustomCss = readFileSync(

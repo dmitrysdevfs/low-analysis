@@ -581,6 +581,180 @@
     },
   },
 
+  ManagedPageBlock: {
+    type: 'object',
+    required: ['id', 'type', 'enabled', 'data', 'style'],
+    properties: {
+      id: { type: 'string', example: 'hero-project-info' },
+      type: {
+        type: 'string',
+        enum: [
+          'hero',
+          'richText',
+          'statsGrid',
+          'cards',
+          'steps',
+          'faq',
+          'cta',
+          'radioGroup',
+          'quote',
+          'image',
+        ],
+        example: 'hero',
+      },
+      enabled: { type: 'boolean', example: true },
+      variant: { type: 'string', example: 'split', nullable: true },
+      data: {
+        type: 'object',
+        additionalProperties: true,
+        example: {
+          title: 'Інформація про проєкт',
+          subtitle: 'Керована block-based сторінка',
+        },
+      },
+      style: {
+        type: 'object',
+        additionalProperties: true,
+        example: {
+          theme: 'navy-gold',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+        },
+      },
+    },
+  },
+
+  ManagedPageSnapshot: {
+    type: 'object',
+    required: ['title', 'blocks'],
+    properties: {
+      title: { type: 'string', example: 'Інформація про проєкт' },
+      description: {
+        type: 'string',
+        example: 'Керована сторінка про платформу Low Analysis.',
+      },
+      seo: {
+        type: 'object',
+        properties: {
+          title: {
+            type: 'string',
+            example: 'Інформація про проєкт | Low Analysis',
+          },
+          description: {
+            type: 'string',
+            example: 'Опис платформи, модулів і можливостей.',
+          },
+          ogImage: {
+            type: 'string',
+            example: 'https://example.com/project-info-cover.jpg',
+            nullable: true,
+          },
+        },
+      },
+      blocks: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/ManagedPageBlock' },
+      },
+    },
+  },
+
+  ManagedPageVersionMeta: {
+    type: 'object',
+    required: ['version', 'kind', 'savedAt', 'title', 'blockCount'],
+    properties: {
+      version: { type: 'integer', example: 4 },
+      kind: {
+        type: 'string',
+        enum: ['seed', 'save', 'publish', 'restore', 'unpublish'],
+        example: 'publish',
+      },
+      savedAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2026-05-26T12:15:00.000Z',
+      },
+      savedBy: {
+        type: 'string',
+        nullable: true,
+        example: '507f1f77bcf86cd799439044',
+      },
+      title: { type: 'string', example: 'Інформація про проєкт' },
+      blockCount: { type: 'integer', example: 8 },
+    },
+  },
+
+  ManagedPageAdmin: {
+    type: 'object',
+    required: ['slug', 'title', 'status', 'draft', 'versions'],
+    properties: {
+      slug: { type: 'string', example: 'project-info' },
+      title: { type: 'string', example: 'Інформація про проєкт' },
+      status: {
+        type: 'string',
+        enum: ['draft', 'published'],
+        example: 'published',
+      },
+      draft: { $ref: '#/components/schemas/ManagedPageSnapshot' },
+      published: {
+        oneOf: [
+          { $ref: '#/components/schemas/ManagedPageSnapshot' },
+          { type: 'null' },
+        ],
+      },
+      updatedAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2026-05-26T12:30:00.000Z',
+      },
+      publishedAt: {
+        type: 'string',
+        format: 'date-time',
+        nullable: true,
+      },
+      versions: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/ManagedPageVersionMeta' },
+      },
+    },
+  },
+
+  ManagedPagePublic: {
+    allOf: [
+      { $ref: '#/components/schemas/ManagedPageSnapshot' },
+      {
+        type: 'object',
+        required: ['slug', 'status', 'updatedAt'],
+        properties: {
+          slug: { type: 'string', example: 'project-info' },
+          status: {
+            type: 'string',
+            enum: ['published'],
+            example: 'published',
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-time',
+            example: '2026-05-26T12:30:00.000Z',
+          },
+          publishedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true,
+          },
+        },
+      },
+    ],
+  },
+
+  ManagedPageCatalogItem: {
+    type: 'object',
+    required: ['slug', 'label'],
+    properties: {
+      slug: { type: 'string', example: 'project-info' },
+      label: { type: 'string', example: 'Інформація про проєкт' },
+    },
+  },
+
   ParseLawRequest: {
     type: 'object',
     required: ['url'],

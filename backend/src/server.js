@@ -1,14 +1,23 @@
-import dotenv from 'dotenv';
-import app from './app.js';
-import connectDB from './config/db.js';
+import './bootstrap/loadEnv.js';
 
-dotenv.config();
+const { default: app } = await import('./app.js');
+const { default: connectDB } = await import('./config/db.js');
+const { ensureLocalDevAdmin } =
+  await import('./bootstrap/ensureLocalDevAdmin.js');
 
 const PORT = process.env.PORT || 3000;
 
-connectDB();
+const startServer = async () => {
+  await connectDB();
+  await ensureLocalDevAdmin();
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
+  });
+};
+
+startServer().catch((error) => {
+  console.error(`Error: ${error.message}`);
+  process.exit(1);
 });

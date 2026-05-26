@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import Header from "@/layout/Header/Header";
 import Footer from "@/layout/Footer/Footer";
+import { FooterStats } from "@/layout/Footer/FooterStats";
 import { BackendWarmup } from "@/components/layout/BackendWarmup";
 import { ScrollRestore } from "@/components/layout/ScrollRestore";
 import { AuthProvider } from "@/components/auth/AuthProvider";
@@ -104,6 +105,7 @@ export default function RootLayout({
                         <RouteAccessGate>{children}</RouteAccessGate>
                       </div>
                       <AiAssistant />
+                      <FooterStats />
                       <Footer />
                     </div>
                   </SidebarDataProvider>

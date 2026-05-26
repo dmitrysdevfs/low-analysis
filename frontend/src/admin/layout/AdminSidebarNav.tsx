@@ -12,6 +12,7 @@ import {
   ScrollText,
   BarChart3,
   HelpCircle,
+  Blocks,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
@@ -61,6 +62,12 @@ const NAV_ITEMS = [
     label: "Аналітика",
     icon: BarChart3,
     note: "Поглиблений зріз даних",
+  },
+  {
+    href: ROUTES.adminProjectPage,
+    label: "Сторінка проєкту",
+    icon: Blocks,
+    note: "Builder для публічної сторінки",
   },
   {
     href: ROUTES.adminHelp,

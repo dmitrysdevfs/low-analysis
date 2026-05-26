@@ -7,6 +7,8 @@ import lawRoutes from './routes/lawRoutes.js';
 import subjectRoutes from './routes/subjectRoutes.js';
 import taxonomyRoutes from './routes/taxonomyRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import pageRoutes from './modules/pages/pageRoutes.js';
+import pageAdminRoutes from './modules/pages/pageAdminRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -73,6 +75,8 @@ app.use('/api/laws', lawRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/taxonomies', taxonomyRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/pages', pageRoutes);
+app.use('/api/admin/pages', pageAdminRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

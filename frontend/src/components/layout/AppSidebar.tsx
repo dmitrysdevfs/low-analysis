@@ -25,6 +25,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const { subjects, onSubjectSelect, activeSubjectId } = useSidebarData();
   const { notes } = useNotes();
+  const [mounted, setMounted] = useState(false);
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
@@ -69,14 +70,69 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   );
 
   function handleLogout() {
+    if (!mounted) return;
     logout();
     router.push(ROUTES.home);
   }
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Reset notesOpen when sidebar closes
   useEffect(() => {
     if (!visible) setNotesOpen(false);
   }, [visible]);
+
+  // Auto-scroll page when dragging near viewport top/bottom edges
+  useEffect(() => {
+    let rafId: number | null = null;
+    let speed = 0;
+
+    function loop() {
+      if (speed !== 0) {
+        window.scrollBy(0, speed);
+        rafId = requestAnimationFrame(loop);
+      } else {
+        rafId = null;
+      }
+    }
+
+    function onWindowDragOver(e: DragEvent) {
+      const ZONE = 80;
+      const y = e.clientY;
+      const h = window.innerHeight;
+      if (y < ZONE) {
+        speed = -Math.round(((ZONE - y) / ZONE) * 14);
+      } else if (y > h - ZONE) {
+        speed = Math.round(((y - (h - ZONE)) / ZONE) * 14);
+      } else {
+        speed = 0;
+      }
+      if (speed !== 0 && rafId === null) {
+        rafId = requestAnimationFrame(loop);
+      }
+    }
+
+    function stopScroll() {
+      speed = 0;
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    window.addEventListener("dragover", onWindowDragOver);
+    window.addEventListener("dragend", stopScroll);
+    window.addEventListener("drop", stopScroll);
+
+    return () => {
+      window.removeEventListener("dragover", onWindowDragOver);
+      window.removeEventListener("dragend", stopScroll);
+      window.removeEventListener("drop", stopScroll);
+      stopScroll();
+    };
+  }, []);
 
   // Sidebar drag detection + drop handling (all at sidebar level so drop zone doesn't need to be mounted)
   useEffect(() => {
@@ -269,6 +325,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                                 : undefined,
                           }}
                           onClick={() => {
+                            if (!mounted) return;
                             router.push(
                               `${pathname}?subjectModal=${s.id}&mentionIdx=0`,
                             );
@@ -278,6 +335,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
                           tabIndex={0}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
+                              if (!mounted) return;
                               router.push(
                                 `${pathname}?subjectModal=${s.id}&mentionIdx=0`,
                               );
