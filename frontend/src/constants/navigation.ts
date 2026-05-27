@@ -7,5 +7,7 @@ export const NAV_ITEMS = [
   { label: "Проєкт", href: ROUTES.projectInfo },
   { label: "Суб'єкти", href: ROUTES.subjects },
   { label: "Пошук", href: ROUTES.search },
+  { label: "Lex AI", href: ROUTES.assistant },
+  { label: "Roadmap", href: ROUTES.roadmap },
   { label: "Довідка", href: ROUTES.help },
 ];

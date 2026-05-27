@@ -1,6 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { getLegalStatusColor, getLegalStatusLabel } from "@/lib/tree";
+import { useTaxonomies } from "@/hooks/useTaxonomies";
 import type { Subject } from "@/types";
 import styles from "./SubjectHero.module.scss";
 
@@ -18,6 +20,14 @@ export function SubjectHero({
   rolesCount,
 }: SubjectHeroProps) {
   const sc = getLegalStatusColor(subject.legal_status);
+  const { taxonomyMap } = useTaxonomies();
+  const resolvedTaxonomies = useMemo(
+    () =>
+      (subject.taxonomies ?? [])
+        .map((id) => taxonomyMap[id])
+        .filter((t): t is NonNullable<typeof t> => t != null),
+    [subject.taxonomies, taxonomyMap],
+  );
 
   return (
     <div className={styles.hero}>
@@ -61,6 +71,19 @@ export function SubjectHero({
       ) : (
         <span className={styles.aliasesEmpty}>Псевдонімів не зазначено</span>
       )}
+
+      {resolvedTaxonomies.length > 0 ? (
+        <div className={styles.taxonomySection}>
+          <div className={styles.aliasesLabel}>Категорії таксономії</div>
+          <div className={styles.aliasesFlex}>
+            {resolvedTaxonomies.map((t) => (
+              <span key={t._id} className={styles.taxonomyBadge}>
+                {t.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

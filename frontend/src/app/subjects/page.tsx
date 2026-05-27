@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { useSubjects } from "@/hooks/useSubjects";
+import { useTaxonomies } from "@/hooks/useTaxonomies";
 import { getLegalStatusLabel } from "@/lib/tree";
 import { SubjectCard } from "@/components/subject/SubjectCard";
 import { ExpandingSearch } from "@/components/ui/ExpandingSearch";
@@ -14,7 +15,9 @@ const TOP_LIMIT = 10;
 
 export default function SubjectsPage() {
   const { subjects, loading, error } = useSubjects();
+  const { taxonomies } = useTaxonomies();
   const [activeFilter, setActiveFilter] = useState<string>(ALL_FILTER);
+  const [activeTaxonomy, setActiveTaxonomy] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
 
@@ -33,15 +36,23 @@ export default function SubjectsPage() {
     [subjects],
   );
 
+  const availableTaxonomies = useMemo(() => {
+    const ids = new Set(subjects.flatMap((s) => s.taxonomies ?? []));
+    return taxonomies.filter((t) => ids.has(t._id));
+  }, [subjects, taxonomies]);
+
   const filteredSubjects = useMemo(() => {
-    const base =
+    let base =
       activeFilter === ALL_FILTER
         ? sortedByFrequency
         : sortedByFrequency.filter((s) => s.legal_status === activeFilter);
+    if (activeTaxonomy) {
+      base = base.filter((s) => s.taxonomies?.includes(activeTaxonomy));
+    }
     if (!query.trim()) return base;
     const q = query.toLowerCase();
     return base.filter((s) => s.canonical_name.toLowerCase().includes(q));
-  }, [sortedByFrequency, activeFilter, query]);
+  }, [sortedByFrequency, activeFilter, activeTaxonomy, query]);
 
   const isSearchActive = query.trim().length > 0;
   const hasMore = !isSearchActive && filteredSubjects.length > TOP_LIMIT;
@@ -58,8 +69,14 @@ export default function SubjectsPage() {
 
   const handleFilterChange = (type: string) => {
     setActiveFilter(type);
+    setActiveTaxonomy(null);
     setShowAll(false);
     setQuery("");
+  };
+
+  const handleTaxonomyChange = (id: string | null) => {
+    setActiveTaxonomy((prev) => (prev === id ? null : id));
+    setShowAll(false);
   };
 
   return (
@@ -111,6 +128,22 @@ export default function SubjectsPage() {
                   className={`mono ${styles.chip} ${activeFilter === type ? styles.chipActive : ""}`}
                 >
                   {type === ALL_FILTER ? type : getLegalStatusLabel(type)}
+                </button>
+              ))}
+            </div>
+          ) : null}
+
+          {!loading && !error && availableTaxonomies.length > 0 ? (
+            <div className={styles.taxonomyBar}>
+              <span className={`mono ${styles.taxonomyLabel}`}>Категорія:</span>
+              {availableTaxonomies.map((t) => (
+                <button
+                  key={t._id}
+                  type="button"
+                  onClick={() => handleTaxonomyChange(t._id)}
+                  className={`mono ${styles.taxonomyChip} ${activeTaxonomy === t._id ? styles.taxonomyChipActive : ""}`}
+                >
+                  {t.name}
                 </button>
               ))}
             </div>

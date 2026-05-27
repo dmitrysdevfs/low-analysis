@@ -1,0 +1,437 @@
+.page {
+  background: #060e1f;
+  min-height: 100vh;
+  color: #d6e0f0;
+}
+
+.skeleton {
+  height: 120px;
+  background: rgba(28, 50, 96, 0.3);
+  border-radius: 12px;
+  margin: 24px auto;
+  max-width: 1100px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+
+.hero {
+  background: linear-gradient(160deg, #0a1628 0%, #0d1c3a 60%, #091220 100%);
+  border-bottom: 1px solid #1c3260;
+  padding: 80px 0 64px;
+}
+
+.heroInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.eyebrow {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #c8a843;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: #ffffff;
+  margin: 0 0 16px;
+  line-height: 1.1;
+}
+
+.heroSub {
+  font-size: 1.05rem;
+  color: #7a98c0;
+  max-width: 600px;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.updatedAt {
+  font-size: 0.72rem;
+  color: #4a6a9a;
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+// ─── Sections ─────────────────────────────────────────────────────────────────
+
+.section {
+  border-top: 1px solid rgba(28, 50, 96, 0.5);
+  padding: 64px 0;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.sectionTitle {
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  color: #ffffff;
+  margin: 0 0 8px;
+}
+
+.sectionSub {
+  font-size: 0.9rem;
+  color: #7a98c0;
+  margin: 0 0 32px;
+  line-height: 1.6;
+}
+
+// ─── Progress ─────────────────────────────────────────────────────────────────
+
+.progressBlock {
+  max-width: 640px;
+}
+
+.progressMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.progressLabel {
+  font-size: 0.78rem;
+  color: #7a98c0;
+  font-family: var(--font-mono);
+}
+
+.progressPct {
+  font-size: 1.6rem;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.progressTrack {
+  height: 6px;
+  background: rgba(28, 50, 96, 0.8);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #c8a843 0%, rgba(200, 168, 67, 0.5) 100%);
+  border-radius: 6px;
+  box-shadow: 0 0 14px rgba(200, 168, 67, 0.4);
+}
+
+.progressNote {
+  font-size: 0.72rem;
+  color: #4a6a9a;
+  font-family: var(--font-mono);
+  margin: 8px 0 0;
+}
+
+// ─── Two columns ──────────────────────────────────────────────────────────────
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.colDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c8a843;
+  box-shadow: 0 0 8px rgba(200, 168, 67, 0.6);
+  flex-shrink: 0;
+}
+
+.colDotPending {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid #1c3260;
+  flex-shrink: 0;
+}
+
+.colLabel {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #c7d5ea;
+}
+
+.itemList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.itemDone,
+.itemPending {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.itemDone {
+  background: rgba(200, 168, 67, 0.04);
+  border-color: rgba(200, 168, 67, 0.12);
+  color: #d6e0f0;
+}
+
+.itemPending {
+  background: transparent;
+  border-color: rgba(28, 50, 96, 0.5);
+  color: #4a6a9a;
+}
+
+.checkDone {
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.checkPending {
+  color: #1c3260;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+// ─── Phases ───────────────────────────────────────────────────────────────────
+
+.phases {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.phase {
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 20px 20px 16px;
+}
+
+.phaseDone {
+  background: rgba(200, 168, 67, 0.04);
+  border-color: rgba(200, 168, 67, 0.14);
+}
+
+.phaseInProgress {
+  background: rgba(56, 139, 253, 0.06);
+  border-color: rgba(56, 139, 253, 0.2);
+}
+
+.phasePending {
+  background: rgba(28, 50, 96, 0.15);
+  border-color: rgba(28, 50, 96, 0.4);
+}
+
+.phaseHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.phaseLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #c7d5ea;
+  line-height: 1.4;
+}
+
+.phaseBadge {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: rgba(200, 168, 67, 0.12);
+  color: #c8a843;
+
+  .phasePending & {
+    background: rgba(28, 50, 96, 0.3);
+    color: #4a6a9a;
+  }
+
+  .phaseInProgress & {
+    background: rgba(56, 139, 253, 0.12);
+    color: #7ab3f8;
+  }
+}
+
+.taskList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.taskDone,
+.taskPending {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.taskDone {
+  color: #7a98c0;
+
+  span:first-child {
+    color: #c8a843;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+  }
+}
+
+.taskPending {
+  color: #4a6a9a;
+
+  span:first-child {
+    color: #2a4a7a;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+  }
+}
+
+// ─── Accordion ────────────────────────────────────────────────────────────────
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.accordionItem {
+  border: 1px solid rgba(28, 50, 96, 0.6);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(13, 28, 58, 0.4);
+}
+
+.accordionTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #c7d5ea;
+  font-family: inherit;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.04);
+  }
+}
+
+.accordionIcon {
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.accordionBody {
+  overflow: hidden;
+  padding: 0 20px 16px;
+  font-size: 0.85rem;
+  color: #7a98c0;
+  line-height: 1.7;
+
+  p {
+    margin: 0;
+  }
+}
+
+.decisionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.decisionTitle {
+  font-weight: 600;
+  color: #c7d5ea;
+}
+
+.decisionSummary {
+  font-size: 0.78rem;
+  color: #4a6a9a;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+
+@media (max-width: 767px) {
+  .heroInner,
+  .inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .hero {
+    padding: 48px 0 40px;
+  }
+
+  .section {
+    padding: 40px 0;
+  }
+
+  .phases {
+    grid-template-columns: 1fr;
+  }
+}

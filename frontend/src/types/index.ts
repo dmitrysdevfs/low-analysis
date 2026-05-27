@@ -49,6 +49,7 @@ export type {
   StepsBlock,
   StepsBlockData,
 } from "./page-builder.types";
+export type { Taxonomy, TaxonomyTreeNode } from "./taxonomy.types";
 export type {
   AuthAccountType,
   AuthSession,

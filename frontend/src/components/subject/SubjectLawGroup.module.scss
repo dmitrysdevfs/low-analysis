@@ -179,3 +179,20 @@
   background: rgba(74, 128, 212, 0.06);
   border: 1px solid rgba(74, 128, 212, 0.18);
 }
+
+.taxonomyBadge {
+  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  padding: 2px 7px;
+  border-radius: 3px;
+  color: #5ba0e0;
+  background: rgba(74, 128, 212, 0.07);
+  border: 1px solid rgba(74, 128, 212, 0.2);
+  letter-spacing: 0.02em;
+}
+
+.taxonomyBadgeDomain {
+  color: #7ab87a;
+  background: rgba(74, 180, 74, 0.07);
+  border-color: rgba(74, 180, 74, 0.22);
+}

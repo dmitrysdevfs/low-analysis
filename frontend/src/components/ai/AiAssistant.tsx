@@ -1,89 +1,63 @@
 "use client";
 
-import styles from "./AiAssistant.module.scss";
-import { useState, useRef, SyntheticEvent, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { ExternalLink } from "lucide-react";
+import { useAssistant } from "@/features/assistant";
+import { useAssistantContext } from "@/features/assistant/hooks/useAssistantContext";
+import { readStoredToken } from "@/lib/auth/authClient";
+import { ROUTES } from "@/constants/routes";
+import { AssistantMessageList } from "@/features/assistant/components/AssistantMessageList";
+import { AssistantComposer } from "@/features/assistant/components/AssistantComposer";
+import { AssistantLimitBanner } from "@/features/assistant/components/AssistantLimitBanner";
+import styles from "./AiAssistant.module.scss";
 
-// Структура повідомлення
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-}
-
-const MIN_FONT_SIZE = 12;
-const MAX_FONT_SIZE = 22;
 const TRIGGER_SIZE = 50;
 const DIALOG_SPACING = 16;
 
-// Якщо це не сторінка "/laws..." то повністю зупиняємо виконання хуків та рендер
+// Widget is only shown on /laws/* pages
 export function AiAssistant() {
   const pathname = usePathname();
   const isLawsPage = pathname?.startsWith("/laws");
 
   if (!isLawsPage) return null;
-
-  return <AiAssistantInner />;
+  return <AiAssistantWidget />;
 }
 
-function AiAssistantInner() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome-message",
-      text: "Вітаю! Я ваш AI Аналітик. Чим можу допомогти?",
-      isUser: false,
-    },
-  ]);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [fontSize, setFontSize] = useState<number>(14);
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+function AiAssistantWidget() {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const context = useAssistantContext();
+  const { messages, isStreaming, limitHit, sendMessage, submitFeedback } =
+    useAssistant();
 
-  /* Автоматичне закриття чату на мобільних */
+  // Close on mobile
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 639px)");
-
-    const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const handler = (e: MediaQueryList | MediaQueryListEvent) => {
       if (e.matches) setIsOpen(false);
     };
-
-    handleMediaChange(mediaQuery);
-    mediaQuery.addEventListener("change", handleMediaChange);
-
-    return () => mediaQuery.removeEventListener("change", handleMediaChange);
+    handler(mq);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
 
-  /* Прокрутка до останнього повідомлення */
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      const container = messagesContainerRef.current;
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messages, isOpen]);
+  function handleSend(text: string) {
+    const token = typeof window !== "undefined" ? readStoredToken() : undefined;
+    sendMessage(text, context, token || undefined);
+  }
 
-  const handleSendMessage = (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!inputValue.trim()) {
-      setInputValue("");
-      return;
-    }
+  function handleFeedback(messageId: string, value: 1 | -1) {
+    const token = typeof window !== "undefined" ? readStoredToken() : undefined;
+    submitFeedback(messageId, value, token || undefined);
+  }
 
-    setMessages((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), text: inputValue.trim(), isUser: true },
-    ]);
-    setInputValue("");
-  };
-
-  const changeFontSize = (amount: number) => {
-    setFontSize((prev) =>
-      Math.max(MIN_FONT_SIZE, Math.min(prev + amount, MAX_FONT_SIZE)),
-    );
-  };
+  function handleExpand() {
+    setIsOpen(false);
+    router.push(ROUTES.assistant);
+  }
 
   const springTransition = {
     type: "spring",
@@ -91,6 +65,9 @@ function AiAssistantInner() {
     damping: 26,
     mass: 1,
   } as const;
+
+  // Show last 6 messages in widget
+  const visibleMessages = messages.slice(-6);
 
   return (
     <div className={`${styles.container} hide-mobile`}>
@@ -133,65 +110,48 @@ function AiAssistantInner() {
             >
               <div className={styles.dialogHeader}>
                 <h4 className={`${styles.dialogTitleText} display`}>
-                  AI Аналітик
+                  Lex — AI Помічник
                 </h4>
-
-                <div className={styles.fontControls}>
-                  <button
-                    type="button"
-                    onClick={() => changeFontSize(-1)}
-                    title="Зменшити шрифт"
-                    disabled={fontSize <= MIN_FONT_SIZE}
-                    className={styles.fontBtn}
-                  >
-                    А-
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => changeFontSize(1)}
-                    title="Збільшити шрифт"
-                    disabled={fontSize >= MAX_FONT_SIZE}
-                    className={styles.fontBtn}
-                  >
-                    А+
-                  </button>
-                </div>
-              </div>
-
-              <div
-                ref={messagesContainerRef}
-                className={styles.messagesContainer}
-              >
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`${styles.messageRow} ${msg.isUser ? styles.userRow : styles.aiRow}`}
-                  >
-                    <div
-                      className={`${styles.messageBubble} ${msg.isUser ? styles.userBubble : styles.aiBubble}`}
-                      style={{ fontSize: `${fontSize}px` }}
-                    >
-                      {msg.text}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <form onSubmit={handleSendMessage} className={styles.inputArea}>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Запитайте щось про закон..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                />
                 <button
-                  type="submit"
-                  className={`btn btn-primary ${styles.sendBtn}`}
+                  type="button"
+                  className={styles.expandBtn}
+                  onClick={handleExpand}
+                  title="Відкрити повну версію"
                 >
-                  Надіслати
+                  <ExternalLink size={14} />
                 </button>
-              </form>
+              </div>
+
+              {limitHit && (
+                <div style={{ padding: "0 12px" }}>
+                  <AssistantLimitBanner
+                    used={limitHit.used}
+                    limit={limitHit.limit}
+                    resetAt={limitHit.resetAt}
+                  />
+                </div>
+              )}
+
+              <div className={styles.messagesWrap}>
+                {visibleMessages.length === 0 ? (
+                  <div className={styles.welcomeMsg}>
+                    Вітаю! Я Lex — AI Помічник. Чим можу допомогти з цим
+                    законом?
+                  </div>
+                ) : (
+                  <AssistantMessageList
+                    messages={visibleMessages}
+                    onFeedback={handleFeedback}
+                    fontSize={13}
+                  />
+                )}
+              </div>
+
+              <AssistantComposer
+                onSend={handleSend}
+                disabled={isStreaming || !!limitHit}
+                placeholder="Запитайте про цей закон..."
+              />
             </motion.div>
           </motion.div>
         )}
@@ -200,13 +160,13 @@ function AiAssistantInner() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`${styles.circleTrigger}`}
-        aria-label={isOpen ? "Закрити AI Аналітик" : "Відкрити AI Аналітик"}
+        className={styles.circleTrigger}
+        aria-label={isOpen ? "Закрити Lex AI" : "Відкрити Lex AI"}
       >
         <span
           className={`${styles.iconBase} ${styles.iconAi} ${isOpen ? styles.iconAiHidden : ""}`}
         >
-          AI
+          Lex
         </span>
         <span
           className={`${styles.iconBase} ${styles.iconCross} ${isOpen ? styles.iconCrossVisible : ""}`}

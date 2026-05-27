@@ -93,3 +93,17 @@
   color: var(--color-smoke);
   font-style: italic;
 }
+
+.taxonomySection {
+  margin-top: 20px;
+}
+
+.taxonomyBadge {
+  font-size: 0.72rem;
+  color: var(--color-azure);
+  background: rgba(74, 128, 212, 0.08);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-family: var(--font-mono);
+}

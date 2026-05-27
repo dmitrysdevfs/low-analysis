@@ -34,6 +34,46 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @returns {Promise<Array|object>} Parsed JSON from the LLM response.
  * @throws {Error} If all retry attempts fail or the response is not valid JSON.
  */
+/**
+ * Sends a multi-turn chat to the LLM and returns a streaming async iterable.
+ * Does NOT use responseMimeType: 'application/json' — intended for conversational chat.
+ *
+ * @param {string} systemPrompt
+ * @param {{ role: string, content: string }[]} history - prior messages
+ * @param {string} userMessage - current user message
+ * @param {{ stream?: boolean, temperature?: number, maxOutputTokens?: number }} options
+ * @returns {Promise<AsyncIterable>} stream of GenerateContentResponse chunks
+ */
+export const queryChatLLM = async (
+  systemPrompt,
+  history,
+  userMessage,
+  options = {},
+) => {
+  const client = getClient();
+  const { temperature = 0.4, maxOutputTokens = 2048 } = options;
+
+  const contents = [
+    ...history.map((m) => ({
+      role: m.role,
+      parts: [{ text: m.content }],
+    })),
+    { role: 'user', parts: [{ text: userMessage }] },
+  ];
+
+  const stream = await client.models.generateContentStream({
+    model: options.model || process.env.LLM_MODEL || 'gemini-2.5-flash',
+    contents,
+    config: {
+      systemInstruction: systemPrompt,
+      temperature,
+      maxOutputTokens,
+    },
+  });
+
+  return stream;
+};
+
 export const queryLLM = async (systemPrompt, userPrompt) => {
   const client = getClient();
   let lastError;

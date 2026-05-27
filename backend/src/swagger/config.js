@@ -63,6 +63,11 @@ API for parsing, structuring and analysing Ukrainian legislation.
     },
     { name: 'Taxonomy', description: 'Taxonomy categories and classification' },
     { name: 'Pages', description: 'Managed public pages and page builder API' },
+    { name: 'Roadmap', description: 'Публічний roadmap і адмін-редагування' },
+    {
+      name: 'Assistant',
+      description: 'Lex AI Помічник — чат, сесії, квота, фідбек',
+    },
   ],
   components: {
     schemas,
@@ -134,7 +139,12 @@ API for parsing, structuring and analysing Ukrainian legislation.
 
 export const swaggerOptions = {
   definition: swaggerDefinition,
-  apis: ['./src/routes/*.js', './src/modules/pages/*.js'],
+  apis: [
+    './src/routes/*.js',
+    './src/modules/pages/*.js',
+    './src/modules/roadmap/*.js',
+    './src/modules/assistant/*.js',
+  ],
 };
 
 export const swaggerCustomCss = readFileSync(

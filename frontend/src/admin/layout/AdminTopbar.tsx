@@ -14,6 +14,11 @@ const PAGE_TITLES = [
     subtitle: "Builder для сторінки «Інформація про проєкт»",
   },
   {
+    href: ROUTES.adminArchitecture,
+    title: "Архітектура та Roadmap",
+    subtitle: "Стан MVP, прийняті рішення та дорожня карта проєкту",
+  },
+  {
     href: ROUTES.adminAnalytics,
     title: "Аналітика",
     subtitle: "Поглиблений зріз даних сайту",

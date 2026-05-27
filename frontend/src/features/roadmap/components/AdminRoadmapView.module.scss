@@ -1,0 +1,467 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 48px;
+}
+
+.skeleton {
+  height: 80px;
+  background: rgba(28, 50, 96, 0.25);
+  border-radius: 16px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+// ─── Toolbar ──────────────────────────────────────────────────────────────────
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.toolbarMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.updatedAt {
+  font-size: 0.72rem;
+  color: #4a6a9a;
+  font-family: var(--font-mono);
+}
+
+.saveError {
+  font-size: 0.72rem;
+  color: #e05c5c;
+  font-family: var(--font-mono);
+}
+
+.toolbarActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnGhost,
+.btnEdit,
+.btnSave {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.btnGhost {
+  background: transparent;
+  border: 1px solid #1c3260;
+  color: #7a98c0;
+
+  &:hover {
+    border-color: #4a6a9a;
+    color: #c7d5ea;
+  }
+}
+
+.btnEdit {
+  background: rgba(200, 168, 67, 0.1);
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  color: #c8a843;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.18);
+    border-color: #c8a843;
+  }
+}
+
+.btnSave {
+  background: #c8a843;
+  border: 1px solid #c8a843;
+  color: #060e1f;
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    background: #d9ba55;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.editBanner {
+  background: rgba(200, 168, 67, 0.08);
+  border: 1px solid rgba(200, 168, 67, 0.2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.78rem;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+.card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
+    rgba(9, 18, 38, 0.84);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+  padding: 20px 24px;
+}
+
+.cardEyebrow {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #c8a843;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+
+// ─── Progress ─────────────────────────────────────────────────────────────────
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 6px;
+  background: rgba(28, 50, 96, 0.8);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #c8a843 0%, rgba(200, 168, 67, 0.5) 100%);
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(200, 168, 67, 0.35);
+}
+
+.progressPct {
+  font-size: 1.4rem;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.progressNote {
+  font-size: 0.72rem;
+  color: #4a6a9a;
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+// ─── Roadmap items ────────────────────────────────────────────────────────────
+
+.itemGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.roadmapItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.85rem;
+}
+
+.roadmapItemDone {
+  background: rgba(200, 168, 67, 0.04);
+  border-color: rgba(200, 168, 67, 0.1);
+  color: #c7d5ea;
+}
+
+.roadmapItemPending {
+  background: transparent;
+  border-color: rgba(28, 50, 96, 0.4);
+  color: #4a6a9a;
+}
+
+.checkActive {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.checkInactive {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #2a4a7a;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+
+// ─── Phases ───────────────────────────────────────────────────────────────────
+
+.phases {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.phase {
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: rgba(9, 18, 38, 0.5);
+}
+
+.phaseHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.phaseLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c7d5ea;
+  line-height: 1.4;
+}
+
+.phaseBadge {
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge_done {
+  background: rgba(200, 168, 67, 0.12);
+  color: #c8a843;
+}
+
+.badge_in_progress {
+  background: rgba(56, 139, 253, 0.12);
+  color: #7ab3f8;
+}
+
+.badge_pending {
+  background: rgba(28, 50, 96, 0.3);
+  color: #4a6a9a;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.taskRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskText {
+  font-size: 0.78rem;
+  color: #7a98c0;
+  line-height: 1.4;
+}
+
+// ─── Status select ────────────────────────────────────────────────────────────
+
+.statusSelect {
+  background: rgba(9, 18, 38, 0.8);
+  border: 1px solid #1c3260;
+  border-radius: 6px;
+  color: #c7d5ea;
+  font-size: 0.75rem;
+  font-family: inherit;
+  padding: 4px 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:focus {
+    outline: none;
+    border-color: #c8a843;
+  }
+}
+
+// ─── Inline edit inputs ───────────────────────────────────────────────────────
+
+.inlineInput {
+  flex: 1;
+  background: rgba(28, 50, 96, 0.2);
+  border: 1px solid rgba(200, 168, 67, 0.25);
+  border-radius: 6px;
+  color: #c7d5ea;
+  font-size: 0.85rem;
+  font-family: inherit;
+  padding: 4px 10px;
+  min-width: 0;
+
+  &:focus {
+    outline: none;
+    border-color: #c8a843;
+    background: rgba(28, 50, 96, 0.3);
+  }
+}
+
+.inlineTextarea {
+  width: 100%;
+  background: rgba(28, 50, 96, 0.2);
+  border: 1px solid rgba(200, 168, 67, 0.25);
+  border-radius: 6px;
+  color: #c7d5ea;
+  font-size: 0.85rem;
+  font-family: inherit;
+  padding: 8px 10px;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #c8a843;
+  }
+}
+
+// ─── Accordion ────────────────────────────────────────────────────────────────
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.accordionItem {
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(9, 18, 38, 0.4);
+}
+
+.accordionTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.875rem;
+  color: #c7d5ea;
+  font-family: inherit;
+
+  svg {
+    color: #c8a843;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.04);
+  }
+}
+
+.accordionBody {
+  overflow: hidden;
+  padding: 0 16px 14px;
+  font-size: 0.82rem;
+  color: #7a98c0;
+  line-height: 1.7;
+
+  p {
+    margin: 0 0 6px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.decisionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.decisionTitle {
+  font-weight: 600;
+  color: #c7d5ea;
+}
+
+.decisionSub {
+  font-size: 0.75rem;
+  color: #4a6a9a;
+}
+
+.decisionDecision {
+  font-weight: 500;
+  color: #c7d5ea;
+  margin-bottom: 6px;
+}
+
+.decisionEditBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editLabel {
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #4a6a9a;
+}

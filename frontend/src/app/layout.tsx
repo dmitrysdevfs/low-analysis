@@ -15,6 +15,7 @@ import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { AppQueryProvider } from "@/providers/AppQueryProvider";
 import { AiAssistant } from "@/components/ai/AiAssistant";
+import { AssistantProvider } from "@/features/assistant";
 import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
 
@@ -95,20 +96,22 @@ export default function RootLayout({
             <AuthProvider>
               <BillingProvider>
                 <GuestLimitsProvider>
-                  <SidebarDataProvider>
-                    <div className="site-shell">
-                      <ApiMetricsTracker />
-                      <BackendWarmup />
-                      <ScrollRestore />
-                      <Header />
-                      <div className="site-content">
-                        <RouteAccessGate>{children}</RouteAccessGate>
+                  <AssistantProvider>
+                    <SidebarDataProvider>
+                      <div className="site-shell">
+                        <ApiMetricsTracker />
+                        <BackendWarmup />
+                        <ScrollRestore />
+                        <Header />
+                        <div className="site-content">
+                          <RouteAccessGate>{children}</RouteAccessGate>
+                        </div>
+                        <AiAssistant />
+                        <FooterStats />
+                        <Footer />
                       </div>
-                      <AiAssistant />
-                      <FooterStats />
-                      <Footer />
-                    </div>
-                  </SidebarDataProvider>
+                    </SidebarDataProvider>
+                  </AssistantProvider>
                 </GuestLimitsProvider>
               </BillingProvider>
             </AuthProvider>

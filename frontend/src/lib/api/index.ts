@@ -20,3 +20,14 @@ export {
   saveAdminPageDraft,
   unpublishAdminPage,
 } from "./pages";
+export { getRoadmap, getAdminRoadmap, updateAdminRoadmap } from "./roadmap";
+export { getTaxonomies, getTaxonomyTree } from "./taxonomy";
+export {
+  fetchAssistantConfig,
+  fetchSuggestions,
+  fetchSessions,
+  fetchSession,
+  deleteSession,
+  submitFeedback,
+  streamChatMessage,
+} from "@/features/assistant/api/assistantApi";

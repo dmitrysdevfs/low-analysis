@@ -23,6 +23,14 @@ vi.mock("@/hooks/useLawsMap", () => ({
   })),
 }));
 
+vi.mock("@/hooks/useTaxonomies", () => ({
+  useTaxonomies: vi.fn(() => ({
+    taxonomies: [],
+    taxonomyMap: {},
+    loading: false,
+  })),
+}));
+
 describe("Subjects pages", () => {
   it("renders the subjects list and linked aliases", () => {
     vi.mocked(useSubjects).mockReturnValue({
