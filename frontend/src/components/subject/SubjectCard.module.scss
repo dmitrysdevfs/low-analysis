@@ -143,6 +143,15 @@
   opacity: 0.6;
 }
 
+.taxonomyChip {
+  font-size: 0.62rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--color-azure);
+  background: rgba(74, 128, 212, 0.08);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+}
+
 /* Back description (full) */
 .backDescription {
   margin: 0;

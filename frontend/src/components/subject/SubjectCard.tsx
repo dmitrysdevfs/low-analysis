@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 
 import { ROUTES } from "@/constants/routes";
 import { getLegalStatusColor, getLegalStatusLabel } from "@/lib/tree";
+import { useTaxonomies } from "@/hooks/useTaxonomies";
 import type { Subject } from "@/types";
 import styles from "./SubjectCard.module.scss";
 
 const FRONT_H = 140;
-const BACK_H = 240;
 
 export function SubjectCard({
   subject,
@@ -20,6 +20,17 @@ export function SubjectCard({
   index: number;
 }) {
   const [flipped, setFlipped] = useState(false);
+  const { taxonomyMap } = useTaxonomies();
+
+  const resolvedTaxonomies = useMemo(
+    () =>
+      (subject.taxonomies ?? [])
+        .map((id) => taxonomyMap[id])
+        .filter((t): t is NonNullable<typeof t> => t != null),
+    [subject.taxonomies, taxonomyMap],
+  );
+
+  const backH = resolvedTaxonomies.length > 0 ? 280 : 240;
 
   const toggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -28,7 +39,7 @@ export function SubjectCard({
   };
 
   const cssVars = {
-    height: flipped ? BACK_H : FRONT_H,
+    height: flipped ? backH : FRONT_H,
     "--sc": getLegalStatusColor(subject.legal_status),
   } as React.CSSProperties;
 
@@ -99,6 +110,18 @@ export function SubjectCard({
               </span>
             )}
           </div>
+          {resolvedTaxonomies.length > 0 ? (
+            <div className={styles.aliasSection}>
+              <span className={`mono ${styles.aliasLabel}`}>Категорії:</span>
+              <div className={styles.aliasRow}>
+                {resolvedTaxonomies.map((t) => (
+                  <span key={t._id} className={`mono ${styles.taxonomyChip}`}>
+                    {t.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null}
           {subject.description ? (
             <p className={styles.backDescription}>{subject.description}</p>
           ) : null}

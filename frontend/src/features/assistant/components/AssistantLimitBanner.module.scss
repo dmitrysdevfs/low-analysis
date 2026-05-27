@@ -1,0 +1,50 @@
+.banner {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  margin: 8px 0;
+}
+
+.bannerWarn {
+  background: rgba(200, 168, 67, 0.08);
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  color: #c8a843;
+}
+
+.bannerBlock {
+  background: rgba(220, 60, 60, 0.08);
+  border: 1px solid rgba(220, 60, 60, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+}
+
+.title {
+  font-weight: 600;
+  color: #e06060;
+  margin: 0;
+}
+
+.description {
+  color: var(--color-ink-soft);
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 5px 14px;
+  background: rgba(200, 168, 67, 0.12);
+  border: 1px solid rgba(200, 168, 67, 0.4);
+  border-radius: 6px;
+  color: #c8a843;
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.22);
+  }
+}

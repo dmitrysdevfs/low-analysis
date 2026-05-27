@@ -138,6 +138,19 @@ export function SubjectLawGroup({
                           {getTypeLabel(el.type)}
                         </span>
                       )}
+                      {el.taxonomy?.legalFunctions?.slice(0, 2).map((fn) => (
+                        <span key={fn} className={styles.taxonomyBadge}>
+                          {fn}
+                        </span>
+                      ))}
+                      {el.taxonomy?.domains?.slice(0, 1).map((d) => (
+                        <span
+                          key={d}
+                          className={`${styles.taxonomyBadge} ${styles.taxonomyBadgeDomain}`}
+                        >
+                          {d}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 );

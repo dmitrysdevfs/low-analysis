@@ -9,6 +9,9 @@ import taxonomyRoutes from './routes/taxonomyRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import pageRoutes from './modules/pages/pageRoutes.js';
 import pageAdminRoutes from './modules/pages/pageAdminRoutes.js';
+import roadmapRoutes from './modules/roadmap/roadmap.routes.js';
+import roadmapAdminRoutes from './modules/roadmap/roadmapAdminRoutes.js';
+import assistantRoutes from './modules/assistant/assistant.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -77,6 +80,9 @@ app.use('/api/taxonomies', taxonomyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/pages', pageRoutes);
 app.use('/api/admin/pages', pageAdminRoutes);
+app.use('/api/roadmap', roadmapRoutes);
+app.use('/api/admin/roadmap', roadmapAdminRoutes);
+app.use('/api/assistant', assistantRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });
