@@ -59,7 +59,8 @@ export async function streamChat(req, res) {
         used: quota.used,
         limit: quota.limit,
         resetAt: quota.resetAt,
-        message: 'Ліміт запитів вичерпано. Оновіть план або зачекайте до наступного дня.',
+        message:
+          'Ліміт запитів вичерпано. Оновіть план або зачекайте до наступного дня.',
       })}\n\n`,
     );
     res.end();
@@ -125,7 +126,8 @@ export async function getSession(req, res) {
   const session = await AssistantSession.findById(req.params.id).lean();
 
   if (!session) return res.status(404).json({ message: 'Session not found' });
-  if (session.userId !== userId) return res.status(403).json({ message: 'Forbidden' });
+  if (session.userId !== userId)
+    return res.status(403).json({ message: 'Forbidden' });
 
   res.json(session);
 }
@@ -135,7 +137,8 @@ export async function deleteSession(req, res) {
   const session = await AssistantSession.findById(req.params.id);
 
   if (!session) return res.status(404).json({ message: 'Session not found' });
-  if (session.userId !== userId) return res.status(403).json({ message: 'Forbidden' });
+  if (session.userId !== userId)
+    return res.status(403).json({ message: 'Forbidden' });
 
   await session.deleteOne();
   res.json({ ok: true });

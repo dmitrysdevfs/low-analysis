@@ -2,12 +2,14 @@ import { MAX_MESSAGE_LENGTH } from './assistant.constants.js';
 
 // Strip HTML tags and dangerous control characters
 function sanitizeMessage(text) {
-  return text
-    .replace(/<[^>]*>/g, '')
-    // eslint-disable-next-line no-control-regex
-    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-    .trim()
-    .slice(0, MAX_MESSAGE_LENGTH);
+  return (
+    text
+      .replace(/<[^>]*>/g, '')
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+      .trim()
+      .slice(0, MAX_MESSAGE_LENGTH)
+  );
 }
 
 export function validateChatRequest(body) {

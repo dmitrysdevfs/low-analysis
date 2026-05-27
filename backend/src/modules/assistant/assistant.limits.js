@@ -4,12 +4,15 @@ import { AI_LIMITS } from './assistant.constants.js';
 const store = new Map();
 
 // Clean up expired entries every 30 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store.entries()) {
-    if (entry.resetAt <= now) store.delete(key);
-  }
-}, 30 * 60 * 1000);
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [key, entry] of store.entries()) {
+      if (entry.resetAt <= now) store.delete(key);
+    }
+  },
+  30 * 60 * 1000,
+);
 
 function getDayResetMs() {
   const tomorrow = new Date();
@@ -26,7 +29,8 @@ function getMonthResetMs() {
 }
 
 function resolveLimit(userRole, planId) {
-  if (userRole === 'admin') return { limit: AI_LIMITS.admin, resetAt: getMonthResetMs() };
+  if (userRole === 'admin')
+    return { limit: AI_LIMITS.admin, resetAt: getMonthResetMs() };
   if (!userRole) return { limit: AI_LIMITS.guest, resetAt: getDayResetMs() };
 
   const planKey = planId || 'user';
@@ -80,7 +84,8 @@ export function peekAiQuota(userId, ipAddress, userRole, planId) {
   const now = Date.now();
   const entry = store.get(key);
 
-  if (!entry || entry.resetAt <= now) return { allowed: true, used: 0, limit, resetAt };
+  if (!entry || entry.resetAt <= now)
+    return { allowed: true, used: 0, limit, resetAt };
 
   return {
     allowed: entry.count < limit,

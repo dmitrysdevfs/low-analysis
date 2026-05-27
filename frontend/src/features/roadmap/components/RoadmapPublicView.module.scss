@@ -14,8 +14,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -388,7 +393,9 @@
   color: #7a98c0;
   line-height: 1.7;
 
-  p { margin: 0; }
+  p {
+    margin: 0;
+  }
 }
 
 .decisionMeta {

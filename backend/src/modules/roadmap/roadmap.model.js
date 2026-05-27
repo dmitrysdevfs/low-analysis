@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
 const roadmapTaskSchema = new mongoose.Schema(
-  { text: { type: String, required: true }, done: { type: Boolean, default: false } },
+  {
+    text: { type: String, required: true },
+    done: { type: Boolean, default: false },
+  },
   { _id: false },
 );
 
@@ -9,14 +12,21 @@ const roadmapPhaseSchema = new mongoose.Schema(
   {
     id: { type: String, required: true },
     label: { type: String, required: true },
-    status: { type: String, enum: ['done', 'in_progress', 'pending'], default: 'pending' },
+    status: {
+      type: String,
+      enum: ['done', 'in_progress', 'pending'],
+      default: 'pending',
+    },
     tasks: { type: [roadmapTaskSchema], default: [] },
   },
   { _id: false },
 );
 
 const roadmapItemSchema = new mongoose.Schema(
-  { text: { type: String, required: true }, done: { type: Boolean, default: false } },
+  {
+    text: { type: String, required: true },
+    done: { type: Boolean, default: false },
+  },
   { _id: false },
 );
 
@@ -45,7 +55,11 @@ const roadmapDocSchema = new mongoose.Schema(
     roadmapItems: { type: [roadmapItemSchema], default: [] },
     deferredItems: { type: [deferredItemSchema], default: [] },
     decisions: { type: [decisionSchema], default: [] },
-    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
   },
   { timestamps: true },
 );

@@ -44,7 +44,12 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {{ stream?: boolean, temperature?: number, maxOutputTokens?: number }} options
  * @returns {Promise<AsyncIterable>} stream of GenerateContentResponse chunks
  */
-export const queryChatLLM = async (systemPrompt, history, userMessage, options = {}) => {
+export const queryChatLLM = async (
+  systemPrompt,
+  history,
+  userMessage,
+  options = {},
+) => {
   const client = getClient();
   const { temperature = 0.4, maxOutputTokens = 2048 } = options;
 
@@ -57,7 +62,7 @@ export const queryChatLLM = async (systemPrompt, history, userMessage, options =
   ];
 
   const stream = await client.models.generateContentStream({
-    model: options.model || (process.env.LLM_MODEL || 'gemini-2.5-flash'),
+    model: options.model || process.env.LLM_MODEL || 'gemini-2.5-flash',
     contents,
     config: {
       systemInstruction: systemPrompt,

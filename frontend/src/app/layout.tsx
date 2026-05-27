@@ -97,20 +97,20 @@ export default function RootLayout({
               <BillingProvider>
                 <GuestLimitsProvider>
                   <AssistantProvider>
-                  <SidebarDataProvider>
-                    <div className="site-shell">
-                      <ApiMetricsTracker />
-                      <BackendWarmup />
-                      <ScrollRestore />
-                      <Header />
-                      <div className="site-content">
-                        <RouteAccessGate>{children}</RouteAccessGate>
+                    <SidebarDataProvider>
+                      <div className="site-shell">
+                        <ApiMetricsTracker />
+                        <BackendWarmup />
+                        <ScrollRestore />
+                        <Header />
+                        <div className="site-content">
+                          <RouteAccessGate>{children}</RouteAccessGate>
+                        </div>
+                        <AiAssistant />
+                        <FooterStats />
+                        <Footer />
                       </div>
-                      <AiAssistant />
-                      <FooterStats />
-                      <Footer />
-                    </div>
-                  </SidebarDataProvider>
+                    </SidebarDataProvider>
                   </AssistantProvider>
                 </GuestLimitsProvider>
               </BillingProvider>

@@ -4,7 +4,11 @@ const sourceSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     href: { type: String, default: null },
-    type: { type: String, enum: ['faq', 'article', 'law', 'help'], default: 'faq' },
+    type: {
+      type: String,
+      enum: ['faq', 'article', 'law', 'help'],
+      default: 'faq',
+    },
   },
   { _id: false },
 );
@@ -36,4 +40,8 @@ const sessionSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model('AssistantSession', sessionSchema, 'assistantsessions');
+export default mongoose.model(
+  'AssistantSession',
+  sessionSchema,
+  'assistantsessions',
+);

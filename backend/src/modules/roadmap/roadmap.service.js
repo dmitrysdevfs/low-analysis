@@ -34,8 +34,10 @@ export async function updateRoadmap(content, userId = null) {
   const doc = await getOrCreate();
 
   if (content.phases !== undefined) doc.phases = content.phases;
-  if (content.roadmapItems !== undefined) doc.roadmapItems = content.roadmapItems;
-  if (content.deferredItems !== undefined) doc.deferredItems = content.deferredItems;
+  if (content.roadmapItems !== undefined)
+    doc.roadmapItems = content.roadmapItems;
+  if (content.deferredItems !== undefined)
+    doc.deferredItems = content.deferredItems;
   if (content.decisions !== undefined) doc.decisions = content.decisions;
   doc.updatedBy = userId;
 

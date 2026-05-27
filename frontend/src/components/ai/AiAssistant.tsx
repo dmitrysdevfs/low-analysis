@@ -45,14 +45,12 @@ function AiAssistantWidget() {
   }, []);
 
   function handleSend(text: string) {
-    const token =
-      typeof window !== "undefined" ? readStoredToken() : undefined;
+    const token = typeof window !== "undefined" ? readStoredToken() : undefined;
     sendMessage(text, context, token || undefined);
   }
 
   function handleFeedback(messageId: string, value: 1 | -1) {
-    const token =
-      typeof window !== "undefined" ? readStoredToken() : undefined;
+    const token = typeof window !== "undefined" ? readStoredToken() : undefined;
     submitFeedback(messageId, value, token || undefined);
   }
 
@@ -137,7 +135,8 @@ function AiAssistantWidget() {
               <div className={styles.messagesWrap}>
                 {visibleMessages.length === 0 ? (
                   <div className={styles.welcomeMsg}>
-                    Вітаю! Я Lex — AI Помічник. Чим можу допомогти з цим законом?
+                    Вітаю! Я Lex — AI Помічник. Чим можу допомогти з цим
+                    законом?
                   </div>
                 ) : (
                   <AssistantMessageList

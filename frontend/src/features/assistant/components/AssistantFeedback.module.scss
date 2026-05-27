@@ -12,7 +12,9 @@
   padding: 2px 4px;
   border-radius: 4px;
   opacity: 0.45;
-  transition: opacity 0.2s, background 0.2s;
+  transition:
+    opacity 0.2s,
+    background 0.2s;
 
   &:hover {
     opacity: 1;

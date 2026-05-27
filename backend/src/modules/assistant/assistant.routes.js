@@ -132,13 +132,17 @@ router.get('/suggestions', getSuggestions);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/chat/stream', (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return protect(req, res, () => next());
-  }
-  next();
-}, streamChat);
+router.post(
+  '/chat/stream',
+  (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      return protect(req, res, () => next());
+    }
+    next();
+  },
+  streamChat,
+);
 
 /**
  * @swagger
@@ -198,13 +202,17 @@ router.post('/chat/stream', (req, res, next) => {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/feedback', (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return protect(req, res, () => next());
-  }
-  next();
-}, submitFeedback);
+router.post(
+  '/feedback',
+  (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      return protect(req, res, () => next());
+    }
+    next();
+  },
+  submitFeedback,
+);
 
 /**
  * @swagger
@@ -247,13 +255,17 @@ router.post('/feedback', (req, res, next) => {
  *                   description: Unix timestamp скидання лічильника
  *                   example: 1716854400000
  */
-router.get('/quota', (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return protect(req, res, () => next());
-  }
-  next();
-}, getQuotaStatus);
+router.get(
+  '/quota',
+  (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      return protect(req, res, () => next());
+    }
+    next();
+  },
+  getQuotaStatus,
+);
 
 /**
  * @swagger
