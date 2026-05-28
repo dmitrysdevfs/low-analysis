@@ -85,14 +85,10 @@ describe('Export Endpoints', () => {
         expect(res.headers['content-type']).toContain('application/json');
         expect(Array.isArray(res.body)).toBe(true);
         expect(res.body[0].element_code).toBe(MOCK_FLAT_DATA[0].element_code);
-        expect(exportService.getFlatDataset).toHaveBeenCalledWith(MOCK_LAW_ID, {
-          subject: undefined,
-          article: undefined,
-          startDate: undefined,
-          endDate: undefined,
-          dateFrom: undefined,
-          dateTo: undefined,
-        });
+        expect(exportService.getFlatDataset).toHaveBeenCalledWith(
+          MOCK_LAW_ID,
+          {},
+        );
       });
 
       it('passes filters to getFlatDataset', async () => {
@@ -108,8 +104,6 @@ describe('Export Endpoints', () => {
           article: '1',
           startDate: '1996-01-01',
           endDate: '2026-12-31',
-          dateFrom: undefined,
-          dateTo: undefined,
         });
       });
 
@@ -124,14 +118,7 @@ describe('Export Endpoints', () => {
         expect(res.body.code).toBe(MOCK_NESTED_DATA.code);
         expect(exportService.getNestedDataset).toHaveBeenCalledWith(
           MOCK_LAW_ID,
-          {
-            subject: undefined,
-            article: undefined,
-            startDate: undefined,
-            endDate: undefined,
-            dateFrom: undefined,
-            dateTo: undefined,
-          },
+          {},
         );
       });
 
@@ -153,14 +140,10 @@ describe('Export Endpoints', () => {
         expect(res.body instanceof Buffer || typeof res.text === 'string').toBe(
           true,
         );
-        expect(exportService.getFlatDataset).toHaveBeenCalledWith(MOCK_LAW_ID, {
-          subject: undefined,
-          article: undefined,
-          startDate: undefined,
-          endDate: undefined,
-          dateFrom: undefined,
-          dateTo: undefined,
-        });
+        expect(exportService.getFlatDataset).toHaveBeenCalledWith(
+          MOCK_LAW_ID,
+          {},
+        );
       });
     });
   });

@@ -21,14 +21,13 @@ export async function exportDataset(req, res, next) {
       });
     }
 
-    const filters = {
-      subject,
-      article,
-      startDate,
-      endDate,
-      dateFrom,
-      dateTo,
-    };
+    const filters = {};
+    if (subject) filters.subject = subject;
+    if (article) filters.article = article;
+    if (startDate) filters.startDate = startDate;
+    if (endDate) filters.endDate = endDate;
+    if (dateFrom) filters.dateFrom = dateFrom;
+    if (dateTo) filters.dateTo = dateTo;
 
     if (format === 'xlsx' || format === 'xls' || format === 'csv') {
       // Set headers for Excel XLSX file download
@@ -52,7 +51,7 @@ export async function exportDataset(req, res, next) {
       const worksheet = workbook.addWorksheet('Dataset');
 
       worksheet.columns = [
-        { header: 'Закон', key: 'law_title_short', width: 25 },
+        { header: 'ID закону', key: 'law_id', width: 25 },
         { header: 'Номер закону', key: 'law_number', width: 15 },
         { header: 'Назва закону', key: 'law_title', width: 30 },
         { header: 'Тип закону', key: 'law_type', width: 15 },
@@ -76,7 +75,7 @@ export async function exportDataset(req, res, next) {
       for (const row of rows) {
         worksheet
           .addRow({
-            law_title_short: row.law_title,
+            law_id: row.law_id,
             law_number: row.law_number,
             law_title: row.law_title,
             law_type: row.law_type,
