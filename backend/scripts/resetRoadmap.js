@@ -1,4 +1,12 @@
-export const DEFAULT_ROADMAP_CONTENT = {
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import connectDB from '../src/config/db.js';
+import RoadmapDoc from '../src/modules/roadmap/roadmap.model.js';
+import { ROADMAP_DOC_ID } from '../src/modules/roadmap/roadmap.constants.js';
+
+dotenv.config();
+
+const CORRECT_ROADMAP_CONTENT = {
   phases: [
     {
       id: 'phase-1',
@@ -236,3 +244,28 @@ export const DEFAULT_ROADMAP_CONTENT = {
     },
   ],
 };
+
+const resetRoadmap = async () => {
+  await connectDB();
+
+  console.log(`Resetting/updating roadmap document (ID: '${ROADMAP_DOC_ID}')...`);
+
+  const updatedDoc = await RoadmapDoc.findByIdAndUpdate(
+    ROADMAP_DOC_ID,
+    {
+      _id: ROADMAP_DOC_ID,
+      ...CORRECT_ROADMAP_CONTENT,
+    },
+    { upsert: true, new: true }
+  );
+
+  console.log('✅ Roadmap successfully updated in the database!');
+  console.log('Updated Document:\n', JSON.stringify(updatedDoc, null, 2));
+
+  process.exit(0);
+};
+
+resetRoadmap().catch((err) => {
+  console.error('❌ Failed to reset roadmap:', err.message);
+  process.exit(1);
+});
