@@ -238,9 +238,9 @@ const CORRECT_ROADMAP_CONTENT = {
       id: 'd-7',
       title: 'LLM як семантичний шар (SRL)',
       decision:
-        'Використання LLM (Gemini API) для семантичного аналізу (Semantic Role Labeling) та витягування суб\'єктів регулювання',
+        "Використання LLM (Gemini API) для семантичного аналізу (Semantic Role Labeling) та витягування суб'єктів регулювання",
       rationale:
-        'Українське законодавство має складну синтаксичну структуру. Класичні NLP-бібліотеки або регулярні вирази дають низьку точність на непрямих формулюваннях норм. Двошарова архітектура (Cheerio для синтаксичного дерева + LLM для семантичного виділення акторів) дозволяє виявляти суб\'єктів з точністю >95% та гнучко будувати зв\'язки.',
+        "Українське законодавство має складну синтаксичну структуру. Класичні NLP-бібліотеки або регулярні вирази дають низьку точність на непрямих формулюваннях норм. Двошарова архітектура (Cheerio для синтаксичного дерева + LLM для семантичного виділення акторів) дозволяє виявляти суб'єктів з точністю >95% та гнучко будувати зв'язки.",
     },
   ],
 };
@@ -248,7 +248,9 @@ const CORRECT_ROADMAP_CONTENT = {
 const resetRoadmap = async () => {
   await connectDB();
 
-  console.log(`Resetting/updating roadmap document (ID: '${ROADMAP_DOC_ID}')...`);
+  console.log(
+    `Resetting/updating roadmap document (ID: '${ROADMAP_DOC_ID}')...`,
+  );
 
   const updatedDoc = await RoadmapDoc.findByIdAndUpdate(
     ROADMAP_DOC_ID,
@@ -256,7 +258,7 @@ const resetRoadmap = async () => {
       _id: ROADMAP_DOC_ID,
       ...CORRECT_ROADMAP_CONTENT,
     },
-    { upsert: true, new: true }
+    { upsert: true, new: true },
   );
 
   console.log('✅ Roadmap successfully updated in the database!');
