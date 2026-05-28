@@ -12,6 +12,7 @@ import pageAdminRoutes from './modules/pages/pageAdminRoutes.js';
 import roadmapRoutes from './modules/roadmap/roadmap.routes.js';
 import roadmapAdminRoutes from './modules/roadmap/roadmapAdminRoutes.js';
 import assistantRoutes from './modules/assistant/assistant.routes.js';
+import exportRoutes from './routes/exportRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -80,8 +81,10 @@ app.use('/api/taxonomies', taxonomyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/pages', pageRoutes);
 app.use('/api/admin/pages', pageAdminRoutes);
-app.use('/api/roadmap', roadmapRoutes);
 app.use('/api/admin/roadmap', roadmapAdminRoutes);
+app.use('/api/roadmap', roadmapRoutes);
+app.use('/api/laws/export', exportRoutes);
+app.use('/api/export/dataset', exportRoutes);
 app.use('/api/assistant', assistantRoutes);
 
 app.get('/', (req, res) => {

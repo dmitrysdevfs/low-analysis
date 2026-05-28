@@ -38,7 +38,7 @@ export async function getFlatDataset(lawId, filters = {}) {
   // Filter elements to get only leaf text elements (or any containing text)
   // Typically sections/articles are structural and do not have text of their own.
   let targetElements = elements.filter(
-    (el) => el.text && el.type !== 'section' && el.type !== 'article'
+    (el) => el.text && el.type !== 'section' && el.type !== 'article',
   );
 
   // Apply subject filter if specified
@@ -52,7 +52,7 @@ export async function getFlatDataset(lawId, filters = {}) {
           subject._id.toString() === subjQuery ||
           subject.canonical_name.toLowerCase().includes(subjQuery)
         );
-      })
+      }),
     );
   }
 
@@ -66,15 +66,15 @@ export async function getFlatDataset(lawId, filters = {}) {
       .filter(Boolean);
 
     const regulators = el.subjects
-      .filter((s) => s.role === 'regulator' || s.role === 'issuer_of_regulations')
+      .filter(
+        (s) => s.role === 'regulator' || s.role === 'issuer_of_regulations',
+      )
       .map((s) => s.subject_id?.canonical_name)
       .filter(Boolean);
 
     const subjectAliases = [
       ...new Set(
-        el.subjects
-          .flatMap((s) => s.subject_id?.aliases || [])
-          .filter(Boolean)
+        el.subjects.flatMap((s) => s.subject_id?.aliases || []).filter(Boolean),
       ),
     ];
 
@@ -160,7 +160,7 @@ export async function getNestedDataset(lawId, filters = {}) {
       const nodeMatches = node.subjects?.some(
         (s) =>
           s.name.toLowerCase().includes(subjQuery) ||
-          s.aliases?.some((a) => a.toLowerCase().includes(subjQuery))
+          s.aliases?.some((a) => a.toLowerCase().includes(subjQuery)),
       );
 
       // Prune children recursively

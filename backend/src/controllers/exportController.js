@@ -23,7 +23,7 @@ export async function exportDataset(req, res, next) {
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       res.setHeader(
         'Content-Disposition',
-        `attachment; filename="dataset-${lawId}.csv"`
+        `attachment; filename="dataset-${lawId}.csv"`,
       );
       res.setHeader('X-Accel-Buffering', 'no');
       res.flushHeaders();
@@ -85,7 +85,7 @@ export async function exportDataset(req, res, next) {
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.setHeader(
         'Content-Disposition',
-        `attachment; filename="dataset-${lawId}.json"`
+        `attachment; filename="dataset-${lawId}.json"`,
       );
 
       if (mode === 'nested') {
