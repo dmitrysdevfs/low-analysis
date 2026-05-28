@@ -69,7 +69,7 @@ export function LawMetaPanel({
   const [showAllSubjects, setShowAllSubjects] = useState(false);
 
   const getExportUrl = (
-    format: "csv" | "json",
+    format: "xlsx" | "json",
     mode: "flat" | "nested" = "flat",
   ) => {
     if (!law) return "";
@@ -108,11 +108,11 @@ export function LawMetaPanel({
           <div className={styles.exportGroup}>
             <span className={`mono ${styles.exportLabel}`}>Датасет:</span>
             <a
-              href={getExportUrl("csv")}
+              href={getExportUrl("xlsx")}
               className={`btn btn-ghost ${styles.exportBtn}`}
-              title="Завантажити датасет у CSV для Excel"
+              title="Завантажити датасет у Excel (XLSX)"
             >
-              CSV
+              Excel (XLSX)
             </a>
             <a
               href={getExportUrl("json", "flat")}

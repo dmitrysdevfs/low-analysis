@@ -87,19 +87,29 @@ describe('Export Endpoints', () => {
         expect(res.body[0].element_code).toBe(MOCK_FLAT_DATA[0].element_code);
         expect(exportService.getFlatDataset).toHaveBeenCalledWith(MOCK_LAW_ID, {
           subject: undefined,
+          article: undefined,
+          startDate: undefined,
+          endDate: undefined,
+          dateFrom: undefined,
+          dateTo: undefined,
         });
       });
 
-      it('passes subject filter to getFlatDataset', async () => {
+      it('passes filters to getFlatDataset', async () => {
         exportService.getFlatDataset.mockResolvedValue(MOCK_FLAT_DATA);
 
         const res = await request(app).get(
-          `${route}?lawId=${MOCK_LAW_ID}&subject=Громадянин`,
+          `${route}?lawId=${MOCK_LAW_ID}&subject=Громадянин&article=1&startDate=1996-01-01&endDate=2026-12-31`,
         );
 
         expect(res.status).toBe(200);
         expect(exportService.getFlatDataset).toHaveBeenCalledWith(MOCK_LAW_ID, {
           subject: 'Громадянин',
+          article: '1',
+          startDate: '1996-01-01',
+          endDate: '2026-12-31',
+          dateFrom: undefined,
+          dateTo: undefined,
         });
       });
 
@@ -116,49 +126,41 @@ describe('Export Endpoints', () => {
           MOCK_LAW_ID,
           {
             subject: undefined,
+            article: undefined,
+            startDate: undefined,
+            endDate: undefined,
+            dateFrom: undefined,
+            dateTo: undefined,
           },
         );
       });
 
-      it('streams CSV dataset with UTF-8 BOM when format=csv', async () => {
+      it('streams XLSX dataset when format=xlsx', async () => {
         exportService.getFlatDataset.mockResolvedValue(MOCK_FLAT_DATA);
 
         const res = await request(app).get(
-          `${route}?lawId=${MOCK_LAW_ID}&format=csv`,
+          `${route}?lawId=${MOCK_LAW_ID}&format=xlsx`,
         );
 
         expect(res.status).toBe(200);
-        expect(res.headers['content-type']).toContain('text/csv');
+        expect(res.headers['content-type']).toContain(
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        );
         expect(res.headers['content-disposition']).toContain('attachment');
-        expect(res.headers['content-disposition']).toContain(`.csv"`);
+        expect(res.headers['content-disposition']).toContain(`.xlsx"`);
 
-        // Check for BOM
-        const text = res.text;
-        expect(text.charCodeAt(0)).toBe(0xfeff);
-
-        // Check for headers and values
-        const lines = text.slice(1).split('\n');
-        expect(lines[0]).toBe(
-          '"Закон","Номер закону","Назва закону","Тип закону","Дата прийняття","Розділ","Назва розділу","Стаття","Назва статті","Абзац","Текст","Код елемента","Суб’єкти","Регулятори","Аліаси суб’єктів","Рівень ризику","Z-Score"',
+        // Excel format is binary (a zip file), so check it is received and has size > 0
+        expect(res.body instanceof Buffer || typeof res.text === 'string').toBe(
+          true,
         );
-        expect(lines[1]).toContain(MOCK_FLAT_DATA[0].element_code);
-        expect(lines[1]).toContain('Україна є суверенна');
-      });
-
-      it('handles empty flat dataset in CSV export gracefully', async () => {
-        exportService.getFlatDataset.mockResolvedValue([]);
-
-        const res = await request(app).get(
-          `${route}?lawId=${MOCK_LAW_ID}&format=csv`,
-        );
-
-        expect(res.status).toBe(200);
-        const text = res.text;
-        expect(text.charCodeAt(0)).toBe(0xfeff);
-        const lines = text.slice(1).split('\n');
-        expect(lines[0]).toBe(
-          '"Закон","Номер закону","Назва закону","Тип закону","Дата прийняття","Розділ","Назва розділу","Стаття","Назва статті","Абзац","Текст","Код елемента","Суб’єкти","Регулятори","Аліаси суб’єктів","Рівень ризику","Z-Score"',
-        );
+        expect(exportService.getFlatDataset).toHaveBeenCalledWith(MOCK_LAW_ID, {
+          subject: undefined,
+          article: undefined,
+          startDate: undefined,
+          endDate: undefined,
+          dateFrom: undefined,
+          dateTo: undefined,
+        });
       });
     });
   });

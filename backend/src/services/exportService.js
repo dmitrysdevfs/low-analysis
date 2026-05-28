@@ -35,6 +35,22 @@ export async function getFlatDataset(lawId, filters = {}) {
     return null;
   };
 
+  // Apply date range filters if specified
+  const start = filters.startDate || filters.dateFrom;
+  const end = filters.endDate || filters.dateTo;
+  if (start || end) {
+    if (!law.adoptedDate) {
+      return [];
+    }
+    const adopted = new Date(law.adoptedDate);
+    if (start && adopted < new Date(start)) {
+      return [];
+    }
+    if (end && adopted > new Date(end)) {
+      return [];
+    }
+  }
+
   // Filter elements to get only leaf text elements (or any containing text)
   // Typically sections/articles are structural and do not have text of their own.
   let targetElements = elements.filter(
@@ -54,6 +70,15 @@ export async function getFlatDataset(lawId, filters = {}) {
         );
       }),
     );
+  }
+
+  // Apply article filter if specified
+  if (filters.article) {
+    const articleNum = String(filters.article).trim();
+    targetElements = targetElements.filter((el) => {
+      const article = findAncestor(el, 'article');
+      return article && String(article.number).trim() === articleNum;
+    });
   }
 
   // Build flat rows
@@ -115,6 +140,22 @@ export async function getNestedDataset(lawId, filters = {}) {
     throw new Error(`Law not found with ID: ${lawId}`);
   }
 
+  // Apply date range filters if specified
+  const start = filters.startDate || filters.dateFrom;
+  const end = filters.endDate || filters.dateTo;
+  if (start || end) {
+    if (!law.adoptedDate) {
+      return null;
+    }
+    const adopted = new Date(law.adoptedDate);
+    if (start && adopted < new Date(start)) {
+      return null;
+    }
+    if (end && adopted > new Date(end)) {
+      return null;
+    }
+  }
+
   // Fetch all elements for this law
   const elements = await Element.find({ lawId })
     .populate('subjects.subject_id')
@@ -150,36 +191,37 @@ export async function getNestedDataset(lawId, filters = {}) {
     }
   });
 
-  // Optional subject filter for tree:
-  // If a subject filter is applied, we only keep branches that contain a matching subject.
+  let filteredRootNodes = rootNodes;
+
+  // Apply article filter if specified
+  if (filters.article) {
+    const articleNum = String(filters.article).trim();
+    const keepArticleNode = (node) => {
+      if (
+        node.type === 'article' &&
+        String(node.number).trim() === articleNum
+      ) {
+        return true;
+      }
+      node.children = node.children.filter(keepArticleNode);
+      return node.children.length > 0;
+    };
+    filteredRootNodes = filteredRootNodes.filter(keepArticleNode);
+  }
+
+  // Apply subject filter if specified
   if (filters.subject) {
     const subjQuery = String(filters.subject).toLowerCase();
-
     const pruneTree = (node) => {
-      // Check if this node matches
       const nodeMatches = node.subjects?.some(
         (s) =>
           s.name.toLowerCase().includes(subjQuery) ||
           s.aliases?.some((a) => a.toLowerCase().includes(subjQuery)),
       );
-
-      // Prune children recursively
       node.children = node.children.filter(pruneTree);
-
-      // Keep this node if it matches OR has matching children
       return nodeMatches || node.children.length > 0;
     };
-
-    const filteredRootNodes = rootNodes.filter(pruneTree);
-
-    return {
-      _id: law._id.toString(),
-      title: law.title,
-      code: law.code,
-      type: law.type || 'unknown',
-      adoptedDate: law.adoptedDate ? law.adoptedDate.toISOString() : null,
-      children: filteredRootNodes,
-    };
+    filteredRootNodes = filteredRootNodes.filter(pruneTree);
   }
 
   return {
@@ -188,6 +230,6 @@ export async function getNestedDataset(lawId, filters = {}) {
     code: law.code,
     type: law.type || 'unknown',
     adoptedDate: law.adoptedDate ? law.adoptedDate.toISOString() : null,
-    children: rootNodes,
+    children: filteredRootNodes,
   };
 }

@@ -8,15 +8,15 @@ const router = express.Router();
  * /api/laws/export:
  *   get:
  *     tags: [Laws]
- *     summary: Експорт структурованого датасету закону (CSV / JSON)
+ *     summary: Експорт структурованого датасету закону (XLSX / JSON)
  *     description: |
  *       Дозволяє вивантажити повний масив текстових елементів закону (абзаців, частин, пунктів) у вигляді датасету для подальшого аналізу в сторонніх засобах (MS Excel, Python, R тощо).
  *
  *       Підтримуються два формати:
- *       1. **CSV** (з вбудованим UTF-8 BOM для безпроблемного відкриття в Excel без кракозябр). Рядки стрімяться частинами (streaming) для запобігання перевантаженню пам'яті.
+ *       1. **XLSX** (нативний Excel файл, що генерується через exceljs зі стрімінгом для великих обсягів).
  *       2. **JSON** (pretty-printed із форматизованими відступами для зручного читання).
  *
- *       Також підтримується фільтрація за конкретним суб'єктом регулювання.
+ *       Також підтримується фільтрація за конкретним суб'єктом регулювання, номером статті та датою прийняття.
  *     parameters:
  *       - in: query
  *         name: lawId
@@ -29,7 +29,7 @@ const router = express.Router();
  *         name: format
  *         schema:
  *           type: string
- *           enum: [json, csv]
+ *           enum: [json, xlsx]
  *           default: json
  *         description: Формат вихідного файлу
  *       - in: query
@@ -45,6 +45,38 @@ const router = express.Router();
  *           type: string
  *           example: громадянин
  *         description: Фільтр за назвою або ID суб'єкта. Дозволяє експортувати лише елементи, які регулюють обраного суб'єкта
+ *       - in: query
+ *         name: article
+ *         schema:
+ *           type: string
+ *           example: "1"
+ *         description: Фільтр за номером статті закону (наприклад, "1", "12-1" тощо)
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "1996-01-01"
+ *         description: Початкова дата прийняття закону (фільтр діє як перевірка дати прийняття закону)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2026-12-31"
+ *         description: Кінцева дата прийняття закону
+ *       - in: query
+ *         name: dateFrom
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Аліас для startDate
+ *       - in: query
+ *         name: dateTo
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Аліас для endDate
  *     responses:
  *       200:
  *         description: Файл успішно сформовано та віддано для завантаження
@@ -52,16 +84,16 @@ const router = express.Router();
  *           Content-Type:
  *             schema:
  *               type: string
- *               example: text/csv; charset=utf-8
+ *               example: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
  *           Content-Disposition:
  *             schema:
  *               type: string
- *               example: attachment; filename="dataset-69f84aa7395f1789bc7b2b89.csv"
+ *               example: attachment; filename="dataset-69f84aa7395f1789bc7b2b89.xlsx"
  *           X-Accel-Buffering:
  *             schema:
  *               type: string
  *               example: no
- *             description: Вимикає буферизацію Nginx для стрімінгу CSV
+ *             description: Вимикає буферизацію Nginx для стрімінгу
  *       400:
  *         description: Невалідний запит (наприклад, відсутній обов'язковий lawId)
  *         content:
@@ -84,7 +116,7 @@ const router = express.Router();
  * /api/export/dataset:
  *   get:
  *     tags: [Laws]
- *     summary: Аліас для експорту структурованого датасету закону (CSV / JSON)
+ *     summary: Аліас для експорту структурованого датасету закону (XLSX / JSON)
  *     description: Повністю дублює поведінку маршруту `/api/laws/export`. Призначений для зручності виклику з зовнішніх аналітичних систем.
  *     parameters:
  *       - in: query
@@ -98,7 +130,7 @@ const router = express.Router();
  *         name: format
  *         schema:
  *           type: string
- *           enum: [json, csv]
+ *           enum: [json, xlsx]
  *           default: json
  *         description: Формат вихідного файлу
  *       - in: query
@@ -114,6 +146,21 @@ const router = express.Router();
  *           type: string
  *           example: громадянин
  *         description: Фільтр за назвою або ID суб'єкта
+ *       - in: query
+ *         name: article
+ *         schema:
+ *           type: string
+ *         description: Фільтр за номером статті закону
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *         description: Початкова дата прийняття закону
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *         description: Кінцева дата прийняття закону
  *     responses:
  *       200:
  *         description: Файл успішно сформовано та віддано
