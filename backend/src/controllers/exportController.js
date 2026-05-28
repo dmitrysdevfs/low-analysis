@@ -88,13 +88,12 @@ export async function exportDataset(req, res, next) {
         `attachment; filename="dataset-${lawId}.json"`,
       );
 
-      if (mode === 'nested') {
-        const data = await exportService.getNestedDataset(lawId, filters);
-        return res.json(data);
-      } else {
-        const data = await exportService.getFlatDataset(lawId, filters);
-        return res.json(data);
-      }
+      const data =
+        mode === 'nested'
+          ? await exportService.getNestedDataset(lawId, filters)
+          : await exportService.getFlatDataset(lawId, filters);
+
+      return res.send(JSON.stringify(data, null, 2));
     }
   } catch (error) {
     return next(error);
