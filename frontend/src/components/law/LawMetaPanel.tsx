@@ -67,6 +67,19 @@ export function LawMetaPanel({
 }: LawMetaPanelProps) {
   const [subjectsQuery, setSubjectsQuery] = useState("");
   const [showAllSubjects, setShowAllSubjects] = useState(false);
+
+  const getExportUrl = (format: "csv" | "json", mode: "flat" | "nested" = "flat") => {
+    if (!law) return "";
+    const params = new URLSearchParams();
+    params.set("lawId", law._id);
+    params.set("format", format);
+    params.set("mode", mode);
+    if (selectedSubjectId) {
+      params.set("subject", selectedSubjectId);
+    }
+    return `/api/laws/export?${params.toString()}`;
+  };
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 14 }}
@@ -82,10 +95,38 @@ export function LawMetaPanel({
         <div className={styles.lawSignatory}>{law.signatory}</div>
       )}
       <div className="law-structure-summary">
-        {law ? <span className="directory-chip mono">{law.code}</span> : null}
-        <span className="mono law-structure-inline-note">
-          {sectionsCount} розділів · {articleCount} статей
-        </span>
+        <div className={styles.summaryMeta}>
+          {law ? <span className="directory-chip mono">{law.code}</span> : null}
+          <span className="mono law-structure-inline-note">
+            {sectionsCount} розділів · {articleCount} статей
+          </span>
+        </div>
+        {law && (
+          <div className={styles.exportGroup}>
+            <span className={`mono ${styles.exportLabel}`}>Датасет:</span>
+            <a
+              href={getExportUrl("csv")}
+              className={`btn btn-ghost ${styles.exportBtn}`}
+              title="Завантажити датасет у CSV для Excel"
+            >
+              CSV
+            </a>
+            <a
+              href={getExportUrl("json", "flat")}
+              className={`btn btn-ghost ${styles.exportBtn}`}
+              title="Завантажити датасет у JSON (плаский список)"
+            >
+              JSON
+            </a>
+            <a
+              href={getExportUrl("json", "nested")}
+              className={`btn btn-ghost ${styles.exportBtn}`}
+              title="Завантажити датасет у JSON (вкладена структура)"
+            >
+              JSON (Дерево)
+            </a>
+          </div>
+        )}
       </div>
       {stats && (
         <LawRiskBar

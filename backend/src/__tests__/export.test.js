@@ -71,7 +71,9 @@ describe('Export Endpoints', () => {
       it('returns 400 when lawId query parameter is missing', async () => {
         const res = await request(app).get(route);
         expect(res.status).toBe(400);
-        expect(res.body.message).toContain('Параметр lawId є обов’язковим для експорту.');
+        expect(res.body.message).toContain(
+          'Параметр lawId є обов’язковим для експорту.',
+        );
       });
 
       it('returns 200 with flat JSON data by default', async () => {
