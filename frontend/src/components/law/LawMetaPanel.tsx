@@ -68,7 +68,10 @@ export function LawMetaPanel({
   const [subjectsQuery, setSubjectsQuery] = useState("");
   const [showAllSubjects, setShowAllSubjects] = useState(false);
 
-  const getExportUrl = (format: "csv" | "json", mode: "flat" | "nested" = "flat") => {
+  const getExportUrl = (
+    format: "csv" | "json",
+    mode: "flat" | "nested" = "flat",
+  ) => {
     if (!law) return "";
     const params = new URLSearchParams();
     params.set("lawId", law._id);
