@@ -387,3 +387,41 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.summaryMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.exportGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.exportLabel {
+  font-size: 0.68rem;
+  color: #7a98c0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.exportBtn {
+  font-size: 0.72rem;
+  padding: 6px 12px;
+  height: auto;
+  min-height: 0;
+  font-family: var(--font-mono, monospace);
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .exportGroup {
+    margin-left: 0;
+    margin-top: 8px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
