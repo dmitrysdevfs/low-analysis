@@ -141,6 +141,17 @@ export const getElement = async (req, res, next) => {
   }
 };
 
+export const getLawArticles = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await lawService.getLawStructure(id);
+    if (!result) return res.status(404).json({ message: 'Law not found' });
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getLawHeatmap = async (req, res, next) => {
   try {
     const { id } = req.params;
