@@ -310,7 +310,10 @@ describe('GET /api/laws/:id/articles', () => {
   });
 
   it('returns empty articles array when law has no articles', async () => {
-    lawService.getLawStructure.mockResolvedValue({ ...MOCK_STRUCTURE, articles: [] });
+    lawService.getLawStructure.mockResolvedValue({
+      ...MOCK_STRUCTURE,
+      articles: [],
+    });
 
     const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles`);
 

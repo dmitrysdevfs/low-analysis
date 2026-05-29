@@ -758,7 +758,15 @@
   LawStructure: {
     type: 'object',
     description: 'Метадані закону зі списком статей',
-    required: ['title', 'documentType', 'documentNumber', 'adoptedDate', 'signatory', 'status', 'articles'],
+    required: [
+      'title',
+      'documentType',
+      'documentNumber',
+      'adoptedDate',
+      'signatory',
+      'status',
+      'articles',
+    ],
     properties: {
       title: { type: 'string', example: 'КОНСТИТУЦІЯ УКРАЇНИ' },
       documentType: {

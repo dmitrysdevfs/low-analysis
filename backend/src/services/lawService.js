@@ -198,7 +198,9 @@ export const getElement = async (id) => {
  */
 export const getLawStructure = async (lawId) => {
   const [law, articles] = await Promise.all([
-    Law.findById(lawId).select('title documentType code adoptedDate signatory status').lean(),
+    Law.findById(lawId)
+      .select('title documentType code adoptedDate signatory status')
+      .lean(),
     Element.find({ lawId, type: 'article' })
       .select('number title order')
       .sort({ order: 1 })
