@@ -22,6 +22,7 @@ import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AmendmentEditor } from "./AmendmentEditor";
 import type { Amendment } from "@/types/legislator";
+import { DiffViewer } from "@/components/ui";
 import styles from "@/app/laws/[id]/articles/[num]/page.module.scss";
 
 interface NestedNodeListProps {
@@ -294,15 +295,12 @@ function NestedNode({
                   )}
                 </div>
                 <div className={styles.amendmentDiff}>
-                  <div className={styles.amendmentOrig}>
-                    <del>{node.text}</del>
-                  </div>
-                  <div className={styles.amendmentProp}>
-                    <ins>{am.proposed_text}</ins>
-                  </div>
+                  <DiffViewer original={node.text} proposed={am.proposed_text} />
                 </div>
                 {am.reason && (
-                  <p className={styles.amendmentReasonText}>{am.reason}</p>
+                  <p className={styles.amendmentReasonText} style={{ whiteSpace: "pre-wrap" }}>
+                    {am.reason}
+                  </p>
                 )}
               </div>
             ))}

@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useProposal, useSubmitProposal } from "@/hooks/useProposals";
+import { DiffViewer } from "@/components/ui";
 import styles from "./page.module.scss";
 
 export default function ProposalDetailPage() {
@@ -42,19 +43,13 @@ export default function ProposalDetailPage() {
                   `Стаття ${amendment.context.article_num}. `}
                 {amendment.context.element_code}
               </div>
-              <div className={styles.diff}>
-                <div className={styles.original}>
-                  <strong>Оригінал:</strong>
-                  <p>{amendment.original_text}</p>
-                </div>
-                <div className={styles.proposed}>
-                  <strong>Пропозиція:</strong>
-                  <p>{amendment.proposed_text}</p>
-                </div>
+              <div className={styles.diff} style={{ display: "block" }}>
+                <strong>Зміни:</strong>
+                <DiffViewer original={amendment.original_text} proposed={amendment.proposed_text} />
               </div>
               {amendment.reason && (
-                <div className={styles.reason}>
-                  <strong>Обгрунтування:</strong>
+                <div className={styles.reason} style={{ whiteSpace: "pre-wrap", marginTop: "12px" }}>
+                  <strong>Обґрунтування:</strong>
                   <p>{amendment.reason}</p>
                 </div>
               )}

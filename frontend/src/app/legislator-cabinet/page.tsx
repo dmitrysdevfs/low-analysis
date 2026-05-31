@@ -6,6 +6,7 @@ import { useAmendments } from "@/hooks/useAmendments";
 import { useLaws } from "@/hooks/useLaws";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
+import { DiffViewer } from "@/components/ui";
 import styles from "./page.module.scss";
 
 export default function LegislatorCabinetPage() {
@@ -161,17 +162,14 @@ export default function LegislatorCabinetPage() {
                   )}
                 </span>
               </div>
-              <p className={styles.amendmentText}>
-                <strong>Оригінал:</strong> <del>{amendment.original_text}</del>
-              </p>
-              <p className={styles.amendmentText}>
-                <strong>Пропозиція:</strong>{" "}
-                <ins>{amendment.proposed_text}</ins>
-              </p>
+              <div className={styles.amendmentDiff}>
+                <strong>Зміни:</strong>
+                <DiffViewer original={amendment.original_text} proposed={amendment.proposed_text} />
+              </div>
               {amendment.reason && (
-                <p className={styles.amendmentText}>
+                <div className={styles.amendmentReason} style={{ whiteSpace: "pre-wrap", marginTop: "8px" }}>
                   <strong>Обґрунтування:</strong> <em>{amendment.reason}</em>
-                </p>
+                </div>
               )}
             </div>
           ))}
