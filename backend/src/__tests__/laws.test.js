@@ -8,6 +8,7 @@ vi.mock('../services/lawService.js', () => ({
   getLawTree: vi.fn(),
   getArticle: vi.fn(),
   getLawStats: vi.fn(),
+  getLawStructure: vi.fn(),
   updateLawStatsFromDb: vi.fn(),
 }));
 
@@ -262,6 +263,89 @@ describe('GET /api/laws/:id/articles/:num', () => {
 
     expect(res.status).toBe(404);
     expect(res.body.message).toBe('Article not found');
+  });
+});
+
+describe('GET /api/laws/:id/articles', () => {
+  const MOCK_STRUCTURE = {
+    title: 'CONSTITUTION OF UKRAINE',
+    documentType: ['Закон України'],
+    documentNumber: '254k/96-vr',
+    adoptedDate: '1996-06-28T00:00:00.000Z',
+    signatory: 'Президент України Л.КУЧМА',
+    status: 'Чинний',
+    articles: [
+      { number: '1', title: 'Стаття 1.' },
+      { number: '2', title: 'Стаття 2.' },
+    ],
+  };
+
+  it('returns 200 with law structure and articles list', async () => {
+    lawService.getLawStructure.mockResolvedValue(MOCK_STRUCTURE);
+
+    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.title).toBe(MOCK_STRUCTURE.title);
+    expect(res.body.documentType).toEqual(MOCK_STRUCTURE.documentType);
+    expect(res.body.documentNumber).toBe(MOCK_STRUCTURE.documentNumber);
+    expect(res.body.adoptedDate).toBe(MOCK_STRUCTURE.adoptedDate);
+    expect(res.body.signatory).toBe(MOCK_STRUCTURE.signatory);
+    expect(res.body.status).toBe(MOCK_STRUCTURE.status);
+    expect(Array.isArray(res.body.articles)).toBe(true);
+    expect(res.body.articles).toHaveLength(2);
+    expect(res.body.articles[0]).toEqual({ number: '1', title: 'Стаття 1.' });
+  });
+
+  it('returns articles with number and title fields', async () => {
+    lawService.getLawStructure.mockResolvedValue(MOCK_STRUCTURE);
+
+    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles`);
+
+    expect(res.status).toBe(200);
+    res.body.articles.forEach((article) => {
+      expect(article).toHaveProperty('number');
+      expect(article).toHaveProperty('title');
+    });
+  });
+
+  it('returns empty articles array when law has no articles', async () => {
+    lawService.getLawStructure.mockResolvedValue({
+      ...MOCK_STRUCTURE,
+      articles: [],
+    });
+
+    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.articles).toEqual([]);
+  });
+
+  it('returns nullable fields as null when not set', async () => {
+    lawService.getLawStructure.mockResolvedValue({
+      ...MOCK_STRUCTURE,
+      adoptedDate: null,
+      signatory: null,
+      status: null,
+    });
+
+    const res = await request(app).get(`/api/laws/${MOCK_LAW._id}/articles`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.adoptedDate).toBeNull();
+    expect(res.body.signatory).toBeNull();
+    expect(res.body.status).toBeNull();
+  });
+
+  it('returns 404 when law not found', async () => {
+    lawService.getLawStructure.mockResolvedValue(null);
+
+    const res = await request(app).get(
+      '/api/laws/000000000000000000000000/articles',
+    );
+
+    expect(res.status).toBe(404);
+    expect(res.body.message).toBe('Law not found');
   });
 });
 

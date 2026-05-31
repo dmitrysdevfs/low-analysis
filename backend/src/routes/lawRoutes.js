@@ -4,6 +4,7 @@ import {
   getLawTree,
   getLawStats,
   getArticle,
+  getLawArticles,
   parseLawFromUrl,
   getElement,
   getLawHeatmap,
@@ -172,6 +173,39 @@ router.get('/', getAllLaws);
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/:id/tree', getLawTree);
+
+/**
+ * @swagger
+ * /api/laws/{id}/articles:
+ *   get:
+ *     tags: [Laws]
+ *     summary: Структура статей закону
+ *     description: Повертає метадані закону та впорядкований список його статей (номер + назва)
+ *     parameters:
+ *       - $ref: '#/components/parameters/LawId'
+ *     responses:
+ *       200:
+ *         description: Метадані закону зі списком статей
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LawStructure'
+ *       404:
+ *         description: Закон не знайдено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               message: Law not found
+ *       500:
+ *         description: Помилка сервера
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/:id/articles', getLawArticles);
 
 /**
  * @swagger

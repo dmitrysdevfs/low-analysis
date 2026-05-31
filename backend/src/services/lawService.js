@@ -191,6 +191,38 @@ export const getElement = async (id) => {
   return await Element.findById(id).select('-__v').lean();
 };
 
+/**
+ * Returns law metadata and its ordered list of articles.
+ * @param {string} lawId
+ * @returns {Promise<{title, documentType, documentNumber, adoptedDate, signatory, status, articles: {number, title}[]}|null>}
+ */
+export const getLawStructure = async (lawId) => {
+  const [law, articles] = await Promise.all([
+    Law.findById(lawId)
+      .select('title documentType code adoptedDate signatory status')
+      .lean(),
+    Element.find({ lawId, type: 'article' })
+      .select('number title order')
+      .sort({ order: 1 })
+      .lean(),
+  ]);
+
+  if (!law) return null;
+
+  return {
+    title: law.title,
+    documentType: law.documentType,
+    documentNumber: law.code,
+    adoptedDate: law.adoptedDate ?? null,
+    signatory: law.signatory ?? null,
+    status: law.status ?? null,
+    articles: articles.map((a) => ({
+      number: a.number ?? null,
+      title: a.title ?? null,
+    })),
+  };
+};
+
 export const getLawHeatmap = async (lawId) => {
   return await Element.find({ lawId })
     .select('code type number title chars_count z_score risk_level taxonomy')

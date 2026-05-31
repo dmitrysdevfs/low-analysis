@@ -755,6 +755,61 @@
     },
   },
 
+  LawStructure: {
+    type: 'object',
+    description: 'Метадані закону зі списком статей',
+    required: [
+      'title',
+      'documentType',
+      'documentNumber',
+      'adoptedDate',
+      'signatory',
+      'status',
+      'articles',
+    ],
+    properties: {
+      title: { type: 'string', example: 'КОНСТИТУЦІЯ УКРАЇНИ' },
+      documentType: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['Закон України'],
+      },
+      documentNumber: {
+        type: 'string',
+        example: '254к/96-вр',
+        description: 'Офіційний код документа на zakon.rada.gov.ua',
+      },
+      adoptedDate: {
+        type: 'string',
+        format: 'date-time',
+        example: '1996-06-28T00:00:00.000Z',
+        nullable: true,
+      },
+      signatory: {
+        type: 'string',
+        example: 'Президент України Л.КУЧМА',
+        nullable: true,
+      },
+      status: {
+        type: 'string',
+        example: 'Чинний',
+        nullable: true,
+      },
+      articles: {
+        type: 'array',
+        description: 'Список статей у порядку їх появи в документі',
+        items: {
+          type: 'object',
+          required: ['number', 'title'],
+          properties: {
+            number: { type: 'string', example: '1', nullable: true },
+            title: { type: 'string', example: 'Стаття 1.', nullable: true },
+          },
+        },
+      },
+    },
+  },
+
   ParseLawRequest: {
     type: 'object',
     required: ['url'],
