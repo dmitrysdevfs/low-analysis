@@ -224,7 +224,7 @@ function NestedNode({
             onClick={() => setShowEditor(!showEditor)}
             title="Запропонувати поправку"
           >
-            тЮД
+            ✎
           </button>
         )}
       </div>
