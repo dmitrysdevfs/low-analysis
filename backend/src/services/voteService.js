@@ -1,21 +1,32 @@
+import mongoose from 'mongoose';
 import Vote from '../models/Vote.js';
 import Amendment from '../models/Amendment.js';
 import Proposal from '../models/Proposal.js';
+
+const castToObjectId = (id) => {
+  if (typeof id === 'string' && mongoose.Types.ObjectId.isValid(id)) {
+    return new mongoose.Types.ObjectId(id);
+  }
+  return id;
+};
 
 /**
  * Cast or update a vote on an amendment.
  */
 export const castVote = async ({ amendment_id, user_id, value }) => {
+  const amendmentObjectId = castToObjectId(amendment_id);
+  const userObjectId = castToObjectId(user_id);
+
   // Upsert the vote
   await Vote.findOneAndUpdate(
-    { amendment_id, user_id },
+    { amendment_id: amendmentObjectId, user_id: userObjectId },
     { value },
     { upsert: true, new: true },
   );
 
   // Recalculate Amendment votes_summary
   const amendmentStats = await Vote.aggregate([
-    { $match: { amendment_id } },
+    { $match: { amendment_id: amendmentObjectId } },
     { $group: { _id: '$value', count: { $sum: 1 } } },
   ]);
 
@@ -25,7 +36,7 @@ export const castVote = async ({ amendment_id, user_id, value }) => {
   });
 
   const amendment = await Amendment.findByIdAndUpdate(
-    amendment_id,
+    amendmentObjectId,
     { votes_summary: summary },
     { new: true },
   );
