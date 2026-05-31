@@ -67,6 +67,86 @@ describe('amendmentService', () => {
       });
       expect(result).toHaveProperty('_id', 'amendment1');
     });
+
+    it('should set original_text to null for add change_type', async () => {
+      const mockElement = {
+        _id: 'element1',
+        code: 'CU.A1',
+        number: '1',
+        title: 'Article 1',
+        text: 'Original text',
+        type: 'article',
+        parentId: null,
+      };
+
+      Element.aggregate.mockResolvedValue([
+        {
+          ...mockElement,
+          ancestors: [],
+        },
+      ]);
+
+      Amendment.create.mockResolvedValue({ _id: 'amendment1' });
+
+      const data = {
+        law_id: 'law1',
+        element_id: 'element1',
+        proposal_id: 'proposal1',
+        created_by: 'user1',
+        change_type: 'add',
+        proposed_text: 'New added text',
+        reason: 'Adding important clause',
+      };
+
+      await amendmentService.createAmendment(data);
+
+      expect(Amendment.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          original_text: null,
+          proposed_text: 'New added text',
+        }),
+      );
+    });
+
+    it('should set proposed_text to null for delete change_type', async () => {
+      const mockElement = {
+        _id: 'element1',
+        code: 'CU.A1',
+        number: '1',
+        title: 'Article 1',
+        text: 'Original text',
+        type: 'article',
+        parentId: null,
+      };
+
+      Element.aggregate.mockResolvedValue([
+        {
+          ...mockElement,
+          ancestors: [],
+        },
+      ]);
+
+      Amendment.create.mockResolvedValue({ _id: 'amendment1' });
+
+      const data = {
+        law_id: 'law1',
+        element_id: 'element1',
+        proposal_id: 'proposal1',
+        created_by: 'user1',
+        change_type: 'delete',
+        proposed_text: 'Should be ignored',
+        reason: 'Removing obsolete clause',
+      };
+
+      await amendmentService.createAmendment(data);
+
+      expect(Amendment.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          original_text: 'Original text',
+          proposed_text: null,
+        }),
+      );
+    });
   });
 
   describe('getAmendmentsByProposal', () => {
