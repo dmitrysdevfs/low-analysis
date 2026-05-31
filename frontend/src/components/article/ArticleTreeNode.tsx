@@ -24,6 +24,8 @@ import { AmendmentEditor } from "./AmendmentEditor";
 import type { Amendment } from "@/types/legislator";
 import { DiffViewer } from "@/components/ui";
 import { useDeleteAmendment } from "@/hooks/useAmendments";
+import { AmendmentVoting } from "./AmendmentVoting";
+import { AmendmentComments } from "./AmendmentComments";
 import styles from "@/app/laws/[id]/articles/[num]/page.module.scss";
 
 function AmendmentItem({
@@ -49,7 +51,7 @@ function AmendmentItem({
       try {
         await deleteMutation.mutateAsync(am._id);
         notify.success("Поправку видалено успішно");
-      } catch (err) {
+      } catch {
         notify.error("Не вдалося видалити поправку");
       }
     }
@@ -123,6 +125,8 @@ function AmendmentItem({
               {am.reason}
             </p>
           )}
+          <AmendmentVoting amendmentId={am._id} />
+          <AmendmentComments amendmentId={am._id} />
         </div>
       )}
     </div>
