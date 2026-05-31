@@ -33,4 +33,6 @@ export const ROUTES = {
   helpArticle: (slug: string) => `/help/${slug}`,
   adminHelp: "/admin/help",
   adminHelpArticle: (slug: string) => `/admin/help/${slug}`,
+  legislatorCabinet: "/legislator-cabinet",
+  legislatorProposal: (id: string) => `/legislator-cabinet/${id}`,
 } as const;

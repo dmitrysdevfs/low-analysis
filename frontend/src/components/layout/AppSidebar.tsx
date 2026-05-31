@@ -59,7 +59,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
       ...(isLegislator
         ? [
             {
-              href: "/legislator-cabinet",
+              href: ROUTES.legislatorCabinet,
               label: "Кабінет законотворця",
               caption: "Поправки та пропозиції",
             },

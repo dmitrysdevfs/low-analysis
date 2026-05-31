@@ -7,6 +7,7 @@ import { useLaws } from "@/hooks/useLaws";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
 import { DiffViewer } from "@/components/ui";
+import { ROUTES } from "@/constants/routes";
 import styles from "./page.module.scss";
 
 export default function LegislatorCabinetPage() {
@@ -114,7 +115,7 @@ export default function LegislatorCabinetPage() {
           {proposals?.map((proposal) => (
             <Link
               key={proposal._id}
-              href={`/legislator-cabinet/${proposal._id}`}
+              href={ROUTES.legislatorProposal(proposal._id)}
               className={styles.card}
             >
               <div>
@@ -152,7 +153,7 @@ export default function LegislatorCabinetPage() {
                 <span className={styles.amendmentProposal}>
                   {amendment.proposal_id ? (
                     <Link
-                      href={`/legislator-cabinet/${amendment.proposal_id}`}
+                      href={ROUTES.legislatorProposal(amendment.proposal_id)}
                       style={{ color: "inherit", textDecoration: "underline" }}
                     >
                       Прив’язано до пропозиції

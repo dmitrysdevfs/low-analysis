@@ -3,6 +3,8 @@
 import { useParams } from "next/navigation";
 import { useProposal, useSubmitProposal } from "@/hooks/useProposals";
 import { DiffViewer } from "@/components/ui";
+import Link from "next/link";
+import { ROUTES } from "@/constants/routes";
 import styles from "./page.module.scss";
 
 export default function ProposalDetailPage() {
@@ -15,6 +17,9 @@ export default function ProposalDetailPage() {
 
   return (
     <div className={styles.container}>
+      <Link href={ROUTES.legislatorCabinet} className={styles.backLink}>
+        ← Назад до кабінету
+      </Link>
       <header className={styles.header}>
         <h1>{proposal.title}</h1>
         <div className={styles.meta}>
