@@ -12,6 +12,11 @@ vi.mock("@/hooks/useArticle", () => ({
 
 vi.mock("@/hooks/useAmendments", () => ({
   useAmendments: vi.fn(),
+  useDeleteAmendment: vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn(),
+    isPending: false,
+  })),
 }));
 
 vi.mock("@/hooks/useLawsMap", () => ({

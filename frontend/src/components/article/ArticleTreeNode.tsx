@@ -23,7 +23,111 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { AmendmentEditor } from "./AmendmentEditor";
 import type { Amendment } from "@/types/legislator";
 import { DiffViewer } from "@/components/ui";
+import { useDeleteAmendment } from "@/hooks/useAmendments";
 import styles from "@/app/laws/[id]/articles/[num]/page.module.scss";
+
+function AmendmentItem({
+  am,
+  originalText,
+}: {
+  am: Amendment;
+  originalText?: string | null;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { user } = useAuth();
+  const deleteMutation = useDeleteAmendment();
+
+  const isOwner =
+    user &&
+    (am.created_by === user.id ||
+      (typeof am.created_by === "object" &&
+        am.created_by &&
+        am.created_by._id === user.id));
+
+  const handleDelete = async () => {
+    if (window.confirm("Ви впевнені, що хочете видалити цю поправку?")) {
+      try {
+        await deleteMutation.mutateAsync(am._id);
+        notify.success("Поправку видалено успішно");
+      } catch (err) {
+        notify.error("Не вдалося видалити поправку");
+      }
+    }
+  };
+
+  return (
+    <div className={styles.amendmentItem}>
+      <div
+        className={styles.amendmentHeader}
+        onClick={() => setIsExpanded(!isExpanded)}
+        style={{
+          cursor: "pointer",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
+          className={styles.amendmentAuthor}
+          style={{ display: "flex", alignItems: "center", gap: "6px" }}
+        >
+          <span style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+            {isExpanded ? "▼" : "▶"}
+          </span>
+          Поправка від{" "}
+          {typeof am.created_by === "object" && am.created_by
+            ? am.created_by.fullName
+            : "Законотворця"}
+        </span>
+        <div
+          className={styles.amendmentActions}
+          onClick={(e) => e.stopPropagation()}
+          style={{ display: "flex", alignItems: "center", gap: "12px" }}
+        >
+          {isOwner && (
+            <button
+              onClick={handleDelete}
+              className={styles.deleteBtn}
+              disabled={deleteMutation.isPending}
+              title="Видалити поправку"
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#ff6b6b",
+                cursor: "pointer",
+                padding: "2px 6px",
+                fontSize: "0.95rem",
+                transition: "opacity 0.15s",
+              }}
+            >
+              🗑
+            </button>
+          )}
+          {am.reason && (
+            <span className={styles.amendmentReason} title={am.reason}>
+              🛈 Обґрунтування
+            </span>
+          )}
+        </div>
+      </div>
+      {isExpanded && (
+        <div style={{ marginTop: "10px" }}>
+          <div className={styles.amendmentDiff}>
+            <DiffViewer original={originalText} proposed={am.proposed_text} />
+          </div>
+          {am.reason && (
+            <p
+              className={styles.amendmentReasonText}
+              style={{ whiteSpace: "pre-wrap", marginTop: "8px" }}
+            >
+              {am.reason}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface NestedNodeListProps {
   nodes: TreeBranch[];
@@ -279,36 +383,7 @@ function NestedNode({
         {nodeAmendments.length > 0 && (
           <div className={styles.amendmentsList}>
             {nodeAmendments.map((am) => (
-              <div key={am._id} className={styles.amendmentItem}>
-                <div className={styles.amendmentHeader}>
-                  <span className={styles.amendmentAuthor}>
-                    Поправка від{" "}
-                    {typeof am.created_by === "object" && am.created_by
-                      ? am.created_by.fullName
-                      : "Законотворця"}
-                    :
-                  </span>
-                  {am.reason && (
-                    <span className={styles.amendmentReason} title={am.reason}>
-                      🛈 Обґрунтування
-                    </span>
-                  )}
-                </div>
-                <div className={styles.amendmentDiff}>
-                  <DiffViewer
-                    original={node.text}
-                    proposed={am.proposed_text}
-                  />
-                </div>
-                {am.reason && (
-                  <p
-                    className={styles.amendmentReasonText}
-                    style={{ whiteSpace: "pre-wrap" }}
-                  >
-                    {am.reason}
-                  </p>
-                )}
-              </div>
+              <AmendmentItem key={am._id} am={am} originalText={node.text} />
             ))}
           </div>
         )}
