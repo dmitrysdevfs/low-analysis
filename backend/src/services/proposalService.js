@@ -17,9 +17,20 @@ export const createProposal = async ({
  * Get proposals by user ID.
  */
 export const getProposalsByUser = async (userId) => {
-  return await Proposal.find({ created_by: userId }).populate(
+  const proposals = await Proposal.find({ created_by: userId }).populate(
     'law_id',
     'title',
+  );
+
+  return await Promise.all(
+    proposals.map(async (p) => {
+      const count = await Amendment.countDocuments({ proposal_id: p._id });
+      if (p.amendments_count !== count) {
+        p.amendments_count = count;
+        await p.save();
+      }
+      return p;
+    }),
   );
 };
 
@@ -27,9 +38,20 @@ export const getProposalsByUser = async (userId) => {
  * Get proposals by law ID.
  */
 export const getProposalsByLaw = async (lawId) => {
-  return await Proposal.find({ law_id: lawId }).populate(
+  const proposals = await Proposal.find({ law_id: lawId }).populate(
     'created_by',
     'fullName',
+  );
+
+  return await Promise.all(
+    proposals.map(async (p) => {
+      const count = await Amendment.countDocuments({ proposal_id: p._id });
+      if (p.amendments_count !== count) {
+        p.amendments_count = count;
+        await p.save();
+      }
+      return p;
+    }),
   );
 };
 
@@ -44,6 +66,13 @@ export const getProposalById = async (id) => {
   if (!proposal) throw new Error('Proposal not found');
 
   const amendments = await Amendment.find({ proposal_id: id });
+
+  // Sync count on individual fetch too
+  if (proposal.amendments_count !== amendments.length) {
+    proposal.amendments_count = amendments.length;
+    await proposal.save();
+  }
+
   return { ...proposal.toObject(), amendments };
 };
 
