@@ -12,7 +12,11 @@ interface AmendmentEditorProps {
   onClose: () => void;
 }
 
-export function AmendmentEditor({ node, lawId, onClose }: AmendmentEditorProps) {
+export function AmendmentEditor({
+  node,
+  lawId,
+  onClose,
+}: AmendmentEditorProps) {
   const [proposedText, setProposedText] = useState(node.text || "");
   const [reason, setReason] = useState("");
   const [proposalId, setProposalId] = useState("");
@@ -58,15 +62,19 @@ export function AmendmentEditor({ node, lawId, onClose }: AmendmentEditorProps) 
           onChange={(e) => setProposalId(e.target.value)}
         >
           <option value="">Створити нову пізніше</option>
-          {proposals?.filter(p => p.status === 'draft').map((p) => (
-            <option key={p._id} value={p._id}>
-              {p.title}
-            </option>
-          ))}
+          {proposals
+            ?.filter((p) => p.status === "draft")
+            .map((p) => (
+              <option key={p._id} value={p._id}>
+                {p.title}
+              </option>
+            ))}
         </select>
       </div>
       <div className={styles.actions}>
-        <button type="button" onClick={onClose}>Скасувати</button>
+        <button type="button" onClick={onClose}>
+          Скасувати
+        </button>
         <button type="submit" disabled={createMutation.isPending}>
           Зберегти поправку
         </button>

@@ -1,6 +1,6 @@
-export type AmendmentChangeType = 'edit' | 'add' | 'delete';
-export type ProposalStatus = 'draft' | 'review' | 'approved' | 'rejected';
-export type VoteValue = 'positive' | 'neutral' | 'negative';
+export type AmendmentChangeType = "edit" | "add" | "delete";
+export type ProposalStatus = "draft" | "review" | "approved" | "rejected";
+export type VoteValue = "positive" | "neutral" | "negative";
 
 export interface Amendment {
   _id: string;
@@ -47,7 +47,7 @@ export interface Proposal {
 
 export interface Comment {
   _id: string;
-  target_type: 'amendment' | 'proposal';
+  target_type: "amendment" | "proposal";
   target_id: string;
   created_by: { _id: string; fullName: string };
   text: string;

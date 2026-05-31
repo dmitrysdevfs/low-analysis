@@ -3,7 +3,12 @@ import Comment from '../models/Comment.js';
 /**
  * Add a comment to an amendment or proposal.
  */
-export const addComment = async ({ target_type, target_id, created_by, text }) => {
+export const addComment = async ({
+  target_type,
+  target_id,
+  created_by,
+  text,
+}) => {
   return await Comment.create({ target_type, target_id, created_by, text });
 };
 

@@ -50,7 +50,8 @@ function AccessState({
 
 export function RouteAccessGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { isAuthenticated, isAdmin, isLegislator, isHydrated, user } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, isHydrated, user } =
+    useAuth();
   const isAdminRoute = matchesRoute(pathname, ROUTES.admin);
   const isClientProtectedRoute =
     matchesRoute(pathname, ROUTES.account) ||

@@ -40,7 +40,9 @@ async function requestJson<T>(
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP ${res.status}: ${res.statusText}`);
+    throw new Error(
+      errorData.message || `HTTP ${res.status}: ${res.statusText}`,
+    );
   }
 
   if (res.status === 204) return {} as T;
@@ -52,7 +54,9 @@ async function requestJson<T>(
 export const createProposal = (data: Partial<Proposal>) =>
   requestJson<Proposal>("/proposals", "POST", data);
 
-export const getProposals = (params: { lawId?: string; userId?: string } = {}) => {
+export const getProposals = (
+  params: { lawId?: string; userId?: string } = {},
+) => {
   const q = new URLSearchParams();
   if (params.lawId) q.set("lawId", params.lawId);
   if (params.userId) q.set("userId", params.userId);
@@ -75,11 +79,13 @@ export const getProposalDocument = (id: string) =>
 export const createAmendment = (data: Partial<Amendment>) =>
   requestJson<Amendment>("/amendments", "POST", data);
 
-export const getAmendments = (params: {
-  lawId?: string;
-  proposalId?: string;
-  userId?: string;
-} = {}) => {
+export const getAmendments = (
+  params: {
+    lawId?: string;
+    proposalId?: string;
+    userId?: string;
+  } = {},
+) => {
   const q = new URLSearchParams();
   if (params.lawId) q.set("lawId", params.lawId);
   if (params.proposalId) q.set("proposalId", params.proposalId);
@@ -104,7 +110,9 @@ export const addComment = (data: {
 }) => requestJson<Comment>("/comments", "POST", data);
 
 export const getComments = (target_type: string, target_id: string) =>
-  getJson<Comment[]>(`/comments?target_type=${target_type}&target_id=${target_id}`);
+  getJson<Comment[]>(
+    `/comments?target_type=${target_type}&target_id=${target_id}`,
+  );
 
 export const deleteComment = (id: string) =>
   requestJson<void>(`/comments/${id}`, "DELETE");

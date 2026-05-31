@@ -6,13 +6,29 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(protect, hasPermission('amendments:create'), amendmentController.createAmendment)
+  .post(
+    protect,
+    hasPermission('amendments:create'),
+    amendmentController.createAmendment,
+  )
   .get(protect, hasPermission('laws:read'), amendmentController.getAmendments);
 
 router
   .route('/:id')
-  .get(protect, hasPermission('laws:read'), amendmentController.getAmendmentById)
-  .patch(protect, hasPermission('amendments:edit'), amendmentController.updateAmendment)
-  .delete(protect, hasPermission('amendments:delete'), amendmentController.deleteAmendment);
+  .get(
+    protect,
+    hasPermission('laws:read'),
+    amendmentController.getAmendmentById,
+  )
+  .patch(
+    protect,
+    hasPermission('amendments:edit'),
+    amendmentController.updateAmendment,
+  )
+  .delete(
+    protect,
+    hasPermission('amendments:delete'),
+    amendmentController.deleteAmendment,
+  );
 
 export default router;

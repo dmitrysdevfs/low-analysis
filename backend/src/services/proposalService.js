@@ -4,7 +4,12 @@ import Amendment from '../models/Amendment.js';
 /**
  * Create a new proposal.
  */
-export const createProposal = async ({ law_id, created_by, title, description }) => {
+export const createProposal = async ({
+  law_id,
+  created_by,
+  title,
+  description,
+}) => {
   return await Proposal.create({ law_id, created_by, title, description });
 };
 
@@ -12,21 +17,30 @@ export const createProposal = async ({ law_id, created_by, title, description })
  * Get proposals by user ID.
  */
 export const getProposalsByUser = async (userId) => {
-  return await Proposal.find({ created_by: userId }).populate('law_id', 'title');
+  return await Proposal.find({ created_by: userId }).populate(
+    'law_id',
+    'title',
+  );
 };
 
 /**
  * Get proposals by law ID.
  */
 export const getProposalsByLaw = async (lawId) => {
-  return await Proposal.find({ law_id: lawId }).populate('created_by', 'fullName');
+  return await Proposal.find({ law_id: lawId }).populate(
+    'created_by',
+    'fullName',
+  );
 };
 
 /**
  * Get proposal by ID with populated amendments.
  */
 export const getProposalById = async (id) => {
-  const proposal = await Proposal.findById(id).populate('created_by', 'fullName');
+  const proposal = await Proposal.findById(id).populate(
+    'created_by',
+    'fullName',
+  );
   if (!proposal) throw new Error('Proposal not found');
 
   const amendments = await Amendment.find({ proposal_id: id });

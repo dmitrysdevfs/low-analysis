@@ -2,11 +2,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as legislatorApi from "@/lib/api/legislator";
 import type { Amendment } from "@/types/legislator";
 
-export function useAmendments(params: {
-  lawId?: string;
-  proposalId?: string;
-  userId?: string;
-} = {}) {
+export function useAmendments(
+  params: {
+    lawId?: string;
+    proposalId?: string;
+    userId?: string;
+  } = {},
+) {
   return useQuery({
     queryKey: ["amendments", params],
     queryFn: () => legislatorApi.getAmendments(params),

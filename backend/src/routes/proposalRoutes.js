@@ -6,13 +6,21 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(protect, hasPermission('proposals:create'), proposalController.createProposal)
+  .post(
+    protect,
+    hasPermission('proposals:create'),
+    proposalController.createProposal,
+  )
   .get(protect, hasPermission('laws:read'), proposalController.getProposals);
 
 router
   .route('/:id')
   .get(protect, hasPermission('laws:read'), proposalController.getProposalById)
-  .patch(protect, hasPermission('proposals:create'), proposalController.updateProposal);
+  .patch(
+    protect,
+    hasPermission('proposals:create'),
+    proposalController.updateProposal,
+  );
 
 router.post(
   '/:id/submit',

@@ -130,8 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: !!user,
       isAdmin: user?.accountType === "admin",
       isLegislator:
-        user?.accountType === "admin" ||
-        !!user?.roles?.includes("legislator"),
+        user?.accountType === "admin" || !!user?.roles?.includes("legislator"),
       user,
       login,
       register,

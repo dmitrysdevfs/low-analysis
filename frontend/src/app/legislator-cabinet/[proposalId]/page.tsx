@@ -32,13 +32,14 @@ export default function ProposalDetailPage() {
 
       <section className={styles.content}>
         <p>{proposal.description}</p>
-        
+
         <h2>Поправки ({proposal.amendments?.length || 0})</h2>
         <div className={styles.amendments}>
           {proposal.amendments?.map((amendment) => (
             <div key={amendment._id} className={styles.amendmentCard}>
               <div className={styles.context}>
-                {amendment.context.article_num && `Стаття ${amendment.context.article_num}. `}
+                {amendment.context.article_num &&
+                  `Стаття ${amendment.context.article_num}. `}
                 {amendment.context.element_code}
               </div>
               <div className={styles.diff}>
