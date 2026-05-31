@@ -21,6 +21,7 @@ import type { Subject } from "@/types";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AmendmentEditor } from "./AmendmentEditor";
+import type { Amendment } from "@/types/legislator";
 import styles from "@/app/laws/[id]/articles/[num]/page.module.scss";
 
 interface NestedNodeListProps {
@@ -32,6 +33,7 @@ interface NestedNodeListProps {
   lawTitle?: string;
   articleNum?: string;
   lawId?: string;
+  amendmentsMap?: Map<string, Amendment[]>;
 }
 
 export function NestedNodeList({
@@ -43,6 +45,7 @@ export function NestedNodeList({
   lawTitle,
   articleNum,
   lawId,
+  amendmentsMap,
 }: NestedNodeListProps) {
   return (
     <div className={styles.childrenList}>
@@ -57,6 +60,7 @@ export function NestedNodeList({
           lawTitle={lawTitle}
           articleNum={articleNum}
           lawId={lawId}
+          amendmentsMap={amendmentsMap}
         />
       ))}
     </div>
@@ -72,6 +76,7 @@ interface NestedNodeProps {
   lawTitle?: string;
   articleNum?: string;
   lawId?: string;
+  amendmentsMap?: Map<string, Amendment[]>;
 }
 
 function hasTermsMatch(
@@ -92,9 +97,11 @@ function NestedNode({
   lawTitle,
   articleNum,
   lawId,
+  amendmentsMap,
 }: NestedNodeProps) {
   const { isLegislator } = useAuth();
   const [showEditor, setShowEditor] = useState(false);
+  const nodeAmendments = (node._id && amendmentsMap?.get(node._id)) || [];
 
   const hasActiveSubject =
     activeSubjectId != null &&
@@ -268,6 +275,40 @@ function NestedNode({
           </div>
         )}
 
+        {nodeAmendments.length > 0 && (
+          <div className={styles.amendmentsList}>
+            {nodeAmendments.map((am) => (
+              <div key={am._id} className={styles.amendmentItem}>
+                <div className={styles.amendmentHeader}>
+                  <span className={styles.amendmentAuthor}>
+                    Поправка від{" "}
+                    {typeof am.created_by === "object" && am.created_by
+                      ? am.created_by.fullName
+                      : "Законотворця"}
+                    :
+                  </span>
+                  {am.reason && (
+                    <span className={styles.amendmentReason} title={am.reason}>
+                      🛈 Обґрунтування
+                    </span>
+                  )}
+                </div>
+                <div className={styles.amendmentDiff}>
+                  <div className={styles.amendmentOrig}>
+                    <del>{node.text}</del>
+                  </div>
+                  <div className={styles.amendmentProp}>
+                    <ins>{am.proposed_text}</ins>
+                  </div>
+                </div>
+                {am.reason && (
+                  <p className={styles.amendmentReasonText}>{am.reason}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
         {node.children.length > 0 ? (
           <NestedNodeList
             nodes={node.children}
@@ -278,6 +319,7 @@ function NestedNode({
             lawTitle={lawTitle}
             articleNum={articleNum}
             lawId={lawId}
+            amendmentsMap={amendmentsMap}
           />
         ) : null}
       </div>

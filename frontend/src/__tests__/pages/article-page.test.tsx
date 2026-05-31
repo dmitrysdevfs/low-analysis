@@ -2,11 +2,16 @@ import { render, screen } from "@testing-library/react";
 import ArticlePage from "@/app/laws/[id]/articles/[num]/page";
 import { useArticle } from "@/hooks/useArticle";
 import { useLawsMap } from "@/hooks/useLawsMap";
+import { useAmendments } from "@/hooks/useAmendments";
 import { ARTICLE_RESPONSE_FIXTURE, LAW_FIXTURE } from "@/test/fixtures";
 import { setMockParams } from "@/test/mocks/next-navigation";
 
 vi.mock("@/hooks/useArticle", () => ({
   useArticle: vi.fn(),
+}));
+
+vi.mock("@/hooks/useAmendments", () => ({
+  useAmendments: vi.fn(),
 }));
 
 vi.mock("@/hooks/useLawsMap", () => ({
@@ -30,6 +35,10 @@ describe("Article page", () => {
       loading: false,
       error: null,
     });
+    vi.mocked(useAmendments).mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useAmendments>);
   });
 
   it("renders article content and nested children", () => {

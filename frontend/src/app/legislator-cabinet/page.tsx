@@ -1,17 +1,112 @@
 "use client";
 
-import { useProposals } from "@/hooks/useProposals";
+import { useState } from "react";
+import { useProposals, useCreateProposal } from "@/hooks/useProposals";
+import { useAmendments } from "@/hooks/useAmendments";
+import { useLaws } from "@/hooks/useLaws";
+import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
 import styles from "./page.module.scss";
 
 export default function LegislatorCabinetPage() {
-  const { data: proposals, isLoading } = useProposals();
+  const { user } = useAuth();
+  const { data: proposals, isLoading: proposalsLoading } = useProposals();
+  const { data: amendments, isLoading: amendmentsLoading } = useAmendments({
+    userId: user?.id,
+  });
+  const { laws } = useLaws();
 
-  if (isLoading) return <div>Завантаження...</div>;
+  const createProposalMutation = useCreateProposal();
+
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [lawId, setLawId] = useState("");
+
+  const handleCreateProposal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !lawId) return;
+
+    await createProposalMutation.mutateAsync({
+      title,
+      description,
+      law_id: lawId,
+    });
+
+    setTitle("");
+    setDescription("");
+    setLawId("");
+    setShowCreateForm(false);
+  };
+
+  if (proposalsLoading || amendmentsLoading) {
+    return <div className={styles.container}>Завантаження...</div>;
+  }
 
   return (
     <div className={styles.container}>
-      <h1>Кабінет законотворця</h1>
+      <header className={styles.header}>
+        <h1>Кабінет законотворця</h1>
+        {!showCreateForm && (
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className={styles.createBtn}
+          >
+            + Нова пропозиція
+          </button>
+        )}
+      </header>
+
+      {showCreateForm && (
+        <section className={styles.formSection}>
+          <h2>Створити нову пропозицію (законопроєкт)</h2>
+          <form onSubmit={handleCreateProposal} className={styles.formGrid}>
+            <div className={styles.formGroup}>
+              <label>Назва пропозиції:</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                placeholder="Наприклад: Зміни до статті 10 щодо..."
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Опис:</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                placeholder="Опишіть суть вашого законопроєкту..."
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Виберіть закон:</label>
+              <select
+                value={lawId}
+                onChange={(e) => setLawId(e.target.value)}
+                required
+              >
+                <option value="">-- Оберіть закон --</option>
+                {laws?.map((l) => (
+                  <option key={l._id} value={l._id}>
+                    {l.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.formActions}>
+              <button type="button" onClick={() => setShowCreateForm(false)}>
+                Скасувати
+              </button>
+              <button type="submit" disabled={createProposalMutation.isPending}>
+                Зберегти
+              </button>
+            </div>
+          </form>
+        </section>
+      )}
+
       <section className={styles.section}>
         <h2>Мої пропозиції</h2>
         <div className={styles.grid}>
@@ -21,18 +116,67 @@ export default function LegislatorCabinetPage() {
               href={`/legislator-cabinet/${proposal._id}`}
               className={styles.card}
             >
-              <h3>{proposal.title}</h3>
-              <p>{proposal.description}</p>
+              <div>
+                <h3>{proposal.title}</h3>
+                <p>{proposal.description || "Без опису"}</p>
+              </div>
               <div className={styles.footer}>
                 <span className={styles.status}>{proposal.status}</span>
                 <span className={styles.count}>
-                  {proposal.amendments_count} поправок
+                  {proposal.amendments_count || 0} поправок
                 </span>
               </div>
             </Link>
           ))}
           {proposals?.length === 0 && (
-            <p>У вас ще немає створених пропозицій.</p>
+            <p className={styles.noItems}>
+              У вас ще немає створених пропозицій.
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2>Мої поправки</h2>
+        <div className={styles.amendmentsGrid}>
+          {amendments?.map((amendment) => (
+            <div key={amendment._id} className={styles.amendmentCard}>
+              <div className={styles.amendmentMeta}>
+                <span className={styles.amendmentContext}>
+                  {amendment.context?.article_num
+                    ? `Стаття ${amendment.context.article_num} · `
+                    : ""}
+                  {amendment.context?.element_code}
+                </span>
+                <span className={styles.amendmentProposal}>
+                  {amendment.proposal_id ? (
+                    <Link
+                      href={`/legislator-cabinet/${amendment.proposal_id}`}
+                      style={{ color: "inherit", textDecoration: "underline" }}
+                    >
+                      Прив&apos;язано до пропозиції
+                    </Link>
+                  ) : (
+                    "Не прив&apos;язано до пропозиції"
+                  )}
+                </span>
+              </div>
+              <p className={styles.amendmentText}>
+                <strong>Оригінал:</strong> <del>{amendment.original_text}</del>
+              </p>
+              <p className={styles.amendmentText}>
+                <strong>Пропозиція:</strong>{" "}
+                <ins>{amendment.proposed_text}</ins>
+              </p>
+              {amendment.reason && (
+                <p className={styles.amendmentText}>
+                  <strong>Обґрунтування:</strong> <em>{amendment.reason}</em>
+                </p>
+              )}
+            </div>
+          ))}
+          {amendments?.length === 0 && (
+            <p className={styles.noItems}>Ви ще не створили жодної поправки.</p>
           )}
         </div>
       </section>
