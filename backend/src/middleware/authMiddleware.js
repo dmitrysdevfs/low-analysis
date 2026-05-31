@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { roleHasPermission } from '../config/permissions.js';
 
 /**
  * Protect route - verifies authentication using JWT.
@@ -49,6 +50,27 @@ export const authorize = (...roles) => {
     if (!req.user || !allowed.includes(req.user.role)) {
       return res.status(403).json({
         message: `User role '${req.user?.role}' is not authorized to access this route`,
+      });
+    }
+    next();
+  };
+};
+
+/**
+ * Check if the user has specific permissions based on their role.
+ * @param {string[]} permissions - Required permissions
+ */
+export const hasPermission = (...permissions) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+    const allowed = permissions
+      .flat()
+      .some((p) => roleHasPermission(req.user.role, p));
+    if (!allowed) {
+      return res.status(403).json({
+        message: `Permission denied. Required: ${permissions.join(', ')}`,
       });
     }
     next();
