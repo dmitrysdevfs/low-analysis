@@ -74,14 +74,27 @@ export const getAmendmentsByProposal = async (proposalId) => {
  * Get amendments by law ID.
  */
 export const getAmendmentsByLaw = async (lawId) => {
-  return await Amendment.find({ law_id: lawId }).populate('created_by', 'fullName');
+  return await Amendment.find({ law_id: lawId }).populate(
+    'created_by',
+    'fullName',
+  );
 };
 
 /**
  * Get amendments by user ID.
  */
 export const getAmendmentsByUser = async (userId) => {
-  return await Amendment.find({ created_by: userId }).populate('law_id', 'title');
+  return await Amendment.find({ created_by: userId }).populate(
+    'law_id',
+    'title',
+  );
+};
+
+/**
+ * Get amendment by ID.
+ */
+export const getAmendmentById = async (id) => {
+  return await Amendment.findById(id).populate('created_by', 'fullName');
 };
 
 /**
