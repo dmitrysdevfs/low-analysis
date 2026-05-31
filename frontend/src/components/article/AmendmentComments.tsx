@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useComments, useAddComment, useDeleteComment } from "@/hooks/useComments";
+import {
+  useComments,
+  useAddComment,
+  useDeleteComment,
+} from "@/hooks/useComments";
 import { notify } from "@/lib/toast";
 import type { Comment } from "@/types/legislator";
 import styles from "./AmendmentComments.module.scss";
@@ -68,7 +72,9 @@ export function AmendmentComments({ amendmentId }: AmendmentCommentsProps) {
 
   return (
     <div className={styles.commentsSection}>
-      <h4 className={styles.commentsTitle}>Обговорення ({comments?.length ?? 0})</h4>
+      <h4 className={styles.commentsTitle}>
+        Обговорення ({comments?.length ?? 0})
+      </h4>
 
       <div className={styles.commentsList}>
         {comments?.map((comment: Comment) => {
@@ -79,12 +85,15 @@ export function AmendmentComments({ amendmentId }: AmendmentCommentsProps) {
 
           const authorName = comment.created_by?.fullName ?? "Користувач";
 
-          const formattedDate = new Date(comment.createdAt).toLocaleString("uk-UA", {
-            day: "numeric",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+          const formattedDate = new Date(comment.createdAt).toLocaleString(
+            "uk-UA",
+            {
+              day: "numeric",
+              month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
+            },
+          );
 
           return (
             <div key={comment._id} className={styles.commentItem}>
@@ -108,7 +117,9 @@ export function AmendmentComments({ amendmentId }: AmendmentCommentsProps) {
         })}
 
         {(!comments || comments.length === 0) && (
-          <p className={styles.noComments}>Коментарів ще немає. Будьте першим!</p>
+          <p className={styles.noComments}>
+            Коментарів ще немає. Будьте першим!
+          </p>
         )}
       </div>
 
@@ -133,7 +144,8 @@ export function AmendmentComments({ amendmentId }: AmendmentCommentsProps) {
           </form>
         ) : (
           <p className={styles.errorText}>
-            Тільки авторизовані користувачі з платним доступом чи законотворці можуть коментувати.
+            Тільки авторизовані користувачі з платним доступом чи законотворці
+            можуть коментувати.
           </p>
         )
       ) : (

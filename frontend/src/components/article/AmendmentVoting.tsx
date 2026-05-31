@@ -13,8 +13,7 @@ export function AmendmentVoting({ amendmentId }: AmendmentVotingProps) {
   const { user } = useAuth();
 
   const canVote =
-    user?.accountType === "admin" ||
-    !!user?.roles?.includes("legislator");
+    user?.accountType === "admin" || !!user?.roles?.includes("legislator");
 
   const { data: summary } = useVoteSummary(amendmentId);
   const { data: myVote } = useMyVote(canVote ? amendmentId : "");
@@ -80,7 +79,9 @@ export function AmendmentVoting({ amendmentId }: AmendmentVotingProps) {
         </button>
       </div>
       {!canVote && user && (
-        <span className={styles.votingTip}>Голосувати можуть лише законотворці</span>
+        <span className={styles.votingTip}>
+          Голосувати можуть лише законотворці
+        </span>
       )}
     </div>
   );
