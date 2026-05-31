@@ -295,10 +295,16 @@ function NestedNode({
                   )}
                 </div>
                 <div className={styles.amendmentDiff}>
-                  <DiffViewer original={node.text} proposed={am.proposed_text} />
+                  <DiffViewer
+                    original={node.text}
+                    proposed={am.proposed_text}
+                  />
                 </div>
                 {am.reason && (
-                  <p className={styles.amendmentReasonText} style={{ whiteSpace: "pre-wrap" }}>
+                  <p
+                    className={styles.amendmentReasonText}
+                    style={{ whiteSpace: "pre-wrap" }}
+                  >
                     {am.reason}
                   </p>
                 )}

@@ -10,7 +10,11 @@ interface DiffViewerProps {
   className?: string;
 }
 
-export default function DiffViewer({ original, proposed, className }: DiffViewerProps) {
+export default function DiffViewer({
+  original,
+  proposed,
+  className,
+}: DiffViewerProps) {
   const diffParts = useMemo(() => {
     return diffWordsWithSpace(original || "", proposed || "");
   }, [original, proposed]);

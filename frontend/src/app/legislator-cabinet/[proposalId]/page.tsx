@@ -45,10 +45,16 @@ export default function ProposalDetailPage() {
               </div>
               <div className={styles.diff} style={{ display: "block" }}>
                 <strong>Зміни:</strong>
-                <DiffViewer original={amendment.original_text} proposed={amendment.proposed_text} />
+                <DiffViewer
+                  original={amendment.original_text}
+                  proposed={amendment.proposed_text}
+                />
               </div>
               {amendment.reason && (
-                <div className={styles.reason} style={{ whiteSpace: "pre-wrap", marginTop: "12px" }}>
+                <div
+                  className={styles.reason}
+                  style={{ whiteSpace: "pre-wrap", marginTop: "12px" }}
+                >
                   <strong>Обґрунтування:</strong>
                   <p>{amendment.reason}</p>
                 </div>

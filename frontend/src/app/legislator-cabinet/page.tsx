@@ -164,10 +164,16 @@ export default function LegislatorCabinetPage() {
               </div>
               <div className={styles.amendmentDiff}>
                 <strong>Зміни:</strong>
-                <DiffViewer original={amendment.original_text} proposed={amendment.proposed_text} />
+                <DiffViewer
+                  original={amendment.original_text}
+                  proposed={amendment.proposed_text}
+                />
               </div>
               {amendment.reason && (
-                <div className={styles.amendmentReason} style={{ whiteSpace: "pre-wrap", marginTop: "8px" }}>
+                <div
+                  className={styles.amendmentReason}
+                  style={{ whiteSpace: "pre-wrap", marginTop: "8px" }}
+                >
                   <strong>Обґрунтування:</strong> <em>{amendment.reason}</em>
                 </div>
               )}
