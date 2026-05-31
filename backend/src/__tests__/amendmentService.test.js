@@ -32,9 +32,12 @@ describe('amendmentService', () => {
         parentId: null,
       };
 
-      Element.findById
-        .mockResolvedValueOnce(mockElement)
-        .mockResolvedValueOnce(mockSection);
+      Element.aggregate.mockResolvedValue([
+        {
+          ...mockElement,
+          ancestors: [mockSection],
+        },
+      ]);
 
       Amendment.create.mockResolvedValue({ _id: 'amendment1' });
 
@@ -50,7 +53,7 @@ describe('amendmentService', () => {
 
       const result = await amendmentService.createAmendment(data);
 
-      expect(Element.findById).toHaveBeenCalledWith('element1');
+      expect(Element.aggregate).toHaveBeenCalled();
       expect(Amendment.create).toHaveBeenCalledWith(
         expect.objectContaining({
           context: expect.objectContaining({

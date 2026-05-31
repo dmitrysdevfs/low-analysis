@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Amendment from '../models/Amendment.js';
 import Element from '../models/Element.js';
 import Proposal from '../models/Proposal.js';
@@ -15,30 +16,43 @@ export const createAmendment = async ({
   proposed_text,
   reason,
 }) => {
-  const element = await Element.findById(element_id);
-  if (!element) {
+  const matchId = mongoose.Types.ObjectId.isValid(element_id)
+    ? new mongoose.Types.ObjectId(element_id)
+    : element_id;
+
+  const results = await Element.aggregate([
+    { $match: { _id: matchId } },
+    {
+      $graphLookup: {
+        from: 'elements',
+        startWith: '$parentId',
+        connectFromField: 'parentId',
+        connectToField: '_id',
+        as: 'ancestors',
+      },
+    },
+  ]);
+
+  if (results.length === 0) {
     throw new Error('Element not found');
   }
+
+  const element = results[0];
+  const ancestors = element.ancestors || [];
 
   // Build context breadcrumb
   const context = {
     element_code: element.code,
   };
 
-  // Find article and section parents
-  let current = element;
-  while (current) {
-    if (current.type === 'article') {
-      context.article_num = current.number;
-      context.article_title = current.title;
-    } else if (current.type === 'section') {
-      context.section_title = current.title;
-    }
-
-    if (current.parentId) {
-      current = await Element.findById(current.parentId);
-    } else {
-      current = null;
+  // Find article and section parents from ancestors array and the element itself
+  const allElements = [element, ...ancestors];
+  for (const item of allElements) {
+    if (item.type === 'article') {
+      context.article_num = item.number;
+      context.article_title = item.title;
+    } else if (item.type === 'section') {
+      context.section_title = item.title;
     }
   }
 
