@@ -154,10 +154,10 @@ export default function LegislatorCabinetPage() {
                       href={`/legislator-cabinet/${amendment.proposal_id}`}
                       style={{ color: "inherit", textDecoration: "underline" }}
                     >
-                      Прив&apos;язано до пропозиції
+                      Прив’язано до пропозиції
                     </Link>
                   ) : (
-                    "Не прив&apos;язано до пропозиції"
+                    "Не прив’язано до пропозиції"
                   )}
                 </span>
               </div>
