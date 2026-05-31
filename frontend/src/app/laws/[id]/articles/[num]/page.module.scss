@@ -809,7 +809,9 @@
 
 .deleteBtn {
   opacity: 0.75;
-  transition: opacity 0.15s, transform 0.1s;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
   &:hover {
     opacity: 1;
     transform: scale(1.1);
