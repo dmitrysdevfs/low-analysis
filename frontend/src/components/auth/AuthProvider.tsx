@@ -32,6 +32,7 @@ type AuthContextValue = {
   isHydrated: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isLegislator: boolean;
   user: AuthSession | null;
   login: (payload: LoginPayload) => Promise<AuthActionResult>;
   register: (payload: RegisterPayload) => Promise<AuthActionResult>;
@@ -47,6 +48,7 @@ const AUTH_CONTEXT_DEFAULT: AuthContextValue = {
   isHydrated: false,
   isAuthenticated: false,
   isAdmin: false,
+  isLegislator: false,
   user: null,
   login: async () => ({ ok: false, error: "Auth provider is unavailable." }),
   register: async () => ({ ok: false, error: "Auth provider is unavailable." }),
@@ -127,6 +129,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isHydrated,
       isAuthenticated: !!user,
       isAdmin: user?.accountType === "admin",
+      isLegislator:
+        user?.accountType === "admin" || user?.roles?.includes("legislator"),
       user,
       login,
       register,

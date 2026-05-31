@@ -50,9 +50,12 @@ function AccessState({
 
 export function RouteAccessGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { isAuthenticated, isAdmin, isHydrated, user } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, isHydrated, user } = useAuth();
   const isAdminRoute = matchesRoute(pathname, ROUTES.admin);
-  const isClientProtectedRoute = matchesRoute(pathname, ROUTES.account);
+  const isClientProtectedRoute =
+    matchesRoute(pathname, ROUTES.account) ||
+    matchesRoute(pathname, "/legislator-cabinet");
+  const isLegislatorRoute = matchesRoute(pathname, "/legislator-cabinet");
 
   if (!isHydrated && (isAdminRoute || isClientProtectedRoute)) {
     return (
@@ -106,6 +109,20 @@ export function RouteAccessGate({ children }: { children: ReactNode }) {
         primaryLabel="Увійти"
         secondaryHref={`${ROUTES.authRegister}?role=client`}
         secondaryLabel="Створити акаунт"
+      />
+    );
+  }
+
+  if (isLegislatorRoute && isAuthenticated && !isLegislator) {
+    return (
+      <AccessState
+        eyebrow="Обмежений доступ"
+        title="Кабінет законотворця доступний тільки для фахівців"
+        description="Для внесення поправок та створення пропозицій необхідний акаунт з роллю законотворця."
+        primaryHref={ROUTES.home}
+        primaryLabel="Повернутися на сайт"
+        secondaryHref={ROUTES.accountBilling}
+        secondaryLabel="Дізнатись про доступ"
       />
     );
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   getNodeBadge,
@@ -18,6 +19,8 @@ import { highlightMatch } from "@/lib/utils/highlightMatch";
 import { notify } from "@/lib/toast";
 import type { Subject } from "@/types";
 import { ROUTES } from "@/constants/routes";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { AmendmentEditor } from "./AmendmentEditor";
 import styles from "@/app/laws/[id]/articles/[num]/page.module.scss";
 
 interface NestedNodeListProps {
@@ -90,6 +93,9 @@ function NestedNode({
   articleNum,
   lawId,
 }: NestedNodeProps) {
+  const { isLegislator } = useAuth();
+  const [showEditor, setShowEditor] = useState(false);
+
   const hasActiveSubject =
     activeSubjectId != null &&
     (node.subjects?.some((s) => s.subject_id === activeSubjectId) ?? false);
@@ -211,6 +217,16 @@ function NestedNode({
         >
           ⧉
         </button>
+        {isLegislator && (
+          <button
+            type="button"
+            className={styles.amendBtn}
+            onClick={() => setShowEditor(!showEditor)}
+            title="Запропонувати поправку"
+          >
+            тЮД
+          </button>
+        )}
       </div>
 
       <div className={styles.childContent}>
@@ -221,6 +237,14 @@ function NestedNode({
         {displayText ? (
           <div className={styles.childTextOnly}>{displayText}</div>
         ) : null}
+
+        {showEditor && lawId && (
+          <AmendmentEditor
+            node={node}
+            lawId={lawId}
+            onClose={() => setShowEditor(false)}
+          />
+        )}
 
         {/* FE-T62: Subjects for this element */}
         {nodeSubjects.length > 0 && (
