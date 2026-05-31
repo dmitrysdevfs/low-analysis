@@ -18,6 +18,7 @@ vi.mock('../middleware/authMiddleware.js', () => ({
     next();
   },
   authorize: () => (_req, _res, next) => next(),
+  hasPermission: () => (_req, _res, next) => next(),
 }));
 
 import app from '../app.js';
