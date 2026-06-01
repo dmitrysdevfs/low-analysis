@@ -24,7 +24,11 @@ export const getAmendments = async (req, res, next) => {
     } else if (userId) {
       amendments = await amendmentService.getAmendmentsByUser(userId);
     } else {
-      amendments = await amendmentService.getAmendmentsByUser(req.user._id);
+      const error = new Error(
+        'At least one filter (proposalId, lawId, or userId) is required',
+      );
+      error.statusCode = 400;
+      return next(error);
     }
 
     res.json(amendments);

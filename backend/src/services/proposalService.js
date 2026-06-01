@@ -14,6 +14,29 @@ export const createProposal = async ({
   return await Proposal.create({ law_id, created_by, title, description });
 };
 
+// Helper to sync amendments count for a list of proposals in a single batch aggregation (resolves N+1 query issue)
+const syncProposalsAmendmentsCount = async (proposals) => {
+  if (!proposals || proposals.length === 0) return proposals;
+
+  const proposalIds = proposals.map((p) => p._id);
+  const counts = await Amendment.aggregate([
+    { $match: { proposal_id: { $in: proposalIds } } },
+    { $group: { _id: '$proposal_id', count: { $sum: 1 } } },
+  ]);
+
+  const countMap = new Map(counts.map((c) => [c._id.toString(), c.count]));
+
+  for (const p of proposals) {
+    const count = countMap.get(p._id.toString()) || 0;
+    if (p.amendments_count !== count) {
+      p.amendments_count = count;
+      await p.save();
+    }
+  }
+
+  return proposals;
+};
+
 /**
  * Get proposals by user ID.
  */
@@ -23,16 +46,7 @@ export const getProposalsByUser = async (userId) => {
     'title',
   );
 
-  return await Promise.all(
-    proposals.map(async (p) => {
-      const count = await Amendment.countDocuments({ proposal_id: p._id });
-      if (p.amendments_count !== count) {
-        p.amendments_count = count;
-        await p.save();
-      }
-      return p;
-    }),
-  );
+  return await syncProposalsAmendmentsCount(proposals);
 };
 
 /**
@@ -44,16 +58,7 @@ export const getProposalsByLaw = async (lawId) => {
     'fullName',
   );
 
-  return await Promise.all(
-    proposals.map(async (p) => {
-      const count = await Amendment.countDocuments({ proposal_id: p._id });
-      if (p.amendments_count !== count) {
-        p.amendments_count = count;
-        await p.save();
-      }
-      return p;
-    }),
-  );
+  return await syncProposalsAmendmentsCount(proposals);
 };
 
 /**
