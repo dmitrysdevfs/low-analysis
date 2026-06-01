@@ -1,4 +1,4 @@
-﻿export const schemas = {
+export const schemas = {
   Law: {
     type: 'object',
     description: 'Закон або нормативний акт України',
@@ -898,6 +898,145 @@
         type: 'string',
         example: 'Please provide email and password',
       },
+    },
+  },
+
+  Proposal: {
+    type: 'object',
+    description: 'Законопроєкт (пакет пропонованих змін до закону)',
+    required: ['_id', 'law_id', 'created_by', 'title', 'status', 'createdAt'],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439055' },
+      law_id: { type: 'string', example: '69f84aa7395f1789bc7b2b89' },
+      created_by: { type: 'string', example: '507f1f77bcf86cd799439044' },
+      title: { type: 'string', example: 'Пропозиція щодо змін до статті 2' },
+      description: {
+        type: 'string',
+        example: 'Опис пропонованих правок...',
+        nullable: true,
+      },
+      status: {
+        type: 'string',
+        enum: ['draft', 'review', 'approved', 'rejected'],
+        example: 'draft',
+      },
+      amendments_count: { type: 'integer', example: 3 },
+      votes_summary: {
+        type: 'object',
+        properties: {
+          positive: { type: 'integer', example: 5 },
+          neutral: { type: 'integer', example: 2 },
+          negative: { type: 'integer', example: 1 },
+        },
+      },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+
+  Amendment: {
+    type: 'object',
+    description: 'Поправка (зміна до конкретного абзацу чи статті закону)',
+    required: [
+      '_id',
+      'law_id',
+      'element_id',
+      'created_by',
+      'change_type',
+      'createdAt',
+    ],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439066' },
+      law_id: { type: 'string', example: '69f84aa7395f1789bc7b2b89' },
+      element_id: { type: 'string', example: '69f84aa7395f1789bc7b2b8a' },
+      proposal_id: {
+        type: 'string',
+        example: '507f1f77bcf86cd799439055',
+        nullable: true,
+      },
+      created_by: { type: 'string', example: '507f1f77bcf86cd799439044' },
+      change_type: {
+        type: 'string',
+        enum: ['edit', 'add', 'delete'],
+        example: 'edit',
+      },
+      original_text: {
+        type: 'string',
+        example: 'Текст закону до зміни',
+        nullable: true,
+      },
+      proposed_text: {
+        type: 'string',
+        example: 'Пропонований текст закону',
+        nullable: true,
+      },
+      reason: {
+        type: 'string',
+        example: 'Обґрунтування поправки...',
+        nullable: true,
+      },
+      context: {
+        type: 'object',
+        properties: {
+          section_title: { type: 'string', example: 'Розділ I' },
+          article_num: { type: 'string', example: '2' },
+          article_title: { type: 'string', example: 'Стаття 2.' },
+          element_code: { type: 'string', example: 'rz1.st2' },
+        },
+      },
+      votes_summary: {
+        type: 'object',
+        properties: {
+          positive: { type: 'integer', example: 5 },
+          neutral: { type: 'integer', example: 2 },
+          negative: { type: 'integer', example: 1 },
+        },
+      },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+
+  Comment: {
+    type: 'object',
+    description: 'Коментар до поправки або законопроєкту',
+    required: [
+      '_id',
+      'target_type',
+      'target_id',
+      'created_by',
+      'text',
+      'createdAt',
+    ],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439077' },
+      target_type: {
+        type: 'string',
+        enum: ['amendment', 'proposal'],
+        example: 'amendment',
+      },
+      target_id: { type: 'string', example: '507f1f77bcf86cd799439066' },
+      created_by: { type: 'string', example: '507f1f77bcf86cd799439044' },
+      text: { type: 'string', example: 'Цей коментар містить зауваження...' },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+
+  Vote: {
+    type: 'object',
+    description: 'Голос законотворця за поправку',
+    required: ['_id', 'amendment_id', 'user_id', 'value', 'createdAt'],
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439088' },
+      amendment_id: { type: 'string', example: '507f1f77bcf86cd799439066' },
+      user_id: { type: 'string', example: '507f1f77bcf86cd799439044' },
+      value: {
+        type: 'string',
+        enum: ['positive', 'neutral', 'negative'],
+        example: 'positive',
+      },
+      createdAt: { type: 'string', format: 'date-time' },
     },
   },
 };

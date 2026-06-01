@@ -68,6 +68,19 @@ API for parsing, structuring and analysing Ukrainian legislation.
       name: 'Assistant',
       description: 'Lex AI Помічник — чат, сесії, квота, фідбек',
     },
+    {
+      name: 'Proposals',
+      description: 'Законопроєкти (пакети пропонованих змін)',
+    },
+    {
+      name: 'Amendments',
+      description: 'Поправки на рівні окремих елементів закону',
+    },
+    {
+      name: 'Comments',
+      description: 'Коментарі до законопроєктів та поправок',
+    },
+    { name: 'Votes', description: 'Голосування за поправки' },
   ],
   components: {
     schemas,

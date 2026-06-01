@@ -1,4 +1,4 @@
-﻿/* ── Layout ── */
+/* ── Layout ── */
 .breadcrumbBar {
   border-bottom: 1px solid #1c3260;
   padding: 10px 24px;
@@ -626,6 +626,26 @@
   }
 }
 
+.amendBtn {
+  background: none;
+  border: 1px solid #1c3260;
+  border-radius: 3px;
+  color: #4a80d4;
+  font-size: 0.62rem;
+  font-weight: bold;
+  padding: 3px 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 4px;
+  transition: all 0.18s;
+
+  &:hover {
+    color: #c8a843;
+    border-color: #c8a843;
+    background: rgba(200, 168, 67, 0.05);
+  }
+}
+
 @media (hover: none) {
   .copyBtn {
     opacity: 0.4;
@@ -722,5 +742,78 @@
     padding-bottom: 12px;
     margin-bottom: 16px;
     border-bottom: 1px solid #1c3260;
+  }
+}
+
+.amendmentsList {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.amendmentItem {
+  background: rgba(28, 50, 96, 0.2);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+  border-left: 3px solid #4a80d4;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.amendmentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.amendmentAuthor {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #7a98c0;
+}
+
+.amendmentReason {
+  font-size: 0.65rem;
+  color: #4a80d4;
+  cursor: help;
+}
+
+.amendmentDiff {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.amendmentOrig {
+  color: #fca5a5;
+  text-decoration: line-through;
+  opacity: 0.85;
+}
+
+.amendmentProp {
+  color: #86efac;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.amendmentReasonText {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: rgba(200, 168, 67, 0.8);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.deleteBtn {
+  opacity: 0.75;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
   }
 }

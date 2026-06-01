@@ -59,6 +59,7 @@ export type {
   RegisterPayload,
   StoredAuthAccount,
 } from "./auth.types";
+export * from "./legislator";
 export type {
   BillingActionResult,
   BillingPaymentMethod,

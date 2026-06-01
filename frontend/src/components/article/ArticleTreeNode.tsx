@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   getNodeBadge,
@@ -18,7 +19,119 @@ import { highlightMatch } from "@/lib/utils/highlightMatch";
 import { notify } from "@/lib/toast";
 import type { Subject } from "@/types";
 import { ROUTES } from "@/constants/routes";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { AmendmentEditor } from "./AmendmentEditor";
+import type { Amendment } from "@/types/legislator";
+import { DiffViewer } from "@/components/ui";
+import { useDeleteAmendment } from "@/hooks/useAmendments";
+import { AmendmentVoting } from "./AmendmentVoting";
+import { AmendmentComments } from "./AmendmentComments";
 import styles from "@/app/laws/[id]/articles/[num]/page.module.scss";
+
+function AmendmentItem({
+  am,
+  originalText,
+}: {
+  am: Amendment;
+  originalText?: string | null;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { user } = useAuth();
+  const deleteMutation = useDeleteAmendment();
+
+  const isOwner =
+    user &&
+    (am.created_by === user.id ||
+      (typeof am.created_by === "object" &&
+        am.created_by &&
+        am.created_by._id === user.id));
+
+  const handleDelete = async () => {
+    if (window.confirm("Ви впевнені, що хочете видалити цю поправку?")) {
+      try {
+        await deleteMutation.mutateAsync(am._id);
+        notify.success("Поправку видалено успішно");
+      } catch {
+        notify.error("Не вдалося видалити поправку");
+      }
+    }
+  };
+
+  return (
+    <div className={styles.amendmentItem}>
+      <div
+        className={styles.amendmentHeader}
+        onClick={() => setIsExpanded(!isExpanded)}
+        style={{
+          cursor: "pointer",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
+          className={styles.amendmentAuthor}
+          style={{ display: "flex", alignItems: "center", gap: "6px" }}
+        >
+          <span style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+            {isExpanded ? "▼" : "▶"}
+          </span>
+          Поправка від{" "}
+          {typeof am.created_by === "object" && am.created_by
+            ? am.created_by.fullName
+            : "Законотворця"}
+        </span>
+        <div
+          className={styles.amendmentActions}
+          onClick={(e) => e.stopPropagation()}
+          style={{ display: "flex", alignItems: "center", gap: "12px" }}
+        >
+          {isOwner && (
+            <button
+              onClick={handleDelete}
+              className={styles.deleteBtn}
+              disabled={deleteMutation.isPending}
+              title="Видалити поправку"
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#ff6b6b",
+                cursor: "pointer",
+                padding: "2px 6px",
+                fontSize: "0.95rem",
+                transition: "opacity 0.15s",
+              }}
+            >
+              🗑
+            </button>
+          )}
+          {am.reason && (
+            <span className={styles.amendmentReason} title={am.reason}>
+              🛈 Обґрунтування
+            </span>
+          )}
+        </div>
+      </div>
+      {isExpanded && (
+        <div style={{ marginTop: "10px" }}>
+          <div className={styles.amendmentDiff}>
+            <DiffViewer original={originalText} proposed={am.proposed_text} />
+          </div>
+          {am.reason && (
+            <p
+              className={styles.amendmentReasonText}
+              style={{ whiteSpace: "pre-wrap", marginTop: "8px" }}
+            >
+              {am.reason}
+            </p>
+          )}
+          <AmendmentVoting amendmentId={am._id} />
+          <AmendmentComments amendmentId={am._id} />
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface NestedNodeListProps {
   nodes: TreeBranch[];
@@ -29,6 +142,7 @@ interface NestedNodeListProps {
   lawTitle?: string;
   articleNum?: string;
   lawId?: string;
+  amendmentsMap?: Map<string, Amendment[]>;
 }
 
 export function NestedNodeList({
@@ -40,6 +154,7 @@ export function NestedNodeList({
   lawTitle,
   articleNum,
   lawId,
+  amendmentsMap,
 }: NestedNodeListProps) {
   return (
     <div className={styles.childrenList}>
@@ -54,6 +169,7 @@ export function NestedNodeList({
           lawTitle={lawTitle}
           articleNum={articleNum}
           lawId={lawId}
+          amendmentsMap={amendmentsMap}
         />
       ))}
     </div>
@@ -69,6 +185,7 @@ interface NestedNodeProps {
   lawTitle?: string;
   articleNum?: string;
   lawId?: string;
+  amendmentsMap?: Map<string, Amendment[]>;
 }
 
 function hasTermsMatch(
@@ -89,7 +206,12 @@ function NestedNode({
   lawTitle,
   articleNum,
   lawId,
+  amendmentsMap,
 }: NestedNodeProps) {
+  const { isLegislator } = useAuth();
+  const [showEditor, setShowEditor] = useState(false);
+  const nodeAmendments = (node._id && amendmentsMap?.get(node._id)) || [];
+
   const hasActiveSubject =
     activeSubjectId != null &&
     (node.subjects?.some((s) => s.subject_id === activeSubjectId) ?? false);
@@ -211,6 +333,16 @@ function NestedNode({
         >
           ⧉
         </button>
+        {isLegislator && (
+          <button
+            type="button"
+            className={styles.amendBtn}
+            onClick={() => setShowEditor(!showEditor)}
+            title="Запропонувати поправку"
+          >
+            ✎
+          </button>
+        )}
       </div>
 
       <div className={styles.childContent}>
@@ -221,6 +353,14 @@ function NestedNode({
         {displayText ? (
           <div className={styles.childTextOnly}>{displayText}</div>
         ) : null}
+
+        {showEditor && lawId && (
+          <AmendmentEditor
+            node={node}
+            lawId={lawId}
+            onClose={() => setShowEditor(false)}
+          />
+        )}
 
         {/* FE-T62: Subjects for this element */}
         {nodeSubjects.length > 0 && (
@@ -244,6 +384,14 @@ function NestedNode({
           </div>
         )}
 
+        {nodeAmendments.length > 0 && (
+          <div className={styles.amendmentsList}>
+            {nodeAmendments.map((am) => (
+              <AmendmentItem key={am._id} am={am} originalText={node.text} />
+            ))}
+          </div>
+        )}
+
         {node.children.length > 0 ? (
           <NestedNodeList
             nodes={node.children}
@@ -254,6 +402,7 @@ function NestedNode({
             lawTitle={lawTitle}
             articleNum={articleNum}
             lawId={lawId}
+            amendmentsMap={amendmentsMap}
           />
         ) : null}
       </div>

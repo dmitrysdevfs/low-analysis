@@ -22,6 +22,7 @@ export {
 } from "./pages";
 export { getRoadmap, getAdminRoadmap, updateAdminRoadmap } from "./roadmap";
 export { getTaxonomies, getTaxonomyTree } from "./taxonomy";
+export * from "./legislator";
 export {
   fetchAssistantConfig,
   fetchSuggestions,

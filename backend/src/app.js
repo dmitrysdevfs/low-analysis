@@ -13,6 +13,10 @@ import roadmapRoutes from './modules/roadmap/roadmap.routes.js';
 import roadmapAdminRoutes from './modules/roadmap/roadmapAdminRoutes.js';
 import assistantRoutes from './modules/assistant/assistant.routes.js';
 import exportRoutes from './routes/exportRoutes.js';
+import proposalRoutes from './routes/proposalRoutes.js';
+import amendmentRoutes from './routes/amendmentRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
+import voteRoutes from './routes/voteRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -86,6 +90,10 @@ app.use('/api/roadmap', roadmapRoutes);
 app.use('/api/laws/export', exportRoutes);
 app.use('/api/export/dataset', exportRoutes);
 app.use('/api/assistant', assistantRoutes);
+app.use('/api/proposals', proposalRoutes);
+app.use('/api/amendments', amendmentRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/votes', voteRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

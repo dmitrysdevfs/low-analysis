@@ -22,7 +22,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const sidebarAsHeaderRef = useRef<HTMLElement | null>(null);
-  const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, user, logout } = useAuth();
   const { subjects, onSubjectSelect, activeSubjectId } = useSidebarData();
   const { notes } = useNotes();
   const [mounted, setMounted] = useState(false);
@@ -56,6 +56,15 @@ export function AppSidebar({ visible }: { visible: boolean }) {
         label: "План та оплата",
         caption: "Рівень доступу",
       },
+      ...(isLegislator
+        ? [
+            {
+              href: ROUTES.legislatorCabinet,
+              label: "Кабінет законотворця",
+              caption: "Поправки та пропозиції",
+            },
+          ]
+        : []),
       ...(isAdmin
         ? [
             {
@@ -66,7 +75,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
           ]
         : []),
     ],
-    [isAdmin],
+    [isAdmin, isLegislator],
   );
 
   function handleLogout() {

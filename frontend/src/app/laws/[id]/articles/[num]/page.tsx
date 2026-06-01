@@ -19,6 +19,8 @@ import { ROUTES } from "@/constants/routes";
 import { useLawsMap } from "@/hooks/useLawsMap";
 import { useArticle } from "@/hooks/useArticle";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
+import { useAmendments } from "@/hooks/useAmendments";
+import type { Amendment } from "@/types/legislator";
 import {
   buildTreeBranches,
   getRoleColor,
@@ -50,6 +52,18 @@ export default function ArticlePage() {
     articleNumber,
   );
   const law = lawId ? lawsMap.get(lawId) : undefined;
+
+  const { data: amendments } = useAmendments({ lawId });
+
+  const amendmentsMap = useMemo(() => {
+    const map = new Map<string, Amendment[]>();
+    amendments?.forEach((am) => {
+      const list = map.get(am.element_id) || [];
+      list.push(am);
+      map.set(am.element_id, list);
+    });
+    return map;
+  }, [amendments]);
 
   const lawTitle = law?.title ?? "Закон";
   const lawCode = law?.code ?? "";
@@ -527,6 +541,7 @@ export default function ArticlePage() {
                           lawTitle={lawTitle}
                           articleNum={articleNumber ?? ""}
                           lawId={lawId ?? ""}
+                          amendmentsMap={amendmentsMap}
                         />
                       </motion.div>
                     ) : null}
