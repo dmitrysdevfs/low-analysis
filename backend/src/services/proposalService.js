@@ -1,5 +1,6 @@
 import Proposal from '../models/Proposal.js';
 import Amendment from '../models/Amendment.js';
+import { compareIds } from '../utils/id.js';
 
 /**
  * Create a new proposal.
@@ -83,7 +84,7 @@ export const updateProposal = async (id, userId, data) => {
   const proposal = await Proposal.findById(id);
   if (!proposal) throw new Error('Proposal not found');
 
-  if (proposal.created_by.toString() !== userId.toString()) {
+  if (!compareIds(proposal.created_by, userId)) {
     throw new Error('Not authorized to update this proposal');
   }
 
@@ -101,7 +102,7 @@ export const submitProposal = async (id, userId) => {
   const proposal = await Proposal.findById(id);
   if (!proposal) throw new Error('Proposal not found');
 
-  if (proposal.created_by.toString() !== userId.toString()) {
+  if (!compareIds(proposal.created_by, userId)) {
     throw new Error('Not authorized to submit this proposal');
   }
 

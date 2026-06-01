@@ -1,4 +1,5 @@
 import Comment from '../models/Comment.js';
+import { compareIds } from '../utils/id.js';
 
 /**
  * Add a comment to an amendment or proposal.
@@ -28,7 +29,7 @@ export const deleteComment = async (commentId, userId) => {
   const comment = await Comment.findById(commentId);
   if (!comment) throw new Error('Comment not found');
 
-  if (comment.created_by.toString() !== userId.toString()) {
+  if (!compareIds(comment.created_by, userId)) {
     throw new Error('Not authorized to delete this comment');
   }
 

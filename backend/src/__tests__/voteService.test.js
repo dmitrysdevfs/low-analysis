@@ -24,6 +24,10 @@ describe('voteService', () => {
       Amendment.aggregate.mockResolvedValue([
         { positive: 10, neutral: 2, negative: 3 },
       ]);
+      Proposal.findByIdAndUpdate.mockResolvedValue({
+        _id: 'p1',
+        votes_summary: { positive: 10, neutral: 2, negative: 3 },
+      });
 
       const result = await voteService.castVote({
         amendment_id: 'a1',

@@ -11,6 +11,10 @@ vi.mock('../models/Proposal.js');
 describe('amendmentService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    Proposal.findByIdAndUpdate.mockResolvedValue({
+      _id: 'proposal1',
+      amendments_count: 1,
+    });
   });
 
   describe('createAmendment', () => {
@@ -56,6 +60,13 @@ describe('amendmentService', () => {
       expect(Element.aggregate).toHaveBeenCalled();
       expect(Amendment.create).toHaveBeenCalledWith(
         expect.objectContaining({
+          law_id: 'law1',
+          element_id: 'element1',
+          proposal_id: 'proposal1',
+          created_by: 'user1',
+          change_type: 'edit',
+          proposed_text: 'New text',
+          reason: 'Better wording',
           context: expect.objectContaining({
             article_num: '1',
             section_title: 'Section 1',

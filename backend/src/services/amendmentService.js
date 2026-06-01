@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Amendment from '../models/Amendment.js';
 import Element from '../models/Element.js';
 import Proposal from '../models/Proposal.js';
+import { compareIds } from '../utils/id.js';
 
 /**
  * Create a new amendment.
@@ -122,7 +123,7 @@ export const updateAmendment = async (id, userId, data) => {
   const amendment = await Amendment.findById(id);
   if (!amendment) throw new Error('Amendment not found');
 
-  if (amendment.created_by.toString() !== userId.toString()) {
+  if (!compareIds(amendment.created_by, userId)) {
     throw new Error('Not authorized to update this amendment');
   }
 
@@ -143,7 +144,7 @@ export const deleteAmendment = async (id, userId) => {
   const amendment = await Amendment.findById(id);
   if (!amendment) throw new Error('Amendment not found');
 
-  if (amendment.created_by.toString() !== userId.toString()) {
+  if (!compareIds(amendment.created_by, userId)) {
     throw new Error('Not authorized to delete this amendment');
   }
 
