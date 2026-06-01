@@ -16,9 +16,9 @@ export const getComments = async (req, res, next) => {
   try {
     const { target_type, target_id } = req.query;
     if (!target_type || !target_id) {
-      return res
-        .status(400)
-        .json({ message: 'target_type and target_id are required' });
+      const error = new Error('target_type and target_id are required');
+      error.statusCode = 400;
+      return next(error);
     }
     const comments = await commentService.getComments(target_type, target_id);
     res.json(comments);
