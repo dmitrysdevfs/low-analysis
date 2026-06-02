@@ -7,6 +7,7 @@ import { classifyElement } from './taxonomyService.js';
 
 export const getAllLaws = async ({
   q = '',
+  searchIn = 'title',
   sortBy = 'date',
   sortOrder = 'desc',
   status,
@@ -19,9 +20,18 @@ export const getAllLaws = async ({
   const filter = {};
 
   if (q) {
-    filter.title = {
-      $regex: new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
-    };
+    const qRegex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    if (searchIn === 'text') {
+      filter.$or = [
+        { preamble: { $regex: qRegex } },
+        { 'global_context.definitions.term': { $regex: qRegex } },
+        { 'global_context.definitions.definition': { $regex: qRegex } },
+      ];
+    } else if (searchIn === 'code') {
+      filter.code = { $regex: qRegex };
+    } else {
+      filter.title = { $regex: qRegex };
+    }
   }
 
   if (status) {

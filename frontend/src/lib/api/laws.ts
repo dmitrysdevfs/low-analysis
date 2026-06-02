@@ -36,9 +36,16 @@ export async function getJson<T>(
   return res.json() as Promise<T>;
 }
 
-export async function getLaws(q = "", options?: RequestInit): Promise<Law[]> {
+export async function getLaws(
+  q = "",
+  options?: RequestInit,
+  queryOptions?: { wordField?: "title" | "text" | "code" },
+): Promise<Law[]> {
   const params = new URLSearchParams({ limit: "100" });
   if (q.trim()) params.set("q", q.trim());
+  if (queryOptions?.wordField && queryOptions.wordField !== "title") {
+    params.set("wordField", queryOptions.wordField);
+  }
   const res = await getJson<{ data: Law[] } | Law[]>(
     `/laws?${params}`,
     options,
