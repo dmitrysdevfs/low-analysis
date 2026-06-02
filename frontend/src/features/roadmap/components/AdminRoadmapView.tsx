@@ -11,13 +11,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useAdminRoadmap } from "../hooks/useAdminRoadmap";
-import type {
-  RoadmapContent,
-  RoadmapPhase,
-  RoadmapItem,
-  RoadmapDeferredItem,
-  RoadmapDecision,
-} from "../types";
+import type { RoadmapContent, RoadmapPhase, RoadmapDecision } from "../types";
 import styles from "./AdminRoadmapView.module.scss";
 
 const STATUS_LABEL: Record<string, string> = {

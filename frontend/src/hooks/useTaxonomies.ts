@@ -12,7 +12,7 @@ export function useTaxonomies() {
     staleTime: 5 * 60_000,
   });
 
-  const taxonomies = data ?? [];
+  const taxonomies = useMemo(() => data ?? [], [data]);
 
   const taxonomyMap = useMemo(
     () => Object.fromEntries(taxonomies.map((t) => [t._id, t])),
