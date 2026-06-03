@@ -24,7 +24,7 @@ export function RoadmapPublicView() {
 
   const doneCount = content.roadmapItems.filter((i) => i.done).length;
   const totalCount = content.roadmapItems.length;
-  const pct = Math.round((doneCount / totalCount) * 100);
+  const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
 
   const doneItems = content.roadmapItems.filter((i) => i.done);
   const pendingItems = content.roadmapItems.filter((i) => !i.done);
@@ -72,11 +72,19 @@ export function RoadmapPublicView() {
               </span>
               <span className={styles.progressPct}>{pct}%</span>
             </div>
-            <div className={styles.progressTrack}>
+            <div
+              className={styles.progressTrack}
+              role="progressbar"
+              aria-valuenow={pct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Загальний прогрес"
+            >
               <motion.div
                 className={styles.progressFill}
-                initial={{ width: 0 }}
-                animate={{ width: `${pct}%` }}
+                initial={{ width: "0%" }}
+                whileInView={{ width: `${pct}%` }}
+                viewport={{ once: true }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
               />
             </div>
@@ -100,14 +108,14 @@ export function RoadmapPublicView() {
               <ul className={styles.itemList}>
                 {doneItems.map((item, i) => (
                   <motion.li
-                    key={i}
+                    key={item.text}
                     className={styles.itemDone}
                     initial={{ opacity: 0, x: -16 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.06 }}
                   >
-                    <span className={styles.checkDone}>✓</span>
+                    <span className={styles.checkDone} aria-hidden="true">✓</span>
                     <span>{item.text}</span>
                   </motion.li>
                 ))}
@@ -123,14 +131,14 @@ export function RoadmapPublicView() {
               <ul className={styles.itemList}>
                 {pendingItems.map((item, i) => (
                   <motion.li
-                    key={i}
+                    key={item.text}
                     className={styles.itemPending}
                     initial={{ opacity: 0, x: 16 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
                   >
-                    <span className={styles.checkPending}>○</span>
+                    <span className={styles.checkPending} aria-hidden="true">○</span>
                     <span>{item.text}</span>
                   </motion.li>
                 ))}
@@ -161,14 +169,14 @@ export function RoadmapPublicView() {
                   </span>
                 </div>
                 <ul className={styles.taskList}>
-                  {phase.tasks.map((task, j) => (
+                  {phase.tasks.map((task) => (
                     <li
-                      key={j}
+                      key={task.text}
                       className={
                         task.done ? styles.taskDone : styles.taskPending
                       }
                     >
-                      <span>{task.done ? "✓" : "○"}</span>
+                      <span aria-hidden="true">{task.done ? "✓" : "○"}</span>
                       <span>{task.text}</span>
                     </li>
                   ))}
@@ -190,10 +198,11 @@ export function RoadmapPublicView() {
             </p>
             <div className={styles.accordion}>
               {content.deferredItems.map((item, i) => (
-                <div key={i} className={styles.accordionItem}>
+                <div key={item.title} className={styles.accordionItem}>
                   <button
                     type="button"
                     className={styles.accordionTrigger}
+                    aria-expanded={openDeferred === String(i)}
                     onClick={() =>
                       setOpenDeferred(
                         openDeferred === String(i) ? null : String(i),
@@ -201,7 +210,7 @@ export function RoadmapPublicView() {
                     }
                   >
                     <span>{item.title}</span>
-                    <span className={styles.accordionIcon}>
+                    <span className={styles.accordionIcon} aria-hidden="true">
                       {openDeferred === String(i) ? "−" : "+"}
                     </span>
                   </button>
@@ -239,6 +248,7 @@ export function RoadmapPublicView() {
                   <button
                     type="button"
                     className={styles.accordionTrigger}
+                    aria-expanded={openDecision === d.id}
                     onClick={() =>
                       setOpenDecision(openDecision === d.id ? null : d.id)
                     }
@@ -249,7 +259,7 @@ export function RoadmapPublicView() {
                         {d.decision}
                       </span>
                     </div>
-                    <span className={styles.accordionIcon}>
+                    <span className={styles.accordionIcon} aria-hidden="true">
                       {openDecision === d.id ? "−" : "+"}
                     </span>
                   </button>
