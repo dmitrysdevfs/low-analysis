@@ -1,9 +1,9 @@
 import { RoadmapPublicView } from "@/features/roadmap";
 
 export const metadata = {
-  title: "Відкритий Roadmap | Low Analysis",
+  title: "Відкритий Roadmap",
   description:
-    "Що вже є, що зараз будується і куди рухається платформа Low Analysis. Фази розробки, архітектурні рішення та плани.",
+    "Що вже є, що зараз будується і куди рухається платформа Law Analysis. Фази розробки, архітектурні рішення та плани.",
 };
 
 export default function RoadmapPage() {
