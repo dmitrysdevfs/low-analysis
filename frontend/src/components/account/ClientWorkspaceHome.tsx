@@ -103,7 +103,13 @@ export function ClientWorkspaceHome() {
           "Локальний preview-білінг активний для цього акаунта.",
       },
     ];
-  }, [subscription?.description, subscription?.plan?.label, user, workspace]);
+  }, [
+    subscription?.description,
+    subscription?.plan?.label,
+    user,
+    workspace,
+    notes.length,
+  ]);
 
   const latestSaved = workspace?.savedArticles[0] ?? null;
   const pinnedNote = notes.find((note) => note.pinned) ?? notes[0] ?? null;

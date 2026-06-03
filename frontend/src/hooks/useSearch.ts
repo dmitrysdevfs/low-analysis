@@ -72,7 +72,8 @@ export function useSearch() {
       };
 
       // If we already have raw results for this query — skip network + quota
-      const cached = rawCache.get(normalizedParams.q);
+      const cacheKey = `${normalizedParams.q}::${normalizedParams.wordField}`;
+      const cached = rawCache.get(cacheKey);
       if (cached && Date.now() - cached.ts < RAW_CACHE_TTL) {
         setState({
           results: applyFilters(cached.data),
@@ -101,9 +102,13 @@ export function useSearch() {
 
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
-      getLaws(normalizedParams.q, { signal })
+      getLaws(
+        normalizedParams.q,
+        { signal },
+        { wordField: normalizedParams.wordField },
+      )
         .then((laws) => {
-          rawCache.set(normalizedParams.q, { data: laws, ts: Date.now() });
+          rawCache.set(cacheKey, { data: laws, ts: Date.now() });
           setState({
             results: applyFilters(laws),
             loading: false,

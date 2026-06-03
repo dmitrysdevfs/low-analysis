@@ -23,10 +23,18 @@ const router = express.Router();
  *       - in: query
  *         name: q
  *         required: false
- *         description: Пошуковий рядок (пошук по назві закону, регістронезалежний)
+ *         description: Пошуковий рядок (регістронезалежний)
  *         schema:
  *           type: string
  *           example: конституція
+ *       - in: query
+ *         name: wordField
+ *         required: false
+ *         description: Поле для пошуку за ключовим словом (title — назва, text — преамбула, code — код)
+ *         schema:
+ *           type: string
+ *           enum: [title, text, code]
+ *           default: title
  *       - in: query
  *         name: status
  *         required: false

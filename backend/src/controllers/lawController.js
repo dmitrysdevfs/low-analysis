@@ -2,81 +2,40 @@ import * as lawService from '../services/lawService.js';
 import * as fetchService from '../services/fetchService.js';
 import { parseLawHtml } from '../services/parserService.js';
 import { performStatisticalAnalysis } from '../services/statisticalAnalysisService.js';
-
-const VALID_SORT_BY = ['date', 'title'];
-const VALID_SORT_ORDER = ['asc', 'desc'];
+import {
+  getLawsQuerySchema,
+  formatZodError,
+} from '../validation/lawSchemas.js';
 
 export const getAllLaws = async (req, res, next) => {
   try {
-    const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
-
-    const sortBy = req.query.sortBy ?? 'date';
-    const sortOrder = req.query.sortOrder ?? 'desc';
-
-    if (!VALID_SORT_BY.includes(sortBy)) {
-      return res.status(400).json({
-        message: `Invalid sortBy value. Allowed: ${VALID_SORT_BY.join(', ')}`,
-      });
-    }
-    if (!VALID_SORT_ORDER.includes(sortOrder)) {
-      return res.status(400).json({
-        message: `Invalid sortOrder value. Allowed: ${VALID_SORT_ORDER.join(', ')}`,
-      });
+    const parsed = getLawsQuerySchema.safeParse(req.query);
+    if (!parsed.success) {
+      return res.status(400).json({ message: formatZodError(parsed.error) });
     }
 
-    const status =
-      typeof req.query.status === 'string'
-        ? req.query.status.trim()
-        : undefined;
-
-    const documentType =
-      typeof req.query.documentType === 'string'
-        ? req.query.documentType.trim()
-        : undefined;
-
-    let dateFrom;
-    if (req.query.dateFrom !== undefined) {
-      dateFrom = new Date(req.query.dateFrom);
-      if (isNaN(dateFrom.getTime())) {
-        return res.status(400).json({
-          message:
-            'Invalid dateFrom value. Expected ISO date (e.g. 2020-01-01)',
-        });
-      }
-    }
-
-    let dateTo;
-    if (req.query.dateTo !== undefined) {
-      dateTo = new Date(req.query.dateTo);
-      if (isNaN(dateTo.getTime())) {
-        return res.status(400).json({
-          message: 'Invalid dateTo value. Expected ISO date (e.g. 2020-12-31)',
-        });
-      }
-    }
-
-    const page = parseInt(req.query.page ?? '1', 10);
-    const limit = parseInt(req.query.limit ?? '20', 10);
-
-    if (!Number.isInteger(page) || page < 1) {
-      return res.status(400).json({
-        message: 'Invalid page value. Must be a positive integer',
-      });
-    }
-    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
-      return res.status(400).json({
-        message: 'Invalid limit value. Must be between 1 and 100',
-      });
-    }
-
-    const result = await lawService.getAllLaws({
+    const {
       q,
+      wordField,
       sortBy,
       sortOrder,
       status,
+      documentType,
       dateFrom,
       dateTo,
+      page,
+      limit,
+    } = parsed.data;
+
+    const result = await lawService.getAllLaws({
+      q,
+      searchIn: wordField,
+      sortBy,
+      sortOrder,
+      status,
       documentType,
+      dateFrom,
+      dateTo,
       page,
       limit,
     });

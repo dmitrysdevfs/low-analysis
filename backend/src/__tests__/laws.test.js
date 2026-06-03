@@ -68,10 +68,38 @@ describe('GET /api/laws', () => {
     expect(lawService.getAllLaws).toHaveBeenCalledWith(
       expect.objectContaining({
         q: 'constitution',
+        searchIn: 'title',
         sortBy: 'date',
         sortOrder: 'desc',
       }),
     );
+  });
+
+  it('passes wordField=text to the service as searchIn=text', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    await request(app).get('/api/laws?q=викладацька&wordField=text');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ q: 'викладацька', searchIn: 'text' }),
+    );
+  });
+
+  it('passes wordField=code to the service as searchIn=code', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    await request(app).get('/api/laws?q=580-19&wordField=code');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ q: '580-19', searchIn: 'code' }),
+    );
+  });
+
+  it('returns 400 for invalid wordField', async () => {
+    const res = await request(app).get('/api/laws?wordField=invalid');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/wordField/);
   });
 
   it('passes sortBy and sortOrder to the service', async () => {

@@ -12,7 +12,6 @@ import {
   type ArticleMention,
 } from "@/lib/subject/mentionHelpers";
 import { ROUTES } from "@/constants/routes";
-import type { TreeNode } from "@/types";
 import styles from "./SubjectMentionsModal.module.scss";
 
 interface PartMention {
