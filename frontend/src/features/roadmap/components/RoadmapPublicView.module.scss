@@ -63,7 +63,7 @@
 
 .updatedAt {
   font-size: 0.72rem;
-  color: #4a6a9a;
+  color: #7a98c0;
   font-family: var(--font-mono);
   margin: 0;
 }
@@ -97,7 +97,6 @@
 // ─── Progress ─────────────────────────────────────────────────────────────────
 
 .progressBlock {
-  max-width: 640px;
 }
 
 .progressMeta {
@@ -136,7 +135,7 @@
 
 .progressNote {
   font-size: 0.72rem;
-  color: #4a6a9a;
+  color: #7a98c0;
   font-family: var(--font-mono);
   margin: 8px 0 0;
 }
@@ -148,7 +147,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 32px;
 
-  @media (max-width: 700px) {
+  @media (max-width: 767px) {
     grid-template-columns: 1fr;
   }
 }
@@ -179,7 +178,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 2px solid #1c3260;
+  border: 2px solid #4a6a9a;
   flex-shrink: 0;
 }
 
@@ -221,7 +220,7 @@
 .itemPending {
   background: transparent;
   border-color: rgba(28, 50, 96, 0.5);
-  color: #4a6a9a;
+  color: #7a98c0;
 }
 
 .checkDone {
@@ -233,7 +232,7 @@
 }
 
 .checkPending {
-  color: #1c3260;
+  color: #4a6a9a;
   font-family: var(--font-mono);
   font-size: 0.8rem;
   flex-shrink: 0;
@@ -335,10 +334,10 @@
 }
 
 .taskPending {
-  color: #4a6a9a;
+  color: #7a98c0;
 
   span:first-child {
-    color: #2a4a7a;
+    color: #4a6a9a;
     font-family: var(--font-mono);
     flex-shrink: 0;
   }
@@ -411,7 +410,7 @@
 
 .decisionSummary {
   font-size: 0.78rem;
-  color: #4a6a9a;
+  color: #7a98c0;
 }
 
 // ─── Responsive ───────────────────────────────────────────────────────────────
