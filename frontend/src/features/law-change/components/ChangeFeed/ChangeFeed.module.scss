@@ -1,0 +1,144 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card {
+  background: rgba(13, 28, 58, 0.8);
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.18s;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.35);
+  }
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+
+  &.edit {
+    color: #93c5fd;
+    background: rgba(147, 197, 253, 0.1);
+    border: 1px solid rgba(147, 197, 253, 0.25);
+  }
+
+  &.add {
+    color: #86efac;
+    background: rgba(134, 239, 172, 0.1);
+    border: 1px solid rgba(134, 239, 172, 0.25);
+  }
+
+  &.delete {
+    color: #fca5a5;
+    background: rgba(252, 165, 165, 0.1);
+    border: 1px solid rgba(252, 165, 165, 0.25);
+  }
+
+  &.move {
+    color: #fde68a;
+    background: rgba(253, 230, 138, 0.1);
+    border: 1px solid rgba(253, 230, 138, 0.25);
+  }
+}
+
+.elementBadge {
+  font-size: 0.7rem;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+}
+
+.date {
+  font-size: 0.72rem;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+}
+
+.text {
+  font-size: 0.875rem;
+  color: #d6e0f0;
+  line-height: 1.6;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  color: #7a98c0;
+  border-top: 1px solid rgba(28, 50, 96, 0.5);
+  padding-top: 0.75rem;
+}
+
+.votes {
+  strong {
+    color: #86efac;
+  }
+}
+
+.lawRef {
+  color: #c8a843;
+  font-weight: 600;
+}
+
+.loadMore {
+  background: transparent;
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 6px;
+  color: #7a98c0;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  align-self: center;
+  transition: all 0.18s;
+
+  &:hover {
+    border-color: #c8a843;
+    color: #c8a843;
+    background: rgba(200, 168, 67, 0.05);
+  }
+}
+
+.empty {
+  color: #7a98c0;
+  font-size: 0.9rem;
+  margin: 0;
+}

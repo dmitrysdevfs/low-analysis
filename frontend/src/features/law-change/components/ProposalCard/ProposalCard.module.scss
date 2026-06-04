@@ -1,0 +1,116 @@
+.card {
+  background: rgba(13, 28, 58, 0.8);
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.25);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.statusBadge,
+.typeBadge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono, monospace);
+}
+
+.status_draft { background: rgba(122, 152, 192, 0.15); color: #7a98c0; }
+.status_active { background: rgba(74, 128, 212, 0.2); color: #4a80d4; }
+.status_approved { background: rgba(76, 175, 80, 0.2); color: #4caf50; }
+.status_rejected { background: rgba(239, 83, 80, 0.2); color: #ef5350; }
+.status_withdrawn { background: rgba(120, 120, 120, 0.15); color: #888; }
+.status_archived { background: rgba(120, 120, 120, 0.12); color: #666; }
+.status_superseded { background: rgba(120, 120, 120, 0.12); color: #666; }
+
+.type_edit { background: rgba(200, 168, 67, 0.15); color: #c8a843; }
+.type_add { background: rgba(76, 175, 80, 0.15); color: #4caf50; }
+.type_delete { background: rgba(239, 83, 80, 0.15); color: #ef5350; }
+.type_move { background: rgba(74, 128, 212, 0.15); color: #4a80d4; }
+
+.meta {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+  align-items: center;
+}
+
+.dot {
+  opacity: 0.4;
+}
+
+.diff {
+  // diff highlight handles its own styles
+}
+
+.reason {
+  font-size: 0.85rem;
+  color: #7a98c0;
+  line-height: 1.5;
+  margin: 0;
+  border-left: 2px solid rgba(28, 50, 96, 0.8);
+  padding-left: 0.75rem;
+
+  em {
+    color: #4a80d4;
+    font-style: normal;
+  }
+}
+
+.voting {
+  border-top: 1px solid rgba(28, 50, 96, 0.5);
+  padding-top: 1rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.withdrawBtn {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgba(239, 83, 80, 0.4);
+  color: #ef5350;
+  transition: all 0.18s ease;
+  font-family: inherit;
+
+  &:hover:not(:disabled) {
+    background: rgba(239, 83, 80, 0.1);
+    border-color: #ef5350;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

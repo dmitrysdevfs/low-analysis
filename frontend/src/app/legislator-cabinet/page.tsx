@@ -8,10 +8,11 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
 import { DiffViewer } from "@/components/ui";
 import { ROUTES } from "@/constants/routes";
+import { LegislatorCabinetSection } from "@/features/law-change/LegislatorCabinetSection";
 import styles from "./page.module.scss";
 
 export default function LegislatorCabinetPage() {
-  const { user } = useAuth();
+  const { user, isLegislator } = useAuth();
   const { data: proposals, isLoading: proposalsLoading } = useProposals();
   const { data: amendments, isLoading: amendmentsLoading } = useAmendments({
     userId: user?.id,
@@ -185,6 +186,8 @@ export default function LegislatorCabinetPage() {
           )}
         </div>
       </section>
+
+      <LegislatorCabinetSection isLegislator={isLegislator} />
     </div>
   );
 }

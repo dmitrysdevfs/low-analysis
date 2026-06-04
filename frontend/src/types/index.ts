@@ -61,6 +61,20 @@ export type {
 } from "./auth.types";
 export * from "./legislator";
 export type {
+  LawChangeType,
+  LawChangeStatus,
+  VoteDirection,
+  LawChangeProposal,
+  LawChangeVote,
+  ApprovedChange,
+  LegislatorAccessRequest,
+  LawViewResponse,
+  CreateProposalPayload,
+  SubmitProposalPayload,
+  VotePayload,
+  VoteStats,
+} from "./law-change.types";
+export type {
   BillingActionResult,
   BillingPaymentMethod,
   BillingPaymentRecord,

@@ -1,0 +1,25 @@
+.container {
+  padding: 2.5rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  border-bottom: 1px solid rgba(28, 50, 96, 0.5);
+  padding-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  color: #ffffff;
+  margin: 0 0 0.4rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #7a98c0;
+  margin: 0;
+}

@@ -17,6 +17,7 @@ import proposalRoutes from './routes/proposalRoutes.js';
 import amendmentRoutes from './routes/amendmentRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import voteRoutes from './routes/voteRoutes.js';
+import lawChangeRoutes from './routes/lawChange/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -94,6 +95,7 @@ app.use('/api/proposals', proposalRoutes);
 app.use('/api/amendments', amendmentRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/votes', voteRoutes);
+app.use('/api/law-change', lawChangeRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

@@ -1,0 +1,130 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin: 0;
+  border-left: 3px solid #c8a843;
+  padding-left: 0.75rem;
+}
+
+.filters {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  background: transparent;
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 20px;
+  color: #7a98c0;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.18s;
+
+  &:hover {
+    border-color: #c8a843;
+    color: #c8a843;
+  }
+
+  &.active {
+    background: rgba(200, 168, 67, 0.15);
+    border-color: #c8a843;
+    color: #c8a843;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: rgba(13, 28, 58, 0.8);
+  border: 1px solid rgba(28, 50, 96, 0.5);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.18s;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.4);
+  }
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.changeType {
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  color: #4a80d4;
+  background: rgba(74, 128, 212, 0.12);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+}
+
+.status {
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+}
+
+.reason {
+  font-size: 0.85rem;
+  color: #7a98c0;
+  line-height: 1.5;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.cardMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  color: #7a98c0;
+  border-top: 1px solid rgba(28, 50, 96, 0.5);
+  padding-top: 0.75rem;
+
+  strong {
+    color: #d6e0f0;
+  }
+}
+
+.date {
+  margin-left: auto;
+}
+
+.empty {
+  color: #7a98c0;
+  font-size: 0.9rem;
+  margin: 0;
+}
