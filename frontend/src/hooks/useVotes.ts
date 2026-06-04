@@ -6,6 +6,7 @@ export function useVoteSummary(amendmentId: string) {
     queryKey: ["vote-summary", amendmentId],
     queryFn: () => legislatorApi.getVoteSummary(amendmentId),
     enabled: !!amendmentId,
+    staleTime: 30_000,
   });
 }
 
@@ -14,6 +15,7 @@ export function useMyVote(amendmentId: string) {
     queryKey: ["my-vote", amendmentId],
     queryFn: () => legislatorApi.getMyVote(amendmentId),
     enabled: !!amendmentId,
+    staleTime: 30_000,
   });
 }
 

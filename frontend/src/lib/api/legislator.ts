@@ -1,8 +1,7 @@
 "use client";
 
 import { getJson } from "./laws";
-import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
-import { readStoredToken } from "@/lib/auth/authClient";
+import { requestJson } from "./_client";
 import type {
   Amendment,
   Proposal,
@@ -11,44 +10,6 @@ import type {
   ProposalDocument,
   Vote,
 } from "@/types/legislator";
-
-const API_BASE = "/api";
-
-async function requestJson<T>(
-  path: string,
-  method: string,
-  body?: unknown,
-  options?: RequestInit,
-): Promise<T> {
-  const token = readStoredToken();
-  const headers = new Headers(options?.headers);
-
-  if (token && !headers.has("Authorization")) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  if (body && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
-  }
-
-  const res = await fetchWithTimeout(`${API_BASE}${path}`, {
-    ...options,
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(
-      errorData.message || `HTTP ${res.status}: ${res.statusText}`,
-    );
-  }
-
-  if (res.status === 204) return {} as T;
-
-  return res.json() as Promise<T>;
-}
 
 // Proposals
 export const createProposal = (data: Partial<Proposal>) =>

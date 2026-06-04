@@ -19,7 +19,7 @@ describe("Home page", () => {
 
     expect(screen.getByText("Law Analysis")).toBeInTheDocument();
     expect(
-      screen.getByText(/Перетворення текстів законів на структуру/i),
+      screen.getByText(/Правова екосистема для громадян, юристів та законотворців/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /Переглянути закони/i }),

@@ -1,4 +1,12 @@
-import { RoadmapPublicView } from "@/features/roadmap";
+import dynamic from "next/dynamic";
+
+const RoadmapPublicView = dynamic(
+  () =>
+    import("@/features/roadmap").then((m) => ({
+      default: m.RoadmapPublicView,
+    })),
+  { ssr: false },
+);
 
 export const metadata = {
   title: "Відкритий Roadmap",

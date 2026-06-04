@@ -398,6 +398,67 @@
   line-height: 1;
 }
 
+.legislatorCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(74, 128, 212, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(74, 128, 212, 0.08) 0%,
+    rgba(12, 22, 44, 0.6) 100%
+  );
+}
+
+.legislatorCardContent {
+  display: grid;
+  gap: 4px;
+}
+
+.legislatorEyebrow {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #4a80d4;
+}
+
+.legislatorTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #c7d5ea;
+  margin: 0;
+}
+
+.legislatorDescription {
+  font-size: 0.72rem;
+  color: var(--color-smoke);
+  margin: 0;
+}
+
+.legislatorAction {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: rgba(74, 128, 212, 0.18);
+  border: 1px solid rgba(74, 128, 212, 0.3);
+  color: #7eaaee;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: rgba(74, 128, 212, 0.28);
+    color: #c7d5ea;
+  }
+}
+
 .activityList {
   display: grid;
   gap: 12px;

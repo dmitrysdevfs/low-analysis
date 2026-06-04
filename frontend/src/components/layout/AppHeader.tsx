@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { NAV_ITEMS } from "@/constants/navigation";
+import { buildNavItems, buildSessionMenuItems } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { TryzubMark } from "@/components/ui/TryzubMark";
@@ -33,45 +33,18 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   const [headerScrolledAway, setHeaderScrolledAway] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, user, logout } = useAuth();
   const isAuthPage = pathname.startsWith(ROUTES.auth);
   const isAdminPage = false;
   const isHome = pathname === "/";
-  const visibleNavItems = NAV_ITEMS;
+  const visibleNavItems = useMemo(
+    () => buildNavItems({ isAuthenticated }),
+    [isAuthenticated],
+  );
 
   const sessionMenuItems = useMemo(
-    () => [
-      {
-        href: ROUTES.account,
-        label: "Мій кабінет",
-        caption: "Профіль, пароль та особисті налаштування",
-      },
-      {
-        href: ROUTES.accountSaved,
-        label: "Збережені статті",
-        caption: "Швидкий доступ до важливих документів",
-      },
-      {
-        href: ROUTES.accountNotes,
-        label: "Нотатки",
-        caption: "Особисті правові чернетки та спостереження",
-      },
-      {
-        href: ROUTES.accountBilling,
-        label: "План та оплата",
-        caption: "Поточний рівень доступу, квоти та demo-checkout",
-      },
-      ...(isAdmin
-        ? [
-            {
-              href: ROUTES.adminAnalytics,
-              label: "Аналітика",
-              caption: "Метрики, покриття та операційний огляд",
-            },
-          ]
-        : []),
-    ],
-    [isAdmin],
+    () => buildSessionMenuItems({ isAdmin, isLegislator }),
+    [isAdmin, isLegislator],
   );
 
   const mobileNavItems = visibleNavItems;

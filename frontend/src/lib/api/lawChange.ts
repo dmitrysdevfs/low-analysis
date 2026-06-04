@@ -1,8 +1,7 @@
 "use client";
 
 import { getJson } from "./laws";
-import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
-import { readStoredToken } from "@/lib/auth/authClient";
+import { requestJson } from "./_client";
 import type {
   LawChangeProposal,
   ApprovedChange,
@@ -12,30 +11,6 @@ import type {
   VotePayload,
   VoteStats,
 } from "@/types/law-change.types";
-
-const API_BASE = "/api";
-
-async function requestJson<T>(
-  path: string,
-  method: string,
-  body?: unknown,
-): Promise<T> {
-  const token = readStoredToken();
-  const headers = new Headers();
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-  if (body) headers.set("Content-Type", "application/json");
-  const res = await fetchWithTimeout(`${API_BASE}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) {
-    const e = await res.json().catch(() => ({}));
-    throw new Error(e.message || `HTTP ${res.status}`);
-  }
-  if (res.status === 204) return {} as T;
-  return res.json() as Promise<T>;
-}
 
 // Law view (original + approved changes + active proposals)
 export const getLawView = (lawId: string) =>

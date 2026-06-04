@@ -13,11 +13,21 @@ import styles from "./page.module.scss";
 
 export default function LegislatorCabinetPage() {
   const { user, isLegislator } = useAuth();
+
+  // Non-legislator: show request/status flow (gate is now soft)
+  if (!isLegislator) {
+    return <LegislatorCabinetSection isLegislator={false} />;
+  }
+
+  return <LegislatorWorkspace user={user} />;
+}
+
+function LegislatorWorkspace({ user }: { user: ReturnType<typeof useAuth>["user"] }) {
+  const { laws } = useLaws();
   const { data: proposals, isLoading: proposalsLoading } = useProposals();
   const { data: amendments, isLoading: amendmentsLoading } = useAmendments({
     userId: user?.id,
   });
-  const { laws } = useLaws();
 
   const createProposalMutation = useCreateProposal();
 
@@ -187,7 +197,6 @@ export default function LegislatorCabinetPage() {
         </div>
       </section>
 
-      <LegislatorCabinetSection isLegislator={isLegislator} />
     </div>
   );
 }

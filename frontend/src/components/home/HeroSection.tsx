@@ -37,14 +37,11 @@ export function HeroSection({ w }: { w: number }) {
             variants={childFade}
             className={`display ${styles.heroSubtitle}`}
           >
-            Перетворення текстів законів на структуру
+            Правова екосистема для громадян, юристів та законотворців
           </motion.p>
 
           <motion.p variants={childFade} className={styles.heroDesc}>
-            Закони України існують як неструктуровані текстові полотна. Law
-            Analysis розбиває кожен закон на атомарні одиниці — розділ → стаття
-            → абзац — де кожен елемент має унікальний ієрархічний код і
-            зв&apos;язок із батьківським елементом.
+            Law Analysis — платформа для пошуку, аналізу та роботи із законодавством України. Структуровані закони, AI-помічник, кабінет законотворця та відкрита аналітика — все в одному місці.
           </motion.p>
 
           <motion.div variants={childFade} className={styles.heroBtns}>

@@ -6,6 +6,7 @@ export function useComments(target_type: string, target_id: string) {
     queryKey: ["comments", target_type, target_id],
     queryFn: () => legislatorApi.getComments(target_type, target_id),
     enabled: !!target_id,
+    staleTime: 30_000,
   });
 }
 

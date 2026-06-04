@@ -1,9 +1,20 @@
 import * as commentService from '../services/commentService.js';
 
+function sanitizeText(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .trim()
+    .slice(0, 5000);
+}
+
 export const addComment = async (req, res, next) => {
   try {
+    const text = sanitizeText(req.body.text || req.body.content || '');
     const comment = await commentService.addComment({
       ...req.body,
+      text,
       created_by: req.user._id,
     });
     res.status(201).json(comment);

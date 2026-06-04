@@ -6,6 +6,7 @@ export function useProposals(params: { lawId?: string; userId?: string } = {}) {
   return useQuery({
     queryKey: ["proposals", params],
     queryFn: () => legislatorApi.getProposals(params),
+    staleTime: 30_000,
   });
 }
 
@@ -14,6 +15,7 @@ export function useProposal(id: string) {
     queryKey: ["proposal", id],
     queryFn: () => legislatorApi.getProposalById(id),
     enabled: !!id,
+    staleTime: 30_000,
   });
 }
 
