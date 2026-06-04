@@ -123,6 +123,7 @@ describe("useAdminWorkspace", () => {
       user: {
         email: "admin@test.dev",
         displayName: "Dev Admin",
+        accountType: "admin",
       },
     } as never);
 

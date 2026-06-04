@@ -1,17 +1,12 @@
 "use client";
 
-const AUTH_TOKEN_STORAGE_KEY = "low-analysis.auth.token";
-
-function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
-}
+import { readStoredToken } from "@/lib/auth/authClient";
 
 async function adminFetch<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const token = getToken();
+  const token = readStoredToken();
   const res = await fetch(`/api/admin${path}`, {
     ...options,
     headers: {

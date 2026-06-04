@@ -30,7 +30,9 @@ export function useAdminWorkspace() {
   }, []);
 
   useEffect(() => {
-    refreshSnapshot();
+    if (user?.accountType === "admin") {
+      refreshSnapshot();
+    }
   }, [refreshSnapshot, user]);
 
   const billingRegistry = useMemo(() => {
