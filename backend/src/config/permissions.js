@@ -1,6 +1,12 @@
 export const ROLE_PERMISSIONS = {
-  user: ['laws:read', 'comments:read'],
-  paid_user: ['laws:read', 'comments:read', 'comments:create'],
+  user: ['laws:read', 'comments:read', 'law_changes:read', 'law_changes:vote'],
+  paid_user: [
+    'laws:read',
+    'comments:read',
+    'comments:create',
+    'law_changes:read',
+    'law_changes:vote',
+  ],
   legislator: [
     'laws:read',
     'amendments:create',
@@ -11,6 +17,9 @@ export const ROLE_PERMISSIONS = {
     'comments:create',
     'comments:read',
     'votes:cast',
+    'law_changes:read',
+    'law_changes:vote',
+    'law_changes:propose',
   ],
   admin: ['*'],
 };

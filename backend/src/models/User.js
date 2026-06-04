@@ -43,6 +43,16 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Please add a full name'],
       trim: true,
     },
+    status: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default: 'active',
+    },
+    billingPlan: {
+      type: String,
+      enum: ['preview', 'trial', 'user', 'plus', 'pro'],
+      default: 'preview',
+    },
   },
   {
     timestamps: true,

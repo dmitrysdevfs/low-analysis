@@ -136,6 +136,7 @@ export function LawMetaPanel({
           stats={stats}
           activeLevel={activeRiskLevel}
           onLevelClick={onRiskLevelClick}
+          context="law"
         />
       )}
       {activeRiskLevel && riskFilterCount !== undefined && (

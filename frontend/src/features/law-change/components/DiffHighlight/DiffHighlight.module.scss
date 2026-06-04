@@ -1,0 +1,100 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.original {
+  background: rgba(122, 74, 0, 0.25);
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.textOriginal {
+  color: #c8a843;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  text-decoration: line-through;
+  text-decoration-color: rgba(200, 168, 67, 0.5);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.proposed {
+  background: rgba(26, 58, 26, 0.35);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.textProposed {
+  color: #4caf50;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.deleteWrapper {
+  background: rgba(58, 26, 26, 0.35);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.textDelete {
+  color: #ef5350;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  text-decoration: line-through;
+  text-decoration-color: rgba(239, 83, 80, 0.6);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.addWrapper {
+  background: rgba(26, 58, 26, 0.35);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.textAdd {
+  color: #4caf50;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.moveWrapper {
+  background: rgba(26, 42, 74, 0.35);
+  border: 1px solid rgba(74, 128, 212, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.textMove {
+  color: #4a80d4;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

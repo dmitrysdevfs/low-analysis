@@ -2,20 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useBilling } from "@/components/billing/BillingProvider";
 import { notify } from "@/lib/toast";
-import {
-  appendAdminAuditLog,
-  deactivateMockAccount,
-  forceLogoutMockAccount,
-  getAdminDashboardSnapshot,
-  promoteMockAccount,
-  regenerateAdminSuperCode,
-  type AdminDashboardSnapshot,
-} from "@/lib/auth/mockAuth";
-import type { BillingPlanId } from "@/types";
-
-const CLIENT_PLAN_IDS = ["trial", "user", "plus", "pro"] as const;
+import { adminApi } from "@/lib/api/admin";
+import type { AdminDashboardSnapshot } from "@/lib/auth/mockAuth";
+import { buildBillingEntry, mapApiToSnapshot } from "./mapAdminData";
 
 type AccountAction = "deactivate" | "promote" | "forceLogout";
 
@@ -23,17 +13,20 @@ async function writeClipboard(value: string) {
   if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
     throw new Error("Clipboard API unavailable");
   }
-
   await navigator.clipboard.writeText(value);
 }
 
 export function useAdminWorkspace() {
   const { user } = useAuth();
-  const { getBillingRegistry, assignPlan } = useBilling();
   const [snapshot, setSnapshot] = useState<AdminDashboardSnapshot | null>(null);
 
-  const refreshSnapshot = useCallback(() => {
-    setSnapshot(getAdminDashboardSnapshot());
+  const refreshSnapshot = useCallback(async () => {
+    try {
+      const data = await adminApi.getDashboard();
+      setSnapshot(mapApiToSnapshot(data));
+    } catch {
+      notify.warning("Не вдалося оновити дані панелі.");
+    }
   }, []);
 
   useEffect(() => {
@@ -41,19 +34,21 @@ export function useAdminWorkspace() {
   }, [refreshSnapshot, user]);
 
   const billingRegistry = useMemo(() => {
-    if (!snapshot) {
-      return [];
-    }
-
-    return getBillingRegistry(
-      snapshot.registryAccounts.map((account) => ({
-        id: account.id,
-        displayName: account.displayName,
+    if (!snapshot) return [];
+    // Re-fetch users from snapshot accounts and build billing entries
+    return snapshot.registryAccounts.map((account) =>
+      buildBillingEntry({
+        _id: account.id,
+        fullName: account.displayName,
         email: account.email,
-        accountType: account.accountType,
-      })),
+        role: account.accountType === "admin" ? "admin" : "user",
+        status: account.status,
+        billingPlan: "preview",
+        createdAt: account.createdAt,
+        updatedAt: account.lastLoginAt ?? account.createdAt,
+      }),
     );
-  }, [getBillingRegistry, snapshot]);
+  }, [snapshot]);
 
   const billingCounts = useMemo(
     () =>
@@ -63,13 +58,12 @@ export function useAdminWorkspace() {
             acc.admin += 1;
             return acc;
           }
-
           if (!account.subscription.planId) {
             acc.preview += 1;
             return acc;
           }
-
-          acc[account.subscription.planId] += 1;
+          acc[account.subscription.planId as keyof typeof acc] =
+            (acc[account.subscription.planId as keyof typeof acc] ?? 0) + 1;
           return acc;
         },
         { preview: 0, trial: 0, user: 0, plus: 0, pro: 0, admin: 0 },
@@ -78,18 +72,14 @@ export function useAdminWorkspace() {
   );
 
   const handleCopyCode = useCallback(async () => {
-    if (!snapshot) {
-      return;
-    }
-
+    if (!snapshot) return;
     try {
       await writeClipboard(snapshot.activeSuperCode);
       notify.success("Активний супер-код скопійовано.");
     } catch {
       notify.info(`Поточний супер-код: ${snapshot.activeSuperCode}`);
     }
-
-    appendAdminAuditLog({
+    await adminApi.appendAuditEntry({
       action: "Супер-код скопійовано",
       detail: `Активний супер-код скопійовано адміністратором ${user?.email ?? "admin"}.`,
       actor: user?.email ?? "admin",
@@ -98,24 +88,24 @@ export function useAdminWorkspace() {
     refreshSnapshot();
   }, [refreshSnapshot, snapshot, user?.email]);
 
-  const handleRegenerateCode = useCallback(() => {
-    const next = regenerateAdminSuperCode();
-    refreshSnapshot();
-    notify.success(`Новий супер-код створено: ${next.code}`);
+  const handleRegenerateCode = useCallback(async () => {
+    try {
+      const next = await adminApi.rotateSuperCode();
+      await refreshSnapshot();
+      notify.success(`Новий супер-код створено: ${next.code}`);
+    } catch {
+      notify.warning("Не вдалося оновити супер-код.");
+    }
   }, [refreshSnapshot]);
 
   const handleCopyGuestStatus = useCallback(async () => {
-    if (!snapshot) {
-      return;
-    }
-
+    if (!snapshot) return;
     const summary = [
       `Пошук гостей: ${snapshot.guestPressure.searchUsed}/${snapshot.guestPressure.searchLimit}`,
       `Перегляди гостей: ${snapshot.guestPressure.viewUsed}/${snapshot.guestPressure.viewLimit}`,
       `Кулдаун пошуку: ${snapshot.guestPressure.searchCooldownActive ? "активний" : "вимкнено"}`,
       `Кулдаун перегляду: ${snapshot.guestPressure.viewCooldownActive ? "активний" : "вимкнено"}`,
     ].join(" | ");
-
     try {
       await writeClipboard(summary);
       notify.success("Зведення про навантаження гостей скопійовано.");
@@ -125,63 +115,65 @@ export function useAdminWorkspace() {
   }, [snapshot]);
 
   const handleAccountAction = useCallback(
-    (action: AccountAction, accountId: string, accountName: string) => {
-      if (action === "deactivate") {
-        const result = deactivateMockAccount(accountId);
-        if (!result.ok) {
-          notify.warning(result.error ?? "Не вдалося змінити статус акаунта.");
-          return;
+    async (action: AccountAction, accountId: string, accountName: string) => {
+      try {
+        if (action === "deactivate") {
+          const curr = snapshot?.registryAccounts.find(
+            (a) => a.id === accountId,
+          );
+          const nextStatus =
+            curr?.status === "inactive" ? "active" : "inactive";
+          await adminApi.setUserStatus(accountId, nextStatus);
+          notify.success("Статус акаунта оновлено.");
+        } else if (action === "promote") {
+          const curr = snapshot?.registryAccounts.find(
+            (a) => a.id === accountId,
+          );
+          const nextRole = curr?.accountType === "admin" ? "user" : "admin";
+          await adminApi.setUserRole(accountId, nextRole);
+          notify.success("Роль акаунта оновлено.");
+        } else {
+          await adminApi.forceLogout(accountId);
+          await adminApi.appendAuditEntry({
+            action: "Примусовий вихід",
+            detail: `Для акаунта ${accountName} (${accountId}) виконано примусовий вихід.`,
+            actor: user?.email ?? "admin",
+            severity: "warning",
+          });
+          notify.success("Примусовий вихід виконано.");
         }
-        notify.success("Статус акаунта оновлено.");
-      } else if (action === "promote") {
-        const result = promoteMockAccount(accountId);
-        if (!result.ok) {
-          notify.warning(result.error ?? "Не вдалося змінити роль акаунта.");
-          return;
-        }
-        notify.success("Роль акаунта оновлено.");
-      } else {
-        forceLogoutMockAccount(accountId);
-        appendAdminAuditLog({
-          action: "Примусовий вихід",
-          detail: `Для акаунта ${accountName} (${accountId}) виконано примусовий вихід.`,
-          actor: user?.email ?? "admin",
-          severity: "warning",
-        });
-        notify.success("Примусовий вихід виконано.");
+        await refreshSnapshot();
+      } catch {
+        notify.warning("Не вдалося виконати дію.");
       }
-
-      refreshSnapshot();
     },
-    [refreshSnapshot, user?.email],
+    [refreshSnapshot, snapshot, user],
   );
 
   const handleAssignPlan = useCallback(
-    (accountId: string, accountName: string, planId: BillingPlanId) => {
-      const result = assignPlan(accountId, planId, user?.email ?? "admin");
-
-      if (!result.ok) {
-        notify.warning(result.error ?? "Не вдалося оновити план.");
-        return;
+    async (accountId: string, accountName: string, planId: string) => {
+      try {
+        await adminApi.setUserBilling(accountId, planId);
+        await adminApi.appendAuditEntry({
+          action: "План білінгу оновлено",
+          detail: `План ${planId} призначено для ${accountName} (${accountId}).`,
+          actor: user?.email ?? "admin",
+          severity: "security",
+        });
+        notify.success("План клієнта оновлено.");
+        await refreshSnapshot();
+      } catch {
+        notify.warning("Не вдалося оновити план.");
       }
-
-      appendAdminAuditLog({
-        action: "План білінгу оновлено",
-        detail: `План ${planId} призначено для ${accountName} (${accountId}).`,
-        actor: user?.email ?? "admin",
-        severity: "security",
-      });
-      notify.success("План клієнта оновлено.");
-      refreshSnapshot();
     },
-    [assignPlan, refreshSnapshot, user?.email],
+    [refreshSnapshot, user],
   );
 
   return {
     snapshot,
     billingRegistry,
     billingCounts,
-    clientPlanIds: CLIENT_PLAN_IDS,
+    clientPlanIds: ["trial", "user", "plus", "pro"] as const,
     refreshSnapshot,
     handleCopyCode,
     handleRegenerateCode,

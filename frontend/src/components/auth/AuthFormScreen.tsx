@@ -169,9 +169,21 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
     event.preventDefault();
 
     if (isRegister && !registerReady) {
-      notify.warning(
-        "Заповніть форму реєстрації, включаючи супер-код адміна за потреби.",
-      );
+      if (trimmedName.length < 2) {
+        notify.warning("Введіть повне ім'я (мінімум 2 символи).");
+      } else if (!emailValid) {
+        notify.warning("Введіть коректну електронну пошту.");
+      } else if (strength.score < strength.rules.length) {
+        notify.warning("Пароль не відповідає всім вимогам.");
+      } else if (form.confirmPassword.length === 0) {
+        notify.warning("Підтвердьте пароль.");
+      } else if (!passwordsMatch) {
+        notify.warning("Паролі не збігаються.");
+      } else if (!superCodeReady) {
+        notify.warning("Введіть супер-код адміна (мінімум 8 символів).");
+      } else if (!form.acceptTerms) {
+        notify.warning("Підтвердьте умови використання.");
+      }
       return;
     }
 
@@ -322,7 +334,7 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
           </div>
         ) : null}
 
-        <form className={styles.form} onSubmit={submitForm}>
+        <form className={styles.form} onSubmit={submitForm} noValidate>
           {isRegister ? (
             <div className={styles.field} data-filled={trimmedName.length > 0}>
               <input
@@ -347,7 +359,7 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
             <input
               id="auth-email"
               className={styles.input}
-              type={isRegister ? "email" : "text"}
+              type="text"
               value={form.email}
               autoComplete={isRegister ? "email" : "username"}
               placeholder=" "

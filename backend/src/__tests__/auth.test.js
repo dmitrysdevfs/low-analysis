@@ -9,6 +9,9 @@ dotenv.config();
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_secret_key_12345';
 
 vi.mock('../models/User.js');
+vi.mock('../services/admin/superCode.service.js', () => ({
+  getActiveCode: vi.fn().mockResolvedValue('SUPER-001'),
+}));
 
 describe('Auth API', () => {
   beforeEach(() => {

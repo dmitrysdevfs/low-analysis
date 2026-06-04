@@ -17,6 +17,8 @@ import proposalRoutes from './routes/proposalRoutes.js';
 import amendmentRoutes from './routes/amendmentRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import voteRoutes from './routes/voteRoutes.js';
+import lawChangeRoutes from './routes/lawChange/index.js';
+import adminRoutes from './routes/admin/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -50,11 +52,27 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // 1. Дозволяємо запити без origin (Postman, cURL, тощо)
+    if (!origin) {
       callback(null, true);
       return;
     }
 
+    // 2. Перевіряємо точний збіг (локальні адреси або Production з Render env)
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    // 3. Перевіряємо динамічні адреси Vercel Previews через регулярний вираз
+    const isVercelPreview =
+      /^https:\/\/low-analysis-frontend.*\.vercel\.app$/.test(origin);
+    if (isVercelPreview) {
+      callback(null, true);
+      return;
+    }
+
+    // Якщо жодна з умов не виконалась - блокуємо
     callback(new Error(`Origin ${origin} is not allowed by CORS`));
   },
   credentials: true,
@@ -94,6 +112,8 @@ app.use('/api/proposals', proposalRoutes);
 app.use('/api/amendments', amendmentRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/votes', voteRoutes);
+app.use('/api/law-change', lawChangeRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });
