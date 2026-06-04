@@ -52,11 +52,27 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // 1. Дозволяємо запити без origin (Postman, cURL, тощо)
+    if (!origin) {
       callback(null, true);
       return;
     }
 
+    // 2. Перевіряємо точний збіг (локальні адреси або Production з Render env)
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    // 3. Перевіряємо динамічні адреси Vercel Previews через регулярний вираз
+    const isVercelPreview =
+      /^https:\/\/low-analysis-frontend.*\.vercel\.app$/.test(origin);
+    if (isVercelPreview) {
+      callback(null, true);
+      return;
+    }
+
+    // Якщо жодна з умов не виконалась - блокуємо
     callback(new Error(`Origin ${origin} is not allowed by CORS`));
   },
   credentials: true,
