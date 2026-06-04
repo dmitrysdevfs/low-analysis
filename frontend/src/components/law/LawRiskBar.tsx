@@ -2,12 +2,14 @@
 
 import type { LawStats } from "@/types";
 import type { RiskLevel } from "@/lib/tree";
+import { RiskBarTooltip } from "./RiskBarTooltip";
 import styles from "./LawRiskBar.module.scss";
 
 interface LawRiskBarProps {
   stats: LawStats;
   activeLevel?: RiskLevel | null;
   onLevelClick?: (level: RiskLevel) => void;
+  context?: "law" | "article";
 }
 
 const LEVEL_LABELS: Record<RiskLevel, string> = {
@@ -25,6 +27,7 @@ export function LawRiskBar({
   stats,
   activeLevel,
   onLevelClick,
+  context = "law",
 }: LawRiskBarProps) {
   const { riskLevels, totalElements, meanChars, standardDeviation } = stats;
   const counted = riskLevels.green + riskLevels.yellow + riskLevels.red;
@@ -53,7 +56,10 @@ export function LawRiskBar({
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>
-        <span className={`eyebrow ${styles.label}`}>Складність норм</span>
+        <span className={`eyebrow ${styles.label}`}>
+          Складність норм
+          <RiskBarTooltip context={context} />
+        </span>
         <span className={`mono ${styles.meta}`}>
           {Math.round(meanChars)} симв. · σ {Math.round(standardDeviation)} ·{" "}
           {totalElements} елементів

@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import { getActiveCode } from '../services/admin/superCode.service.js';
 
 /**
  * @desc    Register a new user
@@ -23,7 +24,8 @@ export const registerUser = async (req, res) => {
 
   let role = 'user';
   if (accountType === 'admin') {
-    if (!superCode || superCode !== process.env.ADMIN_SUPER_CODE) {
+    const activeCode = await getActiveCode();
+    if (!superCode || superCode !== activeCode) {
       return res
         .status(400)
         .json({ message: 'Недійсний супер-код для реєстрації адміністратора' });

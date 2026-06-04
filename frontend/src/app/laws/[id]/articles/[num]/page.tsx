@@ -28,6 +28,7 @@ import {
   type RiskLevel,
 } from "@/lib/tree";
 import { LawRiskBar } from "@/components/law/LawRiskBar";
+import { RiskFilterHint } from "@/components/law/RiskFilterHint";
 import styles from "./page.module.scss";
 import { NestedNodeList } from "@/components/article/ArticleTreeNode";
 import type { Subject } from "@/types";
@@ -497,11 +498,20 @@ export default function ArticlePage() {
                       <LawRiskBar
                         stats={articleStats}
                         activeLevel={activeRiskLevel}
+                        context="article"
                         onLevelClick={(level) =>
                           setActiveRiskLevel((prev) =>
                             prev === level ? null : level,
                           )
                         }
+                      />
+                    )}
+                    {activeRiskLevel && (
+                      <RiskFilterHint
+                        activeLevel={activeRiskLevel}
+                        count={filteredChildren.length}
+                        context="article"
+                        onReset={() => setActiveRiskLevel(null)}
                       />
                     )}
 
