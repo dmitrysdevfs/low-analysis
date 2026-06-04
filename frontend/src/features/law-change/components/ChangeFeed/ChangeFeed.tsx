@@ -42,9 +42,7 @@ function ChangeFeedCard({ change }: { change: ApprovedChange }) {
         </span>
       </div>
 
-      {change.new_text && (
-        <p className={styles.text}>{change.new_text}</p>
-      )}
+      {change.new_text && <p className={styles.text}>{change.new_text}</p>}
 
       <div className={styles.cardMeta}>
         <span className={styles.votes}>

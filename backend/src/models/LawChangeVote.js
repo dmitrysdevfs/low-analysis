@@ -2,8 +2,18 @@ import mongoose from 'mongoose';
 
 const lawChangeVoteSchema = new mongoose.Schema(
   {
-    proposal_id: { type: mongoose.Schema.Types.ObjectId, ref: 'LawChangeProposal', required: true, index: true },
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    proposal_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'LawChangeProposal',
+      required: true,
+      index: true,
+    },
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
     vote: { type: String, enum: ['for', 'against'], required: true },
     vote_weight: { type: Number, required: true, default: 1 }, // 1 for user, 3 for legislator
   },

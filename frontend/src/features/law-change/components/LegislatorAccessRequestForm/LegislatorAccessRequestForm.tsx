@@ -32,9 +32,15 @@ export function LegislatorAccessRequestForm() {
 
   if (request) {
     return (
-      <div className={`${styles.statusBox} ${styles[`status_${request.status}`]}`}>
+      <div
+        className={`${styles.statusBox} ${styles[`status_${request.status}`]}`}
+      >
         <span className={styles.statusIcon}>
-          {request.status === "approved" ? "✓" : request.status === "rejected" ? "✕" : "⏳"}
+          {request.status === "approved"
+            ? "✓"
+            : request.status === "rejected"
+              ? "✕"
+              : "⏳"}
         </span>
         <div>
           <p className={styles.statusText}>{STATUS_MESSAGES[request.status]}</p>
@@ -50,7 +56,8 @@ export function LegislatorAccessRequestForm() {
     <form className={styles.form} onSubmit={handleSubmit}>
       <h3 className={styles.title}>Запит ролі законотворця</h3>
       <p className={styles.description}>
-        Заповніть форму, щоб отримати доступ до функцій законотворця — подачі пропозицій та голосування.
+        Заповніть форму, щоб отримати доступ до функцій законотворця — подачі
+        пропозицій та голосування.
       </p>
 
       <div className={styles.field}>
@@ -59,7 +66,7 @@ export function LegislatorAccessRequestForm() {
           type="text"
           className={styles.input}
           value={organization}
-          onChange={e => setOrganization(e.target.value)}
+          onChange={(e) => setOrganization(e.target.value)}
           placeholder="Назва організації або установи"
           required
         />
@@ -71,7 +78,7 @@ export function LegislatorAccessRequestForm() {
           className={styles.textarea}
           rows={4}
           value={reason}
-          onChange={e => setReason(e.target.value)}
+          onChange={(e) => setReason(e.target.value)}
           placeholder="Поясніть, чому вам потрібен доступ законотворця..."
           required
         />
@@ -81,7 +88,11 @@ export function LegislatorAccessRequestForm() {
         <p className={styles.error}>{(submit.error as Error).message}</p>
       )}
 
-      <button type="submit" className={styles.submitBtn} disabled={submit.isPending}>
+      <button
+        type="submit"
+        className={styles.submitBtn}
+        disabled={submit.isPending}
+      >
         {submit.isPending ? "Надсилання..." : "Надіслати запит"}
       </button>
     </form>

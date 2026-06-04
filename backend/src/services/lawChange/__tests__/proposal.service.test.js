@@ -34,7 +34,13 @@ describe('submitProposal', () => {
   it('throws 400 when proposal status is not draft', async () => {
     compareIds.mockReturnValue(true);
     LawChangeProposal.findById.mockResolvedValue(
-      makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'active', reason: 'some reason', element_id: null }),
+      makeSaveMock({
+        _id: PROPOSAL_ID,
+        created_by: AUTHOR_ID,
+        status: 'active',
+        reason: 'some reason',
+        element_id: null,
+      }),
     );
 
     await expect(submitProposal(PROPOSAL_ID, AUTHOR_ID)).rejects.toMatchObject({
@@ -46,7 +52,13 @@ describe('submitProposal', () => {
   it('throws 403 when user is not the author', async () => {
     compareIds.mockReturnValue(false);
     LawChangeProposal.findById.mockResolvedValue(
-      makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'draft', reason: 'reason', element_id: null }),
+      makeSaveMock({
+        _id: PROPOSAL_ID,
+        created_by: AUTHOR_ID,
+        status: 'draft',
+        reason: 'reason',
+        element_id: null,
+      }),
     );
 
     await expect(submitProposal(PROPOSAL_ID, OTHER_ID)).rejects.toMatchObject({
@@ -58,7 +70,14 @@ describe('submitProposal', () => {
   it('throws 409 when another active proposal exists for the same element', async () => {
     compareIds.mockReturnValue(true);
     LawChangeProposal.findById.mockResolvedValue(
-      makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'draft', reason: 'reason', element_id: 'elem-1', law_id: 'law-1' }),
+      makeSaveMock({
+        _id: PROPOSAL_ID,
+        created_by: AUTHOR_ID,
+        status: 'draft',
+        reason: 'reason',
+        element_id: 'elem-1',
+        law_id: 'law-1',
+      }),
     );
     LawChangeProposal.findOne.mockResolvedValue({ _id: 'conflict-prop' });
 
@@ -70,7 +89,13 @@ describe('submitProposal', () => {
 
   it('sets status to active and saves when all checks pass (no element_id)', async () => {
     compareIds.mockReturnValue(true);
-    const proposal = makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'draft', reason: 'reason', element_id: null });
+    const proposal = makeSaveMock({
+      _id: PROPOSAL_ID,
+      created_by: AUTHOR_ID,
+      status: 'draft',
+      reason: 'reason',
+      element_id: null,
+    });
     LawChangeProposal.findById.mockResolvedValue(proposal);
 
     await submitProposal(PROPOSAL_ID, AUTHOR_ID);
@@ -84,22 +109,34 @@ describe('withdrawProposal', () => {
   it('throws 403 when user is not the author', async () => {
     compareIds.mockReturnValue(false);
     LawChangeProposal.findById.mockResolvedValue(
-      makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'draft' }),
+      makeSaveMock({
+        _id: PROPOSAL_ID,
+        created_by: AUTHOR_ID,
+        status: 'draft',
+      }),
     );
 
-    await expect(withdrawProposal(PROPOSAL_ID, OTHER_ID)).rejects.toMatchObject({
-      status: 403,
-      message: 'Forbidden',
-    });
+    await expect(withdrawProposal(PROPOSAL_ID, OTHER_ID)).rejects.toMatchObject(
+      {
+        status: 403,
+        message: 'Forbidden',
+      },
+    );
   });
 
   it('throws 400 when status is not draft or active', async () => {
     compareIds.mockReturnValue(true);
     LawChangeProposal.findById.mockResolvedValue(
-      makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'approved' }),
+      makeSaveMock({
+        _id: PROPOSAL_ID,
+        created_by: AUTHOR_ID,
+        status: 'approved',
+      }),
     );
 
-    await expect(withdrawProposal(PROPOSAL_ID, AUTHOR_ID)).rejects.toMatchObject({
+    await expect(
+      withdrawProposal(PROPOSAL_ID, AUTHOR_ID),
+    ).rejects.toMatchObject({
       status: 400,
       message: 'Cannot withdraw in current status',
     });
@@ -107,7 +144,11 @@ describe('withdrawProposal', () => {
 
   it('sets status to withdrawn and saves when author withdraws draft', async () => {
     compareIds.mockReturnValue(true);
-    const proposal = makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'draft' });
+    const proposal = makeSaveMock({
+      _id: PROPOSAL_ID,
+      created_by: AUTHOR_ID,
+      status: 'draft',
+    });
     LawChangeProposal.findById.mockResolvedValue(proposal);
 
     await withdrawProposal(PROPOSAL_ID, AUTHOR_ID);
@@ -118,7 +159,11 @@ describe('withdrawProposal', () => {
 
   it('sets status to withdrawn when author withdraws active proposal', async () => {
     compareIds.mockReturnValue(true);
-    const proposal = makeSaveMock({ _id: PROPOSAL_ID, created_by: AUTHOR_ID, status: 'active' });
+    const proposal = makeSaveMock({
+      _id: PROPOSAL_ID,
+      created_by: AUTHOR_ID,
+      status: 'active',
+    });
     LawChangeProposal.findById.mockResolvedValue(proposal);
 
     await withdrawProposal(PROPOSAL_ID, AUTHOR_ID);

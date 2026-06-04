@@ -18,11 +18,7 @@ export {
 } from "./hooks/useProposalMutations";
 
 // Voting
-export {
-  useVoteStats,
-  useCastVote,
-  useRemoveVote,
-} from "./hooks/useVoting";
+export { useVoteStats, useCastVote, useRemoveVote } from "./hooks/useVoting";
 
 // Approved changes
 export {

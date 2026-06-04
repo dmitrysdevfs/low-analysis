@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import type { LawChangeType } from "@/types/law-change.types";
-import { useCreateProposal, useSubmitProposal } from "@/features/law-change/hooks/useProposalMutations";
+import {
+  useCreateProposal,
+  useSubmitProposal,
+} from "@/features/law-change/hooks/useProposalMutations";
 import styles from "./ProposeChangeForm.module.scss";
 
 interface ProposeChangeFormProps {
@@ -20,7 +23,13 @@ const CHANGE_TYPES: { value: LawChangeType; label: string }[] = [
   { value: "move", label: "Переміщення" },
 ];
 
-export function ProposeChangeForm({ lawId, elementId, originalText, onClose, onSuccess }: ProposeChangeFormProps) {
+export function ProposeChangeForm({
+  lawId,
+  elementId,
+  originalText,
+  onClose,
+  onSuccess,
+}: ProposeChangeFormProps) {
   const [changeType, setChangeType] = useState<LawChangeType>("edit");
   const [proposedText, setProposedText] = useState("");
   const [reason, setReason] = useState("");
@@ -69,29 +78,70 @@ export function ProposeChangeForm({ lawId, elementId, originalText, onClose, onS
 
       <div className={styles.field}>
         <label className={styles.label}>Тип зміни</label>
-        <select className={styles.select} value={changeType} onChange={e => setChangeType(e.target.value as LawChangeType)}>
-          {CHANGE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+        <select
+          className={styles.select}
+          value={changeType}
+          onChange={(e) => setChangeType(e.target.value as LawChangeType)}
+        >
+          {CHANGE_TYPES.map((t) => (
+            <option key={t.value} value={t.value}>
+              {t.label}
+            </option>
+          ))}
         </select>
       </div>
 
       {showProposedText && (
         <div className={styles.field}>
           <label className={styles.label}>Новий текст</label>
-          <textarea className={styles.textarea} rows={4} value={proposedText} onChange={e => setProposedText(e.target.value)} placeholder="Введіть запропонований текст..." />
+          <textarea
+            className={styles.textarea}
+            rows={4}
+            value={proposedText}
+            onChange={(e) => setProposedText(e.target.value)}
+            placeholder="Введіть запропонований текст..."
+          />
         </div>
       )}
 
       <div className={styles.field}>
         <label className={styles.label}>Обґрунтування</label>
-        <textarea className={styles.textarea} rows={3} value={reason} onChange={e => setReason(e.target.value)} placeholder="Поясніть причину змін..." />
+        <textarea
+          className={styles.textarea}
+          rows={3}
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Поясніть причину змін..."
+        />
       </div>
 
       {error && <p className={styles.error}>{(error as Error).message}</p>}
 
       <div className={styles.actions}>
-        <button type="button" className={styles.cancelBtn} onClick={onClose} disabled={isPending}>Скасувати</button>
-        <button type="button" className={styles.draftBtn} onClick={handleDraft} disabled={isPending}>Зберегти як чернетку</button>
-        <button type="button" className={styles.submitBtn} onClick={handleSubmit} disabled={isPending}>Подати на голосування</button>
+        <button
+          type="button"
+          className={styles.cancelBtn}
+          onClick={onClose}
+          disabled={isPending}
+        >
+          Скасувати
+        </button>
+        <button
+          type="button"
+          className={styles.draftBtn}
+          onClick={handleDraft}
+          disabled={isPending}
+        >
+          Зберегти як чернетку
+        </button>
+        <button
+          type="button"
+          className={styles.submitBtn}
+          onClick={handleSubmit}
+          disabled={isPending}
+        >
+          Подати на голосування
+        </button>
       </div>
     </div>
   );

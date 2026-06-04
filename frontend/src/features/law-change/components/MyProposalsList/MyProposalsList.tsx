@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useMyProposals } from "@/features/law-change";
-import type { LawChangeProposal, LawChangeStatus } from "@/types/law-change.types";
+import type {
+  LawChangeProposal,
+  LawChangeStatus,
+} from "@/types/law-change.types";
 import styles from "./MyProposalsList.module.scss";
 
 const STATUS_LABELS: Record<LawChangeStatus, string> = {
@@ -52,7 +55,12 @@ function ProposalCard({ proposal }: { proposal: LawChangeProposal }) {
 }
 
 const ALL_STATUSES: Array<LawChangeStatus | "all"> = [
-  "all", "draft", "active", "approved", "rejected", "withdrawn",
+  "all",
+  "draft",
+  "active",
+  "approved",
+  "rejected",
+  "withdrawn",
 ];
 
 export function MyProposalsList() {
@@ -88,7 +96,9 @@ export function MyProposalsList() {
       )}
 
       <div className={styles.grid}>
-        {filtered?.map((p) => <ProposalCard key={p._id} proposal={p} />)}
+        {filtered?.map((p) => (
+          <ProposalCard key={p._id} proposal={p} />
+        ))}
       </div>
     </div>
   );

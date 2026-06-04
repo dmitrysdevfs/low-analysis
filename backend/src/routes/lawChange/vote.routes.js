@@ -27,9 +27,14 @@ const router = express.Router({ mergeParams: true });
  *     security:
  *       - bearerAuth: []
  */
-router.route('/vote')
+router
+  .route('/vote')
   .post(protect, hasPermission('law_changes:vote'), voteController.castVote)
-  .delete(protect, hasPermission('law_changes:vote'), voteController.removeVote);
+  .delete(
+    protect,
+    hasPermission('law_changes:vote'),
+    voteController.removeVote,
+  );
 
 /**
  * @swagger
@@ -40,6 +45,11 @@ router.route('/vote')
  *     security:
  *       - bearerAuth: []
  */
-router.get('/votes', protect, hasPermission('law_changes:read'), voteController.getVoteStats);
+router.get(
+  '/votes',
+  protect,
+  hasPermission('law_changes:read'),
+  voteController.getVoteStats,
+);
 
 export default router;

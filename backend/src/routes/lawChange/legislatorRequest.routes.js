@@ -28,7 +28,8 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.route('/')
+router
+  .route('/')
   .post(protect, legislatorRequestController.submitRequest)
   .get(protect, authorize('admin'), legislatorRequestController.getAllRequests);
 
@@ -52,7 +53,12 @@ router.get('/my', protect, legislatorRequestController.getMyRequest);
  *     security:
  *       - bearerAuth: []
  */
-router.post('/:id/approve', protect, authorize('admin'), legislatorRequestController.approveRequest);
+router.post(
+  '/:id/approve',
+  protect,
+  authorize('admin'),
+  legislatorRequestController.approveRequest,
+);
 
 /**
  * @swagger
@@ -63,6 +69,11 @@ router.post('/:id/approve', protect, authorize('admin'), legislatorRequestContro
  *     security:
  *       - bearerAuth: []
  */
-router.post('/:id/reject', protect, authorize('admin'), legislatorRequestController.rejectRequest);
+router.post(
+  '/:id/reject',
+  protect,
+  authorize('admin'),
+  legislatorRequestController.rejectRequest,
+);
 
 export default router;

@@ -4,16 +4,24 @@ export const getLawView = async (req, res, next) => {
   try {
     const data = await approvedChangeService.getLawView(req.params.id);
     res.json(data);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const getApprovedChanges = async (req, res, next) => {
   try {
     const { law_id } = req.query;
-    if (!law_id) return res.status(400).json({ message: 'law_id query param is required' });
-    const changes = await approvedChangeService.getApprovedChangesForLaw(law_id);
+    if (!law_id)
+      return res
+        .status(400)
+        .json({ message: 'law_id query param is required' });
+    const changes =
+      await approvedChangeService.getApprovedChangesForLaw(law_id);
     res.json(changes);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const getChangeFeed = async (req, res, next) => {
@@ -24,19 +32,31 @@ export const getChangeFeed = async (req, res, next) => {
       limit: parseInt(limit, 10),
     });
     res.json(result);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const rollbackChange = async (req, res, next) => {
   try {
-    const change = await approvedChangeService.rollbackChange(req.params.id, req.user._id);
+    const change = await approvedChangeService.rollbackChange(
+      req.params.id,
+      req.user._id,
+    );
     res.json(change);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const archiveChange = async (req, res, next) => {
   try {
-    const change = await approvedChangeService.archiveChange(req.params.id, req.user._id);
+    const change = await approvedChangeService.archiveChange(
+      req.params.id,
+      req.user._id,
+    );
     res.json(change);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };

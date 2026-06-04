@@ -1,0 +1,74 @@
+import User from '../../models/User.js';
+import { appendAuditEntry } from './audit.service.js';
+
+export const listUsers = async () => {
+  return await User.find().select('-password').sort({ createdAt: -1 }).lean();
+};
+
+export const setUserStatus = async (id, status, actor) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true },
+  ).select('-password');
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  await appendAuditEntry({
+    action:
+      status === 'inactive' ? 'Акаунт деактивовано' : 'Акаунт реактивовано',
+    detail: `Акаунт ${user.email} переведено в статус ${status}.`,
+    actor,
+    severity: 'warning',
+  });
+  return user;
+};
+
+export const setUserRole = async (id, role, actor) => {
+  const allowed = ['user', 'paid_user', 'legislator', 'admin'];
+  if (!allowed.includes(role))
+    throw Object.assign(new Error('Invalid role'), { status: 400 });
+  const user = await User.findByIdAndUpdate(id, { role }, { new: true }).select(
+    '-password',
+  );
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  await appendAuditEntry({
+    action:
+      role === 'admin'
+        ? 'Акаунт підвищено до адміна'
+        : 'Права адміністратора знято',
+    detail: `Акаунт ${user.email} отримав роль ${role}.`,
+    actor,
+    severity: 'security',
+  });
+  return user;
+};
+
+export const setUserBilling = async (id, billingPlan, actor) => {
+  const plans = ['preview', 'trial', 'user', 'plus', 'pro'];
+  if (!plans.includes(billingPlan))
+    throw Object.assign(new Error('Invalid plan'), { status: 400 });
+  const user = await User.findByIdAndUpdate(
+    id,
+    { billingPlan },
+    { new: true },
+  ).select('-password');
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  await appendAuditEntry({
+    action: 'План білінгу оновлено',
+    detail: `План ${billingPlan} призначено для ${user.email}.`,
+    actor,
+    severity: 'security',
+  });
+  return user;
+};
+
+export const recordForceLogout = async (id, actor) => {
+  const user = await User.findById(id).select('-password').lean();
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  await appendAuditEntry({
+    action: 'Виконано примусовий вихід',
+    detail: `Для акаунта ${user.email} застосовано примусовий вихід.`,
+    actor,
+    severity: 'warning',
+  });
+  return { ok: true };
+};

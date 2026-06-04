@@ -7,7 +7,11 @@ interface DiffHighlightProps {
   proposedText?: string;
 }
 
-export function DiffHighlight({ changeType, originalText, proposedText }: DiffHighlightProps) {
+export function DiffHighlight({
+  changeType,
+  originalText,
+  proposedText,
+}: DiffHighlightProps) {
   if (changeType === "edit") {
     return (
       <div className={styles.wrapper}>

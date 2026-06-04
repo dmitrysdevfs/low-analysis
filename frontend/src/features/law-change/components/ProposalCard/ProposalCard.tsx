@@ -13,20 +13,36 @@ interface ProposalCardProps {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  draft: "Чернетка", active: "Активна", approved: "Схвалено",
-  rejected: "Відхилено", withdrawn: "Відкликано", archived: "Архів", superseded: "Замінено",
+  draft: "Чернетка",
+  active: "Активна",
+  approved: "Схвалено",
+  rejected: "Відхилено",
+  withdrawn: "Відкликано",
+  archived: "Архів",
+  superseded: "Замінено",
 };
 
 const CHANGE_LABELS: Record<string, string> = {
-  edit: "Редагування", add: "Додавання", delete: "Видалення", move: "Переміщення",
+  edit: "Редагування",
+  add: "Додавання",
+  delete: "Видалення",
+  move: "Переміщення",
 };
 
-export function ProposalCard({ proposal, currentUserId, isLegislator }: ProposalCardProps) {
+export function ProposalCard({
+  proposal,
+  currentUserId,
+  isLegislator,
+}: ProposalCardProps) {
   const withdraw = useWithdrawProposal();
 
-  const authorId = typeof proposal.created_by === "object" ? proposal.created_by._id : proposal.created_by;
+  const authorId =
+    typeof proposal.created_by === "object"
+      ? proposal.created_by._id
+      : proposal.created_by;
   const isAuthor = !!currentUserId && authorId === currentUserId;
-  const canWithdraw = isAuthor && (proposal.status === "draft" || proposal.status === "active");
+  const canWithdraw =
+    isAuthor && (proposal.status === "draft" || proposal.status === "active");
   const showVoting = proposal.status === "active" && isLegislator;
 
   const date = new Date(proposal.createdAt).toLocaleDateString("uk-UA");
@@ -35,10 +51,14 @@ export function ProposalCard({ proposal, currentUserId, isLegislator }: Proposal
     <div className={styles.card}>
       <div className={styles.header}>
         <div className={styles.badges}>
-          <span className={`${styles.statusBadge} ${styles[`status_${proposal.status}`]}`}>
+          <span
+            className={`${styles.statusBadge} ${styles[`status_${proposal.status}`]}`}
+          >
             {STATUS_LABELS[proposal.status] ?? proposal.status}
           </span>
-          <span className={`${styles.typeBadge} ${styles[`type_${proposal.change_type}`]}`}>
+          <span
+            className={`${styles.typeBadge} ${styles[`type_${proposal.change_type}`]}`}
+          >
             {CHANGE_LABELS[proposal.change_type] ?? proposal.change_type}
           </span>
         </div>
@@ -58,7 +78,9 @@ export function ProposalCard({ proposal, currentUserId, isLegislator }: Proposal
       </div>
 
       {proposal.reason && (
-        <p className={styles.reason}><em>Обґрунтування:</em> {proposal.reason}</p>
+        <p className={styles.reason}>
+          <em>Обґрунтування:</em> {proposal.reason}
+        </p>
       )}
 
       {showVoting && (

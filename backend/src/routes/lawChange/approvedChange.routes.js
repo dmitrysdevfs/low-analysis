@@ -1,6 +1,10 @@
 import express from 'express';
 import * as approvedChangeController from '../../controllers/lawChange/approvedChange.controller.js';
-import { protect, hasPermission, authorize } from '../../middleware/authMiddleware.js';
+import {
+  protect,
+  hasPermission,
+  authorize,
+} from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -18,7 +22,12 @@ const router = express.Router();
  *         required: true
  *         schema: { type: string }
  */
-router.get('/laws/:id/view', protect, hasPermission('law_changes:read'), approvedChangeController.getLawView);
+router.get(
+  '/laws/:id/view',
+  protect,
+  hasPermission('law_changes:read'),
+  approvedChangeController.getLawView,
+);
 
 /**
  * @swagger
@@ -29,7 +38,12 @@ router.get('/laws/:id/view', protect, hasPermission('law_changes:read'), approve
  *     security:
  *       - bearerAuth: []
  */
-router.get('/approved', protect, hasPermission('law_changes:read'), approvedChangeController.getApprovedChanges);
+router.get(
+  '/approved',
+  protect,
+  hasPermission('law_changes:read'),
+  approvedChangeController.getApprovedChanges,
+);
 
 /**
  * @swagger
@@ -40,7 +54,12 @@ router.get('/approved', protect, hasPermission('law_changes:read'), approvedChan
  *     security:
  *       - bearerAuth: []
  */
-router.get('/approved/feed', protect, hasPermission('law_changes:read'), approvedChangeController.getChangeFeed);
+router.get(
+  '/approved/feed',
+  protect,
+  hasPermission('law_changes:read'),
+  approvedChangeController.getChangeFeed,
+);
 
 /**
  * @swagger
@@ -51,7 +70,12 @@ router.get('/approved/feed', protect, hasPermission('law_changes:read'), approve
  *     security:
  *       - bearerAuth: []
  */
-router.post('/approved/:id/rollback', protect, authorize('admin'), approvedChangeController.rollbackChange);
+router.post(
+  '/approved/:id/rollback',
+  protect,
+  authorize('admin'),
+  approvedChangeController.rollbackChange,
+);
 
 /**
  * @swagger
@@ -62,6 +86,11 @@ router.post('/approved/:id/rollback', protect, authorize('admin'), approvedChang
  *     security:
  *       - bearerAuth: []
  */
-router.post('/approved/:id/archive', protect, authorize('admin'), approvedChangeController.archiveChange);
+router.post(
+  '/approved/:id/archive',
+  protect,
+  authorize('admin'),
+  approvedChangeController.archiveChange,
+);
 
 export default router;

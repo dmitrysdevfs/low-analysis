@@ -11,7 +11,9 @@ const makeEl = (id: string, text = "text", sortOrder = 0): LawElement => ({
 });
 
 const makeChange = (
-  overrides: Partial<ApprovedChange> & { change_type: ApprovedChange["change_type"] },
+  overrides: Partial<ApprovedChange> & {
+    change_type: ApprovedChange["change_type"];
+  },
 ): ApprovedChange => ({
   _id: "c1",
   law_id: "law1",
@@ -40,7 +42,11 @@ describe("mergeLawWithChanges", () => {
 
   it("applies edit: replaces element text", () => {
     const el1 = makeEl("1", "old");
-    const change = makeChange({ change_type: "edit", element_id: "1", new_text: "new" });
+    const change = makeChange({
+      change_type: "edit",
+      element_id: "1",
+      new_text: "new",
+    });
     const result = mergeLawWithChanges([el1], [change]);
     expect(result[0].text).toBe("new");
   });
@@ -97,14 +103,24 @@ describe("mergeLawWithChanges", () => {
 
   it("skips non-current changes", () => {
     const el1 = makeEl("1", "original");
-    const change = makeChange({ change_type: "edit", element_id: "1", new_text: "new", is_current: false });
+    const change = makeChange({
+      change_type: "edit",
+      element_id: "1",
+      new_text: "new",
+      is_current: false,
+    });
     const result = mergeLawWithChanges([el1], [change]);
     expect(result[0].text).toBe("original");
   });
 
   it("skips archived changes", () => {
     const el1 = makeEl("1", "original");
-    const change = makeChange({ change_type: "edit", element_id: "1", new_text: "new", status: "archived" });
+    const change = makeChange({
+      change_type: "edit",
+      element_id: "1",
+      new_text: "new",
+      status: "archived",
+    });
     const result = mergeLawWithChanges([el1], [change]);
     expect(result[0].text).toBe("original");
   });
@@ -112,8 +128,19 @@ describe("mergeLawWithChanges", () => {
   it("applies multiple changes in sort_order sequence", () => {
     const el1 = makeEl("1", "old");
     const el2 = makeEl("2");
-    const edit = makeChange({ _id: "c1", change_type: "edit", element_id: "1", new_text: "new", sort_order: 1 });
-    const del = makeChange({ _id: "c2", change_type: "delete", element_id: "2", sort_order: 2 });
+    const edit = makeChange({
+      _id: "c1",
+      change_type: "edit",
+      element_id: "1",
+      new_text: "new",
+      sort_order: 1,
+    });
+    const del = makeChange({
+      _id: "c2",
+      change_type: "delete",
+      element_id: "2",
+      sort_order: 2,
+    });
     const result = mergeLawWithChanges([el1, el2], [del, edit]); // intentionally out of order
     expect(result).toHaveLength(1);
     expect(result[0].text).toBe("new");

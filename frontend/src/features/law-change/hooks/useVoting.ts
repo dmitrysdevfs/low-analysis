@@ -18,13 +18,20 @@ export function useCastVote(proposalId: string) {
     mutationFn: (data: VotePayload) => castVote(proposalId, data),
     onMutate: async (data) => {
       await queryClient.cancelQueries({ queryKey: ["voteStats", proposalId] });
-      const previous = queryClient.getQueryData<VoteStats>(["voteStats", proposalId]);
+      const previous = queryClient.getQueryData<VoteStats>([
+        "voteStats",
+        proposalId,
+      ]);
       if (previous) {
         const isFor = data.vote === "for";
         queryClient.setQueryData<VoteStats>(["voteStats", proposalId], {
           ...previous,
-          votes_for_count: isFor ? previous.votes_for_count + 1 : previous.votes_for_count,
-          votes_against_count: !isFor ? previous.votes_against_count + 1 : previous.votes_against_count,
+          votes_for_count: isFor
+            ? previous.votes_for_count + 1
+            : previous.votes_for_count,
+          votes_against_count: !isFor
+            ? previous.votes_against_count + 1
+            : previous.votes_against_count,
           my_vote: data.vote,
         });
       }
@@ -48,13 +55,20 @@ export function useRemoveVote(proposalId: string) {
     mutationFn: () => removeVote(proposalId),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["voteStats", proposalId] });
-      const previous = queryClient.getQueryData<VoteStats>(["voteStats", proposalId]);
+      const previous = queryClient.getQueryData<VoteStats>([
+        "voteStats",
+        proposalId,
+      ]);
       if (previous && previous.my_vote) {
         const wasFor = previous.my_vote === "for";
         queryClient.setQueryData<VoteStats>(["voteStats", proposalId], {
           ...previous,
-          votes_for_count: wasFor ? previous.votes_for_count - 1 : previous.votes_for_count,
-          votes_against_count: !wasFor ? previous.votes_against_count - 1 : previous.votes_against_count,
+          votes_for_count: wasFor
+            ? previous.votes_for_count - 1
+            : previous.votes_for_count,
+          votes_against_count: !wasFor
+            ? previous.votes_against_count - 1
+            : previous.votes_against_count,
           my_vote: null,
         });
       }

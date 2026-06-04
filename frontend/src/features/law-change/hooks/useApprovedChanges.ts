@@ -29,7 +29,9 @@ export function useRollbackChange() {
   return useMutation({
     mutationFn: (changeId: string) => rollbackChange(changeId),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["approvedChanges", result.law_id] });
+      queryClient.invalidateQueries({
+        queryKey: ["approvedChanges", result.law_id],
+      });
       queryClient.invalidateQueries({ queryKey: ["changeFeed"] });
       queryClient.invalidateQueries({ queryKey: ["lawView", result.law_id] });
     },
@@ -41,7 +43,9 @@ export function useArchiveChange() {
   return useMutation({
     mutationFn: (changeId: string) => archiveChange(changeId),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["approvedChanges", result.law_id] });
+      queryClient.invalidateQueries({
+        queryKey: ["approvedChanges", result.law_id],
+      });
       queryClient.invalidateQueries({ queryKey: ["changeFeed"] });
       queryClient.invalidateQueries({ queryKey: ["lawView", result.law_id] });
     },

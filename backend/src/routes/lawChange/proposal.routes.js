@@ -31,9 +31,18 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.route('/')
-  .post(protect, hasPermission('law_changes:propose'), proposalController.createProposal)
-  .get(protect, hasPermission('law_changes:read'), proposalController.getProposals);
+router
+  .route('/')
+  .post(
+    protect,
+    hasPermission('law_changes:propose'),
+    proposalController.createProposal,
+  )
+  .get(
+    protect,
+    hasPermission('law_changes:read'),
+    proposalController.getProposals,
+  );
 
 /**
  * @swagger
@@ -60,9 +69,18 @@ router.get('/my', protect, proposalController.getMyProposals);
  *     security:
  *       - bearerAuth: []
  */
-router.route('/:id')
-  .get(protect, hasPermission('law_changes:read'), proposalController.getProposalById)
-  .patch(protect, hasPermission('law_changes:propose'), proposalController.updateProposal);
+router
+  .route('/:id')
+  .get(
+    protect,
+    hasPermission('law_changes:read'),
+    proposalController.getProposalById,
+  )
+  .patch(
+    protect,
+    hasPermission('law_changes:propose'),
+    proposalController.updateProposal,
+  );
 
 /**
  * @swagger
@@ -73,7 +91,12 @@ router.route('/:id')
  *     security:
  *       - bearerAuth: []
  */
-router.post('/:id/submit', protect, hasPermission('law_changes:propose'), proposalController.submitProposal);
+router.post(
+  '/:id/submit',
+  protect,
+  hasPermission('law_changes:propose'),
+  proposalController.submitProposal,
+);
 
 /**
  * @swagger
@@ -84,6 +107,11 @@ router.post('/:id/submit', protect, hasPermission('law_changes:propose'), propos
  *     security:
  *       - bearerAuth: []
  */
-router.post('/:id/withdraw', protect, hasPermission('law_changes:propose'), proposalController.withdrawProposal);
+router.post(
+  '/:id/withdraw',
+  protect,
+  hasPermission('law_changes:propose'),
+  proposalController.withdrawProposal,
+);
 
 export default router;

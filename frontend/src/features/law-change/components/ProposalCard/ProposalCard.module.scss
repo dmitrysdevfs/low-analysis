@@ -38,18 +38,51 @@
   font-family: var(--font-mono, monospace);
 }
 
-.status_draft { background: rgba(122, 152, 192, 0.15); color: #7a98c0; }
-.status_active { background: rgba(74, 128, 212, 0.2); color: #4a80d4; }
-.status_approved { background: rgba(76, 175, 80, 0.2); color: #4caf50; }
-.status_rejected { background: rgba(239, 83, 80, 0.2); color: #ef5350; }
-.status_withdrawn { background: rgba(120, 120, 120, 0.15); color: #888; }
-.status_archived { background: rgba(120, 120, 120, 0.12); color: #666; }
-.status_superseded { background: rgba(120, 120, 120, 0.12); color: #666; }
+.status_draft {
+  background: rgba(122, 152, 192, 0.15);
+  color: #7a98c0;
+}
+.status_active {
+  background: rgba(74, 128, 212, 0.2);
+  color: #4a80d4;
+}
+.status_approved {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+.status_rejected {
+  background: rgba(239, 83, 80, 0.2);
+  color: #ef5350;
+}
+.status_withdrawn {
+  background: rgba(120, 120, 120, 0.15);
+  color: #888;
+}
+.status_archived {
+  background: rgba(120, 120, 120, 0.12);
+  color: #666;
+}
+.status_superseded {
+  background: rgba(120, 120, 120, 0.12);
+  color: #666;
+}
 
-.type_edit { background: rgba(200, 168, 67, 0.15); color: #c8a843; }
-.type_add { background: rgba(76, 175, 80, 0.15); color: #4caf50; }
-.type_delete { background: rgba(239, 83, 80, 0.15); color: #ef5350; }
-.type_move { background: rgba(74, 128, 212, 0.15); color: #4a80d4; }
+.type_edit {
+  background: rgba(200, 168, 67, 0.15);
+  color: #c8a843;
+}
+.type_add {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+}
+.type_delete {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef5350;
+}
+.type_move {
+  background: rgba(74, 128, 212, 0.15);
+  color: #4a80d4;
+}
 
 .meta {
   display: flex;

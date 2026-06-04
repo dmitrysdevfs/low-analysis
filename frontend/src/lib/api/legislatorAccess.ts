@@ -42,9 +42,7 @@ export const submitAccessRequest = (data: {
 
 // User: get my request status
 export const getMyAccessRequest = () =>
-  getJson<LegislatorAccessRequest | null>(
-    "/law-change/legislator-requests/my",
-  );
+  getJson<LegislatorAccessRequest | null>("/law-change/legislator-requests/my");
 
 // Admin: get all pending requests
 export const getAllAccessRequests = (status?: string) => {

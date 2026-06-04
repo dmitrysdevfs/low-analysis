@@ -1,6 +1,10 @@
 "use client";
 
-import { useVoteStats, useCastVote, useRemoveVote } from "@/features/law-change/hooks/useVoting";
+import {
+  useVoteStats,
+  useCastVote,
+  useRemoveVote,
+} from "@/features/law-change/hooks/useVoting";
 import styles from "./VotePanel.module.scss";
 
 interface VotePanelProps {
@@ -18,7 +22,8 @@ export function VotePanel({ proposalId, disabled }: VotePanelProps) {
   }
 
   const total = stats.votes_for_weighted + stats.votes_against_weighted;
-  const forPercent = total > 0 ? Math.round((stats.votes_for_weighted / total) * 100) : 50;
+  const forPercent =
+    total > 0 ? Math.round((stats.votes_for_weighted / total) * 100) : 50;
 
   const handleVote = (vote: "for" | "against") => {
     if (disabled) return;
@@ -38,8 +43,12 @@ export function VotePanel({ proposalId, disabled }: VotePanelProps) {
       </div>
 
       <div className={styles.counts}>
-        <span className={styles.forCount}>За: {stats.votes_for_weighted.toFixed(1)}</span>
-        <span className={styles.againstCount}>Проти: {stats.votes_against_weighted.toFixed(1)}</span>
+        <span className={styles.forCount}>
+          За: {stats.votes_for_weighted.toFixed(1)}
+        </span>
+        <span className={styles.againstCount}>
+          Проти: {stats.votes_against_weighted.toFixed(1)}
+        </span>
       </div>
 
       <div className={styles.actions}>

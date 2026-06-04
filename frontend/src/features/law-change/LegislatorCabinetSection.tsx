@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useMyAccessRequest, useSubmitAccessRequest } from "@/features/law-change";
+import {
+  useMyAccessRequest,
+  useSubmitAccessRequest,
+} from "@/features/law-change";
 import { MyProposalsList } from "./components/MyProposalsList/MyProposalsList";
 import styles from "./LegislatorCabinetSection.module.scss";
 
@@ -61,7 +64,11 @@ function AccessRequestForm() {
             required
           />
         </div>
-        <button type="submit" className={styles.submitBtn} disabled={submit.isPending}>
+        <button
+          type="submit"
+          className={styles.submitBtn}
+          disabled={submit.isPending}
+        >
           {submit.isPending ? "Надсилання..." : "Подати запит"}
         </button>
       </form>
@@ -73,7 +80,9 @@ interface LegislatorCabinetSectionProps {
   isLegislator: boolean;
 }
 
-export function LegislatorCabinetSection({ isLegislator }: LegislatorCabinetSectionProps) {
+export function LegislatorCabinetSection({
+  isLegislator,
+}: LegislatorCabinetSectionProps) {
   return (
     <>
       {isLegislator ? (

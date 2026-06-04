@@ -28,7 +28,8 @@ function RequestRow({ req }: { req: LegislatorAccessRequest }) {
       <div className={styles.info}>
         <span className={styles.user}>{displayName}</span>
         <span className={styles.meta}>
-          {req.organization} · {new Date(req.createdAt).toLocaleDateString("uk-UA")}
+          {req.organization} ·{" "}
+          {new Date(req.createdAt).toLocaleDateString("uk-UA")}
         </span>
         <p className={styles.reason}>{req.reason}</p>
       </div>
@@ -58,13 +59,19 @@ function RequestRow({ req }: { req: LegislatorAccessRequest }) {
                   >
                     Відхилити
                   </button>
-                  <button className={styles.btnCancel} onClick={() => setShowNote(false)}>
+                  <button
+                    className={styles.btnCancel}
+                    onClick={() => setShowNote(false)}
+                  >
                     ✕
                   </button>
                 </div>
               </div>
             ) : (
-              <button className={styles.btnReview} onClick={() => setShowNote(true)}>
+              <button
+                className={styles.btnReview}
+                onClick={() => setShowNote(true)}
+              >
                 Розглянути
               </button>
             )}
@@ -106,7 +113,9 @@ export function AdminRequestsPanel({ filterStatus }: AdminRequestsPanelProps) {
         <p className={styles.empty}>Заявок немає</p>
       )}
       <div className={styles.list}>
-        {requests?.map((req) => <RequestRow key={req._id} req={req} />)}
+        {requests?.map((req) => (
+          <RequestRow key={req._id} req={req} />
+        ))}
       </div>
     </div>
   );

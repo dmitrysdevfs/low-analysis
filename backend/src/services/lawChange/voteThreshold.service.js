@@ -21,7 +21,8 @@ export function calculateVoteWeight(role) {
  * @returns {boolean}
  */
 export function checkApprovalThreshold(proposal) {
-  const { votes_for_weighted, votes_against_weighted, voting_deadline } = proposal;
+  const { votes_for_weighted, votes_against_weighted, voting_deadline } =
+    proposal;
 
   const forWins = votes_for_weighted > votes_against_weighted;
 

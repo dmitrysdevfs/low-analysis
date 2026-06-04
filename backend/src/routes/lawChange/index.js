@@ -43,6 +43,11 @@ router.use('/legislator-requests', legislatorRequestRoutes);
  *             properties:
  *               role: { type: string, enum: [user, paid_user, legislator, admin] }
  */
-router.patch('/admin/users/:id/role', protect, authorize('admin'), legislatorRequestController.setUserRole);
+router.patch(
+  '/admin/users/:id/role',
+  protect,
+  authorize('admin'),
+  legislatorRequestController.setUserRole,
+);
 
 export default router;
