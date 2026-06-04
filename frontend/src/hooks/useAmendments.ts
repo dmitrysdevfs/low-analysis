@@ -12,6 +12,7 @@ export function useAmendments(
   return useQuery({
     queryKey: ["amendments", params],
     queryFn: () => legislatorApi.getAmendments(params),
+    staleTime: 30_000,
   });
 }
 

@@ -55,8 +55,11 @@ export function RouteAccessGate({ children }: { children: ReactNode }) {
   const isAdminRoute = matchesRoute(pathname, ROUTES.admin);
   const isClientProtectedRoute =
     matchesRoute(pathname, ROUTES.account) ||
-    matchesRoute(pathname, "/legislator-cabinet");
-  const isLegislatorRoute = matchesRoute(pathname, "/legislator-cabinet");
+    matchesRoute(pathname, ROUTES.legislatorCabinet);
+  // Only nested proposal detail routes are hard-gated for non-legislators
+  const isLegislatorDetailRoute =
+    pathname !== ROUTES.legislatorCabinet &&
+    matchesRoute(pathname, ROUTES.legislatorCabinet);
 
   if (!isHydrated && (isAdminRoute || isClientProtectedRoute)) {
     return (
@@ -114,16 +117,16 @@ export function RouteAccessGate({ children }: { children: ReactNode }) {
     );
   }
 
-  if (isLegislatorRoute && isAuthenticated && !isLegislator) {
+  if (isLegislatorDetailRoute && isAuthenticated && !isLegislator && !isAdmin) {
     return (
       <AccessState
         eyebrow="Обмежений доступ"
-        title="Кабінет законотворця доступний тільки для фахівців"
-        description="Для внесення поправок та створення пропозицій необхідний акаунт з роллю законотворця."
-        primaryHref={ROUTES.home}
-        primaryLabel="Повернутися на сайт"
-        secondaryHref={ROUTES.accountBilling}
-        secondaryLabel="Дізнатись про доступ"
+        title="Деталі пропозиції доступні лише законотворцям"
+        description="Для перегляду та редагування пропозицій потрібна роль законотворця. Подайте запит у кабінеті."
+        primaryHref={ROUTES.legislatorCabinet}
+        primaryLabel="Подати запит"
+        secondaryHref={ROUTES.home}
+        secondaryLabel="Повернутися на сайт"
       />
     );
   }

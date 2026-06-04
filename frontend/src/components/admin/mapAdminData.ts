@@ -28,7 +28,12 @@ export function mapUserToAccount(user: AdminUserRecord): AdminAccountSummary {
     email: user.email,
     accountType: user.role === "admin" ? "admin" : "client",
     status: (user.status as "active" | "inactive") ?? "active",
-    roles: user.role === "admin" ? ["admin", "client"] : ["client"],
+    roles:
+      user.role === "admin"
+        ? ["admin", "client"]
+        : user.role === "legislator"
+          ? ["client", "legislator"]
+          : ["client"],
     createdAt: user.createdAt,
     lastLoginAt: user.updatedAt,
     superCodeProtected: user.role === "admin",

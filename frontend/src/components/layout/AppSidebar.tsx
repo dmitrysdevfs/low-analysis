@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useMemo, useState, useEffect, Suspense } from "react";
-import { NAV_ITEMS } from "@/constants/navigation";
+import { buildNavItems, buildSessionMenuItems } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useNotes } from "@/hooks/useNotes";
@@ -26,6 +26,11 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   const { subjects, onSubjectSelect, activeSubjectId } = useSidebarData();
   const { notes } = useNotes();
   const [mounted, setMounted] = useState(false);
+
+  const navItems = useMemo(
+    () => buildNavItems({ isAuthenticated }),
+    [isAuthenticated],
+  );
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
@@ -35,46 +40,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   const recentNotes = useMemo(() => notes.slice(0, 5), [notes]);
 
   const sessionMenuItems = useMemo(
-    () => [
-      {
-        href: ROUTES.account,
-        label: "Мій кабінет",
-        caption: "Профіль та налаштування",
-      },
-      {
-        href: ROUTES.accountSaved,
-        label: "Збережені статті",
-        caption: "Важливі документи",
-      },
-      {
-        href: ROUTES.accountNotes,
-        label: "Нотатки",
-        caption: "Правові чернетки",
-      },
-      {
-        href: ROUTES.accountBilling,
-        label: "План та оплата",
-        caption: "Рівень доступу",
-      },
-      ...(isLegislator
-        ? [
-            {
-              href: ROUTES.legislatorCabinet,
-              label: "Кабінет законотворця",
-              caption: "Поправки та пропозиції",
-            },
-          ]
-        : []),
-      ...(isAdmin
-        ? [
-            {
-              href: ROUTES.adminAnalytics,
-              label: "Аналітика",
-              caption: "Метрики та огляд",
-            },
-          ]
-        : []),
-    ],
+    () => buildSessionMenuItems({ isAdmin, isLegislator }),
     [isAdmin, isLegislator],
   );
 
@@ -235,7 +201,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
 
             {/* Nav links */}
             <nav className={styles.nav}>
-              {NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const isActive =
                   pathname === item.href ||
                   (item.href !== "/" && pathname.startsWith(item.href));

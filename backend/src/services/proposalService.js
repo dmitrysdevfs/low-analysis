@@ -26,11 +26,23 @@ const syncProposalsAmendmentsCount = async (proposals) => {
 
   const countMap = new Map(counts.map((c) => [c._id.toString(), c.count]));
 
-  for (const p of proposals) {
-    const count = countMap.get(p._id.toString()) || 0;
-    if (p.amendments_count !== count) {
-      p.amendments_count = count;
-      await p.save();
+  const stale = proposals.filter(
+    (p) => (countMap.get(p._id.toString()) || 0) !== p.amendments_count,
+  );
+
+  if (stale.length > 0) {
+    await Proposal.bulkWrite(
+      stale.map((p) => ({
+        updateOne: {
+          filter: { _id: p._id },
+          update: {
+            $set: { amendments_count: countMap.get(p._id.toString()) || 0 },
+          },
+        },
+      })),
+    );
+    for (const p of proposals) {
+      p.amendments_count = countMap.get(p._id.toString()) || 0;
     }
   }
 

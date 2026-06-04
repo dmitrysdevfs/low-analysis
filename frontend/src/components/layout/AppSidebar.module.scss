@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 210px;
+  width: min(210px, 85vw);
   height: 100vh;
   z-index: 30;
   display: flex;
@@ -206,8 +206,9 @@
   border-radius: 4px;
   color: #7a98c0;
   font-size: 0.7rem;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -447,5 +448,18 @@
   &:hover {
     background: rgba(200, 168, 67, 0.08);
     border-color: #c8a843;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    width: min(280px, 85vw);
+    box-shadow: 6px 0 32px rgba(0, 0, 0, 0.6);
+  }
+
+  .subjectsActionBtn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
   }
 }

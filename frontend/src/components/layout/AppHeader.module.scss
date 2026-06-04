@@ -317,6 +317,7 @@
 .sessionMenu {
   position: fixed;
   width: min(310px, 80vw);
+  max-height: min(80vh, 520px);
   padding: 8px;
   border-radius: 22px;
   border: 1px solid rgba(200, 168, 67, 0.24);
@@ -626,7 +627,13 @@
 }
 
 .sidebarTabOpen {
-  left: 210px;
+  left: min(210px, 85vw);
+}
+
+@media (max-width: 640px) {
+  .sidebarTabOpen {
+    left: min(280px, 85vw);
+  }
 }
 
 /* ─── Drag strip – thin left-edge target ─── */

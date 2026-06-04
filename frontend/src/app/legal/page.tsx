@@ -6,7 +6,7 @@ import { Layout } from "@/components/layout/Layout";
 import { ROUTES } from "@/constants/routes";
 import styles from "./page.module.scss";
 
-const LAST_UPDATED = "17 травня 2026 р.";
+const LAST_UPDATED = "4 червня 2026 р.";
 
 export default function LegalPage() {
   return (
@@ -25,17 +25,6 @@ export default function LegalPage() {
             </h1>
             <p className={`mono ${styles.meta}`}>
               Останнє оновлення: {LAST_UPDATED}
-            </p>
-            <p
-              className={`mono ${styles.meta}`}
-              style={{
-                color: "goldenrod",
-                fontSize: "0.8rem",
-                marginTop: "0.5rem",
-              }}
-            >
-              ⚠️ Платформа працює в демонстраційному режимі. Авторизація
-              реалізована на рівні браузера (localStorage).
             </p>
           </div>
 
@@ -170,8 +159,9 @@ export default function LegalPage() {
                   <strong>Email-адреса</strong> — для ідентифікації акаунту
                 </li>
                 <li>
-                  <strong>Пароль</strong> — зберігається локально в браузері
-                  (демо-режим)
+                  <strong>Пароль</strong> — хешується алгоритмом bcrypt та
+                  зберігається у захищеній базі даних MongoDB. Ніколи не
+                  зберігається у відкритому вигляді.
                 </li>
                 <li>
                   <strong>Нотатки та збережені статті</strong> — контент
@@ -202,11 +192,10 @@ export default function LegalPage() {
                 4. Зберігання та захист даних
               </h3>
               <p>
-                Платформа є навчально-демонстраційним проектом (educational
-                prototype). Дані акаунту зберігаються локально в браузері
-                користувача (localStorage) і не передаються на жоден сервер.
-                Рекомендується не використовувати реальні паролі. Усі дані
-                видаляються при очищенні даних браузера.
+                Персональні дані зберігаються у захищеній базі даних MongoDB.
+                Автентифікація реалізована через JWT-токени з обмеженим терміном
+                дії. Паролі хешуються bcrypt. Транспорт даних захищено
+                протоколом HTTPS.
               </p>
             </div>
 

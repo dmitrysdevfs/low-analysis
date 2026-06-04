@@ -3,6 +3,7 @@
 import { ROUTES } from "@/constants/routes";
 import { formatAccessRoleLabel, formatBooleanLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
+import { AdminRequestsPanel } from "@/features/law-change/components/AdminRequestsPanel/AdminRequestsPanel";
 import styles from "./AdminWorkspace.module.scss";
 
 const PROTECTED_SURFACES = [
@@ -165,6 +166,8 @@ export function AdminAccessView() {
           </div>
         </article>
       </section>
+
+      <AdminRequestsPanel />
     </section>
   );
 }

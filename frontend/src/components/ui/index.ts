@@ -6,3 +6,4 @@ export { GridBackground } from "./GridBackground";
 export { TryzubMark } from "./TryzubMark";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { default as DiffViewer } from "./DiffViewer";
+export { AsyncView } from "./AsyncView";

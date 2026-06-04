@@ -99,6 +99,11 @@ const elementSchema = new mongoose.Schema(
   },
 );
 
+elementSchema.index({ lawId: 1 });
+elementSchema.index({ lawId: 1, type: 1 });
+elementSchema.index({ parentId: 1 });
+elementSchema.index({ lawId: 1, depth: 1, order: 1 });
+
 const Element = mongoose.model('Element', elementSchema);
 
 export default Element;

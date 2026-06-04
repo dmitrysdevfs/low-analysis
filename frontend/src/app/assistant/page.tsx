@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AssistantPageView } from "@/features/assistant";
+import AssistantClientWrapper from "./AssistantClientWrapper";
 
 export const metadata: Metadata = {
   title: "Lex — AI Помічник | Law Analysis",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AssistantPage() {
-  return <AssistantPageView />;
+  return <AssistantClientWrapper />;
 }

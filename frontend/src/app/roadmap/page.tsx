@@ -1,4 +1,4 @@
-import { RoadmapPublicView } from "@/features/roadmap";
+import RoadmapClientWrapper from "./RoadmapClientWrapper";
 
 export const metadata = {
   title: "Відкритий Roadmap",
@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function RoadmapPage() {
-  return <RoadmapPublicView />;
+  return <RoadmapClientWrapper />;
 }

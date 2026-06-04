@@ -49,7 +49,7 @@ const PREFERENCE_COPY: Array<{
 ];
 
 export function ClientWorkspaceHome() {
-  const { user, updateProfile, changePassword } = useAuth();
+  const { user, isLegislator, updateProfile, changePassword } = useAuth();
   const { subscription } = useBilling();
   const { notes } = useNotes();
   const userId = user?.id;
@@ -300,6 +300,24 @@ export function ClientWorkspaceHome() {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className={styles.legislatorCard}>
+        <div className={styles.legislatorCardContent}>
+          <span className={styles.legislatorEyebrow}>Законотворець</span>
+          <h2 className={styles.legislatorTitle}>Кабінет законотворця</h2>
+          <p className={styles.legislatorDescription}>
+            {isLegislator
+              ? "Поправки, пропозиції та робота із законопроєктами."
+              : "Подайте запит на роль законотворця та відстежуйте статус заявки."}
+          </p>
+        </div>
+        <Link
+          href={ROUTES.legislatorCabinet}
+          className={styles.legislatorAction}
+        >
+          {isLegislator ? "Відкрити кабінет" : "Подати запит"}
+        </Link>
       </div>
 
       {(workspace.lastViewedLawId || workspace.lastSearchQuery) && (

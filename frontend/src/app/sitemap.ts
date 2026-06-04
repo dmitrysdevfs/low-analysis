@@ -31,20 +31,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${siteUrl}/roadmap`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${siteUrl}/analysis`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
   ];
 
   try {
-    const res = await fetch(`${backendUrl}/api/laws`, {
-      next: { revalidate: 86400 },
-    });
-    if (res.ok) {
-      const laws: Array<{ _id: string }> = await res.json();
-      const lawRoutes: MetadataRoute.Sitemap = laws.map((law) => ({
-        url: `${siteUrl}/laws/${law._id}`,
-        changeFrequency: "monthly",
-        priority: 0.8,
-      }));
-      return [...staticRoutes, ...lawRoutes];
+    const [lawsRes, subjectsRes] = await Promise.all([
+      fetch(`${backendUrl}/api/laws`, { next: { revalidate: 86400 } }),
+      fetch(`${backendUrl}/api/subjects`, { next: { revalidate: 86400 } }),
+    ]);
+    const lawRoutes: MetadataRoute.Sitemap = lawsRes.ok
+      ? ((await lawsRes.json()) as Array<{ _id: string }>).map((law) => ({
+          url: `${siteUrl}/laws/${law._id}`,
+          changeFrequency: "monthly",
+          priority: 0.8,
+        }))
+      : [];
+    const subjectRoutes: MetadataRoute.Sitemap = subjectsRes.ok
+      ? ((await subjectsRes.json()) as Array<{ _id: string }>).map(
+          (subject) => ({
+            url: `${siteUrl}/subjects/${subject._id}`,
+            changeFrequency: "monthly",
+            priority: 0.7,
+          }),
+        )
+      : [];
+    if (lawRoutes.length > 0 || subjectRoutes.length > 0) {
+      return [...staticRoutes, ...lawRoutes, ...subjectRoutes];
     }
   } catch {
     // return static only
