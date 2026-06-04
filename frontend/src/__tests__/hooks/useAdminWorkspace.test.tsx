@@ -185,7 +185,11 @@ describe("useAdminWorkspace", () => {
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
 
     await act(async () => {
-      await result.current.handleAccountAction("forceLogout", "client-1", "Alice");
+      await result.current.handleAccountAction(
+        "forceLogout",
+        "client-1",
+        "Alice",
+      );
     });
 
     expect(adminApi.forceLogout).toHaveBeenCalledWith("client-1");
