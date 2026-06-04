@@ -1,12 +1,4 @@
-import dynamic from "next/dynamic";
-
-const RoadmapPublicView = dynamic(
-  () =>
-    import("@/features/roadmap").then((m) => ({
-      default: m.RoadmapPublicView,
-    })),
-  { ssr: false },
-);
+import RoadmapClientWrapper from "./RoadmapClientWrapper";
 
 export const metadata = {
   title: "Відкритий Roadmap",
@@ -15,5 +7,5 @@ export const metadata = {
 };
 
 export default function RoadmapPage() {
-  return <RoadmapPublicView />;
+  return <RoadmapClientWrapper />;
 }

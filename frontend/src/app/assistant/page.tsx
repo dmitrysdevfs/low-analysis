@@ -1,13 +1,5 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
-
-const AssistantPageView = dynamic(
-  () =>
-    import("@/features/assistant").then((m) => ({
-      default: m.AssistantPageView,
-    })),
-  { ssr: false },
-);
+import AssistantClientWrapper from "./AssistantClientWrapper";
 
 export const metadata: Metadata = {
   title: "Lex — AI Помічник | Law Analysis",
@@ -16,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AssistantPage() {
-  return <AssistantPageView />;
+  return <AssistantClientWrapper />;
 }
