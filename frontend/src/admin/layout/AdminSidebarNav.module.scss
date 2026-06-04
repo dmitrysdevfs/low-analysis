@@ -229,3 +229,14 @@
     display: none;
   }
 }
+
+@media (max-width: 640px) {
+  .navLink {
+    flex: 1 1 80px;
+    padding: 10px 8px;
+  }
+
+  .navNote {
+    display: none;
+  }
+}

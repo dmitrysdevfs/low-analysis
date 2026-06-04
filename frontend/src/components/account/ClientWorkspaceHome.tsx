@@ -312,7 +312,10 @@ export function ClientWorkspaceHome() {
               : "Подайте запит на роль законотворця та відстежуйте статус заявки."}
           </p>
         </div>
-        <Link href={ROUTES.legislatorCabinet} className={styles.legislatorAction}>
+        <Link
+          href={ROUTES.legislatorCabinet}
+          className={styles.legislatorAction}
+        >
           {isLegislator ? "Відкрити кабінет" : "Подати запит"}
         </Link>
       </div>

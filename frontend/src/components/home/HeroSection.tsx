@@ -41,7 +41,9 @@ export function HeroSection({ w }: { w: number }) {
           </motion.p>
 
           <motion.p variants={childFade} className={styles.heroDesc}>
-            Law Analysis — платформа для пошуку, аналізу та роботи із законодавством України. Структуровані закони, AI-помічник, кабінет законотворця та відкрита аналітика — все в одному місці.
+            Law Analysis — платформа для пошуку, аналізу та роботи із
+            законодавством України. Структуровані закони, AI-помічник, кабінет
+            законотворця та відкрита аналітика — все в одному місці.
           </motion.p>
 
           <motion.div variants={childFade} className={styles.heroBtns}>

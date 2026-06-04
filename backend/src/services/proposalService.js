@@ -35,7 +35,9 @@ const syncProposalsAmendmentsCount = async (proposals) => {
       stale.map((p) => ({
         updateOne: {
           filter: { _id: p._id },
-          update: { $set: { amendments_count: countMap.get(p._id.toString()) || 0 } },
+          update: {
+            $set: { amendments_count: countMap.get(p._id.toString()) || 0 },
+          },
         },
       })),
     );

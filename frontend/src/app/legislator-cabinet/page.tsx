@@ -22,7 +22,11 @@ export default function LegislatorCabinetPage() {
   return <LegislatorWorkspace user={user} />;
 }
 
-function LegislatorWorkspace({ user }: { user: ReturnType<typeof useAuth>["user"] }) {
+function LegislatorWorkspace({
+  user,
+}: {
+  user: ReturnType<typeof useAuth>["user"];
+}) {
   const { laws } = useLaws();
   const { data: proposals, isLoading: proposalsLoading } = useProposals();
   const { data: amendments, isLoading: amendmentsLoading } = useAmendments({
@@ -196,7 +200,6 @@ function LegislatorWorkspace({ user }: { user: ReturnType<typeof useAuth>["user"
           )}
         </div>
       </section>
-
     </div>
   );
 }

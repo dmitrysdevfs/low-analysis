@@ -91,6 +91,17 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
       document.removeEventListener("scroll", onScroll, { capture: true });
   }, [sidebarOpen]);
 
+  // Close sidebar on orientation change
+  useEffect(() => {
+    function onOrientationChange() {
+      setSidebarOpen(false);
+      setMobileOpen(false);
+    }
+    window.addEventListener("orientationchange", onOrientationChange);
+    return () =>
+      window.removeEventListener("orientationchange", onOrientationChange);
+  }, []);
+
   // Track global drag for drag-strip visibility
   useEffect(() => {
     function onDragStart() {

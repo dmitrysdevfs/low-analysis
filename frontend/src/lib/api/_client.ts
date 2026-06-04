@@ -28,7 +28,9 @@ export async function requestJson<T>(
 
   if (!res.ok) {
     const e = await res.json().catch(() => ({}));
-    throw new Error((e as { message?: string }).message || `HTTP ${res.status}`);
+    throw new Error(
+      (e as { message?: string }).message || `HTTP ${res.status}`,
+    );
   }
 
   if (res.status === 204) return {} as T;
