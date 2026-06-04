@@ -13,10 +13,18 @@ function jsonResponse(route: Route, body: unknown, status = 200) {
 }
 
 async function suppressWelcome(page: Page) {
-  await page.addInitScript((k) => window.localStorage.setItem(k, "1"), GUEST_KEY);
+  await page.addInitScript(
+    (k) => window.localStorage.setItem(k, "1"),
+    GUEST_KEY,
+  );
 }
 
-async function installCoreApiMocks(page: Page, role: string, userId: string, displayName: string) {
+async function installCoreApiMocks(
+  page: Page,
+  role: string,
+  userId: string,
+  displayName: string,
+) {
   // Single catch-all handler — checks in FIFO order inside the handler
   await page.route("**/api/**", async (route) => {
     const method = route.request().method().toUpperCase();
@@ -25,25 +33,44 @@ async function installCoreApiMocks(page: Page, role: string, userId: string, dis
 
     // Auth verification — return profile so session doesn't get cleared
     if (method === "GET" && path === "/api/auth/me") {
-      return jsonResponse(route, { _id: userId, fullName: displayName, email: `${role}@test.dev`, role });
+      return jsonResponse(route, {
+        _id: userId,
+        fullName: displayName,
+        email: `${role}@test.dev`,
+        role,
+      });
     }
     // Old proposals/amendments used by existing cabinet page
-    if (method === "GET" && path.startsWith("/api/proposals")) return jsonResponse(route, []);
-    if (method === "GET" && path.startsWith("/api/amendments")) return jsonResponse(route, []);
-    if (method === "GET" && path.startsWith("/api/laws")) return jsonResponse(route, []);
-    if (method === "GET" && path.startsWith("/api/subjects")) return jsonResponse(route, []);
+    if (method === "GET" && path.startsWith("/api/proposals"))
+      return jsonResponse(route, []);
+    if (method === "GET" && path.startsWith("/api/amendments"))
+      return jsonResponse(route, []);
+    if (method === "GET" && path.startsWith("/api/laws"))
+      return jsonResponse(route, []);
+    if (method === "GET" && path.startsWith("/api/subjects"))
+      return jsonResponse(route, []);
 
     // Law-change sub-routes
-    if (path === "/api/law-change/legislator-requests/my") return jsonResponse(route, null);
-    if (path.startsWith("/api/law-change/legislator-requests") && method === "POST") {
+    if (path === "/api/law-change/legislator-requests/my")
+      return jsonResponse(route, null);
+    if (
+      path.startsWith("/api/law-change/legislator-requests") &&
+      method === "POST"
+    ) {
       return jsonResponse(route, { _id: "req-1", status: "pending" }, 201);
     }
-    if (path.startsWith("/api/law-change/legislator-requests")) return jsonResponse(route, []);
+    if (path.startsWith("/api/law-change/legislator-requests"))
+      return jsonResponse(route, []);
     if (path === "/api/law-change/proposals/my") return jsonResponse(route, []);
-    if (path.startsWith("/api/law-change/approved")) return jsonResponse(route, []);
+    if (path.startsWith("/api/law-change/approved"))
+      return jsonResponse(route, []);
     if (path.startsWith("/api/law-change")) return jsonResponse(route, null);
 
-    return jsonResponse(route, { message: `Unmatched: ${method} ${path}` }, 404);
+    return jsonResponse(
+      route,
+      { message: `Unmatched: ${method} ${path}` },
+      404,
+    );
   });
 }
 
@@ -57,7 +84,12 @@ test.describe("Living Law System — legislator cabinet (legislator role)", () =
   test.beforeEach(async ({ page }) => {
     await seedLegislatorSession(page);
     await suppressWelcome(page);
-    await installCoreApiMocks(page, "legislator", "dev-legislator-account", "Dev Legislator");
+    await installCoreApiMocks(
+      page,
+      "legislator",
+      "dev-legislator-account",
+      "Dev Legislator",
+    );
     await installLawChangeMocks(page);
   });
 
@@ -97,14 +129,18 @@ test.describe("Living Law System — legislator cabinet (admin role)", () => {
 });
 
 test.describe("Living Law System — law-change API route smoke", () => {
-  test("GET /api/law-change/proposals/my returns 401 without auth", async ({ page }) => {
+  test("GET /api/law-change/proposals/my returns 401 without auth", async ({
+    page,
+  }) => {
     // Direct API call — no mock, hitting real backend (or proxy)
     const response = await page.request.get("/api/law-change/proposals/my");
     // Should be 401 (protected) or 404 (route not registered yet)
     expect([401, 404, 500]).toContain(response.status());
   });
 
-  test("GET /api/law-change/approved/feed returns something", async ({ page }) => {
+  test("GET /api/law-change/approved/feed returns something", async ({
+    page,
+  }) => {
     const response = await page.request.get("/api/law-change/approved/feed");
     expect([200, 401, 404, 500]).toContain(response.status());
   });
