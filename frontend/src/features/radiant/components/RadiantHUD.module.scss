@@ -1,0 +1,167 @@
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.topBar {
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(6, 13, 28, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200, 168, 67, 0.15);
+  flex-wrap: wrap;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(199, 213, 234, 0.15);
+  border-radius: 6px;
+  color: rgba(199, 213, 234, 0.7);
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(199, 213, 234, 0.3);
+    color: #c7d5ea;
+  }
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.brandTitle {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.15em;
+}
+
+.brandSubtitle {
+  font-size: 0.65rem;
+  color: rgba(199, 213, 234, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(200, 168, 67, 0.2);
+  border-radius: 8px;
+  padding: 0 12px;
+  flex: 1;
+  min-width: 160px;
+  max-width: 320px;
+}
+
+.searchIcon {
+  color: rgba(199, 213, 234, 0.4);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #c7d5ea;
+  font-size: 0.85rem;
+  padding: 8px 0;
+  width: 100%;
+
+  &::placeholder {
+    color: rgba(199, 213, 234, 0.3);
+  }
+}
+
+.counter {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: rgba(200, 168, 67, 0.7);
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+
+.resetBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(200, 168, 67, 0.08);
+  border: 1px solid rgba(200, 168, 67, 0.25);
+  border-radius: 6px;
+  color: #c8a843;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.16);
+    border-color: rgba(200, 168, 67, 0.5);
+  }
+}
+
+.bottomBar {
+  pointer-events: all;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 12px 20px;
+  background: rgba(6, 13, 28, 0.7);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(200, 168, 67, 0.1);
+  border-right: 1px solid rgba(200, 168, 67, 0.1);
+  border-radius: 0 8px 0 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: 0.72rem;
+  color: rgba(199, 213, 234, 0.65);
+  letter-spacing: 0.03em;
+}

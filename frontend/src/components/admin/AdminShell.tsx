@@ -12,7 +12,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const pathname = usePathname();
   const [refreshKey, setRefreshKey] = useState(0);
-  const isWideCanvasRoute = pathname.startsWith(ROUTES.adminProjectPage);
+  const isWideCanvasRoute =
+    pathname.startsWith(ROUTES.adminProjectPage) ||
+    pathname.startsWith(ROUTES.adminApiCenter);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((k) => k + 1);

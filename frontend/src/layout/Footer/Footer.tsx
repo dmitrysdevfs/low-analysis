@@ -6,6 +6,7 @@ import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
+import { PatreonCard } from "@/components/support/PatreonCard";
 import styles from "./Footer.module.scss";
 
 const API_DOCS_URL = "https://low-analysis.onrender.com/api-docs";
@@ -71,7 +72,7 @@ function PublicFooter() {
       <div className={styles.blobLeft} />
       <div className={styles.blobRight} />
 
-      {/* 3D rotating cube */}
+      {/* Gold cube — absolute */}
       <div className={styles.scene} aria-hidden>
         <div className={styles.cube}>
           <div className={`${styles.face} ${styles.front}`}>§</div>
@@ -130,7 +131,16 @@ function PublicFooter() {
           </ul>
         </motion.div>
 
-        {/* col 3 — status */}
+        {/* col 3 — patreon cube */}
+        <motion.div
+          className={styles.col}
+          variants={fadeUp}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        >
+          <PatreonCard />
+        </motion.div>
+
+        {/* col 4 — status */}
         <motion.div className={styles.col} variants={fadeUp}>
           <div className={`mono ${styles.colLabel}`}>Статус системи</div>
           <ul className={styles.statusList}>

@@ -1,0 +1,152 @@
+.panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  background: rgba(6, 13, 28, 0.95);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(200, 168, 67, 0.2);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s ease-out;
+  overflow: hidden;
+}
+
+.header {
+  padding: 16px 16px 12px;
+  border-bottom: 2px solid;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  padding-right: 28px;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: rgba(199, 213, 234, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+  }
+}
+
+.body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  align-self: flex-start;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: rgba(199, 213, 234, 0.5);
+    flex-shrink: 0;
+
+    svg {
+      color: rgba(200, 168, 67, 0.6);
+    }
+  }
+
+  dd {
+    font-size: 0.8rem;
+    color: #c7d5ea;
+    text-align: right;
+    margin: 0;
+  }
+}
+
+.code {
+  font-family: monospace;
+  font-size: 0.75rem !important;
+  color: rgba(200, 168, 67, 0.8) !important;
+}
+
+.navigateBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  margin-top: auto;
+  background: rgba(200, 168, 67, 0.12);
+  border: 1px solid rgba(200, 168, 67, 0.4);
+  border-radius: 8px;
+  color: #c8a843;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.22);
+    border-color: rgba(200, 168, 67, 0.7);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

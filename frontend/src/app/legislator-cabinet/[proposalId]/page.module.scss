@@ -22,7 +22,7 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   border-bottom: 1px solid #1c3260;
   padding-bottom: 1.5rem;
   margin-bottom: 2rem;
@@ -34,9 +34,30 @@
   }
 }
 
+.lawRef {
+  font-size: 0.8rem;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+  margin: 0.4rem 0 0;
+  font-style: italic;
+}
+
 .meta {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.emptyFilter {
+  padding: 1.25rem;
+  text-align: center;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  border: 1px dashed rgba(233, 119, 75, 0.2);
+  border-radius: 8px;
+  background: rgba(233, 119, 75, 0.03);
 }
 
 .status {

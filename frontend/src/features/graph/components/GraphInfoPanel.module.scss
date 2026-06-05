@@ -1,0 +1,141 @@
+.panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: rgba(8, 15, 32, 0.9);
+  backdrop-filter: blur(14px);
+  border-left: 1px solid rgba(200, 168, 67, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 14px 0;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(199, 213, 234, 0.15);
+  border-radius: 6px;
+  color: rgba(199, 213, 234, 0.7);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #c7d5ea;
+  }
+}
+
+.body {
+  padding: 14px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.typeBadge {
+  display: inline-flex;
+  align-self: flex-start;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #c7d5ea;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0;
+
+  dt {
+    font-size: 0.72rem;
+    color: rgba(199, 213, 234, 0.45);
+    white-space: nowrap;
+  }
+
+  dd {
+    font-size: 0.8rem;
+    color: #c7d5ea;
+    margin: 0;
+  }
+}
+
+.code {
+  font-family: monospace;
+  font-size: 0.75rem !important;
+  color: rgba(199, 213, 234, 0.6) !important;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.primaryBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(200, 168, 67, 0.15);
+  border: 1px solid rgba(200, 168, 67, 0.35);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: #c8a843;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.25);
+    border-color: rgba(200, 168, 67, 0.55);
+  }
+}
+
+.secondaryBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(26, 62, 138, 0.2);
+  border: 1px solid rgba(200, 168, 67, 0.12);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: rgba(199, 213, 234, 0.65);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgba(26, 62, 138, 0.35);
+    border-color: rgba(200, 168, 67, 0.25);
+    color: #c7d5ea;
+  }
+}

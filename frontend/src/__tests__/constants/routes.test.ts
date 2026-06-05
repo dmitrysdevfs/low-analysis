@@ -12,6 +12,7 @@ describe("frontend route and config constants", () => {
     expect(ROUTES.search).toBe("/search");
     expect(ROUTES.admin).toBe("/admin");
     expect(ROUTES.adminAnalytics).toBe("/admin/analytics");
+    expect(ROUTES.adminApiCenter).toBe("/admin/api-center");
     expect(ROUTES.adminProjectPage).toBe("/admin/project-page");
     expect(ROUTES.auth).toBe("/auth");
     expect(ROUTES.authLogin).toBe("/auth/login");
@@ -36,6 +37,8 @@ describe("frontend route and config constants", () => {
       { label: "Суб'єкти", href: ROUTES.subjects },
       { label: "Пошук", href: ROUTES.search },
       { label: "Lex AI", href: ROUTES.assistant },
+      { label: "Граф", href: ROUTES.graph },
+      { label: "Радіант", href: ROUTES.radiant },
       { label: "Roadmap", href: ROUTES.roadmap },
       { label: "Довідка", href: ROUTES.help },
     ]);

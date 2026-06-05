@@ -276,6 +276,12 @@ export function ClientWorkspaceHome() {
             <span className={styles.rolePill}>{user.accountType}</span>
             <div className={styles.identityName}>{user.displayName}</div>
             <div className={styles.identityEmail}>{user.email}</div>
+            <Link
+              href={ROUTES.legislatorCabinet}
+              className={styles.identityLegislatorLink}
+            >
+              кабінет законотворця
+            </Link>
           </div>
 
           <div className={styles.heroActions}>

@@ -1,0 +1,78 @@
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(233, 119, 75, 0.45);
+  background: rgba(233, 119, 75, 0.1);
+  color: #e9774b;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    color 0.2s ease;
+  white-space: nowrap;
+
+  /* shimmer layer */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.18) 50%,
+      transparent 65%
+    );
+    background-size: 200% 100%;
+    background-position: -100% 0;
+    animation: shimmer 2.8s ease-in-out infinite;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: rgba(233, 119, 75, 0.75);
+    box-shadow: 0 0 12px rgba(233, 119, 75, 0.35);
+    transform: translateY(-2px);
+    color: #ff8a5e;
+  }
+}
+
+.heart {
+  font-size: 0.85rem;
+  line-height: 1;
+  display: inline-block;
+  transition: transform 0.2s ease;
+
+  .btn:hover & {
+    transform: scale(1.25);
+  }
+}
+
+.label {
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

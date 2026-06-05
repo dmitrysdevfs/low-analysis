@@ -62,7 +62,12 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { login, register } = useAuth();
+  const { login, register, isAuthenticated, isHydrated, isAdmin } = useAuth();
+
+  useEffect(() => {
+    if (!isHydrated || !isAuthenticated) return;
+    router.replace(isAdmin ? ROUTES.admin : ROUTES.account);
+  }, [isHydrated, isAuthenticated, isAdmin, router]);
   const roleParam = searchParams.get("role");
   const [currentMode, setCurrentMode] = useState<AuthMode>(mode);
   const [accountType, setAccountType] = useState<AuthAccountType>(

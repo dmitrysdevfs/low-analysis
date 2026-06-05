@@ -1,6 +1,12 @@
 import { ROUTES } from "./routes";
 
-const BASE_NAV_ITEMS = [
+export type NavItem = {
+  label: string;
+  href: string;
+  subItems?: { label: string; href: string }[];
+};
+
+const BASE_NAV_ITEMS: NavItem[] = [
   { label: "Головна", href: ROUTES.home },
   { label: "Закони", href: ROUTES.laws },
   { label: "Аналіз", href: ROUTES.analysis },
@@ -8,18 +14,24 @@ const BASE_NAV_ITEMS = [
   { label: "Суб'єкти", href: ROUTES.subjects },
   { label: "Пошук", href: ROUTES.search },
   { label: "Lex AI", href: ROUTES.assistant },
+  { label: "Граф", href: ROUTES.graph },
+  { label: "Радіант", href: ROUTES.radiant },
   { label: "Roadmap", href: ROUTES.roadmap },
   { label: "Довідка", href: ROUTES.help },
 ];
 
 export const NAV_ITEMS = BASE_NAV_ITEMS;
 
-export function buildNavItems(opts: { isAuthenticated: boolean }) {
+export function buildNavItems(opts: { isAuthenticated: boolean }): NavItem[] {
   if (!opts.isAuthenticated) return BASE_NAV_ITEMS;
-  return [
-    ...BASE_NAV_ITEMS,
-    { label: "Кабінет законотворця", href: ROUTES.legislatorCabinet },
-  ];
+  const result: NavItem[] = [];
+  for (const item of BASE_NAV_ITEMS) {
+    result.push(item);
+    if (item.href === ROUTES.subjects) {
+      result.push({ label: "Кабінет законотворця", href: ROUTES.legislatorCabinet });
+    }
+  }
+  return result;
 }
 
 export type SessionMenuItem = {
@@ -39,6 +51,13 @@ export function buildSessionMenuItems(opts: {
       caption: "Профіль, пароль та особисті налаштування",
     },
     {
+      href: ROUTES.legislatorCabinet,
+      label: "Кабінет законотворця",
+      caption: opts.isLegislator
+        ? "Поправки, пропозиції та робота із законопроєктами"
+        : "Подайте запит на роль законотворця",
+    },
+    {
       href: ROUTES.accountSaved,
       label: "Збережені статті",
       caption: "Швидкий доступ до важливих документів",
@@ -52,13 +71,6 @@ export function buildSessionMenuItems(opts: {
       href: ROUTES.accountBilling,
       label: "План та оплата",
       caption: "Поточний рівень доступу, квоти та demo-checkout",
-    },
-    {
-      href: ROUTES.legislatorCabinet,
-      label: "Кабінет законотворця",
-      caption: opts.isLegislator
-        ? "Поправки, пропозиції та робота із законопроєктами"
-        : "Подайте запит на роль законотворця",
     },
   ];
 

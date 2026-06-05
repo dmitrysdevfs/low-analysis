@@ -1,13 +1,68 @@
 "use client";
 
+import { useState } from "react";
 import { formatDateShort } from "@/lib/utils";
 import { formatCodeStatusLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import styles from "./AdminWorkspace.module.scss";
 
+function RegenConfirmModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 100,
+      background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }}>
+      <div style={{
+        background: "rgba(9,18,38,0.98)", border: "1px solid rgba(233,119,75,0.3)",
+        borderRadius: 20, padding: "28px 32px", maxWidth: 360, width: "100%",
+        boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
+      }}>
+        <div style={{ color: "#e9774b", fontFamily: "monospace", fontSize: "0.65rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 12 }}>
+          Попередження
+        </div>
+        <div style={{ color: "#ffffff", fontSize: "1.1rem", fontWeight: 700, marginBottom: 8 }}>
+          Перегенерувати супер-код?
+        </div>
+        <div style={{ color: "#9eb5d9", fontSize: "0.84rem", marginBottom: 20 }}>
+          Поточний код стане неактивним. Усі адміни, що не ввійшли, втратять можливість підключення через старий код.
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button
+            type="button"
+            onClick={onConfirm}
+            style={{
+              flex: 1, minHeight: 38, borderRadius: 999, border: 0,
+              background: "linear-gradient(135deg, #e9774b 0%, #c8612a 100%)",
+              color: "#ffffff", fontWeight: 700, cursor: "pointer",
+            }}
+          >
+            Перегенерувати
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            style={{
+              flex: 1, minHeight: 38, borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgba(255,255,255,0.04)", color: "#eef3fb",
+              fontWeight: 700, cursor: "pointer",
+            }}
+          >
+            Скасувати
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AdminCodesView() {
   const { snapshot, handleCopyCode, handleRegenerateCode } =
     useAdminWorkspace();
+
+  const [codeRevealed, setCodeRevealed] = useState(false);
+  const [confirmRegen, setConfirmRegen] = useState(false);
 
   if (!snapshot) {
     return null;
@@ -37,7 +92,22 @@ export function AdminCodesView() {
 
         <aside className={styles.heroAside}>
           <span className={styles.tag}>Активний код</span>
-          <div className={styles.heroValue}>{snapshot.activeSuperCode}</div>
+          <div className={styles.heroValue} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <span style={{ letterSpacing: codeRevealed ? "0.05em" : "0.15em", fontFamily: "monospace" }}>
+              {codeRevealed ? snapshot.activeSuperCode : "•".repeat(Math.max(8, snapshot.activeSuperCode.length))}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCodeRevealed(r => !r)}
+              style={{
+                background: "none", border: "1px solid rgba(255,255,255,0.15)",
+                borderRadius: 6, color: "#9eb5d9", cursor: "pointer",
+                fontSize: "0.72rem", padding: "2px 10px", fontWeight: 600,
+              }}
+            >
+              {codeRevealed ? "Сховати" : "Показати"}
+            </button>
+          </div>
           <div className={styles.heroMeta}>
             {snapshot.superCodeRotatedAt
               ? `Оновлено ${formatDateShort(snapshot.superCodeRotatedAt)}`
@@ -92,8 +162,8 @@ export function AdminCodesView() {
           <div className={styles.insightGrid}>
             <div className={styles.insightCard}>
               <div className={styles.insightTitle}>Поточне значення</div>
-              <div className={styles.insightValue}>
-                {snapshot.activeSuperCode}
+              <div className={styles.insightValue} style={{ letterSpacing: codeRevealed ? "0.05em" : "0.15em", fontFamily: "monospace" }}>
+                {codeRevealed ? snapshot.activeSuperCode : "•".repeat(Math.max(8, snapshot.activeSuperCode.length))}
               </div>
               <div className={styles.insightMeta}>
                 Передавайте лише в межах сценарію підключення адміністратора.
@@ -131,11 +201,18 @@ export function AdminCodesView() {
             <button
               type="button"
               className={styles.secondaryAction}
-              onClick={handleRegenerateCode}
+              onClick={() => setConfirmRegen(true)}
             >
               Перегенерувати код
             </button>
           </div>
+
+          {confirmRegen && (
+            <RegenConfirmModal
+              onConfirm={() => { handleRegenerateCode(); setConfirmRegen(false); setCodeRevealed(false); }}
+              onCancel={() => setConfirmRegen(false)}
+            />
+          )}
         </article>
 
         <article className={styles.panel}>

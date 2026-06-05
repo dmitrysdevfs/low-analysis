@@ -1,0 +1,86 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: #060d1c;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.icon {
+  color: #c8a843;
+}
+
+.title {
+  font-family: monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: rgba(199, 213, 234, 0.6);
+  margin: 0;
+  text-align: center;
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.primaryBtn {
+  display: inline-block;
+  padding: 10px 28px;
+  background: #c8a843;
+  color: #060d1c;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.secondaryBtn {
+  padding: 10px 28px;
+  background: transparent;
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  border-radius: 8px;
+  color: #c7d5ea;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.6);
+    color: #ffffff;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -12,6 +12,7 @@ export const ROUTES = {
   adminCodes: "/admin/codes",
   adminAudit: "/admin/audit",
   adminAnalytics: "/admin/analytics",
+  adminApiCenter: "/admin/api-center",
   adminProjectPage: "/admin/project-page",
   adminArchitecture: "/admin/architecture",
   roadmap: "/roadmap",
@@ -35,4 +36,6 @@ export const ROUTES = {
   adminHelpArticle: (slug: string) => `/admin/help/${slug}`,
   legislatorCabinet: "/legislator-cabinet",
   legislatorProposal: (id: string) => `/legislator-cabinet/${id}`,
+  graph: "/graph",
+  radiant: "/radiant",
 } as const;

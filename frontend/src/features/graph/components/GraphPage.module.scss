@@ -1,0 +1,107 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #060d1c;
+  color: #c7d5ea;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(13, 28, 58, 0.95);
+  border-bottom: 1px solid rgba(200, 168, 67, 0.15);
+  flex-shrink: 0;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(199, 213, 234, 0.15);
+  border-radius: 6px;
+  color: rgba(199, 213, 234, 0.7);
+  font-size: 0.78rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(199, 213, 234, 0.3);
+    color: #c7d5ea;
+  }
+}
+
+.headerTitle {
+  font-family: monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c8a843;
+}
+
+.headerBeta {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(200, 168, 67, 0.12);
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  color: #c8a843;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+
+  // React Flow styles override
+  :global(.react-flow__attribution) {
+    display: none;
+  }
+
+  :global(.react-flow__controls-button) {
+    background: transparent;
+    border-bottom-color: rgba(200, 168, 67, 0.15);
+    color: rgba(199, 213, 234, 0.7);
+
+    &:hover {
+      background: rgba(200, 168, 67, 0.1);
+    }
+
+    svg {
+      fill: rgba(199, 213, 234, 0.7);
+    }
+  }
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: #c8a843;
+  background: #060d1c;
+}
