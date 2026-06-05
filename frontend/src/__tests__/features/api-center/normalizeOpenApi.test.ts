@@ -1,4 +1,7 @@
-import { createApiCenterModel, getSecurityMode } from "@/features/api-center/lib/normalizeOpenApi";
+import {
+  createApiCenterModel,
+  getSecurityMode,
+} from "@/features/api-center/lib/normalizeOpenApi";
 import type { OpenApiSpec } from "@/features/api-center";
 
 describe("api center OpenAPI normalization", () => {
@@ -66,7 +69,11 @@ describe("api center OpenAPI normalization", () => {
 
     expect(model.endpoints).toHaveLength(3);
     expect(model.modules).toEqual([
-      expect.objectContaining({ name: "Assistant", count: 2, protectedCount: 2 }),
+      expect.objectContaining({
+        name: "Assistant",
+        count: 2,
+        protectedCount: 2,
+      }),
       expect.objectContaining({ name: "Auth", count: 1, protectedCount: 0 }),
     ]);
     expect(model.schemaCount).toBe(2);

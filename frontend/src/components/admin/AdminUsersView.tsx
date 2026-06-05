@@ -14,14 +14,24 @@ const AVATAR_COLORS = [
 
 function hashAvatarColor(name: string) {
   let h = 0;
-  for (let i = 0; i < name.length; i++) { h = (h * 31 + name.charCodeAt(i)) >>> 0; }
+  for (let i = 0; i < name.length; i++) {
+    h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  }
   return AVATAR_COLORS[h % AVATAR_COLORS.length];
 }
 
 function exportUsersCSV(accounts: ReturnType<typeof useAdminUsers>["users"]) {
   const header = "Ім'я,Email,Тип,Джерело,Статус,Створено,Останній вхід";
-  const rows = accounts.map(a =>
-    [a.displayName, a.email, a.accountType, a.source, a.status, a.createdAt, a.lastLoginAt ?? "—"].join(",")
+  const rows = accounts.map((a) =>
+    [
+      a.displayName,
+      a.email,
+      a.accountType,
+      a.source,
+      a.status,
+      a.createdAt,
+      a.lastLoginAt ?? "—",
+    ].join(","),
   );
   const csv = [header, ...rows].join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -201,7 +211,11 @@ export function AdminUsersView() {
               <span className={styles.panelEyebrow}>Реєстр</span>
               <h3 className={styles.panelTitle}>Пошук і керування акаунтами</h3>
             </div>
-            <button type="button" className={styles.secondaryAction} onClick={() => exportUsersCSV(filteredAccounts)}>
+            <button
+              type="button"
+              className={styles.secondaryAction}
+              onClick={() => exportUsersCSV(filteredAccounts)}
+            >
               Експорт CSV
             </button>
           </div>
@@ -243,18 +257,33 @@ export function AdminUsersView() {
                 const avatarColor = hashAvatarColor(account.displayName);
                 return (
                   <div key={account.id} className={styles.accountRow}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div style={{
-                        width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        background: avatarColor.bg, color: avatarColor.text,
-                        fontWeight: 700, fontSize: "0.9rem"
-                      }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 10 }}
+                    >
+                      <div
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: "50%",
+                          flexShrink: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          background: avatarColor.bg,
+                          color: avatarColor.text,
+                          fontWeight: 700,
+                          fontSize: "0.9rem",
+                        }}
+                      >
                         {account.displayName.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div className={styles.accountName}>{account.displayName}</div>
-                        <div className={styles.accountMeta}>{account.email}</div>
+                        <div className={styles.accountName}>
+                          {account.displayName}
+                        </div>
+                        <div className={styles.accountMeta}>
+                          {account.email}
+                        </div>
                       </div>
                     </div>
                     <div className={styles.accountBadges}>
@@ -271,7 +300,9 @@ export function AdminUsersView() {
                             : styles.accountBadgeAccent
                         }
                       >
-                        {account.status === "active" ? "✓ Активний" : "✕ Неактивний"}
+                        {account.status === "active"
+                          ? "✓ Активний"
+                          : "✕ Неактивний"}
                       </span>
                       {account.superCodeProtected ? (
                         <span className={styles.accountBadgeAccent}>

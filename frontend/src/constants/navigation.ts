@@ -28,7 +28,10 @@ export function buildNavItems(opts: { isAuthenticated: boolean }): NavItem[] {
   for (const item of BASE_NAV_ITEMS) {
     result.push(item);
     if (item.href === ROUTES.subjects) {
-      result.push({ label: "Кабінет законотворця", href: ROUTES.legislatorCabinet });
+      result.push({
+        label: "Кабінет законотворця",
+        href: ROUTES.legislatorCabinet,
+      });
     }
   }
   return result;

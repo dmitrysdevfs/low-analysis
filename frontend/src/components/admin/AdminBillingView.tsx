@@ -43,15 +43,21 @@ function buildDonutStops(segments: DonutSegment[]) {
     .join(", ");
 }
 
-function exportBillingCSV(registry: ReturnType<typeof useAdminWorkspace>["billingRegistry"]) {
+function exportBillingCSV(
+  registry: ReturnType<typeof useAdminWorkspace>["billingRegistry"],
+) {
   const header = "Ім'я,Email,Тип,План,Статус,Залишок пошуку,Залишок переглядів";
-  const rows = registry.map((a) => [
-    a.displayName, a.email, a.accountType,
-    a.subscription.planId ?? "preview",
-    a.subscription.status,
-    a.subscription.searchRemaining ?? "безліміт",
-    a.subscription.viewRemaining ?? "безліміт",
-  ].join(","));
+  const rows = registry.map((a) =>
+    [
+      a.displayName,
+      a.email,
+      a.accountType,
+      a.subscription.planId ?? "preview",
+      a.subscription.status,
+      a.subscription.searchRemaining ?? "безліміт",
+      a.subscription.viewRemaining ?? "безліміт",
+    ].join(","),
+  );
   const csv = [header, ...rows].join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -72,33 +78,70 @@ function ConfirmModal({
   onCancel: () => void;
 }) {
   return (
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 100,
-      background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-    }}>
-      <div style={{
-        background: "rgba(9,18,38,0.98)", border: "1px solid rgba(255,255,255,0.12)",
-        borderRadius: 20, padding: "28px 32px", maxWidth: 360, width: "100%",
-        boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
-      }}>
-        <div style={{ color: "#c8a843", fontFamily: "monospace", fontSize: "0.65rem", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 12 }}>
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 100,
+        background: "rgba(0,0,0,0.6)",
+        backdropFilter: "blur(4px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          background: "rgba(9,18,38,0.98)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          borderRadius: 20,
+          padding: "28px 32px",
+          maxWidth: 360,
+          width: "100%",
+          boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
+        }}
+      >
+        <div
+          style={{
+            color: "#c8a843",
+            fontFamily: "monospace",
+            fontSize: "0.65rem",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            marginBottom: 12,
+          }}
+        >
           Підтвердження
         </div>
-        <div style={{ color: "#ffffff", fontSize: "1.1rem", fontWeight: 700, marginBottom: 8 }}>
+        <div
+          style={{
+            color: "#ffffff",
+            fontSize: "1.1rem",
+            fontWeight: 700,
+            marginBottom: 8,
+          }}
+        >
           Призначити план «{plan.planId}»?
         </div>
-        <div style={{ color: "#9eb5d9", fontSize: "0.84rem", marginBottom: 20 }}>
-          Тарифний план буде змінено для <strong style={{ color: "#c7d5ea" }}>{plan.accountName}</strong>.
+        <div
+          style={{ color: "#9eb5d9", fontSize: "0.84rem", marginBottom: 20 }}
+        >
+          Тарифний план буде змінено для{" "}
+          <strong style={{ color: "#c7d5ea" }}>{plan.accountName}</strong>.
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <button
             type="button"
             onClick={onConfirm}
             style={{
-              flex: 1, minHeight: 38, borderRadius: 999, border: 0,
+              flex: 1,
+              minHeight: 38,
+              borderRadius: 999,
+              border: 0,
               background: "linear-gradient(135deg, #f7f6f2 0%, #d9d5c9 100%)",
-              color: "#081020", fontWeight: 700, cursor: "pointer",
+              color: "#081020",
+              fontWeight: 700,
+              cursor: "pointer",
             }}
           >
             Підтвердити
@@ -107,10 +150,14 @@ function ConfirmModal({
             type="button"
             onClick={onCancel}
             style={{
-              flex: 1, minHeight: 38, borderRadius: 999,
+              flex: 1,
+              minHeight: 38,
+              borderRadius: 999,
               border: "1px solid rgba(255,255,255,0.12)",
-              background: "rgba(255,255,255,0.04)", color: "#eef3fb",
-              fontWeight: 700, cursor: "pointer",
+              background: "rgba(255,255,255,0.04)",
+              color: "#eef3fb",
+              fontWeight: 700,
+              cursor: "pointer",
             }}
           >
             Скасувати
@@ -131,7 +178,11 @@ export function AdminBillingView() {
   } = useAdminWorkspace();
   const [planFilter, setPlanFilter] = useState<PlanFilter>("all");
   const [query, setQuery] = useState("");
-  const [confirmPlan, setConfirmPlan] = useState<{ accountId: string; accountName: string; planId: string } | null>(null);
+  const [confirmPlan, setConfirmPlan] = useState<{
+    accountId: string;
+    accountName: string;
+    planId: string;
+  } | null>(null);
 
   const filteredRegistry = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -381,7 +432,11 @@ export function AdminBillingView() {
               Призначення планів і перевірка квот
             </h3>
           </div>
-          <button type="button" className={styles.secondaryAction} onClick={() => exportBillingCSV(filteredRegistry)}>
+          <button
+            type="button"
+            className={styles.secondaryAction}
+            onClick={() => exportBillingCSV(filteredRegistry)}
+          >
             Експорт CSV
           </button>
         </div>
@@ -475,7 +530,11 @@ export function AdminBillingView() {
                           type="button"
                           className={styles.accountActionBtn}
                           onClick={() =>
-                            setConfirmPlan({ accountId: account.id, accountName: account.displayName, planId })
+                            setConfirmPlan({
+                              accountId: account.id,
+                              accountName: account.displayName,
+                              planId,
+                            })
                           }
                         >
                           {formatPlanLabel(planId)}
@@ -502,7 +561,11 @@ export function AdminBillingView() {
           <ConfirmModal
             plan={confirmPlan}
             onConfirm={() => {
-              handleAssignPlan(confirmPlan.accountId, confirmPlan.accountName, confirmPlan.planId);
+              handleAssignPlan(
+                confirmPlan.accountId,
+                confirmPlan.accountName,
+                confirmPlan.planId,
+              );
               setConfirmPlan(null);
             }}
             onCancel={() => setConfirmPlan(null)}

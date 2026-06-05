@@ -61,7 +61,8 @@ export function createApiCenterModel(spec: OpenApiSpec | null): ApiCenterModel {
 
       const tags = operation.tags?.length ? operation.tags : ["General"];
       const group = tags[0] ?? "General";
-      const summary = operation.summary?.trim() || `${method.toUpperCase()} ${path}`;
+      const summary =
+        operation.summary?.trim() || `${method.toUpperCase()} ${path}`;
       const description =
         operation.description?.trim() ||
         "Опис для цього endpoint-а поки не вказано.";

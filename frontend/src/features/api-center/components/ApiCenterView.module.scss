@@ -11,7 +11,11 @@
   border-radius: 1.6rem;
   padding: 1.6rem;
   background:
-    radial-gradient(circle at top right, rgba(88, 126, 255, 0.16), transparent 34%),
+    radial-gradient(
+      circle at top right,
+      rgba(88, 126, 255, 0.16),
+      transparent 34%
+    ),
     linear-gradient(180deg, rgba(17, 26, 53, 0.98), rgba(10, 17, 38, 0.96));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
@@ -21,7 +25,11 @@
   position: absolute;
   inset: auto -15% -45% 45%;
   height: 12rem;
-  background: radial-gradient(circle, rgba(255, 200, 74, 0.15), transparent 68%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 200, 74, 0.15),
+    transparent 68%
+  );
   pointer-events: none;
 }
 
@@ -122,7 +130,11 @@
   padding: 1rem 1.1rem;
   border: 1px solid rgba(255, 150, 107, 0.35);
   border-radius: 1.15rem;
-  background: linear-gradient(180deg, rgba(79, 36, 24, 0.58), rgba(48, 22, 17, 0.8));
+  background: linear-gradient(
+    180deg,
+    rgba(79, 36, 24, 0.58),
+    rgba(48, 22, 17, 0.8)
+  );
   color: #ffd9ca;
 }
 
@@ -143,8 +155,11 @@
   padding: 1.05rem 1.1rem 1.15rem;
   border: 1px solid rgba(111, 137, 203, 0.16);
   border-radius: 1.3rem;
-  background:
-    linear-gradient(180deg, rgba(18, 28, 55, 0.94), rgba(11, 18, 38, 0.95));
+  background: linear-gradient(
+    180deg,
+    rgba(18, 28, 55, 0.94),
+    rgba(11, 18, 38, 0.95)
+  );
 }
 
 .metricLabel {
@@ -173,15 +188,21 @@
 .workspace {
   display: grid;
   gap: 1rem;
-  grid-template-columns: minmax(16rem, 18rem) minmax(22rem, 1.15fr) minmax(20rem, 0.92fr);
+  grid-template-columns: minmax(16rem, 18rem) minmax(22rem, 1.15fr) minmax(
+      20rem,
+      0.92fr
+    );
   align-items: start;
 }
 
 .panel {
   border: 1px solid rgba(111, 137, 203, 0.16);
   border-radius: 1.45rem;
-  background:
-    linear-gradient(180deg, rgba(18, 28, 55, 0.94), rgba(11, 18, 38, 0.95));
+  background: linear-gradient(
+    180deg,
+    rgba(18, 28, 55, 0.94),
+    rgba(11, 18, 38, 0.95)
+  );
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
@@ -245,7 +266,11 @@
 
 .moduleButtonActive {
   border-color: rgba(245, 200, 78, 0.45);
-  background: linear-gradient(180deg, rgba(35, 46, 79, 0.96), rgba(20, 30, 58, 0.92));
+  background: linear-gradient(
+    180deg,
+    rgba(35, 46, 79, 0.96),
+    rgba(20, 30, 58, 0.92)
+  );
   box-shadow: inset 0 0 0 1px rgba(245, 200, 78, 0.12);
 }
 
@@ -368,7 +393,11 @@
 
 .endpointCardActive {
   border-color: rgba(98, 199, 161, 0.42);
-  background: linear-gradient(180deg, rgba(27, 40, 73, 0.98), rgba(18, 28, 54, 0.96));
+  background: linear-gradient(
+    180deg,
+    rgba(27, 40, 73, 0.98),
+    rgba(18, 28, 54, 0.96)
+  );
   box-shadow: inset 0 0 0 1px rgba(98, 199, 161, 0.1);
 }
 
@@ -420,11 +449,7 @@
 .endpointPath {
   margin: 0;
   color: #dde6ff;
-  font-family:
-    "JetBrains Mono",
-    "SFMono-Regular",
-    ui-monospace,
-    monospace;
+  font-family: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
   font-size: 0.95rem;
   word-break: break-all;
 }
@@ -516,11 +541,7 @@
 .detailMono {
   margin: 0;
   color: #e7ecff;
-  font-family:
-    "JetBrains Mono",
-    "SFMono-Regular",
-    ui-monospace,
-    monospace;
+  font-family: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
   font-size: 0.88rem;
   line-height: 1.58;
   word-break: break-word;

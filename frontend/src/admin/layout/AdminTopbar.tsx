@@ -145,9 +145,7 @@ export function AdminTopbar({
             <Bell size={14} />
           </button>
           {notifOpen && (
-            <div className={styles.notifPanel}>
-              Немає нових сповіщень
-            </div>
+            <div className={styles.notifPanel}>Немає нових сповіщень</div>
           )}
         </div>
         <div className={styles.userChip}>

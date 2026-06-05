@@ -8,9 +8,27 @@ import styles from "./AdminWorkspace.module.scss";
 
 type SeverityFilter = "all" | "info" | "warning" | "security";
 
-function exportAuditCSV(events: Array<{ id: string; severity: string; action: string; detail: string; actor: string; createdAt: string }>) {
+function exportAuditCSV(
+  events: Array<{
+    id: string;
+    severity: string;
+    action: string;
+    detail: string;
+    actor: string;
+    createdAt: string;
+  }>,
+) {
   const header = "ID,Критичність,Дія,Деталі,Виконавець,Дата";
-  const rows = events.map(e => [e.id, e.severity, `"${e.action}"`, `"${e.detail}"`, e.actor, e.createdAt].join(","));
+  const rows = events.map((e) =>
+    [
+      e.id,
+      e.severity,
+      `"${e.action}"`,
+      `"${e.detail}"`,
+      e.actor,
+      e.createdAt,
+    ].join(","),
+  );
   const csv = [header, ...rows].join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -148,9 +166,18 @@ export function AdminAuditView() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span className={styles.updatedText}>
-              Оновлено: {lastPolledAt.toLocaleTimeString("uk-UA", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+              Оновлено:{" "}
+              {lastPolledAt.toLocaleTimeString("uk-UA", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
             </span>
-            <button type="button" className={styles.secondaryAction} onClick={() => exportAuditCSV(filteredEvents)}>
+            <button
+              type="button"
+              className={styles.secondaryAction}
+              onClick={() => exportAuditCSV(filteredEvents)}
+            >
               Експорт CSV
             </button>
           </div>
@@ -181,7 +208,10 @@ export function AdminAuditView() {
           <div className={styles.auditList}>
             {filteredEvents.length > 0 ? (
               filteredEvents.map((item) => (
-                <div key={item.id} className={`${styles.auditRow} ${item.severity === "security" ? styles.auditRowSecurity : ""}`}>
+                <div
+                  key={item.id}
+                  className={`${styles.auditRow} ${item.severity === "security" ? styles.auditRowSecurity : ""}`}
+                >
                   <div className={styles.auditMeta}>
                     <span
                       className={`${styles.auditBadge} ${

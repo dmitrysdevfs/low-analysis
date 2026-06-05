@@ -61,11 +61,7 @@ export default function ProposalDetailPage() {
       <header className={styles.header}>
         <div>
           <h1>{proposal.title}</h1>
-          {lawData && (
-            <p className={styles.lawRef}>
-              📄 {lawData.title}
-            </p>
-          )}
+          {lawData && <p className={styles.lawRef}>📄 {lawData.title}</p>}
         </div>
         <div className={styles.meta}>
           <span className={styles.status}>{proposal.status}</span>

@@ -14,7 +14,11 @@
     width: 60px;
     height: 14px;
     border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(233, 119, 75, 0.28) 0%, transparent 70%);
+    background: radial-gradient(
+      ellipse,
+      rgba(233, 119, 75, 0.28) 0%,
+      transparent 70%
+    );
     filter: blur(4px);
     animation: glowBreath 3.5s ease-in-out infinite;
     pointer-events: none;
@@ -160,19 +164,41 @@
 
 /* ── animations ── */
 @keyframes rotateCubePatreon {
-  0%   { transform: rotateX(-22deg) rotateY(0deg); }
-  100% { transform: rotateX(-22deg) rotateY(360deg); }
+  0% {
+    transform: rotateX(-22deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(-22deg) rotateY(360deg);
+  }
 }
 
 @keyframes glowBreath {
-  0%, 100% { opacity: 0.7; transform: translateX(-50%) scaleX(1); }
-  50%       { opacity: 1;   transform: translateX(-50%) scaleX(1.15); }
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translateX(-50%) scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1.15);
+  }
 }
 
 @keyframes heartBeat {
-  0%, 100% { transform: scale(1); }
-  14%       { transform: scale(1.15); }
-  28%       { transform: scale(1); }
-  42%       { transform: scale(1.08); }
-  56%       { transform: scale(1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.15);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.08);
+  }
+  56% {
+    transform: scale(1);
+  }
 }

@@ -11,10 +11,30 @@ const BUCKETS: {
   hint: string;
   predicate: (z: number) => boolean;
 }[] = [
-  { key: "below",      label: "Нижче середнього", hint: "z < 0 — коротші за середнє",          predicate: (z) => z < 0 },
-  { key: "normal",     label: "Норма",             hint: "0 ≤ z < 1σ — стандартний обсяг",      predicate: (z) => z >= 0 && z < 1 },
-  { key: "moderate",   label: "Помірна",           hint: "1σ ≤ z < 2σ — вище середнього",       predicate: (z) => z >= 1 && z < 2 },
-  { key: "voluminous", label: "Об'ємна",           hint: "z ≥ 2σ — значно більше середнього",   predicate: (z) => z >= 2 },
+  {
+    key: "below",
+    label: "Нижче середнього",
+    hint: "z < 0 — коротші за середнє",
+    predicate: (z) => z < 0,
+  },
+  {
+    key: "normal",
+    label: "Норма",
+    hint: "0 ≤ z < 1σ — стандартний обсяг",
+    predicate: (z) => z >= 0 && z < 1,
+  },
+  {
+    key: "moderate",
+    label: "Помірна",
+    hint: "1σ ≤ z < 2σ — вище середнього",
+    predicate: (z) => z >= 1 && z < 2,
+  },
+  {
+    key: "voluminous",
+    label: "Об'ємна",
+    hint: "z ≥ 2σ — значно більше середнього",
+    predicate: (z) => z >= 2,
+  },
 ];
 
 interface LegislatorVolumeBarProps {

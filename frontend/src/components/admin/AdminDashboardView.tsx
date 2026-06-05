@@ -105,8 +105,12 @@ export function AdminDashboardView() {
 
   return (
     <section className={styles.page}>
-      {snapshot.auditLog.some(e => e.severity === 'security') && (
-        <SecurityBanner count={snapshot.auditLog.filter(e => e.severity === 'security').length} />
+      {snapshot.auditLog.some((e) => e.severity === "security") && (
+        <SecurityBanner
+          count={
+            snapshot.auditLog.filter((e) => e.severity === "security").length
+          }
+        />
       )}
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
@@ -444,7 +448,13 @@ function SecurityBanner({ count }: { count: number }) {
     <div className={styles.securityBanner}>
       <span className={styles.securityBannerIcon}>⚠</span>
       <span>{count} подій безпеки потребують уваги</span>
-      <button type="button" className={styles.securityBannerDismiss} onClick={() => setDismissed(true)}>✕</button>
+      <button
+        type="button"
+        className={styles.securityBannerDismiss}
+        onClick={() => setDismissed(true)}
+      >
+        ✕
+      </button>
     </div>
   );
 }
