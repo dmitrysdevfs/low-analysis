@@ -60,10 +60,13 @@ export async function fetchSession(
 }
 
 export async function deleteSession(id: string, token: string): Promise<void> {
-  await fetch(`${BASE}/sessions/${id}`, {
+  const res = await fetch(`${BASE}/sessions/${id}`, {
     method: "DELETE",
     headers: authHeaders(token),
   });
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: Не вдалося видалити сесію`);
+  }
 }
 
 export async function submitFeedback(
@@ -72,7 +75,7 @@ export async function submitFeedback(
   feedback: 1 | -1,
   token?: string,
 ): Promise<void> {
-  await fetch(`${BASE}/feedback`, {
+  const res = await fetch(`${BASE}/feedback`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -80,6 +83,9 @@ export async function submitFeedback(
     },
     body: JSON.stringify({ sessionId, messageId, feedback }),
   });
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: Не вдалося зберегти оцінку`);
+  }
 }
 
 /**

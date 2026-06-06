@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ROUTES } from "@/constants/routes";
 import type { PageBuilderBlock, PageBuilderSnapshot } from "@/types";
@@ -152,41 +151,56 @@ export function ProjectPageBuilderView() {
   };
 
   const handleSaveDraft = async () => {
-    const response = await saveDraft(draft);
-    setDraft(cloneSnapshot(response.draft));
-    setSelectedBlockId(response.draft.blocks[0]?.id ?? null);
-    setNotice("Чернетку збережено.");
-    setIsDirty(false);
+    try {
+      const response = await saveDraft(draft);
+      setDraft(cloneSnapshot(response.draft));
+      setSelectedBlockId(response.draft.blocks[0]?.id ?? null);
+      setNotice("Чернетку збережено.");
+      setIsDirty(false);
+    } catch {
+      setNotice("Помилка збереження. Спробуйте знову.");
+    }
   };
 
   const handlePublish = async () => {
-    let currentPage = page;
-    if (isDirty) {
-      currentPage = await saveDraft(draft);
-      setDraft(cloneSnapshot(currentPage.draft));
-      setIsDirty(false);
+    try {
+      let currentPage = page;
+      if (isDirty) {
+        currentPage = await saveDraft(draft);
+        setDraft(cloneSnapshot(currentPage.draft));
+        setIsDirty(false);
+      }
+      const response = await publish();
+      setDraft(cloneSnapshot(response.draft));
+      setNotice(
+        currentPage?.status === "published"
+          ? "Публікацію оновлено."
+          : "Сторінку опубліковано.",
+      );
+    } catch {
+      setNotice("Помилка публікації. Спробуйте знову.");
     }
-
-    const response = await publish();
-    setDraft(cloneSnapshot(response.draft));
-    setNotice(
-      currentPage?.status === "published"
-        ? "Публікацію оновлено."
-        : "Сторінку опубліковано.",
-    );
   };
 
   const handleUnpublish = async () => {
-    await unpublish();
-    setNotice("Сторінку знято з публікації.");
+    try {
+      await unpublish();
+      setNotice("Сторінку знято з публікації.");
+    } catch {
+      setNotice("Помилка зняття з публікації. Спробуйте знову.");
+    }
   };
 
   const handleRestore = async (version: number) => {
-    const response = await restoreVersion(version);
-    setDraft(cloneSnapshot(response.draft));
-    setSelectedBlockId(response.draft.blocks[0]?.id ?? null);
-    setIsDirty(false);
-    setNotice(`Версію #${version} відновлено у draft.`);
+    try {
+      const response = await restoreVersion(version);
+      setDraft(cloneSnapshot(response.draft));
+      setSelectedBlockId(response.draft.blocks[0]?.id ?? null);
+      setIsDirty(false);
+      setNotice(`Версію #${version} відновлено у draft.`);
+    } catch {
+      setNotice(`Помилка відновлення версії #${version}. Спробуйте знову.`);
+    }
   };
 
   if (loading) {
@@ -220,9 +234,14 @@ export function ProjectPageBuilderView() {
           >
             {page?.status === "published" ? "Published" : "Draft only"}
           </span>
-          <Link href={ROUTES.projectInfo} className={styles.actionSecondary}>
+          <a
+            href={ROUTES.projectInfo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.actionSecondary}
+          >
             Відкрити публічну сторінку
-          </Link>
+          </a>
           <button
             type="button"
             className={styles.actionSecondary}

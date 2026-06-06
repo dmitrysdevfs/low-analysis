@@ -91,6 +91,21 @@
   color: #c7d5ea;
 }
 
+.identityLegislatorLink {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  color: #c8a843;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .rolePill,
 .badge,
 .badgeAccent {

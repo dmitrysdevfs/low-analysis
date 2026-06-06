@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ROUTES } from "@/constants/routes";
 import { formatDateMedium, formatDateShort, groupCounts } from "@/lib/utils";
 import { formatAccessRoleLabel, formatSeverityLabel } from "./adminLabels";
@@ -71,7 +71,17 @@ export function AdminDashboardView() {
   );
 
   if (!snapshot) {
-    return null;
+    return (
+      <section className={styles.page}>
+        <div className={styles.skeletonHero} />
+        <div className={styles.metricsGrid}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={styles.skeletonCard} />
+          ))}
+        </div>
+        <div className={styles.skeletonPanel} />
+      </section>
+    );
   }
 
   const paidAccounts =
@@ -95,6 +105,13 @@ export function AdminDashboardView() {
 
   return (
     <section className={styles.page}>
+      {snapshot.auditLog.some((e) => e.severity === "security") && (
+        <SecurityBanner
+          count={
+            snapshot.auditLog.filter((e) => e.severity === "security").length
+          }
+        />
+      )}
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>Дашборд</span>
@@ -421,5 +438,23 @@ export function AdminDashboardView() {
         </article>
       </section>
     </section>
+  );
+}
+
+function SecurityBanner({ count }: { count: number }) {
+  const [dismissed, setDismissed] = useState(false);
+  if (dismissed) return null;
+  return (
+    <div className={styles.securityBanner}>
+      <span className={styles.securityBannerIcon}>⚠</span>
+      <span>{count} подій безпеки потребують уваги</span>
+      <button
+        type="button"
+        className={styles.securityBannerDismiss}
+        onClick={() => setDismissed(true)}
+      >
+        ✕
+      </button>
+    </div>
   );
 }

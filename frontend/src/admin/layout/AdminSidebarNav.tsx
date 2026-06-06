@@ -4,19 +4,20 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
-  Users,
-  CreditCard,
-  ShieldCheck,
-  KeyRound,
-  ScrollText,
   BarChart3,
-  HelpCircle,
   Blocks,
-  Layers,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
   ExternalLink,
+  FileCode2,
+  HelpCircle,
+  KeyRound,
+  Layers,
+  LayoutDashboard,
+  ScrollText,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import styles from "./AdminSidebarNav.module.scss";
@@ -65,6 +66,12 @@ const NAV_ITEMS = [
     note: "Поглиблений зріз даних",
   },
   {
+    href: ROUTES.adminApiCenter,
+    label: "API Center",
+    icon: FileCode2,
+    note: "Swagger, схеми, маршрути",
+  },
+  {
     href: ROUTES.adminArchitecture,
     label: "Архітектура",
     icon: Layers,
@@ -106,7 +113,7 @@ export function AdminSidebarNav({ userDisplayName }: AdminSidebarNavProps) {
         <button
           type="button"
           className={styles.collapseBtn}
-          onClick={() => setCollapsed((v) => !v)}
+          onClick={() => setCollapsed((value) => !value)}
           title={collapsed ? "Розгорнути" : "Згорнути"}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}

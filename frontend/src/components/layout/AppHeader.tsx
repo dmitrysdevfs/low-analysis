@@ -12,6 +12,7 @@ import { AuthUserIcon } from "@/components/ui/AuthUserIcon";
 import { BurgerIcon } from "./BurgerIcon";
 import { SessionMenu } from "./SessionMenu";
 import { AppSidebar } from "./AppSidebar";
+import { PatreonButton } from "@/components/support/PatreonButton";
 import styles from "./AppHeader.module.scss";
 
 export function AppHeader() {
@@ -154,6 +155,8 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
           </div>
 
           <div className={styles.topBarActions}>
+            <PatreonButton />
+
             {mounted && isAdmin ? (
               <div className={styles.modeSwitch}>
                 <Link

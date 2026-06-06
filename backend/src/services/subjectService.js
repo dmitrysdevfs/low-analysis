@@ -1,10 +1,33 @@
 import Subject from '../models/Subject.js';
 import Element from '../models/Element.js';
+import { getSubjectCounts } from './subjectMetrics.service.js';
 
 // ── Read ──────────────────────────────────────────────────────────────────────
 
 export const getAllSubjects = async () => {
-  return await Subject.find().select('-__v').sort({ canonical_name: 1 });
+  const [subjects, counts] = await Promise.all([
+    Subject.find().select('-__v').lean(),
+    getSubjectCounts(),
+  ]);
+
+  return subjects
+    .map((s) => {
+      const c = counts.get(s._id.toString()) ?? {
+        elements_count: 0,
+        laws_count: 0,
+      };
+      return {
+        ...s,
+        elements_count: c.elements_count,
+        laws_count: c.laws_count,
+      };
+    })
+    .sort((a, b) => {
+      if (b.elements_count !== a.elements_count)
+        return b.elements_count - a.elements_count;
+      if (b.laws_count !== a.laws_count) return b.laws_count - a.laws_count;
+      return a.canonical_name.localeCompare(b.canonical_name, 'uk');
+    });
 };
 
 export const getSubjectById = async (id) => {

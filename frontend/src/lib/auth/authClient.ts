@@ -226,12 +226,15 @@ export async function logoutUserApi(): Promise<AuthActionResult> {
   if (!token) return { ok: true };
 
   try {
-    await fetch(`${API_BASE}/logout`, {
+    const res = await fetch(`${API_BASE}/logout`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    if (!res.ok) {
+      console.warn(`[auth] Logout backend error: HTTP ${res.status}`);
+    }
     return { ok: true };
   } catch {
     return { ok: false, error: "Помилка з'єднання з сервером під час виходу" };

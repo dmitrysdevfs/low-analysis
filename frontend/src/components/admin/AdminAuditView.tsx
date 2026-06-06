@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDateShort } from "@/lib/utils";
 import { formatSeverityLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
@@ -8,10 +8,50 @@ import styles from "./AdminWorkspace.module.scss";
 
 type SeverityFilter = "all" | "info" | "warning" | "security";
 
+function exportAuditCSV(
+  events: Array<{
+    id: string;
+    severity: string;
+    action: string;
+    detail: string;
+    actor: string;
+    createdAt: string;
+  }>,
+) {
+  const header = "ID,Критичність,Дія,Деталі,Виконавець,Дата";
+  const rows = events.map((e) =>
+    [
+      e.id,
+      e.severity,
+      `"${e.action}"`,
+      `"${e.detail}"`,
+      e.actor,
+      e.createdAt,
+    ].join(","),
+  );
+  const csv = [header, ...rows].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `audit-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function AdminAuditView() {
-  const { snapshot } = useAdminWorkspace();
+  const { snapshot, refreshSnapshot } = useAdminWorkspace();
   const [filter, setFilter] = useState<SeverityFilter>("all");
   const [query, setQuery] = useState("");
+  const [lastPolledAt, setLastPolledAt] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      refreshSnapshot();
+      setLastPolledAt(new Date());
+    }, 30_000);
+    return () => clearInterval(id);
+  }, [refreshSnapshot]);
 
   const filteredEvents = useMemo(() => {
     if (!snapshot) {
@@ -124,6 +164,23 @@ export function AdminAuditView() {
               Фільтрування та перегляд подій
             </h3>
           </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span className={styles.updatedText}>
+              Оновлено:{" "}
+              {lastPolledAt.toLocaleTimeString("uk-UA", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </span>
+            <button
+              type="button"
+              className={styles.secondaryAction}
+              onClick={() => exportAuditCSV(filteredEvents)}
+            >
+              Експорт CSV
+            </button>
+          </div>
         </div>
 
         <div className={styles.toolbar}>
@@ -151,7 +208,10 @@ export function AdminAuditView() {
           <div className={styles.auditList}>
             {filteredEvents.length > 0 ? (
               filteredEvents.map((item) => (
-                <div key={item.id} className={styles.auditRow}>
+                <div
+                  key={item.id}
+                  className={`${styles.auditRow} ${item.severity === "security" ? styles.auditRowSecurity : ""}`}
+                >
                   <div className={styles.auditMeta}>
                     <span
                       className={`${styles.auditBadge} ${

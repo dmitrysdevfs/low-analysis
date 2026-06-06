@@ -16,7 +16,10 @@ const router = express.Router();
  *   get:
  *     tags: [Subjects]
  *     summary: Список суб'єктів регулювання
- *     description: Повертає глобальний реєстр суб'єктів, відсортованих за canonical_name.
+ *     description: >
+ *       Повертає глобальний реєстр суб'єктів з полями elements_count та laws_count.
+ *       Сортування: за кількістю згадувань (elements_count desc), потім законів (laws_count desc),
+ *       потім за назвою (canonical_name asc).
  *     responses:
  *       200:
  *         description: Масив суб'єктів

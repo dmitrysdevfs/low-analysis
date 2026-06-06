@@ -35,6 +35,7 @@ import {
 import { useSidebarData } from "@/components/layout/SidebarDataContext";
 import { useLawStats } from "@/hooks/useLawStats";
 import { saveRecentlyViewed } from "@/lib/storage/recentlyViewed";
+import { VolumeChipBar } from "@/components/law/VolumeChipBar";
 
 export function LawTreePageClient() {
   const params = useParams<{ id: string }>();
@@ -322,6 +323,14 @@ export function LawTreePageClient() {
                   структура розділів і статей.
                 </div>
               </motion.div>
+            ) : null}
+
+            {!loading && !error && (stats ?? computedStats) ? (
+              <VolumeChipBar
+                stats={(stats ?? computedStats)!}
+                activeLevel={riskFilter}
+                onLevelClick={updateRisk}
+              />
             ) : null}
 
             {!loading && !error && articleCount > 0 && lawId ? (

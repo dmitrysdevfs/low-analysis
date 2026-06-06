@@ -21,6 +21,7 @@ import {
   deleteSession as apiDeleteSession,
   submitFeedback as apiSubmitFeedback,
 } from "../api/assistantApi";
+import { notify } from "@/lib/toast";
 
 interface LocalMessage {
   id: string;
@@ -99,12 +100,16 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
 
   const deleteSessionFn = useCallback(
     async (id: string, token: string) => {
-      await apiDeleteSession(id, token);
-      setSessions((prev) => prev.filter((s) => s.id !== id));
-      if (activeSessionId === id) {
-        setActiveSessionId(null);
-        setMessages([]);
-        setSources([]);
+      try {
+        await apiDeleteSession(id, token);
+        setSessions((prev) => prev.filter((s) => s.id !== id));
+        if (activeSessionId === id) {
+          setActiveSessionId(null);
+          setMessages([]);
+          setSources([]);
+        }
+      } catch {
+        notify.error("Не вдалося видалити сесію. Спробуйте ще раз.");
       }
     },
     [activeSessionId],
@@ -229,10 +234,14 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
   const submitFeedbackFn = useCallback(
     async (messageId: string, feedback: 1 | -1, token?: string) => {
       if (!activeSessionId) return;
-      await apiSubmitFeedback(activeSessionId, messageId, feedback, token);
-      setMessages((prev) =>
-        prev.map((m) => (m.id === messageId ? { ...m, feedback } : m)),
-      );
+      try {
+        await apiSubmitFeedback(activeSessionId, messageId, feedback, token);
+        setMessages((prev) =>
+          prev.map((m) => (m.id === messageId ? { ...m, feedback } : m)),
+        );
+      } catch {
+        notify.warning("Оцінку не вдалося зберегти. Спробуйте ще раз.");
+      }
     },
     [activeSessionId],
   );

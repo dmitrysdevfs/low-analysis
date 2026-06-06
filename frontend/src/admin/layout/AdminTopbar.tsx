@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RefreshCw } from "lucide-react";
+import { Bell, RefreshCw } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { ROUTES } from "@/constants/routes";
 import styles from "./AdminTopbar.module.scss";
@@ -12,6 +12,11 @@ const PAGE_TITLES = [
     href: ROUTES.adminProjectPage,
     title: "Сторінка проєкту",
     subtitle: "Builder для сторінки «Інформація про проєкт»",
+  },
+  {
+    href: ROUTES.adminApiCenter,
+    title: "API Center",
+    subtitle: "Ендпоїнти, Swagger, OpenAPI JSON та схеми бекенда",
   },
   {
     href: ROUTES.adminArchitecture,
@@ -70,6 +75,9 @@ export function AdminTopbar({
   const [lastUpdated] = useState(() => new Date());
   const [renderedAt] = useState(() => Date.now());
   const [refreshing, setRefreshing] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  const env = process.env.NODE_ENV;
 
   const pageCopy = useMemo(() => {
     const matched = PAGE_TITLES.find(
@@ -103,6 +111,11 @@ export function AdminTopbar({
               <span className={styles.breadcrumbCurrent}>{pageCopy.title}</span>
             </>
           )}
+          <span
+            className={`${styles.envBadge} ${env === "production" ? styles.envBadgeProd : styles.envBadgeDev}`}
+          >
+            {env === "production" ? "PROD" : "DEV"}
+          </span>
         </nav>
         <h1 className={styles.title}>{pageCopy.title}</h1>
         {pageCopy.subtitle && (
@@ -122,6 +135,19 @@ export function AdminTopbar({
             <RefreshCw size={14} />
           </button>
         )}
+        <div className={styles.bellWrapper}>
+          <button
+            type="button"
+            className={styles.bellBtn}
+            onClick={() => setNotifOpen((prev) => !prev)}
+            title="Сповіщення"
+          >
+            <Bell size={14} />
+          </button>
+          {notifOpen && (
+            <div className={styles.notifPanel}>Немає нових сповіщень</div>
+          )}
+        </div>
         <div className={styles.userChip}>
           <span className={styles.userAvatar}>
             {(userDisplayName ?? "A").charAt(0).toUpperCase()}
