@@ -46,7 +46,7 @@ export async function checkAndIncrementApiGuard(limit) {
         },
       },
     ],
-    { upsert: true, new: true },
+    { upsert: true, returnDocument: 'after', updatePipeline: true },
   );
 
   const used = doc.count;
