@@ -1,5 +1,6 @@
 echo "🎨 Checking code formatting..."
 npm run check-format --workspace=frontend
+npm run check-format --workspace=backend
 echo "✅ Formatting OK"
 
 echo "🧪 Running tests before push..."

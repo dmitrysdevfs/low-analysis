@@ -9,7 +9,11 @@ const schema = new mongoose.Schema(
   { _id: false, versionKey: false },
 );
 
-const ApiGuard = mongoose.model('AssistantApiGuard', schema, 'assistantapiguards');
+const ApiGuard = mongoose.model(
+  'AssistantApiGuard',
+  schema,
+  'assistantapiguards',
+);
 
 function todayUTC() {
   return new Date().toISOString().slice(0, 10);
