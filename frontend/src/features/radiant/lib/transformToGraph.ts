@@ -9,7 +9,7 @@ interface LawInput {
   _id?: string;
   title?: string;
   code?: string;
-  documentType?: string[];
+  documentType?: string[] | null;
   totalArticles?: number;
   adoptedDate?: string | null;
 }
@@ -22,7 +22,7 @@ export function transformToGraph(laws: LawInput[]): RadiantGraph {
     return {
       id,
       name: title,
-      code: law.code,
+      code: law.code ?? "",
       lawType,
       totalArticles: law.totalArticles ?? 0,
       adoptedYear: law.adoptedDate
