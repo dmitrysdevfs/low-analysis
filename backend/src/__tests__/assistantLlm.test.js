@@ -58,15 +58,15 @@ describe('Assistant LLM client', () => {
       resetAt: new Date(),
     });
 
-    await expect(
-      queryChatAssistant('System', [], 'Hello'),
-    ).rejects.toThrow('GEMINI_ASSISTANT_API_KEY is not set');
+    await expect(queryChatAssistant('System', [], 'Hello')).rejects.toThrow(
+      'GEMINI_ASSISTANT_API_KEY is not set',
+    );
   });
 
   it('should throw ASSISTANT_DAILY_LIMIT_REACHED if guard denies query', async () => {
     process.env.GEMINI_ASSISTANT_API_KEY = 'mock-key';
     const resetTime = new Date();
-    
+
     apiGuard.checkAndIncrementApiGuard.mockResolvedValue({
       allowed: false,
       used: 251,
@@ -101,7 +101,7 @@ describe('Assistant LLM client', () => {
       'System prompt instructions',
       [{ role: 'user', content: 'Prev message' }],
       'Current message',
-      { temperature: 0.8, maxOutputTokens: 100, model: 'gemini-test-model' }
+      { temperature: 0.8, maxOutputTokens: 100, model: 'gemini-test-model' },
     );
 
     expect(apiGuard.checkAndIncrementApiGuard).toHaveBeenCalledWith(250);

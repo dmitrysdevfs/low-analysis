@@ -13,7 +13,7 @@ describe('AssistantApiGuard Model', () => {
   it('should return allowed=true and incremented count when within limits', async () => {
     const mockModel = mongoose.model('AssistantApiGuard');
     const today = new Date().toISOString().slice(0, 10);
-    
+
     const spyFindOneAndUpdate = vi
       .spyOn(mockModel, 'findOneAndUpdate')
       .mockResolvedValue({
@@ -35,7 +35,7 @@ describe('AssistantApiGuard Model', () => {
   it('should return allowed=false when limit is exceeded', async () => {
     const mockModel = mongoose.model('AssistantApiGuard');
     const today = new Date().toISOString().slice(0, 10);
-    
+
     vi.spyOn(mockModel, 'findOneAndUpdate').mockResolvedValue({
       _id: 'daily',
       date: today,
@@ -52,7 +52,7 @@ describe('AssistantApiGuard Model', () => {
   it('should retrieve current quota status without incrementing', async () => {
     const mockModel = mongoose.model('AssistantApiGuard');
     const today = new Date().toISOString().slice(0, 10);
-    
+
     const spyFindById = vi.spyOn(mockModel, 'findById').mockReturnValue({
       lean: vi.fn().mockResolvedValue({
         _id: 'daily',
