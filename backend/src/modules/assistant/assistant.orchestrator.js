@@ -28,10 +28,15 @@ async function streamStub(res, content, sources) {
 async function streamLLM(res, systemPrompt, history, userMessage, sources) {
   try {
     const { queryChatAssistant } = await import('./assistant.llm.js');
-    const stream = await queryChatAssistant(systemPrompt, history, userMessage, {
-      temperature: CHAT_LLM_CONFIG.temperature,
-      maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
-    });
+    const stream = await queryChatAssistant(
+      systemPrompt,
+      history,
+      userMessage,
+      {
+        temperature: CHAT_LLM_CONFIG.temperature,
+        maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
+      },
+    );
 
     for await (const chunk of stream) {
       const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
