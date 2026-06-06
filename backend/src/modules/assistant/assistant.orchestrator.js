@@ -136,7 +136,13 @@ export async function handleStreamChat({
         .map((m) => ({ role: m.role, content: m.content }));
 
       const { sources } = generateStubResponse(message, context);
-      const result = await streamLLM(res, systemPrompt, history, message, sources);
+      const result = await streamLLM(
+        res,
+        systemPrompt,
+        history,
+        message,
+        sources,
+      );
       assistantContent = result.content;
       assistantSources = result.sources;
     }
