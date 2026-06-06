@@ -1,6 +1,14 @@
-echo "🎨 Checking code formatting..."
-npm run check-format --workspace=frontend
-echo "✅ Formatting OK"
+echo "🎨 Auto-formatting code..."
+npm run format --workspace=frontend
+npm run format --workspace=backend
+
+if ! git diff --quiet; then
+  git add -A
+  git commit -m "chore: auto-format before push"
+  echo "✅ Auto-formatted and committed"
+else
+  echo "✅ Formatting OK"
+fi
 
 echo "🧪 Running tests before push..."
 npm run test:run --workspace=backend

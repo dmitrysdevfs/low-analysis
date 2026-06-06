@@ -26,6 +26,7 @@ export async function getSubjectCounts() {
 
   const map = new Map();
   for (const row of rows) {
+    if (row._id == null) continue;
     map.set(row._id.toString(), {
       elements_count: row.elements_count,
       laws_count: row.laws_count,

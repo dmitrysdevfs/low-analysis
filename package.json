@@ -19,6 +19,9 @@
     "audit:all": "npm audit --audit-level=high --workspaces",
     "prepare": "husky || true"
   },
+  "lint-staged": {
+    "**/*.{js,ts,tsx,scss,css,json,md}": "prettier --write"
+  },
   "devDependencies": {
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
