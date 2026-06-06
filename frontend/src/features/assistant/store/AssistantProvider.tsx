@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -22,6 +23,8 @@ import {
   submitFeedback as apiSubmitFeedback,
 } from "../api/assistantApi";
 import { notify } from "@/lib/toast";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { readStoredToken } from "@/lib/auth/authClient";
 
 interface LocalMessage {
   id: string;
@@ -71,6 +74,32 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
   } | null>(null);
   const [sources, setSources] = useState<AssistantSource[]>([]);
   const streamingIdRef = useRef<string | null>(null);
+ 
+  const { user } = useAuth();
+  const prevUserRef = useRef(user);
+ 
+  const clearSession = useCallback(() => {
+    setActiveSessionId(null);
+    setMessages([]);
+    setSources([]);
+    setLimitHit(null);
+    setStreamingText("");
+  }, []);
+ 
+  useEffect(() => {
+    if (prevUserRef.current?.id !== user?.id) {
+      clearSession();
+      const storedToken = readStoredToken();
+      if (user && storedToken) {
+        fetchSessions(storedToken)
+          .then(setSessions)
+          .catch(() => null);
+      } else {
+        setSessions([]);
+      }
+    }
+    prevUserRef.current = user;
+  }, [user, clearSession]);
 
   const loadSessions = useCallback(async (token: string) => {
     const data = await fetchSessions(token);
@@ -246,13 +275,6 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
     [activeSessionId],
   );
 
-  const clearSession = useCallback(() => {
-    setActiveSessionId(null);
-    setMessages([]);
-    setSources([]);
-    setLimitHit(null);
-    setStreamingText("");
-  }, []);
 
   return (
     <AssistantContext.Provider
