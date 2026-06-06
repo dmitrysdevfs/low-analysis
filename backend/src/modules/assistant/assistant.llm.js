@@ -63,7 +63,7 @@ export async function queryChatAssistant(
 
   const contents = [
     ...history.map((m) => ({
-      role: m.role,
+      role: m.role === 'assistant' ? 'model' : m.role,
       parts: [{ text: m.content }],
     })),
     { role: 'user', parts: [{ text: userMessage }] },

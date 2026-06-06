@@ -99,7 +99,10 @@ describe('Assistant LLM client', () => {
 
     const res = await queryChatAssistant(
       'System prompt instructions',
-      [{ role: 'user', content: 'Prev message' }],
+      [
+        { role: 'user', content: 'Prev message' },
+        { role: 'assistant', content: 'Assistant reply' },
+      ],
       'Current message',
       { temperature: 0.8, maxOutputTokens: 100, model: 'gemini-test-model' },
     );
@@ -109,6 +112,7 @@ describe('Assistant LLM client', () => {
       model: 'gemini-test-model',
       contents: [
         { role: 'user', parts: [{ text: 'Prev message' }] },
+        { role: 'model', parts: [{ text: 'Assistant reply' }] },
         { role: 'user', parts: [{ text: 'Current message' }] },
       ],
       config: {
