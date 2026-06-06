@@ -26,6 +26,7 @@ async function streamStub(res, content, sources) {
  * Requires queryChatLLM to be available in llmService.
  */
 async function streamLLM(res, systemPrompt, history, userMessage, sources) {
+  let accumulatedText = '';
   try {
     const { queryChatAssistant } = await import('./assistant.llm.js');
     const stream = await queryChatAssistant(
@@ -40,15 +41,20 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
 
     for await (const chunk of stream) {
       const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (text) sendSSE(res, { type: SSE_EVENTS.TOKEN, content: text });
+      if (text) {
+        accumulatedText += text;
+        sendSSE(res, { type: SSE_EVENTS.TOKEN, content: text });
+      }
     }
 
     sendSSE(res, { type: SSE_EVENTS.DONE, sources });
+    return { content: accumulatedText, sources };
   } catch (err) {
     console.error('[assistant.orchestrator] LLM stream error:', err.message);
     // Fallback to stub on LLM error
     const { content, sources: stubSources } = generateStubResponse(userMessage);
     await streamStub(res, content, stubSources);
+    return { content, sources: stubSources };
   }
 }
 
@@ -129,10 +135,10 @@ export async function handleStreamChat({
         .slice(-MAX_HISTORY_MESSAGES)
         .map((m) => ({ role: m.role, content: m.content }));
 
-      const { content, sources } = generateStubResponse(message, context);
-      assistantContent = content;
-      assistantSources = sources;
-      await streamLLM(res, systemPrompt, history, message, sources);
+      const { sources } = generateStubResponse(message, context);
+      const result = await streamLLM(res, systemPrompt, history, message, sources);
+      assistantContent = result.content;
+      assistantSources = result.sources;
     }
 
     // Save assistant message to session
