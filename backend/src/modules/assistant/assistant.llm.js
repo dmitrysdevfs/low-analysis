@@ -1,8 +1,14 @@
 import { GoogleGenAI } from '@google/genai';
+import {
+  checkAndIncrementApiGuard,
+  getApiGuardStatus,
+} from './assistant.api-guard.model.js';
 
 // ── Isolated Gemini client for the frontend assistant only ────────────────────
 // Reads GEMINI_ASSISTANT_API_KEY exclusively.
 // Never imports from ../../config/llm.js (that key is for batch subject analysis).
+
+const DAILY_LIMIT = 250;
 
 let assistantClient = null;
 
@@ -15,51 +21,20 @@ function getAssistantClient() {
   return assistantClient;
 }
 
-// ── Global daily API guard (50% of free-tier 500 RPD = 250 req/day) ──────────
-
-const DAILY_LIMIT = 250;
-
-const guard = {
-  count: 0,
-  resetAt: nextMidnightUTC(),
-};
-
-function nextMidnightUTC() {
-  const d = new Date();
-  d.setUTCHours(24, 0, 0, 0);
-  return d;
-}
-
-function checkAndIncrementGuard() {
-  const now = new Date();
-  if (now >= guard.resetAt) {
-    guard.count = 0;
-    guard.resetAt = nextMidnightUTC();
-  }
-  if (guard.count >= DAILY_LIMIT) {
-    const err = new Error('ASSISTANT_DAILY_LIMIT_REACHED');
-    err.resetAt = guard.resetAt;
-    err.used = guard.count;
-    err.limit = DAILY_LIMIT;
-    throw err;
-  }
-  guard.count++;
-}
-
-export function getAssistantApiGuardStatus() {
-  const now = new Date();
-  if (now >= guard.resetAt) {
-    guard.count = 0;
-    guard.resetAt = nextMidnightUTC();
-  }
-  return { used: guard.count, limit: DAILY_LIMIT, resetAt: guard.resetAt };
+/**
+ * Returns the current global API guard status (no side effects).
+ * Used by GET /api/assistant/quota to expose globalUsed/globalLimit.
+ */
+export async function getAssistantApiGuardStatus() {
+  return getApiGuardStatus(DAILY_LIMIT);
 }
 
 // ── Streaming chat function ────────────────────────────────────────────────────
 
 /**
  * Streams a chat response using the assistant-specific Gemini client.
- * Checks the global daily guard before each call.
+ * Atomically checks and increments the global daily counter in MongoDB
+ * before each call — safe across restarts and multiple instances.
  *
  * @param {string} systemPrompt
  * @param {{ role: string, content: string }[]} history
@@ -73,7 +48,15 @@ export async function queryChatAssistant(
   userMessage,
   options = {},
 ) {
-  checkAndIncrementGuard();
+  const guard = await checkAndIncrementApiGuard(DAILY_LIMIT);
+
+  if (!guard.allowed) {
+    const err = new Error('ASSISTANT_DAILY_LIMIT_REACHED');
+    err.resetAt = guard.resetAt;
+    err.used = guard.used;
+    err.limit = guard.limit;
+    throw err;
+  }
 
   const client = getAssistantClient();
   const { temperature = 0.4, maxOutputTokens = 2048 } = options;
