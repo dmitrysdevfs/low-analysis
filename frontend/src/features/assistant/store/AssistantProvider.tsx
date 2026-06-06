@@ -74,10 +74,10 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
   } | null>(null);
   const [sources, setSources] = useState<AssistantSource[]>([]);
   const streamingIdRef = useRef<string | null>(null);
- 
+
   const { user } = useAuth();
   const prevUserRef = useRef(user);
- 
+
   const clearSession = useCallback(() => {
     setActiveSessionId(null);
     setMessages([]);
@@ -85,7 +85,7 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
     setLimitHit(null);
     setStreamingText("");
   }, []);
- 
+
   useEffect(() => {
     if (prevUserRef.current?.id !== user?.id) {
       clearSession();
@@ -274,7 +274,6 @@ export function AssistantProvider({ children }: { children: React.ReactNode }) {
     },
     [activeSessionId],
   );
-
 
   return (
     <AssistantContext.Provider
