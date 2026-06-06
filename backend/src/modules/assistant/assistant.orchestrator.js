@@ -27,9 +27,8 @@ async function streamStub(res, content, sources) {
  */
 async function streamLLM(res, systemPrompt, history, userMessage, sources) {
   try {
-    const { queryChatLLM } = await import('../../services/llmService.js');
-    const stream = await queryChatLLM(systemPrompt, history, userMessage, {
-      stream: true,
+    const { queryChatAssistant } = await import('./assistant.llm.js');
+    const stream = await queryChatAssistant(systemPrompt, history, userMessage, {
       temperature: CHAT_LLM_CONFIG.temperature,
       maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
     });
