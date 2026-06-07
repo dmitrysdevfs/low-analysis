@@ -11,6 +11,11 @@ import { AssistantMessageList } from "./AssistantMessageList";
 import { AssistantComposer } from "./AssistantComposer";
 import { AssistantSourcesPanel } from "./AssistantSourcesPanel";
 import { AssistantLimitBanner } from "./AssistantLimitBanner";
+import {
+  AssistantRolePicker,
+  ROLE_LABELS,
+} from "./AssistantRolePicker";
+import type { AssistantRole } from "../types";
 import styles from "./AssistantPageView.module.scss";
 
 export function AssistantPageView() {
@@ -32,11 +37,11 @@ export function AssistantPageView() {
   const context = useAssistantContext();
   const { isAuthenticated } = useAuth();
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  // readStoredToken is browser-only; safe because this is a client component
   const [token] = useState<string | null>(() => readStoredToken());
   const [mobileTab, setMobileTab] = useState<"chat" | "sessions" | "sources">(
     "chat",
   );
+  const [selectedRole, setSelectedRole] = useState<AssistantRole | null>(null);
 
   useEffect(() => {
     fetchSuggestions()
@@ -51,7 +56,11 @@ export function AssistantPageView() {
   }, [isAuthenticated, token, loadSessions]);
 
   function handleSend(text: string) {
-    sendMessage(text, context, token || undefined);
+    sendMessage(
+      text,
+      { ...context, role: selectedRole ?? "general" },
+      token || undefined,
+    );
   }
 
   function handleSelectSession(id: string) {
@@ -60,6 +69,11 @@ export function AssistantPageView() {
 
   function handleDeleteSession(id: string) {
     if (token) deleteSession(id, token);
+  }
+
+  function handleNewSession() {
+    clearSession();
+    setSelectedRole(null);
   }
 
   function handleFeedback(messageId: string, value: 1 | -1) {
@@ -104,7 +118,7 @@ export function AssistantPageView() {
               activeId={activeSessionId}
               onSelect={handleSelectSession}
               onDelete={handleDeleteSession}
-              onNew={clearSession}
+              onNew={handleNewSession}
             />
           ) : (
             <div className={styles.authHint}>
@@ -119,12 +133,26 @@ export function AssistantPageView() {
         >
           <div className={styles.chatHeader}>
             <h1 className={styles.chatTitle}>Lex — AI Помічник</h1>
+            {selectedRole && (
+              <span className={styles.roleChip}>
+                {ROLE_LABELS[selectedRole]}
+              </span>
+            )}
             {context.contextLawId && (
               <span className={styles.contextChip}>
                 {context.mode === "article"
                   ? `Стаття ${context.contextArticleNum} · ${context.contextLawId}`
                   : context.contextLawId}
               </span>
+            )}
+            {selectedRole && messages.length === 0 && (
+              <button
+                type="button"
+                className={styles.changeRoleBtn}
+                onClick={() => setSelectedRole(null)}
+              >
+                Змінити роль
+              </button>
             )}
           </div>
 
@@ -138,16 +166,21 @@ export function AssistantPageView() {
             </div>
           )}
 
-          <AssistantMessageList
-            messages={messages}
-            onFeedback={handleFeedback}
-          />
-
-          <AssistantComposer
-            onSend={handleSend}
-            disabled={isStreaming || !!limitHit}
-            suggestions={messages.length === 0 ? suggestions : []}
-          />
+          {!selectedRole && messages.length === 0 ? (
+            <AssistantRolePicker onSelect={setSelectedRole} />
+          ) : (
+            <>
+              <AssistantMessageList
+                messages={messages}
+                onFeedback={handleFeedback}
+              />
+              <AssistantComposer
+                onSend={handleSend}
+                disabled={isStreaming || !!limitHit}
+                suggestions={messages.length === 0 ? suggestions : []}
+              />
+            </>
+          )}
         </div>
 
         {/* Right: Sources */}

@@ -9,9 +9,41 @@ function sendSSE(res, data) {
   res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
-/**
- * Stream a stub response word-by-word.
- */
+const ROLE_SYSTEM_PROMPTS = {
+  general:
+    'Ти — Lex, AI Помічник платформи Law Analysis. ' +
+    'Відповідай українською мовою. ' +
+    'Допомагай користувачам розібратися в законодавстві України. ' +
+    'Будь точним, коротким і корисним. Якщо не знаєш відповіді — чесно скажи про це.',
+  lawyer:
+    'Ти — Lex, AI асистент у ролі адвоката на платформі Law Analysis. ' +
+    'Відповідай українською мовою. ' +
+    'Знаходь процесуальні права клієнта, підстави для захисту, строки оскарження, ' +
+    'способи оскаржити рішення. Акцентуй на захисті прав особи відповідно до законодавства України.',
+  prosecutor:
+    'Ти — Lex, AI асистент у ролі прокурора на платформі Law Analysis. ' +
+    'Відповідай українською мовою. ' +
+    'Аналізуй склад злочину, кваліфікацію діяння, застосовні санкції, вимоги до доказової бази. ' +
+    'Допомагай визначити правову позицію обвинувачення відповідно до КК та КПК України.',
+  judge:
+    'Ти — Lex, AI асистент у ролі судді на платформі Law Analysis. ' +
+    'Відповідай українською мовою. Аналізуй питання неупереджено і нейтрально. ' +
+    'Виділяй ключові норми права, можливі правові позиції обох сторін, ' +
+    'релевантну судову практику і прецеденти. Не давай порад на користь жодної зі сторін.',
+  notary:
+    'Ти — Lex, AI асистент у ролі нотаріуса на платформі Law Analysis. ' +
+    'Відповідай українською мовою. ' +
+    'Акцент на правочинах, нотаріальному посвідченні, державній реєстрації, вимогах до документів. ' +
+    'Пояснюй нотаріальні процедури та відповідні законодавчі вимоги.',
+  business:
+    'Ти — Lex, AI асистент для підприємців на платформі Law Analysis. ' +
+    "Відповідай українською мовою, простою зрозумілою мовою без зайвого юридичного жаргону. " +
+    "Пояснюй права та обов'язки бізнесу, штрафи, необхідні дозволи та процедури. " +
+    'Якщо можливо — наводь конкретні числа, строки, суми.',
+};
+
+const VALID_ROLES = new Set(Object.keys(ROLE_SYSTEM_PROMPTS));
+
 async function streamStub(res, content, sources) {
   const words = content.split(/(?<=\s)|(?=\s)/);
   for (const chunk of words) {
@@ -21,34 +53,30 @@ async function streamStub(res, content, sources) {
   sendSSE(res, { type: SSE_EVENTS.DONE, sources });
 }
 
-/**
- * Stream a real LLM response.
- * Requires queryChatLLM to be available in llmService.
- */
-async function streamLLM(res, systemPrompt, history, userMessage, sources) {
+async function streamLLM(res, systemPrompt, history, userMessage) {
+  let accumulated = '';
   try {
     const { queryChatAssistant } = await import('./assistant.llm.js');
-    const stream = await queryChatAssistant(
-      systemPrompt,
-      history,
-      userMessage,
-      {
-        temperature: CHAT_LLM_CONFIG.temperature,
-        maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
-      },
-    );
+    const stream = await queryChatAssistant(systemPrompt, history, userMessage, {
+      temperature: CHAT_LLM_CONFIG.temperature,
+      maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
+    });
 
     for await (const chunk of stream) {
       const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (text) sendSSE(res, { type: SSE_EVENTS.TOKEN, content: text });
+      if (text) {
+        accumulated += text;
+        sendSSE(res, { type: SSE_EVENTS.TOKEN, content: text });
+      }
     }
 
-    sendSSE(res, { type: SSE_EVENTS.DONE, sources });
+    sendSSE(res, { type: SSE_EVENTS.DONE, sources: [] });
+    return accumulated;
   } catch (err) {
     console.error('[assistant.orchestrator] LLM stream error:', err.message);
-    // Fallback to stub on LLM error
     const { content, sources: stubSources } = generateStubResponse(userMessage);
     await streamStub(res, content, stubSources);
+    return content;
   }
 }
 
@@ -71,7 +99,9 @@ export async function handleStreamChat({
   message,
   contextLawId,
   contextArticleNum,
+  lawTitle,
   mode,
+  role,
 }) {
   res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -96,6 +126,7 @@ export async function handleStreamChat({
         userId: userId || null,
         guestIp: userId ? null : guestIp,
         mode: mode || 'general',
+        role: role || 'general',
         contextLawId: contextLawId || null,
         contextArticleNum: contextArticleNum || null,
         title: deriveTitle(message),
@@ -113,7 +144,7 @@ export async function handleStreamChat({
 
     // Stream response
     const currentMode = getAssistantMode();
-    const context = { lawId: contextLawId, articleNum: contextArticleNum };
+    const context = { lawId: contextLawId, articleNum: contextArticleNum, lawTitle };
     let assistantContent = '';
     let assistantSources = [];
 
@@ -123,16 +154,14 @@ export async function handleStreamChat({
       assistantSources = sources;
       await streamStub(res, content, sources);
     } else {
-      const systemPrompt = buildSystemPrompt(mode, context);
+      const systemPrompt = buildSystemPrompt(mode, { ...context, role });
       const history = session.messages
         .slice(0, -1)
         .slice(-MAX_HISTORY_MESSAGES)
         .map((m) => ({ role: m.role, content: m.content }));
 
-      const { content, sources } = generateStubResponse(message, context);
-      assistantContent = content;
-      assistantSources = sources;
-      await streamLLM(res, systemPrompt, history, message, sources);
+      assistantContent = await streamLLM(res, systemPrompt, history, message);
+      assistantSources = [];
     }
 
     // Save assistant message to session
@@ -161,18 +190,17 @@ export async function handleStreamChat({
 }
 
 function buildSystemPrompt(mode, context) {
-  let base =
-    'Ти — Lex, AI Помічник платформи Law Analysis. ' +
-    'Відповідай українською мовою. ' +
-    'Ти допомагаєш користувачам розібратися в законодавстві України. ' +
-    'Будь точним, коротким і корисним. ' +
-    'Якщо не знаєш відповіді — чесно скажи про це.';
+  const roleKey = VALID_ROLES.has(context.role) ? context.role : 'general';
+  let base = ROLE_SYSTEM_PROMPTS[roleKey];
 
-  if (mode === 'law' && context.lawId) {
-    base += ` Поточний контекст: закон з ID "${context.lawId}".`;
+  if (context.lawTitle) {
+    base += ` Поточний закон: "${context.lawTitle}".`;
+  } else if (mode === 'law' && context.lawId) {
+    base += ` Закон ID: "${context.lawId}".`;
   }
-  if (mode === 'article' && context.lawId && context.articleNum) {
-    base += ` Поточний контекст: стаття ${context.articleNum} закону "${context.lawId}".`;
+
+  if (mode === 'article' && context.articleNum) {
+    base += ` Стаття: ${context.articleNum}.`;
   }
 
   return base;

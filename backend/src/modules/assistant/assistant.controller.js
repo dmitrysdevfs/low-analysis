@@ -75,7 +75,9 @@ export async function streamChat(req, res) {
     message: validation.message,
     contextLawId: req.body.contextLawId || null,
     contextArticleNum: req.body.contextArticleNum || null,
+    lawTitle: validation.lawTitle || null,
     mode: req.body.mode || 'general',
+    role: validation.role || 'general',
   });
 }
 

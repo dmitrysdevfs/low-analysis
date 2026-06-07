@@ -12,12 +12,14 @@ function sanitizeMessage(text) {
   );
 }
 
+const VALID_ROLES = new Set(['general', 'lawyer', 'prosecutor', 'judge', 'notary', 'business']);
+
 export function validateChatRequest(body) {
   if (!body || typeof body !== 'object') {
     return { valid: false, error: 'Invalid request body' };
   }
 
-  const { message, sessionId } = body;
+  const { message, sessionId, role, lawTitle } = body;
 
   if (!message || typeof message !== 'string') {
     return { valid: false, error: 'message is required' };
@@ -32,5 +34,7 @@ export function validateChatRequest(body) {
     valid: true,
     message: cleaned,
     sessionId: typeof sessionId === 'string' ? sessionId : null,
+    role: VALID_ROLES.has(role) ? role : 'general',
+    lawTitle: typeof lawTitle === 'string' ? lawTitle.slice(0, 200) : null,
   };
 }
