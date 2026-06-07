@@ -23,7 +23,9 @@ export const listConversations = async (req, res, next) => {
 
 export const getConversation = async (req, res, next) => {
   try {
-    const conversation = await supportService.getAdminConversation(req.params.id);
+    const conversation = await supportService.getAdminConversation(
+      req.params.id,
+    );
     res.json(conversation);
   } catch (err) {
     next(err);

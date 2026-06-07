@@ -70,6 +70,10 @@ const inboxMessageSchema = new mongoose.Schema(
   },
 );
 
-inboxMessageSchema.index({ connectionKey: 1, gmailThreadId: 1, internalDate: 1 });
+inboxMessageSchema.index({
+  connectionKey: 1,
+  gmailThreadId: 1,
+  internalDate: 1,
+});
 
 export default mongoose.model('InboxMessage', inboxMessageSchema);

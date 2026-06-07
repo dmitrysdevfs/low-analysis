@@ -31,7 +31,8 @@ function formatStatusLabel(value: SupportConversationStatus) {
 
 function senderLabel(senderType: string, senderName: string) {
   if (senderType === "admin") return senderName || "Адмін";
-  if (senderType === "telegram_support") return senderName || "Telegram support";
+  if (senderType === "telegram_support")
+    return senderName || "Telegram support";
   if (senderType === "system") return "Система";
   return senderName || "Клієнт";
 }
@@ -113,7 +114,9 @@ export function AdminSupportView() {
       notify.success(`Статус змінено на «${formatStatusLabel(nextStatus)}».`);
     } catch (err) {
       notify.error(
-        err instanceof Error ? err.message : "Не вдалося оновити статус діалогу.",
+        err instanceof Error
+          ? err.message
+          : "Не вдалося оновити статус діалогу.",
       );
     }
   };
@@ -126,7 +129,9 @@ export function AdminSupportView() {
   }, [statusQuery.data]);
 
   if (statusQuery.isLoading) {
-    return <section className={styles.loadingState}>Завантаження support…</section>;
+    return (
+      <section className={styles.loadingState}>Завантаження support…</section>
+    );
   }
 
   return (
@@ -134,7 +139,9 @@ export function AdminSupportView() {
       <section className={styles.hero}>
         <div>
           <span className={styles.eyebrow}>Support</span>
-          <h2 className={styles.title}>Окремий живий support-чат для клієнтів.</h2>
+          <h2 className={styles.title}>
+            Окремий живий support-чат для клієнтів.
+          </h2>
           <p className={styles.description}>
             Клієнт пише з будь-якої сторінки сайту, повідомлення з’являється в
             цьому адміністраторському модулі, а при підключеному Telegram ще й
@@ -146,7 +153,9 @@ export function AdminSupportView() {
         <aside className={styles.heroAside}>
           <span className={styles.tag}>Режим</span>
           <div className={styles.heroValue}>
-            {statusQuery.data?.telegramConfigured ? "Web + Telegram" : "Web only"}
+            {statusQuery.data?.telegramConfigured
+              ? "Web + Telegram"
+              : "Web only"}
           </div>
           <div className={styles.heroMeta}>{statusNote}</div>
         </aside>
@@ -209,7 +218,9 @@ export function AdminSupportView() {
           </div>
           <div className={styles.conversationList}>
             {conversationsQuery.isLoading ? (
-              <div className={styles.loadingState}>Оновлення списку діалогів…</div>
+              <div className={styles.loadingState}>
+                Оновлення списку діалогів…
+              </div>
             ) : conversations.length === 0 ? (
               <div className={styles.emptyState}>
                 За поточним фільтром немає жодного support-діалогу.
@@ -224,7 +235,9 @@ export function AdminSupportView() {
                 >
                   <div className={styles.cardTopRow}>
                     <div>
-                      <h4 className={styles.cardTitle}>{item.participantLabel}</h4>
+                      <h4 className={styles.cardTitle}>
+                        {item.participantLabel}
+                      </h4>
                       <div className={styles.cardEmail}>
                         {item.guestEmail || "Авторизований клієнт"}
                       </div>
@@ -238,13 +251,17 @@ export function AdminSupportView() {
                       {formatStatusLabel(item.status)}
                     </span>
                     {item.unreadForAdmin > 0 && (
-                      <span className={`${styles.chip} ${styles.chipHighlight}`}>
+                      <span
+                        className={`${styles.chip} ${styles.chipHighlight}`}
+                      >
                         Нові {item.unreadForAdmin}
                       </span>
                     )}
                   </div>
                   <div className={styles.cardPath}>
-                    {item.startedFromPageTitle || item.startedFromPathname || "Сторінка невідома"}
+                    {item.startedFromPageTitle ||
+                      item.startedFromPathname ||
+                      "Сторінка невідома"}
                   </div>
                   <div className={styles.cardSnippet}>
                     {item.lastMessageSnippet || "Без фрагмента повідомлення."}
@@ -268,7 +285,9 @@ export function AdminSupportView() {
                 Обери діалог зліва, щоб побачити переписку.
               </div>
             ) : conversationQuery.isLoading ? (
-              <div className={styles.loadingState}>Завантаження support-чату…</div>
+              <div className={styles.loadingState}>
+                Завантаження support-чату…
+              </div>
             ) : !conversation ? (
               <div className={styles.emptyState}>
                 Не вдалося завантажити діалог. Спробуй ще раз.
@@ -278,13 +297,17 @@ export function AdminSupportView() {
                 <section className={styles.detailHero}>
                   <div className={styles.cardTopRow}>
                     <div>
-                      <h4 className={styles.cardTitle}>{conversation.participantLabel}</h4>
+                      <h4 className={styles.cardTitle}>
+                        {conversation.participantLabel}
+                      </h4>
                       <div className={styles.cardEmail}>
                         {conversation.guestEmail || "Авторизований клієнт"}
                       </div>
                     </div>
                     <span className={styles.cardDate}>
-                      {formatDateMedium(conversation.lastMessageAt || conversation.updatedAt)}
+                      {formatDateMedium(
+                        conversation.lastMessageAt || conversation.updatedAt,
+                      )}
                     </span>
                   </div>
                   <div className={styles.cardMeta}>
@@ -292,7 +315,9 @@ export function AdminSupportView() {
                       {formatStatusLabel(conversation.status)}
                     </span>
                     {conversation.telegramChatId && (
-                      <span className={`${styles.chip} ${styles.chipHighlight}`}>
+                      <span
+                        className={`${styles.chip} ${styles.chipHighlight}`}
+                      >
                         Telegram mirrored
                       </span>
                     )}

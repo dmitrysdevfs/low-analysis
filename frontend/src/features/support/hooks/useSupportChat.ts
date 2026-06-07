@@ -22,7 +22,8 @@ export function useSupportChat({ enabled = true }: { enabled?: boolean } = {}) {
   });
 
   const sendMutation = useMutation({
-    mutationFn: (payload: SupportSendPayload) => supportApi.sendMessage(payload),
+    mutationFn: (payload: SupportSendPayload) =>
+      supportApi.sendMessage(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["support-chat", "current"] });
     },

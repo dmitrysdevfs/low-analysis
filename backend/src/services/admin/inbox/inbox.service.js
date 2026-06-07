@@ -27,9 +27,9 @@ function buildStatusPayload(connection) {
     configured: config.configured,
     connected: Boolean(
       connection &&
-        connection.status === 'connected' &&
-        connection.mailboxEmail &&
-        connection.refreshToken,
+      connection.status === 'connected' &&
+      connection.mailboxEmail &&
+      connection.refreshToken,
     ),
     mailboxEmail: connection?.mailboxEmail ?? null,
     connectedAt: connection?.connectedAt ?? null,
@@ -59,7 +59,8 @@ async function getAuthorizedConnection() {
   const expiresAt = connection.tokenExpiryDate
     ? new Date(connection.tokenExpiryDate).getTime()
     : 0;
-  const shouldRefresh = !connection.accessToken || expiresAt <= Date.now() + 60_000;
+  const shouldRefresh =
+    !connection.accessToken || expiresAt <= Date.now() + 60_000;
 
   if (!shouldRefresh) {
     return connection;
@@ -118,7 +119,9 @@ function chooseReplyTarget(messages, mailboxEmail) {
     )
     .find((message) => {
       const from = String(message.from || '').toLowerCase();
-      return normalizedMailbox ? !from.includes(normalizedMailbox) : message.isInbound;
+      return normalizedMailbox
+        ? !from.includes(normalizedMailbox)
+        : message.isInbound;
     });
 
   return inbound ?? messages[messages.length - 1] ?? null;

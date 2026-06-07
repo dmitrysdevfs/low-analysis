@@ -23,7 +23,8 @@ const PAGE_TITLES = [
   {
     href: ROUTES.adminSupport,
     title: "Support",
-    subtitle: "Live support chat, separate from Lex AI, with admin and Telegram delivery",
+    subtitle:
+      "Live support chat, separate from Lex AI, with admin and Telegram delivery",
   },
   {
     href: ROUTES.adminInbox,

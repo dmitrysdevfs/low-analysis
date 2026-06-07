@@ -239,7 +239,9 @@ export async function postVisitorMessage({
 
   const messageText = normalizeText(text);
   if (!messageText) {
-    throw Object.assign(new Error('Support message is required'), { status: 400 });
+    throw Object.assign(new Error('Support message is required'), {
+      status: 400,
+    });
   }
 
   const isAuthenticated = Boolean(user?._id);
@@ -328,7 +330,10 @@ export async function markConversationReadForUser({
   return { ok: true };
 }
 
-export async function listAdminConversations({ query = '', status = 'all' } = {}) {
+export async function listAdminConversations({
+  query = '',
+  status = 'all',
+} = {}) {
   const filter = {};
   if (status !== 'all') {
     if (status === 'unread') {
@@ -378,11 +383,16 @@ export async function postAdminMessage({ conversationId, adminUser, text }) {
   const messageText = normalizeText(text);
 
   if (!messageText) {
-    throw Object.assign(new Error('Support reply is required'), { status: 400 });
+    throw Object.assign(new Error('Support reply is required'), {
+      status: 400,
+    });
   }
 
   const senderName =
-    adminUser?.fullName || adminUser?.displayName || adminUser?.email || 'Admin';
+    adminUser?.fullName ||
+    adminUser?.displayName ||
+    adminUser?.email ||
+    'Admin';
   const senderEmail = adminUser?.email || '';
 
   const message = await createStoredMessage({
@@ -425,7 +435,9 @@ export async function updateConversationStatus({
 }) {
   const conversation = await getConversationByIdOrThrow(conversationId);
   if (!['open', 'waiting_support', 'waiting_user', 'closed'].includes(status)) {
-    throw Object.assign(new Error('Unsupported support status'), { status: 400 });
+    throw Object.assign(new Error('Unsupported support status'), {
+      status: 400,
+    });
   }
 
   conversation.status = status;
@@ -466,7 +478,9 @@ export async function handleTelegramUpdate(update) {
   }
 
   const senderName =
-    [message.from.first_name, message.from.last_name].filter(Boolean).join(' ') ||
+    [message.from.first_name, message.from.last_name]
+      .filter(Boolean)
+      .join(' ') ||
     message.from.username ||
     `Telegram ${message.from.id}`;
 

@@ -46,7 +46,9 @@ export function createConnectState({ actorEmail, returnTo }) {
 export function readConnectState(stateToken) {
   const decoded = jwt.verify(stateToken, process.env.JWT_SECRET);
   if (!decoded || decoded.type !== 'gmail-connect') {
-    throw Object.assign(new Error('Invalid Gmail OAuth state'), { status: 400 });
+    throw Object.assign(new Error('Invalid Gmail OAuth state'), {
+      status: 400,
+    });
   }
   return decoded;
 }

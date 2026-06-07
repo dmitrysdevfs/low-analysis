@@ -43,9 +43,12 @@ export function getTelegramSupportConfig() {
 async function telegramRequest(method, payload) {
   const config = getTelegramSupportConfig();
   if (!config.configured) {
-    throw Object.assign(new Error('Telegram support bridge is not configured'), {
-      status: 503,
-    });
+    throw Object.assign(
+      new Error('Telegram support bridge is not configured'),
+      {
+        status: 503,
+      },
+    );
   }
 
   const res = await fetch(
@@ -102,9 +105,7 @@ export function buildTelegramOutboundText(conversation, message) {
         : 'Нове звернення з сайту';
 
   const senderName = message.senderName || 'Невідомий користувач';
-  const senderEmail = message.senderEmail
-    ? ` <${message.senderEmail}>`
-    : '';
+  const senderEmail = message.senderEmail ? ` <${message.senderEmail}>` : '';
   const contextLine = buildContextLine(conversation);
 
   return clipText(

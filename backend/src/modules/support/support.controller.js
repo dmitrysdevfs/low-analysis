@@ -1,4 +1,7 @@
-import { ensureSupportVisitorId, readSupportVisitorId } from './support.cookies.js';
+import {
+  ensureSupportVisitorId,
+  readSupportVisitorId,
+} from './support.cookies.js';
 import { verifyTelegramWebhook } from './support.telegram.service.js';
 import * as supportService from './support.service.js';
 
@@ -26,8 +29,15 @@ export const getCurrentConversation = async (req, res, next) => {
 export const postMessage = async (req, res, next) => {
   try {
     const visitorId = req.user ? null : ensureSupportVisitorId(req, res);
-    const { text, guestName, guestEmail, pathname, pageTitle, lawId, articleNum } =
-      req.body ?? {};
+    const {
+      text,
+      guestName,
+      guestEmail,
+      pathname,
+      pageTitle,
+      lawId,
+      articleNum,
+    } = req.body ?? {};
 
     const data = await supportService.postVisitorMessage({
       user: req.user,
@@ -63,7 +73,9 @@ export const markConversationRead = async (req, res, next) => {
 export const handleTelegramWebhook = async (req, res, next) => {
   try {
     if (!verifyTelegramWebhook(req)) {
-      return res.status(403).json({ message: 'Invalid Telegram webhook secret' });
+      return res
+        .status(403)
+        .json({ message: 'Invalid Telegram webhook secret' });
     }
     const result = await supportService.handleTelegramUpdate(req.body);
     res.json(result);

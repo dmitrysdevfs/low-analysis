@@ -40,12 +40,17 @@ async function supportFetch<T>(
 export const supportApi = {
   getConfig: () => supportFetch<SupportConfig>("/api/support/config"),
   getCurrentConversation: () =>
-    supportFetch<SupportConversationPayload>("/api/support/conversations/current"),
+    supportFetch<SupportConversationPayload>(
+      "/api/support/conversations/current",
+    ),
   sendMessage: (payload: SupportSendPayload) =>
-    supportFetch<SupportConversationPayload>("/api/support/conversations/message", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }),
+    supportFetch<SupportConversationPayload>(
+      "/api/support/conversations/message",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    ),
   markRead: (id: string) =>
     supportFetch<{ ok: boolean }>(`/api/support/conversations/${id}/read`, {
       method: "POST",
@@ -53,7 +58,8 @@ export const supportApi = {
 };
 
 export const adminSupportApi = {
-  getStatus: () => supportFetch<AdminSupportStatus>("/api/admin/support/status"),
+  getStatus: () =>
+    supportFetch<AdminSupportStatus>("/api/admin/support/status"),
   listConversations: (params?: {
     query?: string;
     status?:
@@ -75,11 +81,16 @@ export const adminSupportApi = {
     );
   },
   getConversation: (id: string) =>
-    supportFetch<SupportConversationPayload>(`/api/admin/support/conversations/${id}`),
+    supportFetch<SupportConversationPayload>(
+      `/api/admin/support/conversations/${id}`,
+    ),
   markRead: (id: string) =>
-    supportFetch<{ ok: boolean }>(`/api/admin/support/conversations/${id}/read`, {
-      method: "POST",
-    }),
+    supportFetch<{ ok: boolean }>(
+      `/api/admin/support/conversations/${id}/read`,
+      {
+        method: "POST",
+      },
+    ),
   sendMessage: (id: string, text: string) =>
     supportFetch<SupportConversationPayload>(
       `/api/admin/support/conversations/${id}/messages`,

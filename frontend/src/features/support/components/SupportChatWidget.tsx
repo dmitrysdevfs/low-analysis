@@ -129,8 +129,7 @@ export function SupportChatWidget() {
         pathname: context.pathname,
         lawId: context.lawId,
         articleNum: context.articleNum,
-        pageTitle:
-          typeof document !== "undefined" ? document.title || "" : "",
+        pageTitle: typeof document !== "undefined" ? document.title || "" : "",
       });
       setMessage("");
       setIsOpen(true);
@@ -255,7 +254,9 @@ export function SupportChatWidget() {
                                 {formatDateShort(item.createdAt)}
                               </span>
                             </div>
-                            <div className={styles.messageText}>{item.text}</div>
+                            <div className={styles.messageText}>
+                              {item.text}
+                            </div>
                           </div>
                         </article>
                       );

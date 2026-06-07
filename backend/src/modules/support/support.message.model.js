@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
-import {
-  SUPPORT_CHANNELS,
-  SUPPORT_SENDER_TYPES,
-} from './support.constants.js';
+import { SUPPORT_CHANNELS, SUPPORT_SENDER_TYPES } from './support.constants.js';
 
 const supportMessageSchema = new mongoose.Schema(
   {

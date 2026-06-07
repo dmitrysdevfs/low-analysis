@@ -32,7 +32,10 @@ export const getStatus = async (req, res, next) => {
 export const startConnect = async (req, res, next) => {
   try {
     const { returnTo } = req.body ?? {};
-    const result = await inboxService.createConnectUrl(req.user.email, returnTo);
+    const result = await inboxService.createConnectUrl(
+      req.user.email,
+      returnTo,
+    );
     res.json(result);
   } catch (err) {
     next(err);
@@ -43,12 +46,17 @@ export const completeConnect = async (req, res) => {
   const { code, state, error } = req.query;
 
   if (error) {
-    const returnTo = req.query.returnTo ? String(req.query.returnTo) : undefined;
+    const returnTo = req.query.returnTo
+      ? String(req.query.returnTo)
+      : undefined;
     return res.redirect(buildRedirectUrl(returnTo, 'error'));
   }
 
   try {
-    const result = await inboxService.completeConnect(String(code), String(state));
+    const result = await inboxService.completeConnect(
+      String(code),
+      String(state),
+    );
     return res.redirect(
       buildRedirectUrl(result.returnTo, 'connected', result.mailboxEmail),
     );
@@ -98,7 +106,10 @@ export const getThread = async (req, res, next) => {
 
 export const markRead = async (req, res, next) => {
   try {
-    const result = await inboxService.markThreadRead(req.params.id, req.user.email);
+    const result = await inboxService.markThreadRead(
+      req.params.id,
+      req.user.email,
+    );
     res.json(result);
   } catch (err) {
     next(err);

@@ -13,6 +13,5 @@ export function useAdminUsers(opts?: {
   query?: string;
   page?: number;
 }): AdminUsersResult {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useUsersLocal(opts);
 }

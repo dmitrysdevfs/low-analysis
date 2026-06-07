@@ -145,9 +145,8 @@ export function AdminAuditView() {
             {snapshot.auditLog.length} подій
           </div>
           <div className={styles.heroMeta}>
-            {severityCounts.security} безпекових,{" "}
-            {severityCounts.warning} попереджень,{" "}
-            {severityCounts.info} інформаційних
+            {severityCounts.security} безпекових, {severityCounts.warning}{" "}
+            попереджень, {severityCounts.info} інформаційних
           </div>
         </aside>
       </section>
@@ -184,7 +183,9 @@ export function AdminAuditView() {
         <div className={styles.panelHeader}>
           <div>
             <span className={styles.panelEyebrow}>Стрічка подій</span>
-            <h3 className={styles.panelTitle}>Фільтрування та перегляд подій</h3>
+            <h3 className={styles.panelTitle}>
+              Фільтрування та перегляд подій
+            </h3>
           </div>
           <div className={styles.panelHeaderActions}>
             <span className={styles.updatedText}>

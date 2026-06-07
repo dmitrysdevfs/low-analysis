@@ -296,7 +296,11 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, rgba(74, 128, 212, 0.85), var(--th-accent));
+  background: linear-gradient(
+    90deg,
+    rgba(74, 128, 212, 0.85),
+    var(--th-accent)
+  );
 }
 
 .progressMeta {
@@ -1171,7 +1175,7 @@
   text-transform: uppercase;
 
   &::after {
-    content: '';
+    content: "";
     flex: 1;
     height: 1px;
     background: rgba(255, 255, 255, 0.06);
@@ -1194,7 +1198,9 @@
   color: var(--th-muted);
   font-size: 0.72rem;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   white-space: nowrap;
 
   &:hover {

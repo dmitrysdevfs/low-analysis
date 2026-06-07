@@ -106,7 +106,9 @@ export function AdminInboxView() {
 
   const handleConnect = async () => {
     try {
-      const result = await connectMutation.mutateAsync(window.location.pathname);
+      const result = await connectMutation.mutateAsync(
+        window.location.pathname,
+      );
       window.location.href = result.authUrl;
     } catch {
       notify.error("Не вдалося побудувати Gmail OAuth URL.");
@@ -159,7 +161,9 @@ export function AdminInboxView() {
   };
 
   if (statusQuery.isLoading) {
-    return <section className={styles.loadingState}>Завантаження inbox…</section>;
+    return (
+      <section className={styles.loadingState}>Завантаження inbox…</section>
+    );
   }
 
   return (
@@ -167,11 +171,13 @@ export function AdminInboxView() {
       <section className={styles.hero}>
         <div>
           <span className={styles.eyebrow}>Inbox</span>
-          <h2 className={styles.title}>Окремий модуль для спільної Gmail-скриньки.</h2>
+          <h2 className={styles.title}>
+            Окремий модуль для спільної Gmail-скриньки.
+          </h2>
           <p className={styles.description}>
-            Тут адміністратори бачать один спільний mailbox, вручну синхронізують
-            треди, відкривають листи та відповідають з єдиної системної адреси без
-            переходу в Gmail.
+            Тут адміністратори бачать один спільний mailbox, вручну
+            синхронізують треди, відкривають листи та відповідають з єдиної
+            системної адреси без переходу в Gmail.
           </p>
           <div className={styles.heroActions}>
             <button
@@ -215,7 +221,9 @@ export function AdminInboxView() {
             Scopes: {status?.scopes?.length ? status.scopes.join(", ") : "—"}
           </div>
           {status?.lastError && (
-            <div className={`${styles.statusAlert} ${styles.statusAlertWarning}`}>
+            <div
+              className={`${styles.statusAlert} ${styles.statusAlertWarning}`}
+            >
               Остання помилка: {status.lastError}
             </div>
           )}
@@ -225,21 +233,27 @@ export function AdminInboxView() {
       <section className={styles.statusGrid}>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Mailbox</span>
-          <strong className={styles.metricValue}>{status?.mailboxEmail ?? "—"}</strong>
+          <strong className={styles.metricValue}>
+            {status?.mailboxEmail ?? "—"}
+          </strong>
           <div className={styles.metricNote}>
             Підключена спільна адреса для всієї адмінки.
           </div>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Unread threads</span>
-          <strong className={styles.metricValue}>{status?.unreadThreads ?? 0}</strong>
+          <strong className={styles.metricValue}>
+            {status?.unreadThreads ?? 0}
+          </strong>
           <div className={styles.metricNote}>
             Треди, які все ще вимагають уваги.
           </div>
         </article>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Stored threads</span>
-          <strong className={styles.metricValue}>{status?.totalThreads ?? 0}</strong>
+          <strong className={styles.metricValue}>
+            {status?.totalThreads ?? 0}
+          </strong>
           <div className={styles.metricNote}>
             Треди, синхронізовані у Mongo для адмінки.
           </div>
@@ -286,11 +300,13 @@ export function AdminInboxView() {
               </div>
             ) : !status?.connected ? (
               <div className={styles.emptyState}>
-                Gmail ще не підключено. Після `Connect Gmail` тут з’явиться список
-                синхронізованих тредів.
+                Gmail ще не підключено. Після `Connect Gmail` тут з’явиться
+                список синхронізованих тредів.
               </div>
             ) : threadsQuery.isLoading ? (
-              <div className={styles.loadingState}>Оновлення списку тредів…</div>
+              <div className={styles.loadingState}>
+                Оновлення списку тредів…
+              </div>
             ) : threads.length === 0 ? (
               <div className={styles.emptyState}>
                 За поточним фільтром немає жодного треду. Спробуй `Sync now` або
@@ -314,11 +330,15 @@ export function AdminInboxView() {
                   </div>
                   <div className={styles.threadMeta}>
                     {thread.unreadCount > 0 && (
-                      <span className={`${styles.chip} ${styles.chipHighlight}`}>
+                      <span
+                        className={`${styles.chip} ${styles.chipHighlight}`}
+                      >
                         Unread {thread.unreadCount}
                       </span>
                     )}
-                    <span className={styles.chip}>{thread.messageCount} msg</span>
+                    <span className={styles.chip}>
+                      {thread.messageCount} msg
+                    </span>
                   </div>
                   <div className={styles.threadParticipants}>
                     {(thread.participants ?? []).join(", ") || "Без учасників"}
@@ -346,7 +366,9 @@ export function AdminInboxView() {
                 відповіді.
               </div>
             ) : threadQuery.isLoading ? (
-              <div className={styles.loadingState}>Завантаження листування…</div>
+              <div className={styles.loadingState}>
+                Завантаження листування…
+              </div>
             ) : !detail ? (
               <div className={styles.emptyState}>
                 Не вдалося завантажити тред. Спробуй ще раз після синхронізації.
@@ -370,7 +392,9 @@ export function AdminInboxView() {
                       {selectedThread?.messageCount ?? 0} messages
                     </span>
                     {selectedThread && selectedThread.unreadCount > 0 && (
-                      <span className={`${styles.chip} ${styles.chipHighlight}`}>
+                      <span
+                        className={`${styles.chip} ${styles.chipHighlight}`}
+                      >
                         Unread {selectedThread.unreadCount}
                       </span>
                     )}

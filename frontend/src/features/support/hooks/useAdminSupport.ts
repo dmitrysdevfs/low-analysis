@@ -35,15 +35,20 @@ export function useAdminSupport({
 
   const conversationQuery = useQuery({
     queryKey: ["admin-support", "conversation", selectedConversationId],
-    queryFn: () => adminSupportApi.getConversation(selectedConversationId as string),
+    queryFn: () =>
+      adminSupportApi.getConversation(selectedConversationId as string),
     enabled: Boolean(selectedConversationId),
     refetchInterval: selectedConversationId ? 4000 : false,
   });
 
   const invalidateSupport = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-support", "status"] });
-    queryClient.invalidateQueries({ queryKey: ["admin-support", "conversations"] });
-    queryClient.invalidateQueries({ queryKey: ["admin-support", "conversation"] });
+    queryClient.invalidateQueries({
+      queryKey: ["admin-support", "conversations"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["admin-support", "conversation"],
+    });
     queryClient.invalidateQueries({ queryKey: ["support-chat", "current"] });
   };
 

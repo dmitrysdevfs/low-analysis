@@ -311,8 +311,8 @@ export function AdminAnalyticsView() {
             <div className={styles.emptyState}>Завантаження статистики…</div>
           ) : lawStatsMap.size === 0 ? (
             <div className={styles.emptyState}>
-              Статистика порожня — дані risk-рівнів відсутні. Спробуйте
-              спершу виконати парсинг законів через{" "}
+              Статистика порожня — дані risk-рівнів відсутні. Спробуйте спершу
+              виконати парсинг законів через{" "}
               <code
                 style={{ fontFamily: "var(--font-mono)", color: "#c8a843" }}
               >
@@ -405,7 +405,6 @@ export function AdminAnalyticsView() {
             </div>
           )}
         </article>
-
       </div>
       {/* ─── API Load Monitor ─── */}
       <div className={styles.apiSection}>

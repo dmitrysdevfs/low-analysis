@@ -51,8 +51,7 @@ export function useStatsServer(lawIds: string[]) {
     setLoading(true);
 
     const tasks = lawIds.map(
-      (id) => () =>
-        getLawStats(id).then((stats) => ({ id, stats })),
+      (id) => () => getLawStats(id).then((stats) => ({ id, stats })),
     );
 
     throttledAllSettled(tasks, ADMIN_STATS_CONCURRENCY).then((results) => {
