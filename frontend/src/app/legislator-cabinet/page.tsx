@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useProposals, useCreateProposal } from "@/hooks/useProposals";
+import { useProposals, useCreateProposal, useDeleteProposal } from "@/hooks/useProposals";
 import { useAmendments } from "@/hooks/useAmendments";
 import { useLaws } from "@/hooks/useLaws";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
 import { DiffViewer } from "@/components/ui";
 import { ROUTES } from "@/constants/routes";
+import { notify } from "@/lib/toast";
 import { LegislatorCabinetSection } from "@/features/law-change/LegislatorCabinetSection";
 import styles from "./page.module.scss";
 
@@ -34,11 +35,22 @@ function LegislatorWorkspace({
   });
 
   const createProposalMutation = useCreateProposal();
+  const deleteProposalMutation = useDeleteProposal();
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [lawId, setLawId] = useState("");
+
+  const handleDeleteProposal = async (id: string) => {
+    if (!window.confirm("Ви впевнені, що хочете видалити цю пропозицію?")) return;
+    try {
+      await deleteProposalMutation.mutateAsync(id);
+      notify.success("Пропозицію видалено");
+    } catch {
+      notify.error("Не вдалося видалити пропозицію");
+    }
+  };
 
   const handleCreateProposal = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,22 +140,31 @@ function LegislatorWorkspace({
         <h2>Мої пропозиції</h2>
         <div className={styles.grid}>
           {proposals?.map((proposal) => (
-            <Link
-              key={proposal._id}
-              href={ROUTES.legislatorProposal(proposal._id)}
-              className={styles.card}
-            >
-              <div>
+            <div key={proposal._id} className={styles.card}>
+              <Link
+                href={ROUTES.legislatorProposal(proposal._id)}
+                className={styles.cardLink}
+              >
                 <h3>{proposal.title}</h3>
                 <p>{proposal.description || "Без опису"}</p>
-              </div>
+              </Link>
               <div className={styles.footer}>
                 <span className={styles.status}>{proposal.status}</span>
                 <span className={styles.count}>
                   {proposal.amendments_count || 0} поправок
                 </span>
+                {proposal.status === "draft" && (
+                  <button
+                    className={styles.deleteProposalBtn}
+                    onClick={() => handleDeleteProposal(proposal._id)}
+                    disabled={deleteProposalMutation.isPending}
+                    title="Видалити пропозицію"
+                  >
+                    🗑
+                  </button>
+                )}
               </div>
-            </Link>
+            </div>
           ))}
           {proposals?.length === 0 && (
             <p className={styles.noItems}>

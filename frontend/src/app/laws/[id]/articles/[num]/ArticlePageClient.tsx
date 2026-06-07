@@ -74,14 +74,16 @@ export function ArticlePageClient() {
   );
 
   const { filteredChildren, semanticCount } = useMemo(() => {
-    if (!activeRiskLevel) return { filteredChildren: children, semanticCount: children.length };
+    if (!activeRiskLevel)
+      return { filteredChildren: children, semanticCount: children.length };
     const semanticIds = new Set(
       children
         .filter((c) => c.risk_level === activeRiskLevel)
         .map((c) => c._id)
         .filter(Boolean) as string[],
     );
-    if (semanticIds.size === 0) return { filteredChildren: [], semanticCount: 0 };
+    if (semanticIds.size === 0)
+      return { filteredChildren: [], semanticCount: 0 };
     const parentMap = new Map<string, string>();
     children.forEach((c) => {
       if (c._id && c.parentId) parentMap.set(c._id, c.parentId);
@@ -99,7 +101,10 @@ export function ArticlePageClient() {
     return {
       filteredChildren: children
         .filter((c) => c._id && toKeep.has(c._id))
-        .map((c) => ({ ...c, _structuralOnly: c._id ? structuralIds.has(c._id) : false })),
+        .map((c) => ({
+          ...c,
+          _structuralOnly: c._id ? structuralIds.has(c._id) : false,
+        })),
       semanticCount: semanticIds.size,
     };
   }, [children, activeRiskLevel]);

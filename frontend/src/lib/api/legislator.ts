@@ -63,6 +63,9 @@ export const updateAmendment = (id: string, data: Partial<Amendment>) =>
 export const deleteAmendment = (id: string) =>
   requestJson<void>(`/amendments/${id}`, "DELETE");
 
+export const deleteProposal = (id: string) =>
+  requestJson<void>(`/proposals/${id}`, "DELETE");
+
 // Comments
 export const addComment = (data: {
   target_type: "amendment" | "proposal";
