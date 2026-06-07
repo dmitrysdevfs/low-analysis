@@ -290,6 +290,11 @@ export function AdminUsersView() {
                       <span className={styles.accountBadge}>
                         {formatAccountTypeLabel(account.accountType)}
                       </span>
+                      {account.roles?.includes("legislator") && (
+                        <span className={styles.accountBadgeAccent}>
+                          Законотворець
+                        </span>
+                      )}
                       <span className={styles.accountBadge}>
                         {formatAccountSourceLabel(account.source)}
                       </span>
@@ -350,8 +355,26 @@ export function AdminUsersView() {
                       >
                         {account.accountType === "admin"
                           ? "Знизити роль"
-                          : "Підвищити"}
+                          : "Підвищити до адміна"}
                       </button>
+                      {account.accountType !== "admin" && (
+                        <button
+                          type="button"
+                          className={styles.accountActionBtn}
+                          disabled={isDev}
+                          onClick={() =>
+                            handleAccountAction(
+                              "setLegislator",
+                              account.id,
+                              account.displayName,
+                            )
+                          }
+                        >
+                          {account.roles?.includes("legislator")
+                            ? "Зняти законотворця"
+                            : "Законотворець"}
+                        </button>
+                      )}
                       <button
                         type="button"
                         className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}

@@ -12,7 +12,14 @@ function sanitizeMessage(text) {
   );
 }
 
-const VALID_ROLES = new Set(['general', 'lawyer', 'prosecutor', 'judge', 'notary', 'business']);
+const VALID_ROLES = new Set([
+  'general',
+  'lawyer',
+  'prosecutor',
+  'judge',
+  'notary',
+  'business',
+]);
 
 export function validateChatRequest(body) {
   if (!body || typeof body !== 'object') {

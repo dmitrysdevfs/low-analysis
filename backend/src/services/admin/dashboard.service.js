@@ -56,6 +56,7 @@ export const getDashboardSnapshot = async (sessionRole = 'admin') => {
         subjects: true,
         search: true,
         adminPanel: false,
+        legislatorCabinet: false,
       },
       {
         role: 'Клієнт',
@@ -64,6 +65,16 @@ export const getDashboardSnapshot = async (sessionRole = 'admin') => {
         subjects: true,
         search: true,
         adminPanel: false,
+        legislatorCabinet: false,
+      },
+      {
+        role: 'Законотворець',
+        home: true,
+        laws: true,
+        subjects: true,
+        search: true,
+        adminPanel: false,
+        legislatorCabinet: true,
       },
       {
         role: 'Адмін',
@@ -72,6 +83,7 @@ export const getDashboardSnapshot = async (sessionRole = 'admin') => {
         subjects: true,
         search: true,
         adminPanel: true,
+        legislatorCabinet: true,
       },
     ],
   };

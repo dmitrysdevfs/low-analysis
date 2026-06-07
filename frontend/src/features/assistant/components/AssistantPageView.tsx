@@ -11,10 +11,7 @@ import { AssistantMessageList } from "./AssistantMessageList";
 import { AssistantComposer } from "./AssistantComposer";
 import { AssistantSourcesPanel } from "./AssistantSourcesPanel";
 import { AssistantLimitBanner } from "./AssistantLimitBanner";
-import {
-  AssistantRolePicker,
-  ROLE_LABELS,
-} from "./AssistantRolePicker";
+import { AssistantRolePicker, ROLE_LABELS } from "./AssistantRolePicker";
 import type { AssistantRole } from "../types";
 import styles from "./AssistantPageView.module.scss";
 

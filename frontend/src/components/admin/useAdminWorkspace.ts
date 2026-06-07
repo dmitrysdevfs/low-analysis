@@ -7,7 +7,7 @@ import { adminApi } from "@/lib/api/admin";
 import type { AdminDashboardSnapshot } from "@/lib/auth/mockAuth";
 import { buildBillingEntry, mapApiToSnapshot } from "./mapAdminData";
 
-type AccountAction = "deactivate" | "promote" | "forceLogout";
+type AccountAction = "deactivate" | "promote" | "setLegislator" | "forceLogout";
 
 async function writeClipboard(value: string) {
   if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
@@ -134,6 +134,18 @@ export function useAdminWorkspace() {
           const nextRole = curr?.accountType === "admin" ? "user" : "admin";
           await adminApi.setUserRole(accountId, nextRole);
           notify.success("Роль акаунта оновлено.");
+        } else if (action === "setLegislator") {
+          const curr = snapshot?.registryAccounts.find(
+            (a) => a.id === accountId,
+          );
+          const isLegislator = curr?.roles?.includes("legislator") ?? false;
+          const nextRole = isLegislator ? "user" : "legislator";
+          await adminApi.setUserRole(accountId, nextRole);
+          notify.success(
+            isLegislator
+              ? "Роль законотворця знято."
+              : "Роль законотворця призначено.",
+          );
         } else {
           await adminApi.forceLogout(accountId);
           await adminApi.appendAuditEntry({

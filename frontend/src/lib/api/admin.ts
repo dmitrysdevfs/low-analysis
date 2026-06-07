@@ -77,6 +77,7 @@ export type AdminDashboardApiSnapshot = {
     subjects: boolean;
     search: boolean;
     adminPanel: boolean;
+    legislatorCabinet: boolean;
   }>;
 };
 

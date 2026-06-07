@@ -37,7 +37,7 @@ const ROLE_SYSTEM_PROMPTS = {
     'Пояснюй нотаріальні процедури та відповідні законодавчі вимоги.',
   business:
     'Ти — Lex, AI асистент для підприємців на платформі Law Analysis. ' +
-    "Відповідай українською мовою, простою зрозумілою мовою без зайвого юридичного жаргону. " +
+    'Відповідай українською мовою, простою зрозумілою мовою без зайвого юридичного жаргону. ' +
     "Пояснюй права та обов'язки бізнесу, штрафи, необхідні дозволи та процедури. " +
     'Якщо можливо — наводь конкретні числа, строки, суми.',
 };
@@ -57,10 +57,15 @@ async function streamLLM(res, systemPrompt, history, userMessage) {
   let accumulated = '';
   try {
     const { queryChatAssistant } = await import('./assistant.llm.js');
-    const stream = await queryChatAssistant(systemPrompt, history, userMessage, {
-      temperature: CHAT_LLM_CONFIG.temperature,
-      maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
-    });
+    const stream = await queryChatAssistant(
+      systemPrompt,
+      history,
+      userMessage,
+      {
+        temperature: CHAT_LLM_CONFIG.temperature,
+        maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
+      },
+    );
 
     for await (const chunk of stream) {
       const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text || '';
@@ -144,7 +149,11 @@ export async function handleStreamChat({
 
     // Stream response
     const currentMode = getAssistantMode();
-    const context = { lawId: contextLawId, articleNum: contextArticleNum, lawTitle };
+    const context = {
+      lawId: contextLawId,
+      articleNum: contextArticleNum,
+      lawTitle,
+    };
     let assistantContent = '';
     let assistantSources = [];
 

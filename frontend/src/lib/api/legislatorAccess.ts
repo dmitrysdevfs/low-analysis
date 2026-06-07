@@ -23,14 +23,14 @@ export const getMyAccessRequest = () =>
 export const getAllAccessRequests = (status?: string) => {
   const q = status ? `?status=${status}` : "";
   return getJson<LegislatorAccessRequest[]>(
-    `/law-change/admin/legislator-requests${q}`,
+    `/law-change/legislator-requests${q}`,
   );
 };
 
 // Admin: approve request
 export const approveAccessRequest = (id: string, note?: string) =>
   requestJson<LegislatorAccessRequest>(
-    `/law-change/admin/legislator-requests/${id}/approve`,
+    `/law-change/legislator-requests/${id}/approve`,
     "POST",
     { note },
   );
@@ -38,7 +38,7 @@ export const approveAccessRequest = (id: string, note?: string) =>
 // Admin: reject request
 export const rejectAccessRequest = (id: string, note?: string) =>
   requestJson<LegislatorAccessRequest>(
-    `/law-change/admin/legislator-requests/${id}/reject`,
+    `/law-change/legislator-requests/${id}/reject`,
     "POST",
     { note },
   );

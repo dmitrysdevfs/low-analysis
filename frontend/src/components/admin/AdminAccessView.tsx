@@ -56,6 +56,7 @@ export function AdminAccessView() {
             row.subjects,
             row.search,
             row.adminPanel,
+            row.legislatorCabinet,
           ].filter(Boolean).length;
 
           return (
@@ -98,6 +99,7 @@ export function AdminAccessView() {
               <span>Закони</span>
               <span>Суб'єкти</span>
               <span>Пошук</span>
+              <span>Кабінет</span>
               <span>Адмін</span>
             </div>
 
@@ -110,6 +112,7 @@ export function AdminAccessView() {
                 <span>{formatBooleanLabel(row.laws)}</span>
                 <span>{formatBooleanLabel(row.subjects)}</span>
                 <span>{formatBooleanLabel(row.search)}</span>
+                <span>{formatBooleanLabel(row.legislatorCabinet)}</span>
                 <span>{formatBooleanLabel(row.adminPanel)}</span>
               </div>
             ))}
