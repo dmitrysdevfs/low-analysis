@@ -73,29 +73,35 @@ export function ArticlePageClient() {
     null,
   );
 
-  const filteredChildren = useMemo(() => {
-    if (!activeRiskLevel) return children;
-    const matchingIds = new Set(
+  const { filteredChildren, semanticCount } = useMemo(() => {
+    if (!activeRiskLevel) return { filteredChildren: children, semanticCount: children.length };
+    const semanticIds = new Set(
       children
         .filter((c) => c.risk_level === activeRiskLevel)
         .map((c) => c._id)
         .filter(Boolean) as string[],
     );
-    if (matchingIds.size === 0) return [];
+    if (semanticIds.size === 0) return { filteredChildren: [], semanticCount: 0 };
     const parentMap = new Map<string, string>();
     children.forEach((c) => {
       if (c._id && c.parentId) parentMap.set(c._id, c.parentId);
     });
-    const toKeep = new Set<string>(matchingIds);
-    matchingIds.forEach((id) => {
+    const structuralIds = new Set<string>();
+    semanticIds.forEach((id) => {
       let cur: string | null = id;
       while (cur) {
         const parentId: string | null = parentMap.get(cur) ?? null;
-        if (parentId) toKeep.add(parentId);
+        if (parentId && !semanticIds.has(parentId)) structuralIds.add(parentId);
         cur = parentId;
       }
     });
-    return children.filter((c) => c._id && toKeep.has(c._id));
+    const toKeep = new Set([...semanticIds, ...structuralIds]);
+    return {
+      filteredChildren: children
+        .filter((c) => c._id && toKeep.has(c._id))
+        .map((c) => ({ ...c, _structuralOnly: c._id ? structuralIds.has(c._id) : false })),
+      semanticCount: semanticIds.size,
+    };
   }, [children, activeRiskLevel]);
 
   const childTree = useMemo(
@@ -509,7 +515,7 @@ export function ArticlePageClient() {
                     {activeRiskLevel && (
                       <RiskFilterHint
                         activeLevel={activeRiskLevel}
-                        count={filteredChildren.length}
+                        count={semanticCount}
                         context="article"
                         onReset={() => setActiveRiskLevel(null)}
                       />

@@ -227,6 +227,7 @@ function NestedNode({
     activeSubjectId != null && !hasActiveSubject && !hasTextMatch;
 
   const riskLevel = (node.risk_level as RiskLevel | null | undefined) ?? null;
+  const isStructuralOnly = node._structuralOnly === true;
   const activeTerms = hasActiveSubject || hasTextMatch ? allTerms : [];
 
   const displayText =
@@ -292,7 +293,8 @@ function NestedNode({
       className={styles.childItem}
       style={{
         color: isDimmed ? "var(--color-smoke)" : undefined,
-        transition: "color 0.12s ease",
+        opacity: isStructuralOnly ? 0.45 : undefined,
+        transition: "color 0.12s ease, opacity 0.12s ease",
         outline: hasActiveSubject ? `1px solid ${color}33` : "none",
         borderRadius: hasActiveSubject ? "4px" : undefined,
         background: hasActiveSubject ? `${color}0a` : undefined,
@@ -305,7 +307,7 @@ function NestedNode({
         {charCount > 0 && (
           <span className={`mono ${styles.charCount}`}>{charCount}</span>
         )}
-        {riskLevel && (
+        {riskLevel && !isStructuralOnly && (
           <span
             style={{
               display: "inline-block",
