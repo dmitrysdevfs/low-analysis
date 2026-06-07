@@ -6,6 +6,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
 import { AdminSidebarNav } from "@/admin/layout/AdminSidebarNav";
 import { AdminTopbar } from "@/admin/layout/AdminTopbar";
+import { AdminWorkspaceProvider } from "./AdminWorkspaceContext";
 import styles from "./AdminShell.module.scss";
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -21,20 +22,22 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className={styles.shell} data-refresh-key={refreshKey}>
-      <AdminSidebarNav userDisplayName={user?.displayName} />
-      <div className={styles.contentArea}>
-        <AdminTopbar
-          userDisplayName={user?.displayName}
-          userEmail={user?.email}
-          onRefresh={handleRefresh}
-        />
-        <main
-          className={`${styles.main} ${isWideCanvasRoute ? styles.mainWide : ""}`}
-        >
-          {children}
-        </main>
+    <AdminWorkspaceProvider>
+      <div className={styles.shell} data-refresh-key={refreshKey}>
+        <AdminSidebarNav userDisplayName={user?.displayName} />
+        <div className={styles.contentArea}>
+          <AdminTopbar
+            userDisplayName={user?.displayName}
+            userEmail={user?.email}
+            onRefresh={handleRefresh}
+          />
+          <main
+            className={`${styles.main} ${isWideCanvasRoute ? styles.mainWide : ""}`}
+          >
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </AdminWorkspaceProvider>
   );
 }
