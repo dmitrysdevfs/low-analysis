@@ -4,6 +4,7 @@ import { ROUTES } from "@/constants/routes";
 import type { AuthSession, LoginPayload, RegisterPayload } from "@/types";
 
 export const AUTH_SESSION_STORAGE_KEY = "low-analysis.auth.session";
+// Token key kept for backward compat — existing sessions still use it until re-login
 export const AUTH_TOKEN_STORAGE_KEY = "low-analysis.auth.token";
 
 type AuthActionResult = {
@@ -32,6 +33,11 @@ export function readStoredSession(): AuthSession | null {
   }
 }
 
+/**
+ * Returns the token from localStorage/sessionStorage if it exists (legacy sessions).
+ * New sessions use httpOnly cookie — no token in JS context.
+ * Used only as fallback Authorization header when cookie is not yet present.
+ */
 export function readStoredToken(): string | null {
   if (!isBrowser()) return null;
   return (
@@ -40,14 +46,11 @@ export function readStoredToken(): string | null {
   );
 }
 
-function storeSession(
-  session: AuthSession,
-  token: string,
-  rememberMe: boolean = true,
-) {
+function storeSession(session: AuthSession, rememberMe: boolean = true) {
   const storage = rememberMe ? window.localStorage : window.sessionStorage;
   storage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(session));
-  storage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
+  // Token is NOT stored — auth is now via httpOnly cookie set by the server.
+  // Legacy token (if present from a previous session) continues to work until logout.
 }
 
 export function clearStoredSession() {
@@ -64,6 +67,7 @@ export async function loginUser(
   try {
     const res = await fetch(`${API_BASE}/login`, {
       method: "POST",
+      credentials: "include", // sends & receives cookie
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
@@ -83,7 +87,8 @@ export async function loginUser(
       lastLoginAt: new Date().toISOString(),
     };
 
-    storeSession(session, data.token, payload.rememberMe);
+    // Store session (UI data only) — no token stored, server sets httpOnly cookie
+    storeSession(session, payload.rememberMe);
 
     return {
       ok: true,
@@ -101,6 +106,7 @@ export async function registerUser(
   try {
     const res = await fetch(`${API_BASE}/register`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
@@ -111,23 +117,20 @@ export async function registerUser(
       return { ok: false, error: data.message || "Помилка реєстрації" };
     }
 
-    return {
-      ok: true,
-      redirectTo: ROUTES.authLogin,
-    };
+    return { ok: true, redirectTo: ROUTES.authLogin };
   } catch {
     return { ok: false, error: "Помилка з'єднання з сервером" };
   }
 }
 
 export async function getProfile(): Promise<AuthSession | null> {
-  const token = readStoredToken();
-  if (!token) return null;
+  const token = readStoredToken(); // may be null for cookie-based sessions
 
   try {
     const res = await fetch(`${API_BASE}/me`, {
+      credentials: "include", // sends cookie if present
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
 
@@ -154,14 +157,14 @@ export async function updateUserProfile(
   displayName: string,
 ): Promise<AuthActionResult> {
   const token = readStoredToken();
-  if (!token) return { ok: false, error: "Користувач не авторизований" };
 
   try {
     const res = await fetch(`${API_BASE}/profile`, {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({ displayName }),
     });
@@ -174,15 +177,10 @@ export async function updateUserProfile(
 
     const currentSession = readStoredSession();
     if (currentSession) {
-      const nextSession: AuthSession = {
-        ...currentSession,
-        displayName: data.fullName,
-      };
-
+      const nextSession: AuthSession = { ...currentSession, displayName: data.fullName };
       const isLocal = !!window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
       const storage = isLocal ? window.localStorage : window.sessionStorage;
       storage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(nextSession));
-
       return { ok: true, session: nextSession };
     }
 
@@ -197,14 +195,14 @@ export async function changeUserPassword(
   nextPassword: string,
 ): Promise<AuthActionResult> {
   const token = readStoredToken();
-  if (!token) return { ok: false, error: "Користувач не авторизований" };
 
   try {
     const res = await fetch(`${API_BASE}/password`, {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({ currentPassword, nextPassword }),
     });
@@ -223,18 +221,15 @@ export async function changeUserPassword(
 
 export async function logoutUserApi(): Promise<AuthActionResult> {
   const token = readStoredToken();
-  if (!token) return { ok: true };
 
   try {
-    const res = await fetch(`${API_BASE}/logout`, {
+    await fetch(`${API_BASE}/logout`, {
       method: "POST",
+      credentials: "include", // clears httpOnly cookie on server
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
-    if (!res.ok) {
-      console.warn(`[auth] Logout backend error: HTTP ${res.status}`);
-    }
     return { ok: true };
   } catch {
     return { ok: false, error: "Помилка з'єднання з сервером під час виходу" };

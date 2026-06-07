@@ -61,6 +61,12 @@ const userSchema = new mongoose.Schema(
         default: 'unknown',
       },
     },
+    preferences: {
+      emailAlerts: { type: Boolean, default: true },
+      searchHighlights: { type: Boolean, default: true },
+      compactMode: { type: Boolean, default: false },
+      weeklyDigest: { type: Boolean, default: true },
+    },
   },
   {
     timestamps: true,

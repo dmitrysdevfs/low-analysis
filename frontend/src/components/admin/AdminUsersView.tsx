@@ -222,7 +222,7 @@ export function AdminUsersView() {
           <div className={styles.registryViewport}>
             <VirtualList
               items={filteredAccounts}
-              estimateSize={120}
+              estimateSize={88}
               maxHeight={520}
               emptyState={
                 <div className={styles.emptyState}>

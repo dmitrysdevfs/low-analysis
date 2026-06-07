@@ -31,7 +31,9 @@ type AdminWorkspaceValue = ReturnType<typeof useAdminWorkspaceCore>;
 function useAdminWorkspaceCore() {
   const { user } = useAuth();
   const [snapshot, setSnapshot] = useState<AdminDashboardSnapshot | null>(null);
-  const [pendingRequests, setPendingRequests] = useState<LegislatorAccessRequest[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<
+    LegislatorAccessRequest[]
+  >([]);
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null);
 
   const refreshSnapshot = useCallback(async () => {
@@ -65,7 +67,7 @@ function useAdminWorkspaceCore() {
         email: account.email,
         role: account.accountType === "admin" ? "admin" : "user",
         status: account.status,
-        billingPlan: "preview",
+        billingPlan: (account.billingPlan ?? "preview") as "preview" | "trial" | "user" | "plus" | "pro",
         createdAt: account.createdAt,
         updatedAt: account.lastLoginAt ?? account.createdAt,
       }),

@@ -1,10 +1,16 @@
 import UserActivity from '../models/UserActivity.js';
 
-export const trackEvent = async (userId, { type, path, query, lawId, meta } = {}) => {
+export const trackEvent = async (
+  userId,
+  { type, path, query, lawId, meta } = {},
+) => {
   return UserActivity.create({ userId, type, path, query, lawId, meta });
 };
 
-export const getUserActivity = async (userId, { limit = 50, skip = 0, type } = {}) => {
+export const getUserActivity = async (
+  userId,
+  { limit = 50, skip = 0, type } = {},
+) => {
   const filter = { userId, ...(type ? { type } : {}) };
   return UserActivity.find(filter)
     .sort({ createdAt: -1 })

@@ -67,6 +67,7 @@ export type AdminAccountSummary = {
   lastLoginAt?: string;
   superCodeProtected: boolean;
   source: AccountSource;
+  billingPlan?: string;
 };
 
 export type AdminDashboardSnapshot = {

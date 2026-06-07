@@ -22,6 +22,7 @@ export async function requestJson<T>(
   const res = await fetchWithTimeout(`/api${path}`, {
     ...options,
     method,
+    credentials: "include",
     headers,
     body: body ? JSON.stringify(body) : undefined,
   });

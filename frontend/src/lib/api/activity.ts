@@ -1,6 +1,6 @@
 "use client";
 
-import { readStoredToken } from "@/lib/auth/authClient";
+import { readStoredSession, readStoredToken } from "@/lib/auth/authClient";
 
 type ActivityEventType = "page_view" | "search" | "law_view";
 
@@ -13,13 +13,17 @@ interface ActivityPayload {
 }
 
 async function sendActivity(payload: ActivityPayload): Promise<void> {
-  const token = readStoredToken();
-  if (!token) return;
+  // Guard: skip if user is not logged in (no session = guest)
+  const session = readStoredSession();
+  if (!session) return;
+
+  const token = readStoredToken(); // null for cookie-based sessions
   await fetch("/api/activity", {
     method: "POST",
+    credentials: "include", // sends httpOnly cookie if present
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(payload),
   });

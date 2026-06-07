@@ -72,7 +72,9 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
   const [user, setUser] = useState<AdminUserRecord | null>(null);
   const [auditEntries, setAuditEntries] = useState<AdminAuditEntry[]>([]);
   const [activity, setActivity] = useState<UserActivityEntry[]>([]);
-  const [activityStats, setActivityStats] = useState<UserActivityStats | null>(null);
+  const [activityStats, setActivityStats] = useState<UserActivityStats | null>(
+    null,
+  );
   const [requests, setRequests] = useState<LegislatorAccessRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +106,8 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
         getAllAccessRequests(),
       ]);
 
-      if (auditRes.status === "fulfilled") setAuditEntries(auditRes.value ?? []);
+      if (auditRes.status === "fulfilled")
+        setAuditEntries(auditRes.value ?? []);
 
       if (activityRes.status === "fulfilled") {
         setActivity(activityRes.value.entries ?? []);
@@ -113,8 +116,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
 
       if (requestsRes.status === "fulfilled") {
         const userReqs = (requestsRes.value ?? []).filter((r) => {
-          const uid =
-            typeof r.user_id === "string" ? r.user_id : r.user_id._id;
+          const uid = typeof r.user_id === "string" ? r.user_id : r.user_id._id;
           return uid === userId;
         });
         setRequests(userReqs);
@@ -158,7 +160,9 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
   if (error || !user) {
     return (
       <div className={styles.stateScreen}>
-        <div className={styles.stateText}>{error ?? "Користувача не знайдено."}</div>
+        <div className={styles.stateText}>
+          {error ?? "Користувача не знайдено."}
+        </div>
         <Link href="/admin/users" className={styles.backLink}>
           ← Повернутися до списку
         </Link>
@@ -220,11 +224,12 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
           onClick={() => setTab("activity")}
         >
           Активність
-          {activityStats && (activityStats.pageViews + activityStats.searches) > 0 && (
-            <span className={styles.tabCount}>
-              {activityStats.pageViews + activityStats.searches}
-            </span>
-          )}
+          {activityStats &&
+            activityStats.pageViews + activityStats.searches > 0 && (
+              <span className={styles.tabCount}>
+                {activityStats.pageViews + activityStats.searches}
+              </span>
+            )}
         </button>
       </div>
 
@@ -401,7 +406,9 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
           {activityStats && (
             <div className={styles.statsRow}>
               <div className={styles.statChip}>
-                <span className={styles.statNum}>{activityStats.pageViews}</span>
+                <span className={styles.statNum}>
+                  {activityStats.pageViews}
+                </span>
                 <span className={styles.statLabel}>переглядів</span>
               </div>
               <div className={styles.statChip}>
@@ -420,7 +427,8 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
             <div className={styles.sectionTitle}>Перегляди сторінок</div>
             {pageViews.length === 0 ? (
               <div className={styles.emptyNote}>
-                Переглядів ще немає — з&apos;являться після першого відвідування.
+                Переглядів ще немає — з&apos;являться після першого
+                відвідування.
               </div>
             ) : (
               <div className={styles.activityTable}>

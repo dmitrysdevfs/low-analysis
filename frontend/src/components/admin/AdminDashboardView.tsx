@@ -440,7 +440,10 @@ export function AdminDashboardView() {
 }
 
 const SECURITY_ACTION_ROUTES: Array<{ keywords: string[]; route: string }> = [
-  { keywords: ["роль", "призначено", "legislator", "законотворц"], route: ROUTES.adminUsers },
+  {
+    keywords: ["роль", "призначено", "legislator", "законотворц"],
+    route: ROUTES.adminUsers,
+  },
   { keywords: ["код", "super code", "supercode"], route: ROUTES.adminCodes },
   { keywords: ["доступ", "access", "заявк"], route: ROUTES.adminAccess },
 ];
@@ -453,7 +456,11 @@ function resolveSecurityRoute(action: string, detail: string): string {
   return ROUTES.adminAudit;
 }
 
-function SecurityBanner({ events }: { events: import("@/lib/auth/mockAuth").AdminAuditLogEntry[] }) {
+function SecurityBanner({
+  events,
+}: {
+  events: import("@/lib/auth/mockAuth").AdminAuditLogEntry[];
+}) {
   const [dismissed, setDismissed] = useState(false);
   const [open, setOpen] = useState(false);
   if (dismissed) return null;

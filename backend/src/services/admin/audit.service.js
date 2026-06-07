@@ -9,8 +9,14 @@ export const appendAuditEntry = async ({
   return await AuditLog.create({ action, detail, actor, severity });
 };
 
-export const getAuditLog = async ({ limit = 50, skip = 0, targetEmail } = {}) => {
-  const filter = targetEmail ? { detail: { $regex: targetEmail, $options: 'i' } } : {};
+export const getAuditLog = async ({
+  limit = 50,
+  skip = 0,
+  targetEmail,
+} = {}) => {
+  const filter = targetEmail
+    ? { detail: { $regex: targetEmail, $options: 'i' } }
+    : {};
   return await AuditLog.find(filter)
     .sort({ createdAt: -1 })
     .skip(skip)

@@ -9,6 +9,7 @@ async function adminFetch<T>(
   const token = readStoredToken();
   const res = await fetch(`/api/admin${path}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -139,9 +140,10 @@ export const adminApi = {
     if (params?.limit) q.set("limit", String(params.limit));
     if (params?.type) q.set("type", params.type);
     const qs = q.toString();
-    return adminFetch<{ entries: UserActivityEntry[]; stats: UserActivityStats }>(
-      `/activity/${userId}${qs ? `?${qs}` : ""}`,
-    );
+    return adminFetch<{
+      entries: UserActivityEntry[];
+      stats: UserActivityStats;
+    }>(`/activity/${userId}${qs ? `?${qs}` : ""}`);
   },
 
   getAuditLog: (limit = 50, skip = 0) =>

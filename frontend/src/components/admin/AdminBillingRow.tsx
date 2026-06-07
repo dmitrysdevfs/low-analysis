@@ -4,18 +4,31 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Info, MoreVertical } from "lucide-react";
 import { formatDateShort } from "@/lib/utils";
-import {
-  formatAccountSourceLabel,
-  formatAccountTypeLabel,
-} from "./adminLabels";
-import type { AdminAccountSummary } from "@/lib/auth/mockAuth";
+import { formatAccountTypeLabel, formatPlanLabel } from "./adminLabels";
 import styles from "./AdminWorkspace.module.scss";
 
-type AccountAction = "deactivate" | "promote" | "setLegislator" | "forceLogout";
+type BillingEntry = {
+  id: string;
+  displayName: string;
+  email: string;
+  accountType: "admin" | "client";
+  status: "active" | "inactive";
+  createdAt: string;
+  subscription: {
+    planId: string | null;
+    status: string;
+    searchLimit: number | null;
+    viewLimit: number | null;
+    searchRemaining: number | null;
+    viewRemaining: number | null;
+    endsAt: string | null;
+  };
+};
 
-export interface AdminUserRowProps {
-  account: AdminAccountSummary;
-  onAction: (action: AccountAction, id: string, name: string) => void;
+export interface AdminBillingRowProps {
+  account: BillingEntry;
+  clientPlanIds: readonly string[];
+  onRequestPlan: (accountId: string, accountName: string, planId: string) => void;
 }
 
 const AVATAR_COLORS = [
@@ -98,11 +111,14 @@ function PortalMenu({
   );
 }
 
-export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
-  const isInactive = account.status === "inactive";
-  const isDev = account.source === "dev";
-  const isLegislator = account.roles?.includes("legislator") ?? false;
+export function AdminBillingRow({
+  account,
+  clientPlanIds,
+  onRequestPlan,
+}: AdminBillingRowProps) {
   const avatarColor = hashColor(account.displayName);
+  const isAdmin = account.accountType === "admin";
+  const sub = account.subscription;
 
   const [activePanel, setActivePanel] = useState<null | "info" | "actions">(
     null,
@@ -132,10 +148,7 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
   const openActions = useCallback(() => {
     if (!actionsTriggerRef.current) return;
     const r = actionsTriggerRef.current.getBoundingClientRect();
-    setActionsPos({
-      top: r.bottom + 6,
-      left: Math.max(8, r.right - 224),
-    });
+    setActionsPos({ top: r.bottom + 6, left: Math.max(8, r.right - 224) });
     setActivePanel("actions");
   }, []);
 
@@ -149,18 +162,9 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
   );
   const close = useCallback(() => setActivePanel(null), []);
 
-  const handleAction = useCallback(
-    (action: AccountAction) => {
-      setActivePanel(null);
-      onAction(action, account.id, account.displayName);
-    },
-    [onAction, account.id, account.displayName],
-  );
-
   return (
     <>
       <div className={styles.accountRow}>
-        {/* Identity */}
         <div className={styles.accountIdentity}>
           <div
             className={styles.accountAvatar}
@@ -174,32 +178,25 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
           </div>
         </div>
 
-        {/* 2 core badges */}
         <div className={styles.accountCoreBadges}>
           <span className={styles.accountBadge}>
             {formatAccountTypeLabel(account.accountType)}
           </span>
-          <span
-            className={
-              isInactive ? styles.accountBadgeDanger : styles.accountBadgeAccent
-            }
-          >
-            {isInactive ? "✕ Неактивний" : "✓ Активний"}
+          <span className={styles.accountBadge}>
+            {formatPlanLabel(sub.planId)}
           </span>
         </div>
 
-        {/* Info trigger */}
         <button
           ref={infoTriggerRef}
           type="button"
           className={`${styles.rowIconBtn} ${activePanel === "info" ? styles.rowIconBtnActive : ""}`}
           onClick={toggleInfo}
-          title="Дані акаунта"
+          title="Білінг-дані"
         >
           <Info size={14} />
         </button>
 
-        {/* Actions trigger */}
         <button
           ref={actionsTriggerRef}
           type="button"
@@ -211,7 +208,6 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
         </button>
       </div>
 
-      {/* Info popover — portal */}
       <PortalMenu
         open={activePanel === "info"}
         pos={infoPos}
@@ -220,54 +216,56 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
         triggerRef={infoTriggerRef}
       >
         <div className={styles.rowPopover}>
-          <div className={styles.rowPopoverTitle}>Дані акаунта</div>
+          <div className={styles.rowPopoverTitle}>Білінг-дані</div>
           <dl className={styles.rowPopoverGrid}>
             <dt>Тип</dt>
             <dd>{formatAccountTypeLabel(account.accountType)}</dd>
 
-            {isLegislator && (
-              <>
-                <dt>Роль</dt>
-                <dd className={styles.rowPopoverAccent}>Законотворець</dd>
-              </>
-            )}
-
-            <dt>Джерело</dt>
-            <dd>{formatAccountSourceLabel(account.source)}</dd>
+            <dt>План</dt>
+            <dd>{formatPlanLabel(sub.planId)}</dd>
 
             <dt>Статус</dt>
             <dd
               className={
-                isInactive ? styles.rowPopoverDanger : styles.rowPopoverAccent
+                sub.status === "active"
+                  ? styles.rowPopoverAccent
+                  : styles.rowPopoverDanger
               }
             >
-              {isInactive ? "Неактивний" : "Активний"}
+              {sub.status === "active"
+                ? "Активний"
+                : sub.status === "trialing"
+                  ? "Тріал"
+                  : sub.status === "expired"
+                    ? "Прострочений"
+                    : "Неактивний"}
             </dd>
 
-            {account.superCodeProtected && (
-              <>
-                <dt>Супер-код</dt>
-                <dd className={styles.rowPopoverAccent}>Захищений</dd>
-              </>
-            )}
+            <dt>Пошук</dt>
+            <dd>
+              {sub.searchRemaining === null
+                ? "безліміт"
+                : `${sub.searchRemaining} / ${sub.searchLimit}`}
+            </dd>
+
+            <dt>Перегляди</dt>
+            <dd>
+              {sub.viewRemaining === null
+                ? "безліміт"
+                : `${sub.viewRemaining} / ${sub.viewLimit}`}
+            </dd>
+
+            <dt>Платіжний цикл</dt>
+            <dd>
+              {sub.endsAt ? `до ${formatDateShort(sub.endsAt)}` : "Немає"}
+            </dd>
 
             <dt>Створено</dt>
-            <dd>{formatDateShort(account.createdAt)}</dd>
-
-            <dt>Вхід</dt>
-            <dd>
-              {account.lastLoginAt
-                ? formatDateShort(account.lastLoginAt)
-                : "ніколи"}
-            </dd>
-
-            <dt>ID</dt>
-            <dd className={styles.rowPopoverMono}>…{account.id.slice(-8)}</dd>
+            <dd>{account.createdAt ? formatDateShort(account.createdAt) : "—"}</dd>
           </dl>
         </div>
       </PortalMenu>
 
-      {/* Actions menu — portal */}
       <PortalMenu
         open={activePanel === "actions"}
         pos={actionsPos}
@@ -286,47 +284,24 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
           >
             Відкрити профіль →
           </button>
-          <div className={styles.rowActionsMenuDivider} />
-          <button
-            type="button"
-            className={styles.rowActionItem}
-            disabled={isDev}
-            onClick={() => handleAction("deactivate")}
-          >
-            {isInactive ? "Активувати" : "Деактивувати"}
-          </button>
-
-          <button
-            type="button"
-            className={styles.rowActionItem}
-            disabled={isDev}
-            onClick={() => handleAction("promote")}
-          >
-            {account.accountType === "admin"
-              ? "Знизити роль"
-              : "Підвищити до адміна"}
-          </button>
-
-          {account.accountType !== "admin" && (
-            <button
-              type="button"
-              className={styles.rowActionItem}
-              disabled={isDev}
-              onClick={() => handleAction("setLegislator")}
-            >
-              {isLegislator ? "Зняти законотворця" : "Призначити законотворця"}
-            </button>
+          {!isAdmin && (
+            <>
+              <div className={styles.rowActionsMenuDivider} />
+              {clientPlanIds.map((planId) => (
+                <button
+                  key={planId}
+                  type="button"
+                  className={styles.rowActionItem}
+                  onClick={() => {
+                    setActivePanel(null);
+                    onRequestPlan(account.id, account.displayName, planId);
+                  }}
+                >
+                  Призначити: {formatPlanLabel(planId)}
+                </button>
+              ))}
+            </>
           )}
-
-          <div className={styles.rowActionsMenuDivider} />
-
-          <button
-            type="button"
-            className={`${styles.rowActionItem} ${styles.rowActionItemDanger}`}
-            onClick={() => handleAction("forceLogout")}
-          >
-            Вийти примусово
-          </button>
         </div>
       </PortalMenu>
     </>
