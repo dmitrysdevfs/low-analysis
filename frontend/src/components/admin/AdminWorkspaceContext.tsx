@@ -12,7 +12,9 @@ import {
 import { useAuth } from "@/components/auth/AuthProvider";
 import { notify } from "@/lib/toast";
 import { adminApi } from "@/lib/api/admin";
+import { getAllAccessRequests } from "@/lib/api/legislatorAccess";
 import type { AdminDashboardSnapshot } from "@/lib/auth/mockAuth";
+import type { LegislatorAccessRequest } from "@/types/law-change.types";
 import { buildBillingEntry, mapApiToSnapshot } from "./mapAdminData";
 
 type AccountAction = "deactivate" | "promote" | "setLegislator" | "forceLogout";
@@ -29,6 +31,8 @@ type AdminWorkspaceValue = ReturnType<typeof useAdminWorkspaceCore>;
 function useAdminWorkspaceCore() {
   const { user } = useAuth();
   const [snapshot, setSnapshot] = useState<AdminDashboardSnapshot | null>(null);
+  const [pendingRequests, setPendingRequests] = useState<LegislatorAccessRequest[]>([]);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null);
 
   const refreshSnapshot = useCallback(async () => {
     try {
@@ -37,6 +41,13 @@ function useAdminWorkspaceCore() {
     } catch {
       notify.warning("Не вдалося оновити дані панелі.");
     }
+    try {
+      const requests = await getAllAccessRequests("pending");
+      setPendingRequests(requests ?? []);
+    } catch {
+      // non-critical, silently skip
+    }
+    setLastRefreshedAt(new Date());
   }, []);
 
   useEffect(() => {
@@ -194,6 +205,8 @@ function useAdminWorkspaceCore() {
 
   return {
     snapshot,
+    pendingRequests,
+    lastRefreshedAt,
     billingRegistry,
     billingCounts,
     clientPlanIds: ["trial", "user", "plus", "pro"] as const,

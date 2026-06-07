@@ -4,7 +4,8 @@ export const getAuditLog = async (req, res, next) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 50, 200);
     const skip = parseInt(req.query.skip) || 0;
-    const entries = await auditService.getAuditLog({ limit, skip });
+    const targetEmail = req.query.targetEmail || null;
+    const entries = await auditService.getAuditLog({ limit, skip, targetEmail });
     res.json(entries);
   } catch (err) {
     next(err);

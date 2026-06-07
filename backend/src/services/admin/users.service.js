@@ -61,6 +61,12 @@ export const setUserBilling = async (id, billingPlan, actor) => {
   return user;
 };
 
+export const getUserById = async (id) => {
+  const user = await User.findById(id).select('-password').lean();
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  return user;
+};
+
 export const recordForceLogout = async (id, actor) => {
   const user = await User.findById(id).select('-password').lean();
   if (!user) throw Object.assign(new Error('User not found'), { status: 404 });

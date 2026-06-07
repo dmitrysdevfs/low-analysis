@@ -112,9 +112,12 @@ export const deleteProposal = async (id, userId) => {
   if (!compareIds(proposal.created_by, userId))
     throw Object.assign(new Error('Forbidden'), { status: 403 });
   if (!['draft', 'withdrawn'].includes(proposal.status))
-    throw Object.assign(new Error('Only draft or withdrawn proposals can be deleted'), {
-      status: 400,
-    });
+    throw Object.assign(
+      new Error('Only draft or withdrawn proposals can be deleted'),
+      {
+        status: 400,
+      },
+    );
 
   await proposal.deleteOne();
 };

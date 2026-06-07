@@ -431,12 +431,193 @@
 
 .accountRow {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) auto minmax(180px, 0.9fr) auto;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 12px;
   align-items: center;
   padding: 12px 14px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.04);
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.accountIdentity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.accountAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.accountEmail {
+  color: #c7d5ea;
+  font-size: 0.8rem;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.accountCoreBadges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rowIconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: #7a98c0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #d6e0f0;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+}
+
+.rowIconBtnActive {
+  background: rgba(200, 168, 67, 0.12);
+  border-color: rgba(200, 168, 67, 0.35);
+  color: #c8a843;
+}
+
+.rowPopover {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(9, 18, 40, 0.97);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.rowPopoverTitle {
+  padding: 10px 14px 8px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.rowPopoverGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0;
+  margin: 0;
+  padding: 6px 0 8px;
+
+  dt,
+  dd {
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  dt {
+    color: #7a98c0;
+    white-space: nowrap;
+    padding-right: 8px;
+  }
+
+  dd {
+    color: #d6e0f0;
+  }
+}
+
+.rowPopoverAccent {
+  color: #fff1bf !important;
+}
+
+.rowPopoverDanger {
+  color: #ffb39b !important;
+}
+
+.rowPopoverMono {
+  font-family: var(--font-mono) !important;
+  font-size: 0.72rem !important;
+  color: #7a98c0 !important;
+}
+
+.rowActionsMenu {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(9, 18, 40, 0.97);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowActionItem {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #c7d5ea;
+  font-size: 0.82rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+  }
+
+  &:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+}
+
+.rowActionItemDanger {
+  color: #ffb39b;
+
+  &:hover:not(:disabled) {
+    background: rgba(233, 119, 75, 0.12);
+    color: #ffc8ae;
+  }
+}
+
+.rowActionsMenuDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin: 2px 0;
 }
 
 .accountName {
@@ -754,36 +935,110 @@
 
 .securityBanner {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0;
+  padding: 0;
   border-radius: 12px;
   border: 1px solid rgba(233, 119, 75, 0.4);
   background: rgba(233, 119, 75, 0.1);
   color: #e9774b;
   font-size: 0.88rem;
   font-weight: 600;
+  overflow: hidden;
+}
+
+.securityBannerHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background: rgba(233, 119, 75, 0.08);
+  }
 }
 
 .securityBannerIcon {
   font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.securityBannerChevron {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  flex-shrink: 0;
 }
 
 .securityBannerDismiss {
-  margin-left: auto;
   background: none;
   border: none;
   color: inherit;
   cursor: pointer;
   font-size: 1rem;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 12px 14px;
   opacity: 0.7;
   transition: opacity 0.15s ease;
+  flex-shrink: 0;
 
   &:hover {
     opacity: 1;
   }
+}
+
+.securityBannerBody {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(233, 119, 75, 0.25);
+}
+
+.securityItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid rgba(233, 119, 75, 0.12);
+  transition: background 0.15s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(233, 119, 75, 0.1);
+    text-decoration: underline;
+  }
+}
+
+.securityItemAction {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.securityItemDetail {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.securityItemMeta {
+  font-size: 0.72rem;
+  opacity: 0.6;
+  font-weight: 400;
+  font-family: var(--font-mono, monospace);
+  margin-top: 2px;
 }
 
 @keyframes skeletonPulse {

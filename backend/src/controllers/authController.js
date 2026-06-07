@@ -2,6 +2,15 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import { getActiveCode } from '../services/admin/superCode.service.js';
 
+function detectRegistrationSource(referrer) {
+  if (!referrer) return { referrer: null, source: 'direct' };
+  if (/google\./i.test(referrer)) return { referrer, source: 'google' };
+  if (/bing\./i.test(referrer)) return { referrer, source: 'bing' };
+  if (/facebook\.|instagram\.|twitter\.|linkedin\.|tiktok\./i.test(referrer))
+    return { referrer, source: 'social' };
+  return { referrer, source: 'link' };
+}
+
 /**
  * @desc    Register a new user
  * @route   POST /api/auth/register
@@ -33,11 +42,16 @@ export const registerUser = async (req, res) => {
     role = 'admin';
   }
 
+  const rawReferrer =
+    req.body.registrationReferrer || req.headers.referer || null;
+  const registrationSource = detectRegistrationSource(rawReferrer);
+
   const user = await User.create({
     email,
     password,
     fullName: finalFullName,
     role,
+    registrationSource,
   });
 
   if (user) {

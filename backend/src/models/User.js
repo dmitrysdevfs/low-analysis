@@ -53,6 +53,14 @@ const userSchema = new mongoose.Schema(
       enum: ['preview', 'trial', 'user', 'plus', 'pro'],
       default: 'preview',
     },
+    registrationSource: {
+      referrer: { type: String, default: null },
+      source: {
+        type: String,
+        enum: ['direct', 'google', 'bing', 'social', 'link', 'unknown'],
+        default: 'unknown',
+      },
+    },
   },
   {
     timestamps: true,

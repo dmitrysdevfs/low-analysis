@@ -48,6 +48,15 @@ export const setBilling = async (req, res, next) => {
   }
 };
 
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await usersService.getUserById(req.params.id);
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const forceLogout = async (req, res, next) => {
   try {
     const { id } = req.params;

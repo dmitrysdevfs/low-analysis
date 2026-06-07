@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell, RefreshCw } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ROUTES } from "@/constants/routes";
+import { useAdminWorkspaceContext } from "@/components/admin/AdminWorkspaceContext";
 import styles from "./AdminTopbar.module.scss";
 
 const PAGE_TITLES = [
@@ -60,6 +61,106 @@ const PAGE_TITLES = [
   },
 ] as const;
 
+const SECURITY_ROUTE_MAP: Array<{ keywords: string[]; route: string }> = [
+  { keywords: ["роль", "призначено", "legislator", "законотворц"], route: ROUTES.adminUsers },
+  { keywords: ["код", "super code", "supercode"], route: ROUTES.adminCodes },
+  { keywords: ["доступ", "access", "заявк"], route: ROUTES.adminAccess },
+];
+
+function resolveSecurityRoute(action: string, detail: string): string {
+  const text = (action + " " + detail).toLowerCase();
+  for (const { keywords, route } of SECURITY_ROUTE_MAP) {
+    if (keywords.some((kw) => text.includes(kw))) return route;
+  }
+  return ROUTES.adminAudit;
+}
+
+function fmtTime(date: Date, tz: string): string {
+  return new Intl.DateTimeFormat("uk-UA", {
+    timeZone: tz,
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function fmtRefreshed(date: Date): string {
+  return new Intl.DateTimeFormat("uk-UA", {
+    timeZone: "Europe/Kyiv",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(date);
+}
+
+// Lookup table: IANA tz → { flag, country, city override }
+const TZ_META: Record<string, { flag: string; country: string; city?: string }> = {
+  "Europe/Kyiv":         { flag: "🇺🇦", country: "Україна", city: "Київ" },
+  "Europe/Kiev":         { flag: "🇺🇦", country: "Україна", city: "Київ" },
+  "Europe/Uzhgorod":    { flag: "🇺🇦", country: "Україна", city: "Ужгород" },
+  "Europe/Zaporozhye":  { flag: "🇺🇦", country: "Україна", city: "Запоріжжя" },
+  "Europe/London":      { flag: "🇬🇧", country: "Велика Британія" },
+  "Europe/Paris":       { flag: "🇫🇷", country: "Франція" },
+  "Europe/Berlin":      { flag: "🇩🇪", country: "Німеччина" },
+  "Europe/Warsaw":      { flag: "🇵🇱", country: "Польща", city: "Варшава" },
+  "Europe/Prague":      { flag: "🇨🇿", country: "Чехія", city: "Прага" },
+  "Europe/Budapest":    { flag: "🇭🇺", country: "Угорщина", city: "Будапешт" },
+  "Europe/Bucharest":   { flag: "🇷🇴", country: "Румунія", city: "Бухарест" },
+  "Europe/Sofia":       { flag: "🇧🇬", country: "Болгарія", city: "Софія" },
+  "Europe/Istanbul":    { flag: "🇹🇷", country: "Туреччина", city: "Стамбул" },
+  "Europe/Athens":      { flag: "🇬🇷", country: "Греція", city: "Афіни" },
+  "Europe/Madrid":      { flag: "🇪🇸", country: "Іспанія", city: "Мадрид" },
+  "Europe/Rome":        { flag: "🇮🇹", country: "Італія" },
+  "Europe/Amsterdam":   { flag: "🇳🇱", country: "Нідерланди", city: "Амстердам" },
+  "Europe/Vienna":      { flag: "🇦🇹", country: "Австрія", city: "Відень" },
+  "Europe/Zurich":      { flag: "🇨🇭", country: "Швейцарія" },
+  "Europe/Lisbon":      { flag: "🇵🇹", country: "Португалія", city: "Лісабон" },
+  "Europe/Stockholm":   { flag: "🇸🇪", country: "Швеція", city: "Стокгольм" },
+  "Europe/Oslo":        { flag: "🇳🇴", country: "Норвегія", city: "Осло" },
+  "Europe/Helsinki":    { flag: "🇫🇮", country: "Фінляндія", city: "Гельсінкі" },
+  "Europe/Riga":        { flag: "🇱🇻", country: "Латвія", city: "Рига" },
+  "Europe/Tallinn":     { flag: "🇪🇪", country: "Естонія", city: "Таллінн" },
+  "Europe/Vilnius":     { flag: "🇱🇹", country: "Литва", city: "Вільнюс" },
+  "Europe/Minsk":       { flag: "🇧🇾", country: "Білорусь", city: "Мінськ" },
+  "Europe/Moscow":      { flag: "🇷🇺", country: "Росія", city: "Москва" },
+  "Europe/Brussels":    { flag: "🇧🇪", country: "Бельгія", city: "Брюссель" },
+  "Europe/Copenhagen":  { flag: "🇩🇰", country: "Данія", city: "Копенгаген" },
+  "America/New_York":   { flag: "🇺🇸", country: "США", city: "Нью-Йорк" },
+  "America/Chicago":    { flag: "🇺🇸", country: "США", city: "Чикаго" },
+  "America/Denver":     { flag: "🇺🇸", country: "США", city: "Денвер" },
+  "America/Los_Angeles":{ flag: "🇺🇸", country: "США", city: "Лос-Анджелес" },
+  "America/Phoenix":    { flag: "🇺🇸", country: "США", city: "Фенікс" },
+  "America/Toronto":    { flag: "🇨🇦", country: "Канада", city: "Торонто" },
+  "America/Vancouver":  { flag: "🇨🇦", country: "Канада", city: "Ванкувер" },
+  "America/Sao_Paulo":  { flag: "🇧🇷", country: "Бразилія", city: "Сан-Паулу" },
+  "America/Mexico_City":{ flag: "🇲🇽", country: "Мексика", city: "Мехіко" },
+  "Asia/Dubai":         { flag: "🇦🇪", country: "ОАЕ", city: "Дубай" },
+  "Asia/Tbilisi":       { flag: "🇬🇪", country: "Грузія", city: "Тбілісі" },
+  "Asia/Yerevan":       { flag: "🇦🇲", country: "Вірменія", city: "Єреван" },
+  "Asia/Baku":          { flag: "🇦🇿", country: "Азербайджан", city: "Баку" },
+  "Asia/Tokyo":         { flag: "🇯🇵", country: "Японія", city: "Токіо" },
+  "Asia/Shanghai":      { flag: "🇨🇳", country: "Китай", city: "Шанхай" },
+  "Asia/Seoul":         { flag: "🇰🇷", country: "Корея", city: "Сеул" },
+  "Asia/Kolkata":       { flag: "🇮🇳", country: "Індія", city: "Колката" },
+  "Asia/Singapore":     { flag: "🇸🇬", country: "Сінгапур" },
+  "Asia/Bangkok":       { flag: "🇹🇭", country: "Таїланд", city: "Бангкок" },
+  "Asia/Tel_Aviv":      { flag: "🇮🇱", country: "Ізраїль", city: "Тель-Авів" },
+  "Asia/Jerusalem":     { flag: "🇮🇱", country: "Ізраїль", city: "Єрусалим" },
+  "Australia/Sydney":   { flag: "🇦🇺", country: "Австралія", city: "Сідней" },
+  "Pacific/Auckland":   { flag: "🇳🇿", country: "Нова Зеландія", city: "Окленд" },
+};
+
+function getLocalTzInfo() {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const meta = TZ_META[tz];
+  const rawCity = tz.split("/").pop()?.replace(/_/g, " ") ?? tz;
+  return {
+    tz,
+    flag: meta?.flag ?? "📍",
+    country: meta?.country ?? "",
+    city: meta?.city ?? rawCity,
+  };
+}
+
 interface AdminTopbarProps {
   userDisplayName?: string;
   userEmail?: string;
@@ -72,31 +173,79 @@ export function AdminTopbar({
   onRefresh,
 }: AdminTopbarProps) {
   const pathname = usePathname();
-  const [lastUpdated] = useState(() => new Date());
-  const [renderedAt] = useState(() => Date.now());
+  const { snapshot, pendingRequests, lastRefreshedAt, refreshSnapshot } =
+    useAdminWorkspaceContext();
+
   const [refreshing, setRefreshing] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [now, setNow] = useState(() => new Date());
+  const tzInfo = useMemo(() => getLocalTzInfo(), []);
+  const bellRef = useRef<HTMLDivElement>(null);
 
   const env = process.env.NODE_ENV;
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Close notif panel on outside click
+  useEffect(() => {
+    if (!notifOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [notifOpen]);
 
   const pageCopy = useMemo(() => {
     const matched = PAGE_TITLES.find(
       (page) => pathname === page.href || pathname.startsWith(`${page.href}/`),
     );
-
     return matched ?? { title: "Адмін", subtitle: "" };
   }, [pathname]);
 
-  const handleRefresh = useCallback(() => {
-    if (!onRefresh) return;
+  const notifItems = useMemo(() => {
+    const requests = (pendingRequests ?? []).map((r) => {
+      const userObj = typeof r.user_id === "object" ? r.user_id : null;
+      return {
+        id: r._id,
+        group: "requests" as const,
+        title: "Заявка на роль законотворця",
+        detail: r.organization || r.reason || "",
+        meta: userObj?.email ?? userObj?.displayName ?? "Невідомий",
+        href: ROUTES.adminAccess,
+      };
+    });
 
+    const security = (snapshot?.auditLog ?? [])
+      .filter((e) => e.severity === "security")
+      .map((e) => ({
+        id: e.id,
+        group: "security" as const,
+        title: e.action,
+        detail: e.detail,
+        meta: e.actor,
+        href: resolveSecurityRoute(e.action, e.detail),
+      }));
+
+    return [...requests, ...security];
+  }, [pendingRequests, snapshot?.auditLog]);
+
+  const badgeCount = notifItems.length;
+
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    onRefresh();
-    setTimeout(() => setRefreshing(false), 800);
-  }, [onRefresh]);
+    await refreshSnapshot();
+    onRefresh?.();
+    setTimeout(() => setRefreshing(false), 600);
+  }, [refreshSnapshot, onRefresh]);
 
-  const minutesAgo = Math.floor((renderedAt - lastUpdated.getTime()) / 60000);
-  const updatedText = minutesAgo === 0 ? "щойно" : `${minutesAgo} хв тому`;
+  const requestItems = notifItems.filter((n) => n.group === "requests");
+  const securityItems = notifItems.filter((n) => n.group === "security");
 
   return (
     <header className={styles.topbar}>
@@ -124,30 +273,110 @@ export function AdminTopbar({
       </div>
 
       <div className={styles.actions}>
-        <span className={styles.updatedText}>Оновлено: {updatedText}</span>
-        {onRefresh && (
+        {/* Auto-detected local clock */}
+        <div className={styles.clockRow}>
+          <span className={styles.clockFlag}>{tzInfo.flag}</span>
+          <span className={styles.clockLocation}>
+            {tzInfo.city}
+            {tzInfo.country && <span className={styles.clockCountry}>, {tzInfo.country}</span>}
+          </span>
+          <span className={styles.clockDivider}>·</span>
+          <span className={styles.clockTime}>{fmtTime(now, tzInfo.tz)}</span>
+        </div>
+
+        {/* Last refreshed */}
+        <span className={styles.updatedText}>
+          {lastRefreshedAt
+            ? `Оновлено: ${fmtRefreshed(lastRefreshedAt)}`
+            : "Оновлено: —"}
+        </span>
+
+        {/* Refresh button */}
+        <button
+          type="button"
+          className={`${styles.refreshBtn} ${refreshing ? styles.refreshBtnSpin : ""}`}
+          onClick={handleRefresh}
+          title="Оновити всі дані"
+          disabled={refreshing}
+        >
+          <RefreshCw size={14} />
+        </button>
+
+        {/* Bell */}
+        <div className={styles.bellWrapper} ref={bellRef}>
           <button
             type="button"
-            className={`${styles.refreshBtn} ${refreshing ? styles.refreshBtnSpin : ""}`}
-            onClick={handleRefresh}
-            title="Оновити дані"
-          >
-            <RefreshCw size={14} />
-          </button>
-        )}
-        <div className={styles.bellWrapper}>
-          <button
-            type="button"
-            className={styles.bellBtn}
+            className={`${styles.bellBtn} ${badgeCount > 0 ? styles.bellBtnActive : ""}`}
             onClick={() => setNotifOpen((prev) => !prev)}
             title="Сповіщення"
           >
             <Bell size={14} />
+            {badgeCount > 0 && (
+              <span className={styles.bellBadge}>
+                {badgeCount > 99 ? "99+" : badgeCount}
+              </span>
+            )}
           </button>
+
           {notifOpen && (
-            <div className={styles.notifPanel}>Немає нових сповіщень</div>
+            <div className={styles.notifPanel}>
+              {notifItems.length === 0 ? (
+                <p className={styles.notifEmpty}>Немає нових сповіщень</p>
+              ) : (
+                <>
+                  {requestItems.length > 0 && (
+                    <div className={styles.notifGroup}>
+                      <div className={styles.notifGroupTitle}>
+                        Заявки ({requestItems.length})
+                      </div>
+                      {requestItems.map((item) => (
+                        <a
+                          key={item.id}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.notifItem}
+                          onClick={() => setNotifOpen(false)}
+                        >
+                          <span className={styles.notifItemTitle}>{item.title}</span>
+                          {item.detail && (
+                            <span className={styles.notifItemDetail}>{item.detail}</span>
+                          )}
+                          <span className={styles.notifItemMeta}>{item.meta}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  {securityItems.length > 0 && (
+                    <div className={styles.notifGroup}>
+                      <div className={styles.notifGroupTitle}>
+                        Безпека ({securityItems.length})
+                      </div>
+                      {securityItems.map((item) => (
+                        <a
+                          key={item.id}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.notifItem}
+                          onClick={() => setNotifOpen(false)}
+                        >
+                          <span className={styles.notifItemTitle}>{item.title}</span>
+                          {item.detail && (
+                            <span className={styles.notifItemDetail}>{item.detail}</span>
+                          )}
+                          <span className={styles.notifItemMeta}>{item.meta}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           )}
         </div>
+
+        {/* User chip */}
         <div className={styles.userChip}>
           <span className={styles.userAvatar}>
             {(userDisplayName ?? "A").charAt(0).toUpperCase()}

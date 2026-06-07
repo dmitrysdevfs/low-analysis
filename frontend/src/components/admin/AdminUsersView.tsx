@@ -1,24 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { formatDateShort } from "@/lib/utils";
-
-const AVATAR_COLORS = [
-  { bg: "rgba(200,168,67,0.2)", text: "#c8a843" },
-  { bg: "rgba(74,128,212,0.2)", text: "#4a80d4" },
-  { bg: "rgba(82,183,136,0.2)", text: "#52b788" },
-  { bg: "rgba(233,119,75,0.2)", text: "#e9774b" },
-  { bg: "rgba(233,30,154,0.2)", text: "#e91e9a" },
-  { bg: "rgba(139,195,74,0.2)", text: "#8bc34a" },
-];
-
-function hashAvatarColor(name: string) {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) {
-    h = (h * 31 + name.charCodeAt(i)) >>> 0;
-  }
-  return AVATAR_COLORS[h % AVATAR_COLORS.length];
-}
+import { AdminUserRow } from "./AdminUserRow";
 
 function exportUsersCSV(accounts: ReturnType<typeof useAdminUsers>["users"]) {
   const header = "Ім'я,Email,Тип,Джерело,Статус,Створено,Останній вхід";
@@ -42,12 +25,7 @@ function exportUsersCSV(accounts: ReturnType<typeof useAdminUsers>["users"]) {
   a.click();
   URL.revokeObjectURL(url);
 }
-import {
-  formatAccountSourceLabel,
-  formatAccountStatusLabel,
-  formatAccountTypeLabel,
-  formatPlanFilterLabel,
-} from "./adminLabels";
+import { formatPlanFilterLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import { useAdminUsers } from "@/admin/data/_adapters/usersAdapter";
 import { VirtualList } from "@/admin/components/VirtualList/VirtualList";
@@ -251,147 +229,13 @@ export function AdminUsersView() {
                   За поточним фільтром не знайдено жодного акаунта.
                 </div>
               }
-              renderItem={(account) => {
-                const isDev = account.source === "dev";
-                const isInactive = account.status === "inactive";
-                const avatarColor = hashAvatarColor(account.displayName);
-                return (
-                  <div key={account.id} className={styles.accountRow}>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 10 }}
-                    >
-                      <div
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: "50%",
-                          flexShrink: 0,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          background: avatarColor.bg,
-                          color: avatarColor.text,
-                          fontWeight: 700,
-                          fontSize: "0.9rem",
-                        }}
-                      >
-                        {account.displayName.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className={styles.accountName}>
-                          {account.displayName}
-                        </div>
-                        <div className={styles.accountMeta}>
-                          {account.email}
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles.accountBadges}>
-                      <span className={styles.accountBadge}>
-                        {formatAccountTypeLabel(account.accountType)}
-                      </span>
-                      {account.roles?.includes("legislator") && (
-                        <span className={styles.accountBadgeAccent}>
-                          Законотворець
-                        </span>
-                      )}
-                      <span className={styles.accountBadge}>
-                        {formatAccountSourceLabel(account.source)}
-                      </span>
-                      <span
-                        className={
-                          isInactive
-                            ? styles.accountBadgeDanger
-                            : styles.accountBadgeAccent
-                        }
-                      >
-                        {account.status === "active"
-                          ? "✓ Активний"
-                          : "✕ Неактивний"}
-                      </span>
-                      {account.superCodeProtected ? (
-                        <span className={styles.accountBadgeAccent}>
-                          супер-код
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className={styles.accountMetaBlock}>
-                      <span>
-                        Створено: {formatDateShort(account.createdAt)}
-                      </span>
-                      <span>
-                        Останній вхід:{" "}
-                        {account.lastLoginAt
-                          ? formatDateShort(account.lastLoginAt)
-                          : "ніколи"}
-                      </span>
-                    </div>
-                    <div className={styles.accountActions}>
-                      <button
-                        type="button"
-                        className={styles.accountActionBtn}
-                        disabled={isDev}
-                        onClick={() =>
-                          handleAccountAction(
-                            "deactivate",
-                            account.id,
-                            account.displayName,
-                          )
-                        }
-                      >
-                        {isInactive ? "Активувати" : "Деактивувати"}
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.accountActionBtn}
-                        disabled={isDev}
-                        onClick={() =>
-                          handleAccountAction(
-                            "promote",
-                            account.id,
-                            account.displayName,
-                          )
-                        }
-                      >
-                        {account.accountType === "admin"
-                          ? "Знизити роль"
-                          : "Підвищити до адміна"}
-                      </button>
-                      {account.accountType !== "admin" && (
-                        <button
-                          type="button"
-                          className={styles.accountActionBtn}
-                          disabled={isDev}
-                          onClick={() =>
-                            handleAccountAction(
-                              "setLegislator",
-                              account.id,
-                              account.displayName,
-                            )
-                          }
-                        >
-                          {account.roles?.includes("legislator")
-                            ? "Зняти законотворця"
-                            : "Законотворець"}
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        className={`${styles.accountActionBtn} ${styles.accountActionBtnDanger}`}
-                        onClick={() =>
-                          handleAccountAction(
-                            "forceLogout",
-                            account.id,
-                            account.displayName,
-                          )
-                        }
-                      >
-                        Вийти примусово
-                      </button>
-                    </div>
-                  </div>
-                );
-              }}
+              renderItem={(account) => (
+                <AdminUserRow
+                  key={account.id}
+                  account={account}
+                  onAction={handleAccountAction}
+                />
+              )}
             />
           </div>
         </article>

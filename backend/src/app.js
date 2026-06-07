@@ -19,6 +19,7 @@ import commentRoutes from './routes/commentRoutes.js';
 import voteRoutes from './routes/voteRoutes.js';
 import lawChangeRoutes from './routes/lawChange/index.js';
 import adminRoutes from './routes/admin/index.js';
+import activityRoutes from './routes/activity.js';
 import graphRoutes from './routes/graphRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -115,6 +116,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/votes', voteRoutes);
 app.use('/api/law-change', lawChangeRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/activity', activityRoutes);
 app.use('/api/graph', graphRoutes);
 
 app.get('/', (req, res) => {

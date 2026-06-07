@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useProposals, useCreateProposal, useDeleteProposal } from "@/hooks/useProposals";
+import {
+  useProposals,
+  useCreateProposal,
+  useDeleteProposal,
+} from "@/hooks/useProposals";
 import { useAmendments } from "@/hooks/useAmendments";
 import { useLaws } from "@/hooks/useLaws";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -43,7 +47,8 @@ function LegislatorWorkspace({
   const [lawId, setLawId] = useState("");
 
   const handleDeleteProposal = async (id: string) => {
-    if (!window.confirm("Ви впевнені, що хочете видалити цю пропозицію?")) return;
+    if (!window.confirm("Ви впевнені, що хочете видалити цю пропозицію?"))
+      return;
     try {
       await deleteProposalMutation.mutateAsync(id);
       notify.success("Пропозицію видалено");

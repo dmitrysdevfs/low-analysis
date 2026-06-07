@@ -18,6 +18,7 @@ import { AiAssistant } from "@/components/ai/AiAssistant";
 import { AssistantProvider } from "@/features/assistant";
 import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
+import { UserActivityTracker } from "@/components/layout/UserActivityTracker";
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
@@ -100,6 +101,7 @@ export default function RootLayout({
                     <SidebarDataProvider>
                       <div className="site-shell">
                         <ApiMetricsTracker />
+                        <UserActivityTracker />
                         <BackendWarmup />
                         <ScrollRestore />
                         <Header />
