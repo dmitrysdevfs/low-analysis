@@ -311,13 +311,14 @@ export function AdminAnalyticsView() {
             <div className={styles.emptyState}>Завантаження статистики…</div>
           ) : lawStatsMap.size === 0 ? (
             <div className={styles.emptyState}>
-              Статистика недоступна — ендпоінт{" "}
+              Статистика порожня — дані risk-рівнів відсутні. Спробуйте
+              спершу виконати парсинг законів через{" "}
               <code
                 style={{ fontFamily: "var(--font-mono)", color: "#c8a843" }}
               >
-                /api/laws/:id/stats
+                /admin/codes
               </code>{" "}
-              не відповідає. Дані будуть тут коли бекенд поверне stats.
+              або перевірте що в базі є закони з обчисленою статистикою.
             </div>
           ) : (
             <div className={styles.statsTable}>
@@ -405,37 +406,6 @@ export function AdminAnalyticsView() {
           )}
         </article>
 
-        <article className={styles.panel}>
-          <div className={styles.panelHeader}>
-            <div>
-              <span className={styles.panelEyebrow}>Стан запитів</span>
-              <h2 className={styles.panelTitle}>Стан отримання даних</h2>
-            </div>
-          </div>
-
-          <div className={styles.list}>
-            <div className={styles.listRow}>
-              <div className={styles.listTitle}>Запит законів</div>
-              <div className={styles.listMeta}>
-                {lawsLoading
-                  ? "Завантаження…"
-                  : lawsError
-                    ? lawsError
-                    : "Готово"}
-              </div>
-            </div>
-            <div className={styles.listRow}>
-              <div className={styles.listTitle}>Запит суб'єктів</div>
-              <div className={styles.listMeta}>
-                {subjectsLoading
-                  ? "Завантаження…"
-                  : subjectsError
-                    ? subjectsError
-                    : "Готово"}
-              </div>
-            </div>
-          </div>
-        </article>
       </div>
       {/* ─── API Load Monitor ─── */}
       <div className={styles.apiSection}>
@@ -457,8 +427,9 @@ export function AdminAnalyticsView() {
               </button>
               <button
                 type="button"
-                className={`${styles.sourcePill} ${source === "backend" ? styles.sourcePillActive : ""}`}
-                onClick={() => setSource("backend")}
+                className={styles.sourcePill}
+                disabled
+                title="Ендпоінт /api/admin/metrics ще не реалізований"
               >
                 Бекенд
               </button>

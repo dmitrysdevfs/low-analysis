@@ -1,29 +1,27 @@
+"use client";
 // ═══════════════════════════════════════════════════════════════════════
 //  СЕРВЕРНА РЕАЛІЗАЦІЯ — НЕ ВИДАЛЯТИ
 //  Активується: змінити LOCAL_MODE = false в adminConfig.ts
 //
 //  Потребує бекенд:
-//    GET /api/laws?q=&page=1&limit=50
-//    Відповідь: Law[]   (або { laws: Law[], total: number } з пагінацією)
-//
-//  Потребує RBAC middleware на бекенді: requireRole("admin")
+//    GET /api/laws?q=&limit=100
+//    Відповідь: Law[] або { data: Law[] }
 // ═══════════════════════════════════════════════════════════════════════
 
 import { useQuery } from "@tanstack/react-query";
+import { getLaws } from "@/lib/api/laws";
 import { STALE_LAWS } from "../../config/adminConfig";
 
 export function useLawsServer(opts?: { q?: string }) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["admin", "laws", opts?.q ?? ""],
-    queryFn: async (): Promise<never> => {
-      // TODO: замінити на реальний API-виклик коли бекенд готовий
-      // import { getLaws } from "@/lib/api";
-      // return getLaws(opts?.q ?? "");
-      throw new Error(
-        "Server mode not implemented — set LOCAL_MODE = true in adminConfig.ts",
-      );
-    },
+    queryFn: () => getLaws(opts?.q ?? ""),
     staleTime: STALE_LAWS,
-    enabled: false, // НЕ ВИДАЛЯТИ: вимкнено поки LOCAL_MODE = true
   });
+
+  return {
+    laws: query.data ?? [],
+    loading: query.isLoading,
+    error: query.error ? String(query.error) : null,
+  };
 }

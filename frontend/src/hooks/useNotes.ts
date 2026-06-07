@@ -83,14 +83,11 @@ export function useNotes(): {
     })();
   }, [userId, reload]);
 
-  const addNote = useCallback(
-    async (draft: NoteDraft): Promise<Note> => {
-      const note = await notesApi.create(draft);
-      setNotes((prev) => [note, ...prev]);
-      return note;
-    },
-    [],
-  );
+  const addNote = useCallback(async (draft: NoteDraft): Promise<Note> => {
+    const note = await notesApi.create(draft);
+    setNotes((prev) => [note, ...prev]);
+    return note;
+  }, []);
 
   const removeNote = useCallback(async (id: string): Promise<void> => {
     await notesApi.delete(id);
@@ -128,5 +125,13 @@ export function useNotes(): {
     [notes],
   );
 
-  return { notes, loading, addNote, removeNote, updateNote, togglePin, hasArticleNote };
+  return {
+    notes,
+    loading,
+    addNote,
+    removeNote,
+    updateNote,
+    togglePin,
+    hasArticleNote,
+  };
 }

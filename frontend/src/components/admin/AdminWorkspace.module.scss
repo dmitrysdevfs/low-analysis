@@ -44,7 +44,7 @@
 .quickLabel {
   display: inline-flex;
   width: fit-content;
-  color: #c8a843;
+  color: var(--th-accent);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.14em;
@@ -210,11 +210,11 @@
 
 .quickCard:hover {
   transform: translateY(-2px);
-  border-color: rgba(200, 168, 67, 0.24);
+  border-color: var(--th-accent-border-subtle);
   background:
     linear-gradient(
       180deg,
-      rgba(200, 168, 67, 0.08) 0%,
+      var(--th-accent-bg-subtle) 0%,
       rgba(255, 255, 255, 0.03) 100%
     ),
     rgba(9, 18, 38, 0.84);
@@ -296,11 +296,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    rgba(74, 128, 212, 0.85),
-    rgba(200, 168, 67, 0.88)
-  );
+  background: linear-gradient(90deg, rgba(74, 128, 212, 0.85), var(--th-accent));
 }
 
 .progressMeta {
@@ -342,7 +338,7 @@
 }
 
 .donutHole span {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
@@ -402,8 +398,8 @@
 }
 
 .toolbarInput:focus {
-  border-color: rgba(200, 168, 67, 0.45);
-  box-shadow: 0 0 0 4px rgba(200, 168, 67, 0.08);
+  border-color: var(--th-accent-border-strong);
+  box-shadow: 0 0 0 4px var(--th-accent-bg-subtle);
 }
 
 .filterTabs {
@@ -424,8 +420,8 @@
 }
 
 .filterTabActive {
-  border-color: rgba(200, 168, 67, 0.36);
-  background: rgba(200, 168, 67, 0.12);
+  border-color: var(--th-accent-border);
+  background: var(--th-accent-bg);
   color: #fff1bf;
 }
 
@@ -504,9 +500,9 @@
 }
 
 .rowIconBtnActive {
-  background: rgba(200, 168, 67, 0.12);
-  border-color: rgba(200, 168, 67, 0.35);
-  color: #c8a843;
+  background: var(--th-accent-bg);
+  border-color: var(--th-accent-border);
+  color: var(--th-accent);
 }
 
 .rowPopover {
@@ -524,7 +520,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #c8a843;
+  color: var(--th-accent);
   font-family: var(--font-mono);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -664,7 +660,7 @@
 }
 
 .accountBadgeAccent {
-  background: rgba(200, 168, 67, 0.16);
+  background: var(--th-accent-bg-strong);
   color: #fff1bf;
 }
 
@@ -730,7 +726,7 @@
 }
 
 .matrixHead {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -753,6 +749,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin-top: 20px;
 }
 
 .auditRow {
@@ -761,7 +758,7 @@
 }
 
 .auditMeta {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.06em;
@@ -780,7 +777,7 @@
 }
 
 .auditBadgeWarning {
-  background: rgba(200, 168, 67, 0.16);
+  background: var(--th-accent-bg-strong);
   color: #fff1bf;
 }
 
@@ -815,7 +812,7 @@
 }
 
 .historyStatus {
-  background: rgba(200, 168, 67, 0.14);
+  background: var(--th-accent-bg-strong);
 }
 
 .insightCard {
@@ -1089,13 +1086,131 @@
 .auditRowSecurity {
   border-left: 3px solid rgba(233, 119, 75, 0.7);
   background: rgba(233, 119, 75, 0.06);
-  border-radius: 0 8px 8px 0;
+  border-radius: 16px;
 }
 
 .updatedText {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-family: var(--font-mono);
   font-size: 0.64rem;
   letter-spacing: 0.08em;
   white-space: nowrap;
+}
+
+/* ── Audit page layout ───────────────────────────────── */
+
+.metricsGrid3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.panelHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.auditRowHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.auditAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.auditRowContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.auditActor {
+  color: var(--th-muted);
+  font-size: 0.75rem;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auditRowRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.auditDate {
+  color: var(--th-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.auditDateGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0 6px;
+  color: #5a7aab;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.auditCount {
+  color: #5a7aab;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  padding: 4px 0 10px;
+}
+
+.clearFiltersBtn {
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--th-muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #eef3fb;
+  }
+}
+
+@media (max-width: 1200px) {
+  .metricsGrid3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .metricsGrid3 {
+    grid-template-columns: 1fr;
+  }
 }

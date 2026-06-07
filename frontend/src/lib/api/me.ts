@@ -7,10 +7,7 @@ import type {
   ClientFocusTopic,
 } from "@/lib/auth/clientWorkspace";
 
-async function meFetch<T>(
-  path: string,
-  options: RequestInit = {},
-): Promise<T> {
+async function meFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = readStoredToken();
   const res = await fetch(`/api/me${path}`, {
     ...options,
@@ -36,7 +33,9 @@ export const preferencesApi = {
   get: (): Promise<ClientWorkspacePreferences> =>
     meFetch<ClientWorkspacePreferences>("/preferences"),
 
-  update: (patch: Partial<ClientWorkspacePreferences>): Promise<ClientWorkspacePreferences> =>
+  update: (
+    patch: Partial<ClientWorkspacePreferences>,
+  ): Promise<ClientWorkspacePreferences> =>
     meFetch<ClientWorkspacePreferences>("/preferences", {
       method: "PATCH",
       body: JSON.stringify(patch),

@@ -16,6 +16,7 @@ import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { AppQueryProvider } from "@/providers/AppQueryProvider";
 import { AiAssistant } from "@/components/ai/AiAssistant";
 import { AssistantProvider } from "@/features/assistant";
+import { SupportChatWidget } from "@/features/support";
 import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
 import { UserActivityTracker } from "@/components/layout/UserActivityTracker";
@@ -109,6 +110,7 @@ export default function RootLayout({
                           <RouteAccessGate>{children}</RouteAccessGate>
                         </div>
                         <AiAssistant />
+                        <SupportChatWidget />
                         <FooterStats />
                         <Footer />
                       </div>

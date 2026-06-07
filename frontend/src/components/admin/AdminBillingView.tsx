@@ -1,9 +1,7 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
-import {
-  formatPlanFilterLabel,
-} from "./adminLabels";
+import { formatPlanFilterLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import { AdminBillingRow } from "./AdminBillingRow";
 import styles from "./AdminWorkspace.module.scss";

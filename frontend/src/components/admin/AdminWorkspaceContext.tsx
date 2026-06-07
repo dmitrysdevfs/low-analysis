@@ -67,7 +67,12 @@ function useAdminWorkspaceCore() {
         email: account.email,
         role: account.accountType === "admin" ? "admin" : "user",
         status: account.status,
-        billingPlan: (account.billingPlan ?? "preview") as "preview" | "trial" | "user" | "plus" | "pro",
+        billingPlan: (account.billingPlan ?? "preview") as
+          | "preview"
+          | "trial"
+          | "user"
+          | "plus"
+          | "pro",
         createdAt: account.createdAt,
         updatedAt: account.lastLoginAt ?? account.createdAt,
       }),

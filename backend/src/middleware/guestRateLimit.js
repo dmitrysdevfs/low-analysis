@@ -71,12 +71,15 @@ export function guestRateLimit(req, res, next) {
 }
 
 // Periodically clear old entries to prevent memory growth (every 30 min)
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of store.entries()) {
-    const recent = prune(entry.timestamps, now);
-    if (recent.length === 0 && now >= entry.cooldownUntil) {
-      store.delete(ip);
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [ip, entry] of store.entries()) {
+      const recent = prune(entry.timestamps, now);
+      if (recent.length === 0 && now >= entry.cooldownUntil) {
+        store.delete(ip);
+      }
     }
-  }
-}, 30 * 60 * 1000);
+  },
+  30 * 60 * 1000,
+);

@@ -24,6 +24,7 @@ import activityRoutes from './routes/activity.js';
 import notesRoutes from './routes/notesRoutes.js';
 import meRoutes from './routes/meRoutes.js';
 import graphRoutes from './routes/graphRoutes.js';
+import supportRoutes from './modules/support/support.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -124,6 +125,7 @@ app.use('/api/activity', activityRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/api/me', meRoutes);
 app.use('/api/graph', graphRoutes);
+app.use('/api/support', supportRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

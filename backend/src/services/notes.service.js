@@ -2,7 +2,10 @@ import Note from '../models/Note.js';
 
 export const getNotes = async (userId, { limit = 100, type } = {}) => {
   const filter = { userId, ...(type ? { type } : {}) };
-  return Note.find(filter).sort({ pinned: -1, createdAt: -1 }).limit(limit).lean();
+  return Note.find(filter)
+    .sort({ pinned: -1, createdAt: -1 })
+    .limit(limit)
+    .lean();
 };
 
 export const createNote = async (userId, data) => {

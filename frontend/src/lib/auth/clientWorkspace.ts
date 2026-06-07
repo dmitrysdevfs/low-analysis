@@ -65,7 +65,9 @@ type UiCache = {
 type UiCacheStore = Record<string, UiCache>;
 
 function isBrowser() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  );
 }
 
 function readUiCacheStore(): UiCacheStore {

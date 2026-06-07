@@ -58,13 +58,15 @@ export function ClientWorkspaceSaved() {
           const legacy = readLegacyWorkspace(userId);
           if (legacy?.savedArticles?.length) {
             await savedApi.migrate(
-              legacy.savedArticles.map(({ lawId, title, code, note, tags }) => ({
-                lawId,
-                title,
-                code,
-                note: note ?? "",
-                tags: tags ?? [],
-              })),
+              legacy.savedArticles.map(
+                ({ lawId, title, code, note, tags }) => ({
+                  lawId,
+                  title,
+                  code,
+                  note: note ?? "",
+                  tags: tags ?? [],
+                }),
+              ),
             );
             clearLegacyWorkspace(userId);
           }

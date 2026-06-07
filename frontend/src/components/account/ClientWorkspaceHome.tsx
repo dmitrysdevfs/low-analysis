@@ -66,7 +66,8 @@ export function ClientWorkspaceHome() {
   const uiCache = useMemo(() => (userId ? readUiCache(userId) : {}), [userId]);
 
   // API-backed state
-  const [preferences, setPreferences] = useState<ClientWorkspacePreferences>(DEFAULT_PREFS);
+  const [preferences, setPreferences] =
+    useState<ClientWorkspacePreferences>(DEFAULT_PREFS);
   const [savedArticles, setSavedArticles] = useState<SavedArticleItem[]>([]);
   const [focusTopics, setFocusTopics] = useState<ClientFocusTopic[]>([]);
 
@@ -90,11 +91,9 @@ export function ClientWorkspaceHome() {
       const needsMigration = !isWorkspaceMigrationDone(userId);
       const legacy = needsMigration ? readLegacyWorkspace(userId) : null;
 
-      const [prefsResult, savedResult, topicsResult] = await Promise.allSettled([
-        preferencesApi.get(),
-        savedApi.getAll(),
-        topicsApi.getAll(),
-      ]);
+      const [prefsResult, savedResult, topicsResult] = await Promise.allSettled(
+        [preferencesApi.get(), savedApi.getAll(), topicsApi.getAll()],
+      );
 
       if (prefsResult.status === "fulfilled") {
         setPreferences({ ...DEFAULT_PREFS, ...prefsResult.value });
@@ -114,13 +113,15 @@ export function ClientWorkspaceHome() {
           }
           if (legacy.savedArticles?.length) {
             await savedApi.migrate(
-              legacy.savedArticles.map(({ lawId, title, code, note, tags }) => ({
-                lawId,
-                title,
-                code,
-                note: note ?? "",
-                tags: tags ?? [],
-              })),
+              legacy.savedArticles.map(
+                ({ lawId, title, code, note, tags }) => ({
+                  lawId,
+                  title,
+                  code,
+                  note: note ?? "",
+                  tags: tags ?? [],
+                }),
+              ),
             );
           }
           if (legacy.focusTopics?.length) {
@@ -135,7 +136,10 @@ export function ClientWorkspaceHome() {
         markWorkspaceMigrationDone(userId);
 
         // refresh after migration
-        const [s, t] = await Promise.allSettled([savedApi.getAll(), topicsApi.getAll()]);
+        const [s, t] = await Promise.allSettled([
+          savedApi.getAll(),
+          topicsApi.getAll(),
+        ]);
         if (s.status === "fulfilled") setSavedArticles(s.value);
         if (t.status === "fulfilled") setFocusTopics(t.value);
       }
@@ -173,7 +177,14 @@ export function ClientWorkspaceHome() {
           "Локальний preview-білінг активний для цього акаунта.",
       },
     ];
-  }, [subscription?.description, subscription?.plan?.label, user, savedArticles.length, notes.length, preferences.compactMode]);
+  }, [
+    subscription?.description,
+    subscription?.plan?.label,
+    user,
+    savedArticles.length,
+    notes.length,
+    preferences.compactMode,
+  ]);
 
   const latestSaved = savedArticles[0] ?? null;
   const pinnedNote = notes.find((note) => note.pinned) ?? notes[0] ?? null;
@@ -221,7 +232,9 @@ export function ClientWorkspaceHome() {
   }
 
   async function handleTogglePreference(key: WorkspacePreferenceKey) {
-    const patch = { [key]: !preferences[key] } as Partial<ClientWorkspacePreferences>;
+    const patch = {
+      [key]: !preferences[key],
+    } as Partial<ClientWorkspacePreferences>;
     // optimistic update
     setPreferences((prev) => ({ ...prev, ...patch }));
     try {

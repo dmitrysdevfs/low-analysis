@@ -1,0 +1,468 @@
+.page {
+  display: grid;
+  gap: 24px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  padding: 28px 30px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(82, 122, 255, 0.16), transparent 34%),
+    linear-gradient(160deg, rgba(20, 31, 58, 0.96), rgba(12, 19, 37, 0.92));
+  box-shadow: 0 22px 50px rgba(5, 10, 20, 0.32);
+}
+
+.eyebrow {
+  display: inline-flex;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: #c8a843;
+  margin-bottom: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: #f8fbff;
+}
+
+.description {
+  margin: 16px 0 0;
+  max-width: 70ch;
+  line-height: 1.75;
+  color: rgba(216, 228, 246, 0.8);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.primaryButton,
+.secondaryButton,
+.ghostButton {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.primaryButton {
+  border: 0;
+  background: linear-gradient(135deg, #f7f6f2 0%, #d9d5c9 100%);
+  color: #0a1224;
+  box-shadow: 0 16px 36px rgba(217, 213, 201, 0.18);
+}
+
+.secondaryButton,
+.ghostButton {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+}
+
+.primaryButton:hover,
+.secondaryButton:hover,
+.ghostButton:hover {
+  transform: translateY(-1px);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.ghostButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.heroAside {
+  padding: 22px 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 17, 32, 0.45);
+}
+
+.tag {
+  display: inline-flex;
+  margin-bottom: 12px;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #c8a843;
+}
+
+.heroValue {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #f8fbff;
+}
+
+.heroMeta,
+.heroNote {
+  margin-top: 8px;
+  color: rgba(216, 228, 246, 0.76);
+  line-height: 1.6;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.metricCard {
+  padding: 18px 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 28, 50, 0.92);
+}
+
+.metricLabel {
+  display: inline-flex;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #98aacf;
+}
+
+.metricValue {
+  display: block;
+  margin-top: 12px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #f7fbff;
+}
+
+.metricNote {
+  margin-top: 8px;
+  color: rgba(216, 228, 246, 0.72);
+  line-height: 1.5;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.35fr);
+  gap: 20px;
+}
+
+.panel {
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 28, 50, 0.94);
+  box-shadow: 0 18px 40px rgba(5, 10, 20, 0.24);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.panelEyebrow {
+  display: inline-flex;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #c8a843;
+}
+
+.panelTitle {
+  margin: 8px 0 0;
+  font-size: 1.26rem;
+  color: #f8fbff;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px 0;
+}
+
+.searchInput {
+  flex: 1;
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+}
+
+.searchInput::placeholder {
+  color: rgba(198, 214, 237, 0.52);
+}
+
+.toggleButton {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.toggleButtonActive {
+  border-color: rgba(200, 168, 67, 0.45);
+  background: rgba(200, 168, 67, 0.12);
+  color: #f7e7a0;
+}
+
+.threadList {
+  display: grid;
+  gap: 12px;
+  max-height: 680px;
+  padding: 18px 18px 24px;
+  overflow-y: auto;
+}
+
+.threadCard {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+  appearance: none;
+  cursor: pointer;
+}
+
+.threadCardActive {
+  border-color: rgba(200, 168, 67, 0.34);
+  box-shadow: 0 12px 28px rgba(200, 168, 67, 0.1);
+}
+
+.threadTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.threadSubject {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f7fbff;
+}
+
+.threadDate {
+  color: rgba(216, 228, 246, 0.62);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.threadMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: #dce8fb;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.chipHighlight {
+  border-color: rgba(200, 168, 67, 0.4);
+  background: rgba(200, 168, 67, 0.12);
+  color: #f7e7a0;
+}
+
+.threadParticipants {
+  color: rgba(216, 228, 246, 0.78);
+  font-size: 0.86rem;
+}
+
+.threadSnippet {
+  color: rgba(216, 228, 246, 0.66);
+  line-height: 1.55;
+  font-size: 0.88rem;
+}
+
+.threadBody {
+  display: grid;
+  gap: 16px;
+  padding: 20px 24px 24px;
+}
+
+.detailHero {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.detailActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.messages {
+  display: grid;
+  gap: 14px;
+}
+
+.messageCard {
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.messageInbound {
+  border-color: rgba(74, 128, 212, 0.18);
+}
+
+.messageOutbound {
+  border-color: rgba(200, 168, 67, 0.18);
+}
+
+.messageTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.messageTitle {
+  display: grid;
+  gap: 4px;
+}
+
+.messageSender {
+  color: #f7fbff;
+  font-weight: 700;
+}
+
+.messageRecipients,
+.messageDate {
+  color: rgba(216, 228, 246, 0.68);
+  font-size: 0.82rem;
+}
+
+.messageBody {
+  margin: 14px 0 0;
+  color: rgba(232, 238, 249, 0.88);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.replyPanel {
+  display: grid;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+  resize: vertical;
+}
+
+.textarea::placeholder {
+  color: rgba(198, 214, 237, 0.52);
+}
+
+.emptyState {
+  padding: 28px 24px;
+  color: rgba(216, 228, 246, 0.72);
+  line-height: 1.7;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  color: rgba(216, 228, 246, 0.72);
+}
+
+.statusAlert {
+  padding: 16px 18px;
+  margin-top: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(232, 238, 249, 0.88);
+  line-height: 1.6;
+}
+
+.statusAlertWarning {
+  border-color: rgba(233, 119, 75, 0.28);
+  background: rgba(233, 119, 75, 0.08);
+}
+
+@media (max-width: 1180px) {
+  .hero,
+  .workspace,
+  .statusGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero,
+  .panel {
+    border-radius: 22px;
+  }
+
+  .toolbar,
+  .panelHeader,
+  .threadBody {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .threadList {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .detailActions,
+  .heroActions {
+    flex-direction: column;
+  }
+}

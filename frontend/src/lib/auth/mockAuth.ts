@@ -52,6 +52,7 @@ export type AdminAccessMatrixRow = {
   laws: boolean;
   subjects: boolean;
   search: boolean;
+  account: boolean;
   adminPanel: boolean;
   legislatorCabinet: boolean;
 };
@@ -852,6 +853,7 @@ export function getAdminDashboardSnapshot() {
         laws: true,
         subjects: true,
         search: true,
+        account: false,
         adminPanel: false,
         legislatorCabinet: false,
       },
@@ -861,6 +863,7 @@ export function getAdminDashboardSnapshot() {
         laws: true,
         subjects: true,
         search: true,
+        account: true,
         adminPanel: false,
         legislatorCabinet: false,
       },
@@ -870,6 +873,7 @@ export function getAdminDashboardSnapshot() {
         laws: true,
         subjects: true,
         search: true,
+        account: true,
         adminPanel: false,
         legislatorCabinet: true,
       },
@@ -879,6 +883,7 @@ export function getAdminDashboardSnapshot() {
         laws: true,
         subjects: true,
         search: true,
+        account: true,
         adminPanel: true,
         legislatorCabinet: true,
       },

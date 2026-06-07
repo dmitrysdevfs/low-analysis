@@ -1,20 +1,9 @@
 "use client";
 
-import { ROUTES } from "@/constants/routes";
 import { formatAccessRoleLabel, formatBooleanLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import { AdminRequestsPanel } from "@/features/law-change/components/AdminRequestsPanel/AdminRequestsPanel";
 import styles from "./AdminWorkspace.module.scss";
-
-const PROTECTED_SURFACES = [
-  ROUTES.admin,
-  ROUTES.adminUsers,
-  ROUTES.adminBilling,
-  ROUTES.adminAccess,
-  ROUTES.adminCodes,
-  ROUTES.adminAudit,
-  ROUTES.adminAnalytics,
-];
 
 export function AdminAccessView() {
   const { snapshot } = useAdminWorkspace();
@@ -55,6 +44,7 @@ export function AdminAccessView() {
             row.laws,
             row.subjects,
             row.search,
+            row.account,
             row.adminPanel,
             row.legislatorCabinet,
           ].filter(Boolean).length;
@@ -74,7 +64,7 @@ export function AdminAccessView() {
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Адмін-оболонка</span>
           <strong className={styles.metricValue}>
-            {PROTECTED_SURFACES.length}
+            {snapshot.protectedRoutes}
           </strong>
           <p className={styles.metricNote}>
             Окремі адмін-маршрути тепер ізольовані від оболонки публічного
@@ -99,6 +89,7 @@ export function AdminAccessView() {
               <span>Закони</span>
               <span>Суб'єкти</span>
               <span>Пошук</span>
+              <span>Акаунт</span>
               <span>Кабінет</span>
               <span>Адмін</span>
             </div>
@@ -112,6 +103,7 @@ export function AdminAccessView() {
                 <span>{formatBooleanLabel(row.laws)}</span>
                 <span>{formatBooleanLabel(row.subjects)}</span>
                 <span>{formatBooleanLabel(row.search)}</span>
+                <span>{formatBooleanLabel(row.account)}</span>
                 <span>{formatBooleanLabel(row.legislatorCabinet)}</span>
                 <span>{formatBooleanLabel(row.adminPanel)}</span>
               </div>
@@ -119,55 +111,6 @@ export function AdminAccessView() {
           </div>
         </article>
 
-        <article className={styles.panel}>
-          <div className={styles.panelHeader}>
-            <div>
-              <span className={styles.panelEyebrow}>Захищена поверхня</span>
-              <h3 className={styles.panelTitle}>Карта адмін-маршрутів</h3>
-            </div>
-          </div>
-
-          <div className={styles.list}>
-            {PROTECTED_SURFACES.map((route) => (
-              <div key={route} className={styles.listRow}>
-                <div className={styles.listTitle}>{route}</div>
-                <div className={styles.listMeta}>
-                  Доступно лише через рольовий бар'єр для адміністратора.
-                </div>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className={styles.panel}>
-          <div className={styles.panelHeader}>
-            <div>
-              <span className={styles.panelEyebrow}>Запобіжники</span>
-              <h3 className={styles.panelTitle}>Що лишається незмінним</h3>
-            </div>
-          </div>
-
-          <div className={styles.progressList}>
-            <div className={styles.progressRow}>
-              <div className={styles.progressLabel}>
-                Головний бар'єр доступу до /admin/*, як і раніше, лишається
-                чинним.
-              </div>
-            </div>
-            <div className={styles.progressRow}>
-              <div className={styles.progressLabel}>
-                Публічні сторінки зберігають попередню поведінку автентифікації
-                й не змінюються.
-              </div>
-            </div>
-            <div className={styles.progressRow}>
-              <div className={styles.progressLabel}>
-                Редизайн ізолює адмінську оболонку, але не послаблює права
-                доступу.
-              </div>
-            </div>
-          </div>
-        </article>
       </section>
 
       <AdminRequestsPanel />

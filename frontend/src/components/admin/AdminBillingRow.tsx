@@ -28,7 +28,11 @@ type BillingEntry = {
 export interface AdminBillingRowProps {
   account: BillingEntry;
   clientPlanIds: readonly string[];
-  onRequestPlan: (accountId: string, accountName: string, planId: string) => void;
+  onRequestPlan: (
+    accountId: string,
+    accountName: string,
+    planId: string,
+  ) => void;
 }
 
 const AVATAR_COLORS = [
@@ -261,7 +265,9 @@ export function AdminBillingRow({
             </dd>
 
             <dt>Створено</dt>
-            <dd>{account.createdAt ? formatDateShort(account.createdAt) : "—"}</dd>
+            <dd>
+              {account.createdAt ? formatDateShort(account.createdAt) : "—"}
+            </dd>
           </dl>
         </div>
       </PortalMenu>

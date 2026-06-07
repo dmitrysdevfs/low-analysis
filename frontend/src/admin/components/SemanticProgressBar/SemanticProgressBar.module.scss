@@ -17,7 +17,7 @@
 }
 
 .count {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-family: var(--font-mono);
   font-size: 0.78rem;
 }
@@ -50,7 +50,7 @@
 }
 
 .meta {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-size: 0.8rem;
   line-height: 1.5;
 }

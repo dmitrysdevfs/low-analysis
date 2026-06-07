@@ -6,6 +6,7 @@ import { Bell, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ROUTES } from "@/constants/routes";
 import { useAdminWorkspaceContext } from "@/components/admin/AdminWorkspaceContext";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 import styles from "./AdminTopbar.module.scss";
 
 const PAGE_TITLES = [
@@ -18,6 +19,16 @@ const PAGE_TITLES = [
     href: ROUTES.adminApiCenter,
     title: "API Center",
     subtitle: "Ендпоїнти, Swagger, OpenAPI JSON та схеми бекенда",
+  },
+  {
+    href: ROUTES.adminSupport,
+    title: "Support",
+    subtitle: "Live support chat, separate from Lex AI, with admin and Telegram delivery",
+  },
+  {
+    href: ROUTES.adminInbox,
+    title: "Inbox",
+    subtitle: "Спільна Gmail-скринька, треди, синхронізація та відповіді",
   },
   {
     href: ROUTES.adminArchitecture,
@@ -279,6 +290,9 @@ export function AdminTopbar({
       </div>
 
       <div className={styles.actions}>
+        {/* Theme switcher */}
+        <ThemeSwitcher />
+
         {/* Auto-detected local clock */}
         <div className={styles.clockRow}>
           <span className={styles.clockFlag}>{tzInfo.flag}</span>

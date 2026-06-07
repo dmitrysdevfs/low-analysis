@@ -5,7 +5,7 @@
   gap: 16px;
   padding: 14px 22px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(7, 17, 38, 0.6);
+  background: var(--th-topbar-bg);
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -30,7 +30,7 @@
 }
 
 .breadcrumbLink {
-  color: #c8a843;
+  color: var(--th-accent);
   text-decoration: none;
   &:hover {
     color: #f2d06c;
@@ -42,7 +42,7 @@
 }
 
 .breadcrumbCurrent {
-  color: #9eb5d9;
+  color: var(--th-muted);
 }
 
 .title {
@@ -57,7 +57,7 @@
 
 .subtitle {
   margin: 0;
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-size: 0.84rem;
   line-height: 1.45;
 }
@@ -70,7 +70,7 @@
 }
 
 .updatedText {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-family: var(--font-mono);
   font-size: 0.64rem;
   letter-spacing: 0.08em;
@@ -86,7 +86,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
-  color: #9eb5d9;
+  color: var(--th-muted);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -132,8 +132,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(200, 168, 67, 0.2);
-  color: #c8a843;
+  background: var(--th-accent-bg-strong);
+  color: var(--th-accent);
   font-weight: 700;
   font-size: 0.82rem;
   flex-shrink: 0;
@@ -153,7 +153,7 @@
 }
 
 .userEmail {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-size: 0.72rem;
   white-space: nowrap;
   overflow: hidden;
@@ -175,9 +175,9 @@
 }
 
 .envBadgeDev {
-  background: rgba(200, 168, 67, 0.15);
-  border-color: rgba(200, 168, 67, 0.4);
-  color: #c8a843;
+  background: var(--th-accent-bg);
+  border-color: var(--th-accent-border);
+  color: var(--th-accent);
 }
 
 .envBadgeProd {
@@ -193,7 +193,7 @@
   font-family: var(--font-mono);
   font-size: 0.64rem;
   letter-spacing: 0.04em;
-  color: #9eb5d9;
+  color: var(--th-muted);
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
   border-radius: 8px;
@@ -223,7 +223,7 @@
 }
 
 .clockTime {
-  color: #c8a843;
+  color: var(--th-accent);
   font-weight: 700;
   letter-spacing: 0.06em;
 }
@@ -242,7 +242,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
-  color: #9eb5d9;
+  color: var(--th-muted);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -302,7 +302,7 @@
 
 .notifEmpty {
   padding: 16px;
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-size: 0.82rem;
   text-align: center;
   margin: 0;
@@ -322,7 +322,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #c8a843;
+  color: var(--th-accent);
   font-family: var(--font-mono);
 }
 
@@ -351,7 +351,7 @@
 
 .notifItemDetail {
   font-size: 0.76rem;
-  color: #9eb5d9;
+  color: var(--th-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -177,7 +177,10 @@ export async function updateUserProfile(
 
     const currentSession = readStoredSession();
     if (currentSession) {
-      const nextSession: AuthSession = { ...currentSession, displayName: data.fullName };
+      const nextSession: AuthSession = {
+        ...currentSession,
+        displayName: data.fullName,
+      };
       const isLocal = !!window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
       const storage = isLocal ? window.localStorage : window.sessionStorage;
       storage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(nextSession));

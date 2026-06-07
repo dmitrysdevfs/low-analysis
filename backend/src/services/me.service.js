@@ -15,7 +15,12 @@ export const getPreferences = async (userId) => {
 };
 
 export const updatePreferences = async (userId, patch) => {
-  const allowed = ['emailAlerts', 'searchHighlights', 'compactMode', 'weeklyDigest'];
+  const allowed = [
+    'emailAlerts',
+    'searchHighlights',
+    'compactMode',
+    'weeklyDigest',
+  ];
   const update = {};
   for (const key of allowed) {
     if (patch[key] !== undefined) update[`preferences.${key}`] = patch[key];
@@ -40,7 +45,11 @@ export const getSavedArticles = async (userId) => {
 };
 
 export const createSavedArticle = async (userId, data) => {
-  const existing = await SavedArticle.findOne({ userId, lawId: data.lawId, code: data.code });
+  const existing = await SavedArticle.findOne({
+    userId,
+    lawId: data.lawId,
+    code: data.code,
+  });
   if (existing) return existing;
   return SavedArticle.create({ userId, ...data });
 };

@@ -8,6 +8,31 @@ import styles from "./AdminWorkspace.module.scss";
 
 type SeverityFilter = "all" | "info" | "warning" | "security";
 
+const AVATAR_COLORS = [
+  { bg: "rgba(200,168,67,0.2)", text: "#c8a843" },
+  { bg: "rgba(74,128,212,0.2)", text: "#4a80d4" },
+  { bg: "rgba(82,183,136,0.2)", text: "#52b788" },
+  { bg: "rgba(233,119,75,0.2)", text: "#e9774b" },
+  { bg: "rgba(233,30,154,0.2)", text: "#e91e9a" },
+  { bg: "rgba(139,195,74,0.2)", text: "#8bc34a" },
+];
+
+function hashColor(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+function getDateGroup(dateStr: string): string {
+  const date = new Date(dateStr);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  if (date.toDateString() === today.toDateString()) return "Сьогодні";
+  if (date.toDateString() === yesterday.toDateString()) return "Вчора";
+  return date.toLocaleDateString("uk-UA", { day: "numeric", month: "long" });
+}
+
 function exportAuditCSV(
   events: Array<{
     id: string;
@@ -54,12 +79,8 @@ export function AdminAuditView() {
   }, [refreshSnapshot]);
 
   const filteredEvents = useMemo(() => {
-    if (!snapshot) {
-      return [];
-    }
-
+    if (!snapshot) return [];
     const normalizedQuery = query.trim().toLowerCase();
-
     return snapshot.auditLog.filter((item) => {
       const matchesSeverity =
         filter === "all" ? true : item.severity === filter;
@@ -69,28 +90,39 @@ export function AdminAuditView() {
           : item.action.toLowerCase().includes(normalizedQuery) ||
             item.detail.toLowerCase().includes(normalizedQuery) ||
             item.actor.toLowerCase().includes(normalizedQuery);
-
       return matchesSeverity && matchesQuery;
     });
   }, [filter, query, snapshot]);
 
-  const severityCounts = useMemo(() => {
-    if (!snapshot) {
-      return { info: 0, warning: 0, security: 0 };
+  const groupedEvents = useMemo(() => {
+    const groups: { label: string; events: typeof filteredEvents }[] = [];
+    let currentLabel: string | null = null;
+    for (const event of filteredEvents) {
+      const label = getDateGroup(event.createdAt);
+      if (label !== currentLabel) {
+        groups.push({ label, events: [event] });
+        currentLabel = label;
+      } else {
+        groups[groups.length - 1].events.push(event);
+      }
     }
+    return groups;
+  }, [filteredEvents]);
 
+  const severityCounts = useMemo(() => {
+    if (!snapshot) return { info: 0, warning: 0, security: 0 };
     return snapshot.auditLog.reduce(
       (acc, item) => {
-        acc[item.severity] += 1;
+        acc[item.severity as keyof typeof acc] += 1;
         return acc;
       },
       { info: 0, warning: 0, security: 0 },
     );
   }, [snapshot]);
 
-  if (!snapshot) {
-    return null;
-  }
+  const hasActiveFilters = query !== "" || filter !== "all";
+
+  if (!snapshot) return null;
 
   return (
     <section className={styles.page}>
@@ -113,18 +145,19 @@ export function AdminAuditView() {
             {snapshot.auditLog.length} подій
           </div>
           <div className={styles.heroMeta}>
-            {severityCounts.security} безпекових, {severityCounts.warning}{" "}
-            попереджень, {severityCounts.info} інформаційних
+            {severityCounts.security} безпекових,{" "}
+            {severityCounts.warning} попереджень,{" "}
+            {severityCounts.info} інформаційних
           </div>
         </aside>
       </section>
 
-      <section className={styles.metricsGrid}>
+      <section className={`${styles.metricsGrid} ${styles.metricsGrid3}`}>
         <article className={styles.metricCard}>
           <span className={styles.metricLabel}>Інфо</span>
           <strong className={styles.metricValue}>{severityCounts.info}</strong>
           <p className={styles.metricNote}>
-            Загальні події, пов'язані з автентифікацією та навігацією.
+            Загальні події, пов&apos;язані з автентифікацією та навігацією.
           </p>
         </article>
         <article className={styles.metricCard}>
@@ -145,26 +178,15 @@ export function AdminAuditView() {
             Входи адмінів, ротації коду та білінг/безпеково-чутливі зміни.
           </p>
         </article>
-        <article className={styles.metricCard}>
-          <span className={styles.metricLabel}>Видимі</span>
-          <strong className={styles.metricValue}>
-            {filteredEvents.length}
-          </strong>
-          <p className={styles.metricNote}>
-            Події, які зараз відповідають активному фільтру й пошуковому запиту.
-          </p>
-        </article>
       </section>
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
             <span className={styles.panelEyebrow}>Стрічка подій</span>
-            <h3 className={styles.panelTitle}>
-              Фільтрування та перегляд подій
-            </h3>
+            <h3 className={styles.panelTitle}>Фільтрування та перегляд подій</h3>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className={styles.panelHeaderActions}>
             <span className={styles.updatedText}>
               Оновлено:{" "}
               {lastPolledAt.toLocaleTimeString("uk-UA", {
@@ -202,33 +224,80 @@ export function AdminAuditView() {
               </button>
             ))}
           </div>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              className={styles.clearFiltersBtn}
+              onClick={() => {
+                setQuery("");
+                setFilter("all");
+              }}
+            >
+              ✕ Очистити
+            </button>
+          )}
+        </div>
+
+        <div className={styles.auditCount}>
+          Знайдено {filteredEvents.length} з {snapshot.auditLog.length} подій
         </div>
 
         <div className={styles.feedViewport}>
           <div className={styles.auditList}>
-            {filteredEvents.length > 0 ? (
-              filteredEvents.map((item) => (
-                <div
-                  key={item.id}
-                  className={`${styles.auditRow} ${item.severity === "security" ? styles.auditRowSecurity : ""}`}
-                >
-                  <div className={styles.auditMeta}>
-                    <span
-                      className={`${styles.auditBadge} ${
-                        item.severity === "security"
-                          ? styles.auditBadgeSecurity
-                          : item.severity === "warning"
-                            ? styles.auditBadgeWarning
+            {groupedEvents.length > 0 ? (
+              groupedEvents.map(({ label, events }) => (
+                <div key={label}>
+                  <div className={styles.auditDateGroup}>{label}</div>
+                  {events.map((item) => {
+                    const color = hashColor(item.actor);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`${styles.auditRow} ${
+                          item.severity === "security"
+                            ? styles.auditRowSecurity
                             : ""
-                      }`}
-                    >
-                      {formatSeverityLabel(item.severity)}
-                    </span>
-                    <span>{formatDateShort(item.createdAt)}</span>
-                    <span>{item.actor}</span>
-                  </div>
-                  <div className={styles.auditTitle}>{item.action}</div>
-                  <div className={styles.auditDetail}>{item.detail}</div>
+                        }`}
+                      >
+                        <div className={styles.auditRowHead}>
+                          <div
+                            className={styles.auditAvatar}
+                            style={{
+                              background: color.bg,
+                              color: color.text,
+                            }}
+                          >
+                            {item.actor.charAt(0).toUpperCase()}
+                          </div>
+                          <div className={styles.auditRowContent}>
+                            <div className={styles.auditTitle}>
+                              {item.action}
+                            </div>
+                            <div className={styles.auditActor}>
+                              {item.actor}
+                            </div>
+                          </div>
+                          <div className={styles.auditRowRight}>
+                            <span
+                              className={`${styles.auditBadge} ${
+                                item.severity === "security"
+                                  ? styles.auditBadgeSecurity
+                                  : item.severity === "warning"
+                                    ? styles.auditBadgeWarning
+                                    : ""
+                              }`}
+                            >
+                              {formatSeverityLabel(item.severity)}
+                            </span>
+                            <span className={styles.auditDate}>
+                              {formatDateShort(item.createdAt)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className={styles.auditDetail}>{item.detail}</div>
+                      </div>
+                    );
+                  })}
                 </div>
               ))
             ) : (

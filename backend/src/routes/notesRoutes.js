@@ -50,7 +50,11 @@ router.patch('/:id/pin', async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
   try {
-    const note = await notesService.updateNote(req.user._id, req.params.id, req.body);
+    const note = await notesService.updateNote(
+      req.user._id,
+      req.params.id,
+      req.body,
+    );
     res.json(note);
   } catch (err) {
     next(err);

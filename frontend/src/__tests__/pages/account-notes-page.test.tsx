@@ -59,6 +59,7 @@ describe("Account notes page", () => {
     } as never);
     vi.mocked(useNotes).mockReturnValue({
       notes: NOTE_FIXTURES,
+      loading: false,
       addNote: vi.fn(),
       removeNote,
       updateNote: vi.fn(),

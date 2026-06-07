@@ -34,7 +34,8 @@ function detectRegistrationSource(referrer) {
  * @access  Public
  */
 export const registerUser = async (req, res) => {
-  const { email, password, fullName, displayName, accountType, superCode } = req.body;
+  const { email, password, fullName, displayName, accountType, superCode } =
+    req.body;
 
   const finalFullName = fullName || displayName;
   if (!finalFullName) {
@@ -50,15 +51,24 @@ export const registerUser = async (req, res) => {
   if (accountType === 'admin') {
     const activeCode = await getActiveCode();
     if (!superCode || superCode !== activeCode) {
-      return res.status(400).json({ message: 'Недійсний супер-код для реєстрації адміністратора' });
+      return res
+        .status(400)
+        .json({ message: 'Недійсний супер-код для реєстрації адміністратора' });
     }
     role = 'admin';
   }
 
-  const rawReferrer = req.body.registrationReferrer || req.headers.referer || null;
+  const rawReferrer =
+    req.body.registrationReferrer || req.headers.referer || null;
   const registrationSource = detectRegistrationSource(rawReferrer);
 
-  const user = await User.create({ email, password, fullName: finalFullName, role, registrationSource });
+  const user = await User.create({
+    email,
+    password,
+    fullName: finalFullName,
+    role,
+    registrationSource,
+  });
 
   if (user) {
     const token = generateToken(user._id);
@@ -85,7 +95,9 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: 'Please provide email or username and password' });
+    return res
+      .status(400)
+      .json({ message: 'Please provide email or username and password' });
   }
 
   const identifier = email.toLowerCase();
@@ -170,13 +182,19 @@ export const updateUserPassword = async (req, res) => {
     const { currentPassword, nextPassword } = req.body;
 
     if (!currentPassword || !nextPassword) {
-      return res.status(400).json({ message: 'Please provide current and next password' });
+      return res
+        .status(400)
+        .json({ message: 'Please provide current and next password' });
     }
 
     const minLength =
-      process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? 3 : 8;
+      process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
+        ? 3
+        : 8;
     if (nextPassword.length < minLength) {
-      return res.status(400).json({ message: `Password must be at least ${minLength} characters` });
+      return res
+        .status(400)
+        .json({ message: `Password must be at least ${minLength} characters` });
     }
 
     const isMatch = await user.comparePassword(currentPassword);
