@@ -14,6 +14,7 @@ import pageAdminRoutes from './modules/pages/pageAdminRoutes.js';
 import roadmapRoutes from './modules/roadmap/roadmap.routes.js';
 import roadmapAdminRoutes from './modules/roadmap/roadmapAdminRoutes.js';
 import assistantRoutes from './modules/assistant/assistant.routes.js';
+import queueRoutes from './modules/queue/queue.routes.js';
 import exportRoutes from './routes/exportRoutes.js';
 import proposalRoutes from './routes/proposalRoutes.js';
 import amendmentRoutes from './routes/amendmentRoutes.js';
@@ -60,19 +61,16 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin(origin, callback) {
-    // 1. Дозволяємо запити без origin (Postman, cURL, тощо)
     if (!origin) {
       callback(null, true);
       return;
     }
 
-    // 2. Перевіряємо точний збіг (локальні адреси або Production з Render env)
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
       return;
     }
 
-    // 3. Перевіряємо динамічні адреси Vercel Previews через регулярний вираз
     const isVercelPreview =
       /^https:\/\/low-analysis-frontend.*\.vercel\.app$/.test(origin);
     if (isVercelPreview) {
@@ -80,7 +78,6 @@ const corsOptions = {
       return;
     }
 
-    // Якщо жодна з умов не виконалась - блокуємо
     callback(new Error(`Origin ${origin} is not allowed by CORS`));
   },
   credentials: true,
@@ -117,6 +114,7 @@ app.use('/api/roadmap', roadmapRoutes);
 app.use('/api/laws/export', exportRoutes);
 app.use('/api/export/dataset', exportRoutes);
 app.use('/api/assistant', assistantRoutes);
+app.use('/api/queue', queueRoutes);
 app.use('/api/proposals', proposalRoutes);
 app.use('/api/amendments', amendmentRoutes);
 app.use('/api/comments', commentRoutes);
