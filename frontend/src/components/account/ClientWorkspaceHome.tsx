@@ -281,6 +281,7 @@ export function ClientWorkspaceHome() {
   }
 
   function handleExportWorkspace() {
+    if (!user) return;
     const json = JSON.stringify(
       {
         exportedAt: new Date().toISOString(),
