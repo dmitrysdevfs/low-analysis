@@ -2,6 +2,7 @@ import { getAssistantMode, CHAT_LLM_CONFIG } from './assistant.config.js';
 import { generateStubResponse } from './assistant.stub.js';
 import { SSE_EVENTS, MAX_HISTORY_MESSAGES } from './assistant.constants.js';
 import AssistantSession from './assistant.session.model.js';
+import { retrieveRelevantArticles } from './assistant.retriever.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -47,11 +48,27 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
       }
     }
 
-    sendSSE(res, { type: SSE_EVENTS.DONE, sources });
-    return { content: accumulatedText, sources };
+    // V4: extract used-source indices marker appended by LLM
+    const usedMarkerRe = /<!--USED:\[([0-9,\s]*)\]-->\s*$/;
+    const markerMatch = accumulatedText.match(usedMarkerRe);
+    let finalContent = accumulatedText;
+    let finalSources = sources;
+
+    if (markerMatch) {
+      finalContent = accumulatedText.replace(usedMarkerRe, '').trimEnd();
+      const usedIndices = markerMatch[1]
+        .split(',')
+        .map((s) => parseInt(s.trim(), 10))
+        .filter((n) => !Number.isNaN(n));
+      if (usedIndices.length && sources.length) {
+        finalSources = sources.filter((s) => usedIndices.includes(s.index));
+      }
+    }
+
+    sendSSE(res, { type: SSE_EVENTS.DONE, sources: finalSources });
+    return { content: finalContent, sources: finalSources };
   } catch (err) {
     console.error('[assistant.orchestrator] LLM stream error:', err.message);
-    // Fallback to stub on LLM error
     const { content, sources: stubSources } = generateStubResponse(userMessage);
     await streamStub(res, content, stubSources);
     return { content, sources: stubSources };
@@ -129,19 +146,22 @@ export async function handleStreamChat({
       assistantSources = sources;
       await streamStub(res, content, sources);
     } else {
-      const systemPrompt = buildSystemPrompt(mode, context);
+      const retrievedSources = await retrieveRelevantArticles(
+        message,
+        contextLawId,
+      );
+      const systemPrompt = buildSystemPrompt(mode, context, retrievedSources);
       const history = session.messages
         .slice(0, -1)
         .slice(-MAX_HISTORY_MESSAGES)
         .map((m) => ({ role: m.role, content: m.content }));
 
-      const { sources } = generateStubResponse(message, context);
       const result = await streamLLM(
         res,
         systemPrompt,
         history,
         message,
-        sources,
+        retrievedSources,
       );
       assistantContent = result.content;
       assistantSources = result.sources;
@@ -172,7 +192,7 @@ export async function handleStreamChat({
   }
 }
 
-function buildSystemPrompt(mode, context) {
+function buildSystemPrompt(mode, context, articles = []) {
   let base =
     'Ти — Lex, AI Помічник платформи Law Analysis. ' +
     'Відповідай українською мовою. ' +
@@ -185,6 +205,18 @@ function buildSystemPrompt(mode, context) {
   }
   if (mode === 'article' && context.lawId && context.articleNum) {
     base += ` Поточний контекст: стаття ${context.articleNum} закону "${context.lawId}".`;
+  }
+
+  if (articles.length) {
+    base += '\n\nРелевантні статті законодавства для відповіді:\n';
+    for (const art of articles) {
+      base += `\n[${art.index}] Стаття ${art.articleNum}${art.articleTitle ? ` "${art.articleTitle}"` : ''} — ${art.lawTitle}\n${art.text}\n`;
+    }
+    base +=
+      '\nЯкщо ти використав будь-які статті з наведеного контексту — ' +
+      'додай в самому кінці відповіді маркер: <!--USED:[0,1,2]--> ' +
+      'де числа — індекси використаних статей (у квадратних дужках через кому). ' +
+      'Якщо жодна стаття не використана — маркер не додавай.';
   }
 
   return base;
