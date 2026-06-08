@@ -72,7 +72,8 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
     if (err.message === 'ASSISTANT_DAILY_LIMIT_REACHED') {
       sendSSE(res, {
         type: SSE_EVENTS.LIMIT,
-        message: 'Глобальний денний ліміт AI-запитів вичерпано. Спробуйте пізніше.',
+        message:
+          'Глобальний денний ліміт AI-запитів вичерпано. Спробуйте пізніше.',
       });
       return { content: '', sources: [] };
     }
@@ -220,7 +221,13 @@ const ROLE_ADDONS = {
     'Ти консультуєш підприємця. Акцентуй на практичних наслідках для бізнесу, відповідальності та ліцензуванні.',
 };
 
-function buildSystemPrompt(mode, context, articles = [], role = 'general', lawTitle = null) {
+function buildSystemPrompt(
+  mode,
+  context,
+  articles = [],
+  role = 'general',
+  lawTitle = null,
+) {
   let base =
     'Ти — Lex, AI Помічник платформи Law Analysis. ' +
     'Відповідай українською мовою. ' +
