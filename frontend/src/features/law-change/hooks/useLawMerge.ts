@@ -1,5 +1,5 @@
 // Pure utility — no hooks, no "use client"
-import type { ApprovedChange, LawChangeType } from "@/types/law-change.types";
+import type { ApprovedChange } from "@/types/law-change.types";
 
 export interface LawElement {
   _id: string;

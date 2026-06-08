@@ -6,6 +6,7 @@ import { Bell, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ROUTES } from "@/constants/routes";
 import { useAdminWorkspaceContext } from "@/components/admin/AdminWorkspaceContext";
+import { adminApi } from "@/lib/api/admin";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import styles from "./AdminTopbar.module.scss";
 
@@ -197,6 +198,7 @@ export function AdminTopbar({
   const [refreshing, setRefreshing] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [now, setNow] = useState(() => new Date());
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
   const tzInfo = useMemo(() => getLocalTzInfo(), []);
   const bellRef = useRef<HTMLDivElement>(null);
 
@@ -206,6 +208,36 @@ export function AdminTopbar({
     const id = setInterval(() => setNow(new Date()), 30_000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    adminApi
+      .getDismissedNotifications()
+      .then(({ dismissedIds: ids }) => setDismissedIds(new Set(ids)))
+      .catch(() => {});
+  }, []);
+
+  const handleDismissItems = useCallback(
+    async (items: Array<{ sourceType: string; sourceId: string }>) => {
+      if (!items.length) return;
+      setDismissedIds((prev) => {
+        const next = new Set(prev);
+        items.forEach((i) => next.add(i.sourceId));
+        return next;
+      });
+      await adminApi.dismissNotifications(items).catch(() => {});
+    },
+    [],
+  );
+
+  const handleClearSecurity = useCallback(
+    (secItems: Array<{ id: string; group: "requests" | "security" }>) => {
+      const items = secItems
+        .filter((n) => n.group === "security")
+        .map((n) => ({ sourceType: "security", sourceId: n.id }));
+      handleDismissItems(items);
+    },
+    [handleDismissItems],
+  );
 
   // Close notif panel on outside click
   useEffect(() => {
@@ -226,7 +258,7 @@ export function AdminTopbar({
     return matched ?? { title: "Адмін", subtitle: "" };
   }, [pathname]);
 
-  const notifItems = useMemo(() => {
+  const visibleNotifItems = useMemo(() => {
     const requests = (pendingRequests ?? []).map((r) => {
       const userObj = typeof r.user_id === "object" ? r.user_id : null;
       return {
@@ -250,10 +282,10 @@ export function AdminTopbar({
         href: resolveSecurityRoute(e.action, e.detail),
       }));
 
-    return [...requests, ...security];
-  }, [pendingRequests, snapshot?.auditLog]);
+    return [...requests, ...security].filter((n) => !dismissedIds.has(n.id));
+  }, [pendingRequests, snapshot?.auditLog, dismissedIds]);
 
-  const badgeCount = notifItems.length;
+  const badgeCount = visibleNotifItems.length;
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -262,8 +294,8 @@ export function AdminTopbar({
     setTimeout(() => setRefreshing(false), 600);
   }, [refreshSnapshot, onRefresh]);
 
-  const requestItems = notifItems.filter((n) => n.group === "requests");
-  const securityItems = notifItems.filter((n) => n.group === "security");
+  const requestItems = visibleNotifItems.filter((n) => n.group === "requests");
+  const securityItems = visibleNotifItems.filter((n) => n.group === "security");
 
   return (
     <header className={styles.topbar}>
@@ -343,14 +375,43 @@ export function AdminTopbar({
 
           {notifOpen && (
             <div className={styles.notifPanel}>
-              {notifItems.length === 0 ? (
+              <div className={styles.notifPanelHeader}>
+                <span className={styles.notifPanelTitle}>
+                  Сповіщення
+                  {badgeCount > 0 && (
+                    <span className={styles.notifPanelCount}>
+                      {badgeCount}
+                    </span>
+                  )}
+                </span>
+                {securityItems.length > 0 && (
+                  <button
+                    type="button"
+                    className={styles.notifMarkAllBtn}
+                    onClick={() => handleClearSecurity(visibleNotifItems)}
+                  >
+                    Позначити як переглянуте
+                  </button>
+                )}
+              </div>
+
+              {visibleNotifItems.length === 0 ? (
                 <p className={styles.notifEmpty}>Немає нових сповіщень</p>
               ) : (
                 <>
                   {requestItems.length > 0 && (
                     <div className={styles.notifGroup}>
-                      <div className={styles.notifGroupTitle}>
-                        Заявки ({requestItems.length})
+                      <div className={styles.notifGroupHeader}>
+                        <span className={styles.notifGroupTitle}>
+                          Заявки ({requestItems.length})
+                        </span>
+                        <Link
+                          href={ROUTES.adminAccess}
+                          className={styles.notifGroupAction}
+                          onClick={() => setNotifOpen(false)}
+                        >
+                          Обробити →
+                        </Link>
                       </div>
                       {requestItems.map((item) => (
                         <a
@@ -378,8 +439,17 @@ export function AdminTopbar({
                   )}
                   {securityItems.length > 0 && (
                     <div className={styles.notifGroup}>
-                      <div className={styles.notifGroupTitle}>
-                        Безпека ({securityItems.length})
+                      <div className={styles.notifGroupHeader}>
+                        <span className={styles.notifGroupTitle}>
+                          Безпека ({securityItems.length})
+                        </span>
+                        <button
+                          type="button"
+                          className={styles.notifGroupAction}
+                          onClick={() => handleClearSecurity(visibleNotifItems)}
+                        >
+                          Очистити
+                        </button>
                       </div>
                       {securityItems.map((item) => (
                         <a

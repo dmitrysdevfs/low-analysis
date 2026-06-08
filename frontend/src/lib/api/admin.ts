@@ -176,4 +176,15 @@ export const adminApi = {
     adminFetch<{ code: string; rotatedAt: string }>("/super-code/rotate", {
       method: "POST",
     }),
+
+  getDismissedNotifications: () =>
+    adminFetch<{ dismissedIds: string[] }>("/notifications/dismissed"),
+
+  dismissNotifications: (
+    items: Array<{ sourceType: string; sourceId: string }>,
+  ) =>
+    adminFetch<{ ok: boolean; dismissed: number }>("/notifications/dismiss", {
+      method: "POST",
+      body: JSON.stringify({ items }),
+    }),
 };

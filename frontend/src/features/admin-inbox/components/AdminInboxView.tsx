@@ -43,7 +43,7 @@ export function AdminInboxView() {
   });
 
   const status = statusQuery.data;
-  const threads = threadsQuery.data ?? [];
+  const threads = useMemo(() => threadsQuery.data ?? [], [threadsQuery.data]);
   const detail = threadQuery.data;
   const selectedThread = detail?.thread ?? null;
 

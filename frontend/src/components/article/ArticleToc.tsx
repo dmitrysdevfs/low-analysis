@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { sanitizeAnchor, type TreeBranch } from "@/lib/tree";
 import styles from "./ArticleToc.module.scss";
 
@@ -27,7 +27,7 @@ function collectEntries(nodes: TreeBranch[], depth = 0): TocEntry[] {
 }
 
 export function ArticleToc({ nodes }: { nodes: TreeBranch[] }) {
-  const entries = collectEntries(nodes);
+  const entries = useMemo(() => collectEntries(nodes), [nodes]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -63,7 +63,7 @@ export function ArticleToc({ nodes }: { nodes: TreeBranch[] }) {
     }
 
     return () => observerRef.current?.disconnect();
-  }, [entries.map((e) => e.id).join(",")]);
+  }, [entries]);
 
   if (!entries.length) return null;
 

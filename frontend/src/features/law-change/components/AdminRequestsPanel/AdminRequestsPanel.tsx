@@ -15,8 +15,6 @@ function RequestRow({ req }: { req: LegislatorAccessRequest }) {
   const approve = useApproveRequest();
   const reject = useRejectRequest();
 
-  const userId =
-    typeof req.user_id === "object" ? req.user_id._id : req.user_id;
   const displayName =
     typeof req.user_id === "object" ? req.user_id.displayName : req.user_id;
 
