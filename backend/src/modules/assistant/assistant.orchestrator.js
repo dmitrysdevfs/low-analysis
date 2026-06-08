@@ -69,6 +69,13 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
     return { content: finalContent, sources: finalSources };
   } catch (err) {
     console.error('[assistant.orchestrator] LLM stream error:', err.message);
+    if (err.message === 'ASSISTANT_DAILY_LIMIT_REACHED') {
+      sendSSE(res, {
+        type: SSE_EVENTS.LIMIT,
+        message: 'Глобальний денний ліміт AI-запитів вичерпано. Спробуйте пізніше.',
+      });
+      return { content: '', sources: [] };
+    }
     const { content, sources: stubSources } = generateStubResponse(userMessage);
     await streamStub(res, content, stubSources);
     return { content, sources: stubSources };
@@ -95,6 +102,8 @@ export async function handleStreamChat({
   contextLawId,
   contextArticleNum,
   mode,
+  role,
+  lawTitle,
 }) {
   res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -150,7 +159,13 @@ export async function handleStreamChat({
         message,
         contextLawId,
       );
-      const systemPrompt = buildSystemPrompt(mode, context, retrievedSources);
+      const systemPrompt = buildSystemPrompt(
+        mode,
+        context,
+        retrievedSources,
+        role,
+        lawTitle,
+      );
       const history = session.messages
         .slice(0, -1)
         .slice(-MAX_HISTORY_MESSAGES)
@@ -192,7 +207,20 @@ export async function handleStreamChat({
   }
 }
 
-function buildSystemPrompt(mode, context, articles = []) {
+const ROLE_ADDONS = {
+  lawyer:
+    'Ти консультуєш практикуючого адвоката. Звертай увагу на процесуальні норми, строки, санкції та судову практику.',
+  prosecutor:
+    'Ти консультуєш прокурора. Акцентуй на публічному інтересі, підставах для позовів та кримінально-правових нормах.',
+  judge:
+    'Ти консультуєш суддю. Давай збалансований аналіз, посилайся на процесуальні кодекси і практику Верховного Суду.',
+  notary:
+    'Ти консультуєш нотаріуса. Акцентуй на документах, нотаріальних діях, реєстрах і формальних вимогах.',
+  business:
+    'Ти консультуєш підприємця. Акцентуй на практичних наслідках для бізнесу, відповідальності та ліцензуванні.',
+};
+
+function buildSystemPrompt(mode, context, articles = [], role = 'general', lawTitle = null) {
   let base =
     'Ти — Lex, AI Помічник платформи Law Analysis. ' +
     'Відповідай українською мовою. ' +
@@ -200,11 +228,17 @@ function buildSystemPrompt(mode, context, articles = []) {
     'Будь точним, коротким і корисним. ' +
     'Якщо не знаєш відповіді — чесно скажи про це.';
 
+  if (role && ROLE_ADDONS[role]) {
+    base += ' ' + ROLE_ADDONS[role];
+  }
+
   if (mode === 'law' && context.lawId) {
-    base += ` Поточний контекст: закон з ID "${context.lawId}".`;
+    const label = lawTitle || context.lawId;
+    base += ` Поточний контекст: закон "${label}".`;
   }
   if (mode === 'article' && context.lawId && context.articleNum) {
-    base += ` Поточний контекст: стаття ${context.articleNum} закону "${context.lawId}".`;
+    const label = lawTitle || context.lawId;
+    base += ` Поточний контекст: стаття ${context.articleNum} закону "${label}".`;
   }
 
   if (articles.length) {

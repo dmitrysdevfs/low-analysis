@@ -65,14 +65,23 @@ export async function retrieveRelevantArticles(query, contextLawId = null) {
 
     return top.map((el, idx) => {
       const law = lawMap[el.lawId] || {};
+      const lawTitle = law.title || el.lawId;
+      const articleNum = el.number || '';
+      const articleTitle = el.title || '';
+      const sourceUrl = law.source || null;
       return {
+        // RAG fields — used for system prompt injection
         index: idx,
         lawId: el.lawId,
-        lawTitle: law.title || el.lawId,
-        articleNum: el.number || '',
-        articleTitle: el.title || '',
+        lawTitle,
+        articleNum,
+        articleTitle,
         text: (el.text || '').slice(0, TEXT_TRUNCATE),
-        sourceUrl: law.source || null,
+        sourceUrl,
+        // Standard source fields — required by session model and frontend
+        title: `Стаття ${articleNum}${articleTitle ? ` "${articleTitle}"` : ''} — ${lawTitle}`,
+        href: sourceUrl,
+        type: 'article',
       };
     });
   } catch (err) {
