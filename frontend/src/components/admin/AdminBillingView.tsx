@@ -1,13 +1,9 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
-import { formatDateShort } from "@/lib/utils";
-import {
-  formatAccountTypeLabel,
-  formatPlanFilterLabel,
-  formatPlanLabel,
-} from "./adminLabels";
+import { formatPlanFilterLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
+import { AdminBillingRow } from "./AdminBillingRow";
 import styles from "./AdminWorkspace.module.scss";
 
 type PlanFilter =
@@ -476,79 +472,14 @@ export function AdminBillingView() {
           <div className={styles.accountList}>
             {filteredRegistry.length > 0 ? (
               filteredRegistry.map((account) => (
-                <div key={account.id} className={styles.accountRow}>
-                  <div>
-                    <div className={styles.accountName}>
-                      {account.displayName}
-                    </div>
-                    <div className={styles.accountMeta}>{account.email}</div>
-                  </div>
-
-                  <div className={styles.accountBadges}>
-                    <span className={styles.accountBadge}>
-                      {formatAccountTypeLabel(account.accountType)}
-                    </span>
-                    <span className={styles.accountBadge}>
-                      {formatPlanLabel(account.subscription.planId)}
-                    </span>
-                    <span className={styles.accountBadgeAccent}>
-                      {account.subscription.status === "active"
-                        ? "активний"
-                        : account.subscription.status === "trialing"
-                          ? "тріал"
-                          : account.subscription.status === "expired"
-                            ? "прострочений"
-                            : "неактивний"}
-                    </span>
-                  </div>
-
-                  <div className={styles.accountMetaBlock}>
-                    <span>
-                      Пошук:{" "}
-                      {account.subscription.searchRemaining === null
-                        ? "безліміт"
-                        : `${account.subscription.searchRemaining} / ${account.subscription.searchLimit}`}
-                    </span>
-                    <span>
-                      Перегляди:{" "}
-                      {account.subscription.viewRemaining === null
-                        ? "безліміт"
-                        : `${account.subscription.viewRemaining} / ${account.subscription.viewLimit}`}
-                    </span>
-                    <span>
-                      {account.subscription.endsAt
-                        ? `До ${formatDateShort(account.subscription.endsAt)}`
-                        : "Немає активного платіжного циклу"}
-                    </span>
-                  </div>
-
-                  {account.accountType === "client" ? (
-                    <div className={styles.accountActions}>
-                      {clientPlanIds.map((planId) => (
-                        <button
-                          key={planId}
-                          type="button"
-                          className={styles.accountActionBtn}
-                          onClick={() =>
-                            setConfirmPlan({
-                              accountId: account.id,
-                              accountName: account.displayName,
-                              planId,
-                            })
-                          }
-                        >
-                          {formatPlanLabel(planId)}
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={styles.accountActions}>
-                      <span className={styles.accountBadgeAccent}>
-                        керується адміном
-                      </span>
-                    </div>
-                  )}
-                </div>
+                <AdminBillingRow
+                  key={account.id}
+                  account={account}
+                  clientPlanIds={clientPlanIds}
+                  onRequestPlan={(accountId, accountName, planId) =>
+                    setConfirmPlan({ accountId, accountName, planId })
+                  }
+                />
               ))
             ) : (
               <div className={styles.emptyState}>

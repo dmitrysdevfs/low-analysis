@@ -32,6 +32,7 @@ export function useSubmitAccessRequest() {
       submitAccessRequest(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["legislatorAccess", "my"] });
+      queryClient.invalidateQueries({ queryKey: ["legislatorAccess", "all"] });
     },
   });
 }

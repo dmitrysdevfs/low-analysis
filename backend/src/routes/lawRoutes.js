@@ -9,8 +9,12 @@ import {
   getElement,
   getLawHeatmap,
 } from '../controllers/lawController.js';
+import { guestRateLimit } from '../middleware/guestRateLimit.js';
 
 const router = express.Router();
+
+// Apply guest rate limiting to all law routes
+router.use(guestRateLimit);
 
 /**
  * @swagger

@@ -12,7 +12,7 @@ export const getDashboardSnapshot = async (sessionRole = 'admin') => {
         .sort({ createdAt: -1 })
         .limit(4)
         .lean(),
-      getAuditLog({ limit: 24 }),
+      getAuditLog({ limit: 100 }),
       getAuditCount(),
       getActiveCode(),
       getCodeHistory(),
@@ -55,7 +55,9 @@ export const getDashboardSnapshot = async (sessionRole = 'admin') => {
         laws: true,
         subjects: true,
         search: true,
+        account: false,
         adminPanel: false,
+        legislatorCabinet: false,
       },
       {
         role: 'Клієнт',
@@ -63,7 +65,19 @@ export const getDashboardSnapshot = async (sessionRole = 'admin') => {
         laws: true,
         subjects: true,
         search: true,
+        account: true,
         adminPanel: false,
+        legislatorCabinet: false,
+      },
+      {
+        role: 'Законотворець',
+        home: true,
+        laws: true,
+        subjects: true,
+        search: true,
+        account: true,
+        adminPanel: false,
+        legislatorCabinet: true,
       },
       {
         role: 'Адмін',
@@ -71,7 +85,9 @@ export const getDashboardSnapshot = async (sessionRole = 'admin') => {
         laws: true,
         subjects: true,
         search: true,
+        account: true,
         adminPanel: true,
+        legislatorCabinet: true,
       },
     ],
   };

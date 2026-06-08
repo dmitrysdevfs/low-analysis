@@ -92,6 +92,16 @@
   margin: 0;
 }
 
+.roleChip {
+  font-size: 0.72rem;
+  background: rgba(200, 168, 67, 0.12);
+  border: 1px solid rgba(200, 168, 67, 0.35);
+  color: var(--color-gold);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-weight: 600;
+}
+
 .contextChip {
   font-size: 0.72rem;
   background: rgba(200, 168, 67, 0.08);
@@ -100,6 +110,22 @@
   border-radius: 20px;
   padding: 2px 10px;
   font-family: var(--font-mono);
+}
+
+.changeRoleBtn {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--color-smoke-light);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--color-ink);
+  }
 }
 
 .bannerWrap {

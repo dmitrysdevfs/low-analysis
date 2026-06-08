@@ -13,6 +13,7 @@ import { BurgerIcon } from "./BurgerIcon";
 import { SessionMenu } from "./SessionMenu";
 import { AppSidebar } from "./AppSidebar";
 import { PatreonButton } from "@/components/support/PatreonButton";
+import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import styles from "./AppHeader.module.scss";
 
 export function AppHeader() {
@@ -223,6 +224,9 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
               </Link>
             );
           })}
+          <div className={styles.navThemeSwitcher}>
+            <ThemeSwitcher />
+          </div>
         </nav>
 
         <AnimatePresence>

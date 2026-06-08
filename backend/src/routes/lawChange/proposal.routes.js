@@ -80,6 +80,11 @@ router
     protect,
     hasPermission('law_changes:propose'),
     proposalController.updateProposal,
+  )
+  .delete(
+    protect,
+    hasPermission('law_changes:propose'),
+    proposalController.deleteProposal,
   );
 
 /**

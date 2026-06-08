@@ -32,6 +32,7 @@ export async function fetchQuotaStatus(
 ): Promise<QuotaStatus> {
   const params = planId ? `?planId=${planId}` : "";
   const res = await fetch(`${BASE}/quota${params}`, {
+    credentials: "include",
     headers: authHeaders(token),
   });
   if (!res.ok) return { allowed: true, used: null, limit: null };
@@ -42,6 +43,7 @@ export async function fetchSessions(
   token: string,
 ): Promise<AssistantSession[]> {
   const res = await fetch(`${BASE}/sessions`, {
+    credentials: "include",
     headers: authHeaders(token),
   });
   if (!res.ok) return [];
@@ -53,6 +55,7 @@ export async function fetchSession(
   token: string,
 ): Promise<AssistantSessionFull | null> {
   const res = await fetch(`${BASE}/sessions/${id}`, {
+    credentials: "include",
     headers: authHeaders(token),
   });
   if (!res.ok) return null;
@@ -62,6 +65,7 @@ export async function fetchSession(
 export async function deleteSession(id: string, token: string): Promise<void> {
   const res = await fetch(`${BASE}/sessions/${id}`, {
     method: "DELETE",
+    credentials: "include",
     headers: authHeaders(token),
   });
   if (!res.ok) {
@@ -77,6 +81,7 @@ export async function submitFeedback(
 ): Promise<void> {
   const res = await fetch(`${BASE}/feedback`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...authHeaders(token),
@@ -99,6 +104,7 @@ export async function* streamChatMessage(
 ): AsyncGenerator<StreamEvent> {
   const res = await fetch(`${BASE}/chat/stream`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...authHeaders(token),

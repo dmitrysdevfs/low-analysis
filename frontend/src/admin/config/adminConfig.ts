@@ -5,7 +5,7 @@
 //  LOCAL_MODE = false → дані з /api/admin/* (потребує бекенд-готовності)
 // ═══════════════════════════════════════════════════════════════════════
 
-export const LOCAL_MODE = true;
+export const LOCAL_MODE = false;
 
 // Pagination
 export const ADMIN_PAGE_SIZE = 50;

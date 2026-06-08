@@ -38,7 +38,7 @@ export function RiskFilterHint({
   const suffix =
     context === "law"
       ? `${count} ${pluralArticles(count)}`
-      : "елементи та батьківські вузли";
+      : `${count} елементів`;
 
   return (
     <div className={styles.hint}>

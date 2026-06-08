@@ -1,85 +1,137 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import type { Note, NoteDraft } from "@/lib/notes/types";
-import {
-  getNotes,
-  saveNote,
-  deleteNote,
-  updateNote as storageUpdateNote,
-  toggleNotePin as storageTogglePin,
-} from "@/lib/notes/storage";
+import { notesApi } from "@/lib/api/notes";
+import { readLegacyNotes, clearLegacyNotes } from "@/lib/notes/storage";
 
-function generateId(): string {
-  if (
-    typeof crypto !== "undefined" &&
-    typeof crypto.randomUUID === "function"
-  ) {
-    return crypto.randomUUID();
+const MIGRATION_FLAG_KEY = (userId: string) =>
+  `law-analysis.notes.migrated.${userId}`;
+
+function isMigrationDone(userId: string) {
+  try {
+    return localStorage.getItem(MIGRATION_FLAG_KEY(userId)) === "1";
+  } catch {
+    return true;
   }
-  return String(Date.now());
+}
+
+function markMigrationDone(userId: string) {
+  try {
+    localStorage.setItem(MIGRATION_FLAG_KEY(userId), "1");
+  } catch {
+    // ignore
+  }
 }
 
 export function useNotes(): {
   notes: Note[];
-  addNote: (draft: NoteDraft) => Note;
-  removeNote: (id: string) => void;
+  loading: boolean;
+  addNote: (draft: NoteDraft) => Promise<Note>;
+  removeNote: (id: string) => Promise<void>;
   updateNote: (
     id: string,
     patch: Partial<Pick<Note, "noteText" | "color">>,
-  ) => void;
-  togglePin: (id: string) => void;
+  ) => Promise<void>;
+  togglePin: (id: string) => Promise<void>;
   hasArticleNote: (lawId: string, articleNum: string) => boolean;
 } {
   const { user } = useAuth();
-  const userId = user?.id ?? "guest";
+  const userId = user?.id ?? null;
 
-  const [notes, setNotes] = useState<Note[]>(() => getNotes(userId));
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [loading, setLoading] = useState(false);
+  const loadedRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    setNotes(getNotes(userId));
+  const reload = useCallback(async () => {
+    if (!userId) {
+      setNotes([]);
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await notesApi.getAll();
+      setNotes(data);
+    } catch {
+      // API unavailable — keep current state
+    } finally {
+      setLoading(false);
+    }
   }, [userId]);
 
-  function addNote(draft: NoteDraft): Note {
-    const now = new Date().toISOString();
-    const note: Note = {
-      ...draft,
-      id: generateId(),
-      createdAt: now,
-      updatedAt: now,
-    };
-    saveNote(userId, note);
-    setNotes(getNotes(userId));
+  // on user change: migrate legacy notes then load from API
+  useEffect(() => {
+    if (!userId || loadedRef.current === userId) return;
+    loadedRef.current = userId;
+
+    (async () => {
+      // one-time migration from localStorage
+      if (!isMigrationDone(userId)) {
+        const legacy = readLegacyNotes(userId);
+        if (legacy.length > 0) {
+          try {
+            await notesApi.migrate(legacy);
+            clearLegacyNotes(userId);
+          } catch {
+            // migration failed — will retry next session
+          }
+        }
+        markMigrationDone(userId);
+      }
+      await reload();
+    })();
+  }, [userId, reload]);
+
+  const addNote = useCallback(async (draft: NoteDraft): Promise<Note> => {
+    const note = await notesApi.create(draft);
+    setNotes((prev) => [note, ...prev]);
     return note;
-  }
+  }, []);
 
-  function removeNote(id: string): void {
-    deleteNote(userId, id);
-    setNotes(getNotes(userId));
-  }
+  const removeNote = useCallback(async (id: string): Promise<void> => {
+    await notesApi.delete(id);
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+  }, []);
 
-  function updateNote(
-    id: string,
-    patch: Partial<Pick<Note, "noteText" | "color">>,
-  ): void {
-    storageUpdateNote(userId, id, patch);
-    setNotes(getNotes(userId));
-  }
+  const updateNote = useCallback(
+    async (
+      id: string,
+      patch: Partial<Pick<Note, "noteText" | "color">>,
+    ): Promise<void> => {
+      const updated = await notesApi.update(id, patch);
+      setNotes((prev) => prev.map((n) => (n.id === id ? updated : n)));
+    },
+    [],
+  );
 
-  function togglePin(id: string): void {
-    storageTogglePin(userId, id);
-    setNotes(getNotes(userId));
-  }
-
-  function hasArticleNote(lawId: string, articleNum: string): boolean {
-    return notes.some(
-      (n) =>
-        n.type === "article" &&
-        n.lawId === lawId &&
-        n.articleNum === articleNum,
+  const togglePin = useCallback(async (id: string): Promise<void> => {
+    const updated = await notesApi.togglePin(id);
+    setNotes((prev) =>
+      prev
+        .map((n) => (n.id === id ? updated : n))
+        .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)),
     );
-  }
+  }, []);
 
-  return { notes, addNote, removeNote, updateNote, togglePin, hasArticleNote };
+  const hasArticleNote = useCallback(
+    (lawId: string, articleNum: string): boolean =>
+      notes.some(
+        (n) =>
+          n.type === "article" &&
+          n.lawId === lawId &&
+          n.articleNum === articleNum,
+      ),
+    [notes],
+  );
+
+  return {
+    notes,
+    loading,
+    addNote,
+    removeNote,
+    updateNote,
+    togglePin,
+    hasArticleNote,
+  };
 }

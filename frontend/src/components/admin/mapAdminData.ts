@@ -38,6 +38,7 @@ export function mapUserToAccount(user: AdminUserRecord): AdminAccountSummary {
     lastLoginAt: user.updatedAt,
     superCodeProtected: user.role === "admin",
     source: "stored",
+    billingPlan: user.billingPlan ?? "preview",
   };
 }
 
@@ -55,6 +56,8 @@ export function buildBillingEntry(user: AdminUserRecord) {
     accountType: (user.role === "admin" ? "admin" : "client") as
       | "admin"
       | "client",
+    status: (user.status ?? "active") as "active" | "inactive",
+    createdAt: user.createdAt,
     subscription: {
       planId,
       plan: planId ? { label: planId } : null,

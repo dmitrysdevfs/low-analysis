@@ -107,9 +107,7 @@ export function AdminDashboardView() {
     <section className={styles.page}>
       {snapshot.auditLog.some((e) => e.severity === "security") && (
         <SecurityBanner
-          count={
-            snapshot.auditLog.filter((e) => e.severity === "security").length
-          }
+          events={snapshot.auditLog.filter((e) => e.severity === "security")}
         />
       )}
       <section className={styles.hero}>
@@ -441,13 +439,42 @@ export function AdminDashboardView() {
   );
 }
 
-function SecurityBanner({ count }: { count: number }) {
+const SECURITY_ACTION_ROUTES: Array<{ keywords: string[]; route: string }> = [
+  {
+    keywords: ["роль", "призначено", "legislator", "законотворц"],
+    route: ROUTES.adminUsers,
+  },
+  { keywords: ["код", "super code", "supercode"], route: ROUTES.adminCodes },
+  { keywords: ["доступ", "access", "заявк"], route: ROUTES.adminAccess },
+];
+
+function resolveSecurityRoute(action: string, detail: string): string {
+  const text = (action + " " + detail).toLowerCase();
+  for (const { keywords, route } of SECURITY_ACTION_ROUTES) {
+    if (keywords.some((kw) => text.includes(kw))) return route;
+  }
+  return ROUTES.adminAudit;
+}
+
+function SecurityBanner({
+  events,
+}: {
+  events: import("@/lib/auth/mockAuth").AdminAuditLogEntry[];
+}) {
   const [dismissed, setDismissed] = useState(false);
+  const [open, setOpen] = useState(false);
   if (dismissed) return null;
   return (
     <div className={styles.securityBanner}>
-      <span className={styles.securityBannerIcon}>⚠</span>
-      <span>{count} подій безпеки потребують уваги</span>
+      <button
+        type="button"
+        className={styles.securityBannerHeader}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span className={styles.securityBannerIcon}>⚠</span>
+        <span>{events.length} подій безпеки потребують уваги</span>
+        <span className={styles.securityBannerChevron}>{open ? "▲" : "▼"}</span>
+      </button>
       <button
         type="button"
         className={styles.securityBannerDismiss}
@@ -455,6 +482,28 @@ function SecurityBanner({ count }: { count: number }) {
       >
         ✕
       </button>
+      {open && (
+        <ul className={styles.securityBannerBody}>
+          {events.map((e) => (
+            <li key={e.id}>
+              <a
+                href={resolveSecurityRoute(e.action, e.detail)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.securityItem}
+              >
+                <span className={styles.securityItemAction}>{e.action}</span>
+                {e.detail && (
+                  <span className={styles.securityItemDetail}>{e.detail}</span>
+                )}
+                <span className={styles.securityItemMeta}>
+                  {e.actor} · {formatDateShort(e.createdAt)}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

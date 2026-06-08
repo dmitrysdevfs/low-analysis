@@ -5,7 +5,7 @@
   gap: 16px;
   padding: 14px 22px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(7, 17, 38, 0.6);
+  background: var(--th-topbar-bg);
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -30,7 +30,7 @@
 }
 
 .breadcrumbLink {
-  color: #c8a843;
+  color: var(--th-accent);
   text-decoration: none;
   &:hover {
     color: #f2d06c;
@@ -42,7 +42,7 @@
 }
 
 .breadcrumbCurrent {
-  color: #9eb5d9;
+  color: var(--th-muted);
 }
 
 .title {
@@ -57,7 +57,7 @@
 
 .subtitle {
   margin: 0;
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-size: 0.84rem;
   line-height: 1.45;
 }
@@ -70,7 +70,7 @@
 }
 
 .updatedText {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-family: var(--font-mono);
   font-size: 0.64rem;
   letter-spacing: 0.08em;
@@ -86,7 +86,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
-  color: #9eb5d9;
+  color: var(--th-muted);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -132,8 +132,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(200, 168, 67, 0.2);
-  color: #c8a843;
+  background: var(--th-accent-bg-strong);
+  color: var(--th-accent);
   font-weight: 700;
   font-size: 0.82rem;
   flex-shrink: 0;
@@ -153,7 +153,7 @@
 }
 
 .userEmail {
-  color: #9eb5d9;
+  color: var(--th-muted);
   font-size: 0.72rem;
   white-space: nowrap;
   overflow: hidden;
@@ -175,9 +175,9 @@
 }
 
 .envBadgeDev {
-  background: rgba(200, 168, 67, 0.15);
-  border-color: rgba(200, 168, 67, 0.4);
-  color: #c8a843;
+  background: var(--th-accent-bg);
+  border-color: var(--th-accent-border);
+  color: var(--th-accent);
 }
 
 .envBadgeProd {
@@ -186,11 +186,54 @@
   color: #4a80d4;
 }
 
+.clockRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  color: var(--th-muted);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+.clockFlag {
+  font-size: 0.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.clockLocation {
+  color: #c8d8f0;
+  font-weight: 600;
+}
+
+.clockCountry {
+  color: #7a98c0;
+  font-weight: 400;
+}
+
+.clockDivider {
+  color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.clockTime {
+  color: var(--th-accent);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 .bellWrapper {
   position: relative;
 }
 
 .bellBtn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,7 +242,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
-  color: #9eb5d9;
+  color: var(--th-muted);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -211,21 +254,113 @@
   }
 }
 
+.bellBtnActive {
+  border-color: rgba(233, 119, 75, 0.4);
+  color: #e9774b;
+
+  &:hover {
+    color: #f59a74;
+  }
+}
+
+.bellBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #e9774b;
+  color: #ffffff;
+  font-size: 0.55rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}
+
 .notifPanel {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 240px;
-  padding: 12px 14px;
+  width: 320px;
+  max-height: 480px;
+  overflow-y: auto;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(9, 18, 38, 0.97);
   backdrop-filter: blur(18px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
   z-index: 50;
-  color: #9eb5d9;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.notifEmpty {
+  padding: 16px;
+  color: var(--th-muted);
   font-size: 0.82rem;
-  line-height: 1.5;
+  text-align: center;
+  margin: 0;
+}
+
+.notifGroup {
+  padding: 10px 0 4px;
+
+  & + & {
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+  }
+}
+
+.notifGroupTitle {
+  padding: 0 14px 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--th-accent);
+  font-family: var(--font-mono);
+}
+
+.notifItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.notifItemTitle {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #d6e0f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notifItemDetail {
+  font-size: 0.76rem;
+  color: var(--th-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notifItemMeta {
+  font-size: 0.68rem;
+  color: rgba(158, 181, 217, 0.6);
+  font-family: var(--font-mono);
 }
 
 @media (max-width: 640px) {

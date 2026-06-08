@@ -51,3 +51,13 @@ export function useSubmitProposal() {
     },
   });
 }
+
+export function useDeleteProposal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => legislatorApi.deleteProposal(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["proposals"] });
+    },
+  });
+}

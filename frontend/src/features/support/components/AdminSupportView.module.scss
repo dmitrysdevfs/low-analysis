@@ -1,0 +1,379 @@
+.page {
+  display: grid;
+  gap: 24px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.82fr);
+  gap: 24px;
+  padding: 28px 30px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(233, 119, 75, 0.16),
+      transparent 38%
+    ),
+    linear-gradient(160deg, rgba(20, 31, 58, 0.96), rgba(12, 19, 37, 0.92));
+  box-shadow: 0 22px 50px rgba(5, 10, 20, 0.32);
+}
+
+.eyebrow,
+.panelEyebrow {
+  display: inline-flex;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #c8a843;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: #f8fbff;
+}
+
+.description,
+.heroMeta,
+.cardSnippet,
+.cardPath,
+.contextBlock,
+.messageChannel,
+.cardEmail {
+  color: rgba(216, 228, 246, 0.76);
+  line-height: 1.65;
+}
+
+.description {
+  margin: 16px 0 0;
+  max-width: 72ch;
+}
+
+.heroAside {
+  padding: 22px 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 17, 32, 0.45);
+}
+
+.tag {
+  display: inline-flex;
+  margin-bottom: 12px;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #c8a843;
+}
+
+.heroValue {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #f8fbff;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.metricCard,
+.panel {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 28, 50, 0.94);
+  box-shadow: 0 18px 40px rgba(5, 10, 20, 0.24);
+}
+
+.metricCard {
+  padding: 18px 20px;
+}
+
+.metricLabel {
+  display: inline-flex;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #98aacf;
+}
+
+.metricValue {
+  display: block;
+  margin-top: 12px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #f7fbff;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.96fr) minmax(0, 1.34fr);
+  gap: 20px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.panelTitle {
+  margin: 8px 0 0;
+  font-size: 1.26rem;
+  color: #f8fbff;
+}
+
+.toolbar,
+.filterRow {
+  padding: 18px 24px 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+}
+
+.searchInput,
+.textarea {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+  font: inherit;
+}
+
+.searchInput {
+  min-height: 46px;
+  padding: 0 16px;
+}
+
+.searchInput::placeholder,
+.textarea::placeholder {
+  color: rgba(198, 214, 237, 0.52);
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filterButton,
+.primaryButton,
+.secondaryButton,
+.ghostButton,
+.chip {
+  min-height: 40px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.filterButton,
+.secondaryButton,
+.ghostButton {
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+  cursor: pointer;
+}
+
+.filterButtonActive,
+.chipHighlight {
+  border-color: rgba(200, 168, 67, 0.45);
+  background: rgba(200, 168, 67, 0.12);
+  color: #f7e7a0;
+}
+
+.conversationList {
+  display: grid;
+  gap: 12px;
+  max-height: 720px;
+  padding: 18px 18px 24px;
+  overflow-y: auto;
+}
+
+.conversationCard {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+  cursor: pointer;
+}
+
+.conversationCardActive {
+  border-color: rgba(200, 168, 67, 0.34);
+  box-shadow: 0 12px 28px rgba(200, 168, 67, 0.1);
+}
+
+.cardTopRow,
+.messageMeta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f7fbff;
+}
+
+.cardDate,
+.messageDate {
+  color: rgba(216, 228, 246, 0.62);
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.cardMeta,
+.detailActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: #dce8fb;
+}
+
+.threadBody {
+  display: grid;
+  gap: 16px;
+  padding: 20px 24px 24px;
+}
+
+.detailHero {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.messageRow {
+  display: flex;
+}
+
+.messageRowUser {
+  justify-content: flex-start;
+}
+
+.messageRowSupport {
+  justify-content: flex-end;
+}
+
+.messageBubble {
+  max-width: 82%;
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 18px;
+}
+
+.messageBubbleUser {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(74, 128, 212, 0.18);
+}
+
+.messageBubbleSupport {
+  background: rgba(200, 168, 67, 0.1);
+  border: 1px solid rgba(200, 168, 67, 0.22);
+}
+
+.messageSender {
+  color: #f7fbff;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.messageText {
+  color: rgba(236, 243, 252, 0.9);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.replyPanel {
+  display: grid;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.textarea {
+  min-height: 160px;
+  padding: 14px 16px;
+  resize: vertical;
+}
+
+.primaryButton {
+  padding: 0 18px;
+  border: 0;
+  background: linear-gradient(135deg, #f7f6f2 0%, #d9d5c9 100%);
+  color: #0a1224;
+  cursor: pointer;
+}
+
+.emptyState,
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  padding: 0 16px;
+  color: rgba(216, 228, 246, 0.72);
+  line-height: 1.7;
+  text-align: center;
+}
+
+@media (max-width: 1180px) {
+  .hero,
+  .workspace,
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .toolbar,
+  .filterRow,
+  .panelHeader,
+  .threadBody {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .conversationList {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .detailActions {
+    flex-direction: column;
+  }
+}

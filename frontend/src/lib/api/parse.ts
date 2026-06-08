@@ -18,6 +18,7 @@ export async function parseLaw(url: string): Promise<ParseLawResponse> {
 
   const res = await fetch(`${API_BASE}/laws/parse`, {
     method: "POST",
+    credentials: "include",
     headers,
     body: JSON.stringify({ url }),
   });

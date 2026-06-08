@@ -143,6 +143,7 @@ describe("frontend API client", () => {
 
     expect(fetchMock).toHaveBeenCalledWith("/api/laws/parse", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

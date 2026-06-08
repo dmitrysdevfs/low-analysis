@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useAdminWorkspace } from "@/components/admin/useAdminWorkspace";
+import { AdminWorkspaceProvider } from "@/components/admin/AdminWorkspaceContext";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { notify } from "@/lib/toast";
 import { adminApi } from "@/lib/api/admin";
@@ -136,7 +137,9 @@ describe("useAdminWorkspace", () => {
   });
 
   it("hydrates the admin snapshot and computes billing counts", async () => {
-    const { result } = renderHook(() => useAdminWorkspace());
+    const { result } = renderHook(() => useAdminWorkspace(), {
+      wrapper: AdminWorkspaceProvider,
+    });
 
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
 
@@ -153,7 +156,9 @@ describe("useAdminWorkspace", () => {
   });
 
   it("copies the active super code and logs the audit event", async () => {
-    const { result } = renderHook(() => useAdminWorkspace());
+    const { result } = renderHook(() => useAdminWorkspace(), {
+      wrapper: AdminWorkspaceProvider,
+    });
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
 
     await act(async () => {
@@ -171,7 +176,9 @@ describe("useAdminWorkspace", () => {
       value: undefined,
     });
 
-    const { result } = renderHook(() => useAdminWorkspace());
+    const { result } = renderHook(() => useAdminWorkspace(), {
+      wrapper: AdminWorkspaceProvider,
+    });
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
 
     await act(async () => {
@@ -182,7 +189,9 @@ describe("useAdminWorkspace", () => {
   });
 
   it("handles force logout and plan assignment", async () => {
-    const { result } = renderHook(() => useAdminWorkspace());
+    const { result } = renderHook(() => useAdminWorkspace(), {
+      wrapper: AdminWorkspaceProvider,
+    });
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
 
     await act(async () => {
@@ -205,7 +214,9 @@ describe("useAdminWorkspace", () => {
   });
 
   it("regenerates the code and copies guest status summaries", async () => {
-    const { result } = renderHook(() => useAdminWorkspace());
+    const { result } = renderHook(() => useAdminWorkspace(), {
+      wrapper: AdminWorkspaceProvider,
+    });
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
 
     await act(async () => {

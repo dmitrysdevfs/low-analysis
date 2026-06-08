@@ -26,6 +26,7 @@ export async function getJson<T>(
 
   const res = await fetchWithTimeout(`${API_BASE}${path}`, {
     ...options,
+    credentials: "include",
     headers,
   });
 

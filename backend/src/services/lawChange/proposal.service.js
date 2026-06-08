@@ -105,6 +105,23 @@ export const withdrawProposal = async (id, userId) => {
   return await proposal.save();
 };
 
+export const deleteProposal = async (id, userId) => {
+  const proposal = await LawChangeProposal.findById(id);
+  if (!proposal)
+    throw Object.assign(new Error('Proposal not found'), { status: 404 });
+  if (!compareIds(proposal.created_by, userId))
+    throw Object.assign(new Error('Forbidden'), { status: 403 });
+  if (!['draft', 'withdrawn'].includes(proposal.status))
+    throw Object.assign(
+      new Error('Only draft or withdrawn proposals can be deleted'),
+      {
+        status: 400,
+      },
+    );
+
+  await proposal.deleteOne();
+};
+
 export const getProposalById = async (id) => {
   const proposal = await LawChangeProposal.findById(id).populate(
     'created_by',

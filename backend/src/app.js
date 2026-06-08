@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -19,7 +20,11 @@ import commentRoutes from './routes/commentRoutes.js';
 import voteRoutes from './routes/voteRoutes.js';
 import lawChangeRoutes from './routes/lawChange/index.js';
 import adminRoutes from './routes/admin/index.js';
+import activityRoutes from './routes/activity.js';
+import notesRoutes from './routes/notesRoutes.js';
+import meRoutes from './routes/meRoutes.js';
 import graphRoutes from './routes/graphRoutes.js';
+import supportRoutes from './modules/support/support.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -83,6 +88,7 @@ const spec = swaggerJsdoc(swaggerOptions);
 const app = express();
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
 
 app.get('/api-docs.json', (req, res) => {
@@ -115,7 +121,11 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/votes', voteRoutes);
 app.use('/api/law-change', lawChangeRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/activity', activityRoutes);
+app.use('/api/notes', notesRoutes);
+app.use('/api/me', meRoutes);
 app.use('/api/graph', graphRoutes);
+app.use('/api/support', supportRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

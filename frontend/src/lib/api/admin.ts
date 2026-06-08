@@ -9,6 +9,7 @@ async function adminFetch<T>(
   const token = readStoredToken();
   const res = await fetch(`/api/admin${path}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -33,6 +34,26 @@ export type AdminUserRecord = {
   billingPlan: "preview" | "trial" | "user" | "plus" | "pro";
   createdAt: string;
   updatedAt: string;
+  registrationSource?: {
+    referrer: string | null;
+    source: "direct" | "google" | "bing" | "social" | "link" | "unknown";
+  };
+};
+
+export type UserActivityEntry = {
+  _id: string;
+  userId: string;
+  type: "page_view" | "search" | "law_view";
+  path?: string;
+  query?: string;
+  lawId?: string;
+  createdAt: string;
+};
+
+export type UserActivityStats = {
+  pageViews: number;
+  searches: number;
+  lawViews: number;
 };
 
 export type AdminAuditEntry = {
@@ -76,7 +97,9 @@ export type AdminDashboardApiSnapshot = {
     laws: boolean;
     subjects: boolean;
     search: boolean;
+    account: boolean;
     adminPanel: boolean;
+    legislatorCabinet: boolean;
   }>;
 };
 
@@ -108,8 +131,29 @@ export const adminApi = {
       method: "POST",
     }),
 
+  getUserById: (id: string) => adminFetch<AdminUserRecord>(`/users/${id}`),
+
+  getUserActivity: (
+    userId: string,
+    params?: { limit?: number; type?: string },
+  ) => {
+    const q = new URLSearchParams();
+    if (params?.limit) q.set("limit", String(params.limit));
+    if (params?.type) q.set("type", params.type);
+    const qs = q.toString();
+    return adminFetch<{
+      entries: UserActivityEntry[];
+      stats: UserActivityStats;
+    }>(`/activity/${userId}${qs ? `?${qs}` : ""}`);
+  },
+
   getAuditLog: (limit = 50, skip = 0) =>
     adminFetch<AdminAuditEntry[]>(`/audit?limit=${limit}&skip=${skip}`),
+
+  getAuditLogByTarget: (email: string, limit = 100) =>
+    adminFetch<AdminAuditEntry[]>(
+      `/audit?limit=${limit}&targetEmail=${encodeURIComponent(email)}`,
+    ),
 
   appendAuditEntry: (payload: {
     action: string;

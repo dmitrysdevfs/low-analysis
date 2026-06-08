@@ -34,10 +34,13 @@ const SEVERITY_LABELS = {
 const ACCESS_ROLE_LABELS = {
   Guest: "Гість",
   Client: "Клієнт",
+  Legislator: "Законотворець",
   Admin: "Адмін",
   guest: "Гість",
   client: "Клієнт",
+  legislator: "Законотворець",
   admin: "Адмін",
+  Законотворець: "Законотворець",
 } as const;
 
 const CODE_STATUS_LABELS = {

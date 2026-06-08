@@ -47,12 +47,14 @@ type DevAccountOverride = Partial<
 >;
 
 export type AdminAccessMatrixRow = {
-  role: "Гість" | "Клієнт" | "Адмін";
+  role: "Гість" | "Клієнт" | "Законотворець" | "Адмін";
   home: boolean;
   laws: boolean;
   subjects: boolean;
   search: boolean;
+  account: boolean;
   adminPanel: boolean;
+  legislatorCabinet: boolean;
 };
 
 export type AdminAccountSummary = {
@@ -66,6 +68,7 @@ export type AdminAccountSummary = {
   lastLoginAt?: string;
   superCodeProtected: boolean;
   source: AccountSource;
+  billingPlan?: string;
 };
 
 export type AdminDashboardSnapshot = {
@@ -850,7 +853,9 @@ export function getAdminDashboardSnapshot() {
         laws: true,
         subjects: true,
         search: true,
+        account: false,
         adminPanel: false,
+        legislatorCabinet: false,
       },
       {
         role: "Клієнт",
@@ -858,7 +863,19 @@ export function getAdminDashboardSnapshot() {
         laws: true,
         subjects: true,
         search: true,
+        account: true,
         adminPanel: false,
+        legislatorCabinet: false,
+      },
+      {
+        role: "Законотворець",
+        home: true,
+        laws: true,
+        subjects: true,
+        search: true,
+        account: true,
+        adminPanel: false,
+        legislatorCabinet: true,
       },
       {
         role: "Адмін",
@@ -866,7 +883,9 @@ export function getAdminDashboardSnapshot() {
         laws: true,
         subjects: true,
         search: true,
+        account: true,
         adminPanel: true,
+        legislatorCabinet: true,
       },
     ],
   } satisfies AdminDashboardSnapshot;

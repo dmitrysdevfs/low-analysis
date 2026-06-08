@@ -1,7 +1,6 @@
 "use client";
 
-export const CLIENT_WORKSPACE_STORAGE_KEY = "low-analysis.client.workspace";
-
+// Types are still exported so consumers don't need to change import paths
 export type WorkspacePreferenceKey =
   | "emailAlerts"
   | "searchHighlights"
@@ -50,11 +49,11 @@ export type ClientActivityItem = {
   createdAt: string;
 };
 
-export type ClientWorkspace = {
-  preferences: ClientWorkspacePreferences;
-  savedArticles: SavedArticleItem[];
-  focusTopics: ClientFocusTopic[];
-  activity: ClientActivityItem[];
+// ── UI cache — stays in localStorage (not user data, pure navigation state) ──
+
+const UI_CACHE_KEY = "low-analysis.client.ui-cache";
+
+type UiCache = {
   lastViewedLawId?: string;
   lastViewedLawTitle?: string;
   lastViewedArticleNum?: string;
@@ -62,7 +61,8 @@ export type ClientWorkspace = {
   lastSearchQuery?: string;
 };
 
-type WorkspaceStore = Record<string, ClientWorkspace>;
+// Per-user cache keyed by userId
+type UiCacheStore = Record<string, UiCache>;
 
 function isBrowser() {
   return (
@@ -70,275 +70,32 @@ function isBrowser() {
   );
 }
 
-function readStore() {
-  if (!isBrowser()) {
-    return {} as WorkspaceStore;
-  }
-
-  const raw = window.localStorage.getItem(CLIENT_WORKSPACE_STORAGE_KEY);
-
-  if (!raw) {
-    return {} as WorkspaceStore;
-  }
-
+function readUiCacheStore(): UiCacheStore {
+  if (!isBrowser()) return {};
   try {
-    return JSON.parse(raw) as WorkspaceStore;
+    const raw = localStorage.getItem(UI_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as UiCacheStore) : {};
   } catch {
-    return {} as WorkspaceStore;
+    return {};
   }
 }
 
-function writeStore(store: WorkspaceStore) {
-  if (!isBrowser()) {
-    return;
+function writeUiCacheStore(store: UiCacheStore) {
+  if (!isBrowser()) return;
+  try {
+    localStorage.setItem(UI_CACHE_KEY, JSON.stringify(store));
+  } catch {
+    // ignore
   }
-
-  window.localStorage.setItem(
-    CLIENT_WORKSPACE_STORAGE_KEY,
-    JSON.stringify(store),
-  );
 }
 
-function createDefaultWorkspace(): ClientWorkspace {
-  const now = new Date().toISOString();
-
-  return {
-    preferences: {
-      emailAlerts: true,
-      searchHighlights: true,
-      compactMode: false,
-      weeklyDigest: true,
-    },
-    savedArticles: [],
-    focusTopics: [],
-    activity: [
-      {
-        id: "activity-workspace-ready",
-        type: "workspace",
-        title: "Workspace initialized",
-        detail:
-          "Your personal research cabinet is ready for notes, saved laws, and tracked topics.",
-        createdAt: now,
-      },
-    ],
-  };
+export function readUiCache(userId: string): UiCache {
+  return readUiCacheStore()[userId] ?? {};
 }
 
-function appendActivity(
-  workspace: ClientWorkspace,
-  payload: Pick<ClientActivityItem, "type" | "title" | "detail">,
-) {
-  const nextEntry: ClientActivityItem = {
-    id: `activity-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    createdAt: new Date().toISOString(),
-    ...payload,
-  };
-
-  return {
-    ...workspace,
-    activity: [nextEntry, ...workspace.activity].slice(0, 18),
-  };
-}
-
-export function readClientWorkspace(userId: string) {
-  const store = readStore();
-  const fallback = createDefaultWorkspace();
-  const storedWorkspace = store[userId];
-
-  if (!storedWorkspace) {
-    return fallback;
-  }
-
-  return {
-    ...fallback,
-    ...storedWorkspace,
-    preferences: {
-      ...fallback.preferences,
-      ...storedWorkspace.preferences,
-    },
-    savedArticles: storedWorkspace.savedArticles ?? fallback.savedArticles,
-    focusTopics: storedWorkspace.focusTopics ?? fallback.focusTopics,
-    activity: storedWorkspace.activity ?? fallback.activity,
-  };
-}
-
-export function writeClientWorkspace(
-  userId: string,
-  workspace: ClientWorkspace,
-) {
-  const store = readStore();
-  writeStore({
-    ...store,
-    [userId]: workspace,
-  });
-}
-
-export function updateWorkspacePreferences(
-  userId: string,
-  patch: Partial<ClientWorkspacePreferences>,
-) {
-  const current = readClientWorkspace(userId);
-  const changedKeys = Object.keys(patch).filter((key) => {
-    const preferenceKey = key as WorkspacePreferenceKey;
-    return (
-      patch[preferenceKey] !== undefined &&
-      current.preferences[preferenceKey] !== patch[preferenceKey]
-    );
-  }) as WorkspacePreferenceKey[];
-  const next = {
-    ...current,
-    preferences: {
-      ...current.preferences,
-      ...patch,
-    },
-  };
-
-  const nextWithActivity =
-    changedKeys.length > 0
-      ? appendActivity(next, {
-          type: "preference",
-          title: "Workspace preferences updated",
-          detail: changedKeys
-            .map(
-              (key) =>
-                `${key}: ${next.preferences[key] ? "enabled" : "disabled"}`,
-            )
-            .join(" · "),
-        })
-      : next;
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function addSavedArticle(
-  userId: string,
-  payload: Omit<SavedArticleItem, "id" | "savedAt">,
-) {
-  const current = readClientWorkspace(userId);
-
-  if (
-    current.savedArticles.some(
-      (item) => item.lawId === payload.lawId && item.code === payload.code,
-    )
-  ) {
-    return current;
-  }
-
-  const next = {
-    ...current,
-    savedArticles: [
-      {
-        id: `saved-${Date.now()}`,
-        savedAt: new Date().toISOString(),
-        ...payload,
-      },
-      ...current.savedArticles,
-    ],
-  };
-
-  const nextWithActivity = appendActivity(next, {
-    type: "saved",
-    title: "Law saved",
-    detail: payload.title,
-  });
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function removeSavedArticle(userId: string, articleId: string) {
-  const current = readClientWorkspace(userId);
-  const next = {
-    ...current,
-    savedArticles: current.savedArticles.filter(
-      (item) => item.id !== articleId,
-    ),
-  };
-
-  const removedItem = current.savedArticles.find(
-    (item) => item.id === articleId,
-  );
-  const nextWithActivity = removedItem
-    ? appendActivity(next, {
-        type: "saved",
-        title: "Saved law removed",
-        detail: removedItem.title,
-      })
-    : next;
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function addWorkspaceFocusTopic(userId: string, label: string) {
-  const current = readClientWorkspace(userId);
-  const normalized = label.trim();
-
-  if (normalized.length < 2) {
-    return current;
-  }
-
-  const exists = current.focusTopics.some(
-    (topic) => topic.label.toLowerCase() === normalized.toLowerCase(),
-  );
-
-  if (exists) {
-    return current;
-  }
-
-  const next = {
-    ...current,
-    focusTopics: [
-      {
-        id: `focus-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        label: normalized,
-        createdAt: new Date().toISOString(),
-      },
-      ...current.focusTopics,
-    ],
-  };
-
-  const nextWithActivity = appendActivity(next, {
-    type: "focus",
-    title: "Research focus added",
-    detail: normalized,
-  });
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function removeWorkspaceFocusTopic(userId: string, topicId: string) {
-  const current = readClientWorkspace(userId);
-  const removedTopic = current.focusTopics.find(
-    (topic) => topic.id === topicId,
-  );
-  const next = {
-    ...current,
-    focusTopics: current.focusTopics.filter((topic) => topic.id !== topicId),
-  };
-
-  const nextWithActivity = removedTopic
-    ? appendActivity(next, {
-        type: "focus",
-        title: "Research focus removed",
-        detail: removedTopic.label,
-      })
-    : next;
-
-  writeClientWorkspace(userId, nextWithActivity);
-  return nextWithActivity;
-}
-
-export function appendWorkspaceActivity(
-  userId: string,
-  payload: Pick<ClientActivityItem, "type" | "title" | "detail">,
-) {
-  const current = readClientWorkspace(userId);
-  const next = appendActivity(current, payload);
-  writeClientWorkspace(userId, next);
-  return next;
+function patchUiCache(userId: string, patch: Partial<UiCache>) {
+  const store = readUiCacheStore();
+  writeUiCacheStore({ ...store, [userId]: { ...store[userId], ...patch } });
 }
 
 export function recordWorkspaceView(
@@ -350,61 +107,89 @@ export function recordWorkspaceView(
     articleTitle?: string;
   },
 ): void {
-  const current = readClientWorkspace(userId);
-  const next: ClientWorkspace = {
-    ...current,
-    lastViewedLawId: data.lawId ?? current.lastViewedLawId,
-    lastViewedLawTitle: data.lawTitle ?? current.lastViewedLawTitle,
-    lastViewedArticleNum: data.articleNum ?? current.lastViewedArticleNum,
-    lastViewedArticleTitle: data.articleTitle ?? current.lastViewedArticleTitle,
-  };
-
-  const detail = [data.lawTitle, data.articleNum, data.articleTitle]
-    .filter(Boolean)
-    .join(" · ");
-
-  const nextWithActivity = appendActivity(next, {
-    type: "view",
-    title: "Viewed",
-    detail: detail || data.lawId || "",
+  patchUiCache(userId, {
+    lastViewedLawId: data.lawId,
+    lastViewedLawTitle: data.lawTitle,
+    lastViewedArticleNum: data.articleNum,
+    lastViewedArticleTitle: data.articleTitle,
   });
-
-  writeClientWorkspace(userId, nextWithActivity);
 }
 
 export function recordWorkspaceSearch(userId: string, query: string): void {
-  const current = readClientWorkspace(userId);
   const trimmed = query.trim();
-
-  if (!trimmed) {
-    return;
-  }
-
-  const next: ClientWorkspace = {
-    ...current,
-    lastSearchQuery: trimmed,
-  };
-
-  const nextWithActivity = appendActivity(next, {
-    type: "search",
-    title: "Search",
-    detail: trimmed,
-  });
-
-  writeClientWorkspace(userId, nextWithActivity);
+  if (!trimmed) return;
+  patchUiCache(userId, { lastSearchQuery: trimmed });
 }
 
-export function exportClientWorkspaceSnapshot(userId: string) {
-  const workspace = readClientWorkspace(userId);
+// ── Legacy migration helpers ──────────────────────────────────────────────────
+// Reads old workspace format (before MongoDB migration) for one-time data migration.
 
+const LEGACY_WORKSPACE_KEY = "low-analysis.client.workspace";
+const LEGACY_MIGRATION_KEY = (userId: string) =>
+  `low-analysis.client.workspace.migrated.${userId}`;
+
+export type LegacyWorkspace = {
+  preferences?: Partial<ClientWorkspacePreferences>;
+  savedArticles?: SavedArticleItem[];
+  focusTopics?: ClientFocusTopic[];
+  activity?: ClientActivityItem[];
+  lastViewedLawId?: string;
+  lastViewedLawTitle?: string;
+  lastViewedArticleNum?: string;
+  lastViewedArticleTitle?: string;
+  lastSearchQuery?: string;
+};
+
+export function readLegacyWorkspace(userId: string): LegacyWorkspace | null {
+  if (!isBrowser()) return null;
+  try {
+    const raw = localStorage.getItem(LEGACY_WORKSPACE_KEY);
+    if (!raw) return null;
+    const store = JSON.parse(raw) as Record<string, LegacyWorkspace>;
+    return store[userId] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearLegacyWorkspace(userId: string) {
+  if (!isBrowser()) return;
+  try {
+    const raw = localStorage.getItem(LEGACY_WORKSPACE_KEY);
+    if (!raw) return;
+    const store = JSON.parse(raw) as Record<string, unknown>;
+    delete store[userId];
+    if (Object.keys(store).length === 0) {
+      localStorage.removeItem(LEGACY_WORKSPACE_KEY);
+    } else {
+      localStorage.setItem(LEGACY_WORKSPACE_KEY, JSON.stringify(store));
+    }
+  } catch {
+    // ignore
+  }
+}
+
+export function isWorkspaceMigrationDone(userId: string): boolean {
+  if (!isBrowser()) return true;
+  return localStorage.getItem(LEGACY_MIGRATION_KEY(userId)) === "1";
+}
+
+export function markWorkspaceMigrationDone(userId: string) {
+  if (!isBrowser()) return;
+  try {
+    localStorage.setItem(LEGACY_MIGRATION_KEY(userId), "1");
+  } catch {
+    // ignore
+  }
+}
+
+// ── Export snapshot (reads from API now, just returns a stub) ─────────────────
+// Components that need export should call API directly; this is kept for compat.
+export function exportClientWorkspaceSnapshot(_userId: string): string {
   return JSON.stringify(
     {
       exportedAt: new Date().toISOString(),
-      summary: {
-        savedArticles: workspace.savedArticles.length,
-        focusTopics: workspace.focusTopics.length,
-      },
-      workspace,
+      note: "Data is now stored in the database. Use the API to export your workspace.",
     },
     null,
     2,

@@ -85,3 +85,12 @@ export const withdrawProposal = async (req, res, next) => {
     next(err);
   }
 };
+
+export const deleteProposal = async (req, res, next) => {
+  try {
+    await proposalService.deleteProposal(req.params.id, req.user._id);
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+};

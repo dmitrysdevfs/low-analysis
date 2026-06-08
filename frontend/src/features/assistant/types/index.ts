@@ -37,11 +37,21 @@ export interface AssistantConfig {
   mode: "stub" | "llm";
 }
 
+export type AssistantRole =
+  | "general"
+  | "lawyer"
+  | "prosecutor"
+  | "judge"
+  | "notary"
+  | "business";
+
 export interface AssistantChatContext {
   mode?: "general" | "law" | "article";
   contextLawId?: string;
   contextArticleNum?: string;
   planId?: string;
+  role?: AssistantRole;
+  lawTitle?: string;
 }
 
 export interface StreamEvent {

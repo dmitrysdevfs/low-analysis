@@ -1,0 +1,82 @@
+import Element from '../../models/Element.js';
+import Law from '../../models/Law.js';
+
+const MAX_TOKENS = 6;
+const TOP_K = 3;
+const TEXT_TRUNCATE = 800;
+
+function tokenize(query) {
+  return [
+    ...new Set(
+      query
+        .toLowerCase()
+        .replace(/[^\wа-яіїєґ\s]/gi, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length > 3)
+        .slice(0, MAX_TOKENS),
+    ),
+  ];
+}
+
+/**
+ * Retrieve top-K relevant articles from MongoDB using regex scoring.
+ * Returns enriched source objects ready for SSE DONE and system prompt injection.
+ */
+export async function retrieveRelevantArticles(query, contextLawId = null) {
+  try {
+    const tokens = tokenize(query);
+    if (!tokens.length) return [];
+
+    const escapedTokens = tokens.map((t) =>
+      t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    );
+    const regex = new RegExp(escapedTokens.join('|'), 'i');
+
+    const filter = {
+      type: 'article',
+      $or: [{ text: regex }, { title: regex }],
+    };
+    if (contextLawId) {
+      filter.lawId = contextLawId;
+    }
+
+    const candidates = await Element.find(filter)
+      .select('lawId number title text')
+      .limit(20)
+      .lean();
+
+    if (!candidates.length) return [];
+
+    const scored = candidates.map((el) => {
+      const haystack = `${el.title || ''} ${el.text || ''}`.toLowerCase();
+      const hits = escapedTokens.filter((t) =>
+        new RegExp(t, 'i').test(haystack),
+      ).length;
+      return { ...el, _hits: hits };
+    });
+
+    const top = scored.sort((a, b) => b._hits - a._hits).slice(0, TOP_K);
+
+    const lawIds = [...new Set(top.map((e) => e.lawId))];
+    const laws = await Law.find({ code: { $in: lawIds } })
+      .select('code title source')
+      .lean();
+    const lawMap = Object.fromEntries(laws.map((l) => [l.code, l]));
+
+    return top.map((el, idx) => {
+      const law = lawMap[el.lawId] || {};
+      return {
+        index: idx,
+        lawId: el.lawId,
+        lawTitle: law.title || el.lawId,
+        articleNum: el.number || '',
+        articleTitle: el.title || '',
+        text: (el.text || '').slice(0, TEXT_TRUNCATE),
+        sourceUrl: law.source || null,
+      };
+    });
+  } catch (err) {
+    console.error('[assistant.retriever] error:', err.message);
+    return [];
+  }
+}

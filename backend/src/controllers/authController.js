@@ -2,6 +2,32 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import { getActiveCode } from '../services/admin/superCode.service.js';
 
+const COOKIE_NAME = 'token';
+const COOKIE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+function setCookieToken(res, token) {
+  res.cookie(COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    maxAge: COOKIE_MAX_AGE_MS,
+    path: '/',
+  });
+}
+
+function clearCookieToken(res) {
+  res.clearCookie(COOKIE_NAME, { path: '/' });
+}
+
+function detectRegistrationSource(referrer) {
+  if (!referrer) return { referrer: null, source: 'direct' };
+  if (/google\./i.test(referrer)) return { referrer, source: 'google' };
+  if (/bing\./i.test(referrer)) return { referrer, source: 'bing' };
+  if (/facebook\.|instagram\.|twitter\.|linkedin\.|tiktok\./i.test(referrer))
+    return { referrer, source: 'social' };
+  return { referrer, source: 'link' };
+}
+
 /**
  * @desc    Register a new user
  * @route   POST /api/auth/register
@@ -17,7 +43,6 @@ export const registerUser = async (req, res) => {
   }
 
   const userExists = await User.findOne({ email });
-
   if (userExists) {
     return res.status(400).json({ message: 'User already exists' });
   }
@@ -33,20 +58,28 @@ export const registerUser = async (req, res) => {
     role = 'admin';
   }
 
+  const rawReferrer =
+    req.body.registrationReferrer || req.headers.referer || null;
+  const registrationSource = detectRegistrationSource(rawReferrer);
+
   const user = await User.create({
     email,
     password,
     fullName: finalFullName,
     role,
+    registrationSource,
   });
 
   if (user) {
+    const token = generateToken(user._id);
+    setCookieToken(res, token);
     res.status(201).json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      // token still returned in body for backward compat with existing clients
+      token,
     });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
@@ -73,12 +106,15 @@ export const loginUser = async (req, res) => {
   }).select('+password');
 
   if (user && (await user.comparePassword(password))) {
+    const token = generateToken(user._id);
+    setCookieToken(res, token);
     res.json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      // token still returned in body for backward compat
+      token,
     });
   } else {
     res.status(401).json({ message: 'Invalid email or password' });
@@ -156,9 +192,9 @@ export const updateUserPassword = async (req, res) => {
         ? 3
         : 8;
     if (nextPassword.length < minLength) {
-      return res.status(400).json({
-        message: `Password must be at least ${minLength} characters`,
-      });
+      return res
+        .status(400)
+        .json({ message: `Password must be at least ${minLength} characters` });
     }
 
     const isMatch = await user.comparePassword(currentPassword);
@@ -176,12 +212,11 @@ export const updateUserPassword = async (req, res) => {
 };
 
 /**
- * @desc    Logout user / clear cookie
+ * @desc    Logout user — clears httpOnly cookie
  * @route   POST /api/auth/logout
  * @access  Public
  */
 export const logoutUser = (req, res) => {
-  // Since we're using JWT in headers, client just needs to discard the token.
-  // We can also use HttpOnly cookies if requested, but for now we follow the checklist.
+  clearCookieToken(res);
   res.json({ message: 'Logged out successfully' });
 };

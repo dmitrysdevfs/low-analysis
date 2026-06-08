@@ -34,6 +34,11 @@ const sessionSchema = new mongoose.Schema(
       enum: ['general', 'law', 'article'],
       default: 'general',
     },
+    role: {
+      type: String,
+      enum: ['general', 'lawyer', 'prosecutor', 'judge', 'notary', 'business'],
+      default: 'general',
+    },
     contextLawId: { type: String, default: null },
     contextArticleNum: { type: String, default: null },
   },

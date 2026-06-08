@@ -5,6 +5,7 @@ import * as ctrl from '../../controllers/admin/users.controller.js';
 const router = Router();
 router.use(protect, authorize('admin'));
 router.get('/', ctrl.listUsers);
+router.get('/:id', ctrl.getUser);
 router.patch('/:id/status', ctrl.setStatus);
 router.patch('/:id/role', ctrl.setRole);
 router.patch('/:id/billing', ctrl.setBilling);

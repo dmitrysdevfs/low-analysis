@@ -6,20 +6,28 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { useBilling } from "@/components/billing/BillingProvider";
 import { useNotes } from "@/hooks/useNotes";
 import { ROUTES } from "@/constants/routes";
+import { preferencesApi, savedApi, topicsApi } from "@/lib/api/me";
 import {
-  addWorkspaceFocusTopic,
-  appendWorkspaceActivity,
-  exportClientWorkspaceSnapshot,
-  removeWorkspaceFocusTopic,
-  readClientWorkspace,
   type ClientWorkspacePreferences,
-  updateWorkspacePreferences,
-  type ClientWorkspace,
+  type SavedArticleItem,
+  type ClientFocusTopic,
   type WorkspacePreferenceKey,
+  readUiCache,
+  readLegacyWorkspace,
+  clearLegacyWorkspace,
+  isWorkspaceMigrationDone,
+  markWorkspaceMigrationDone,
 } from "@/lib/auth/clientWorkspace";
 import { notify } from "@/lib/toast";
 import { formatDateFull } from "@/lib/utils";
 import styles from "./ClientWorkspace.module.scss";
+
+const DEFAULT_PREFS: ClientWorkspacePreferences = {
+  emailAlerts: true,
+  searchHighlights: true,
+  compactMode: false,
+  weeklyDigest: true,
+};
 
 const PREFERENCE_COPY: Array<{
   key: WorkspacePreferenceKey;
@@ -53,7 +61,17 @@ export function ClientWorkspaceHome() {
   const { subscription } = useBilling();
   const { notes } = useNotes();
   const userId = user?.id;
-  const [workspace, setWorkspace] = useState<ClientWorkspace | null>(null);
+
+  // UI cache from localStorage (lastViewed, lastSearch)
+  const uiCache = useMemo(() => (userId ? readUiCache(userId) : {}), [userId]);
+
+  // API-backed state
+  const [preferences, setPreferences] =
+    useState<ClientWorkspacePreferences>(DEFAULT_PREFS);
+  const [savedArticles, setSavedArticles] = useState<SavedArticleItem[]>([]);
+  const [focusTopics, setFocusTopics] = useState<ClientFocusTopic[]>([]);
+
+  // Form state
   const [displayName, setDisplayName] = useState("");
   const [focusTopic, setFocusTopic] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -61,23 +79,79 @@ export function ClientWorkspaceHome() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    if (!userId || !user) {
-      return;
-    }
-
-    setWorkspace(readClientWorkspace(userId));
+    if (!user || !userId) return;
     setDisplayName(user.displayName);
   }, [user, userId]);
 
-  const stats = useMemo(() => {
-    if (!workspace || !user) {
-      return [];
-    }
+  // Load all API data + one-time migration from legacy localStorage
+  useEffect(() => {
+    if (!userId) return;
 
+    (async () => {
+      const needsMigration = !isWorkspaceMigrationDone(userId);
+      const legacy = needsMigration ? readLegacyWorkspace(userId) : null;
+
+      const [prefsResult, savedResult, topicsResult] = await Promise.allSettled(
+        [preferencesApi.get(), savedApi.getAll(), topicsApi.getAll()],
+      );
+
+      if (prefsResult.status === "fulfilled") {
+        setPreferences({ ...DEFAULT_PREFS, ...prefsResult.value });
+      }
+      if (savedResult.status === "fulfilled") {
+        setSavedArticles(savedResult.value);
+      }
+      if (topicsResult.status === "fulfilled") {
+        setFocusTopics(topicsResult.value);
+      }
+
+      // migrate legacy data if needed
+      if (needsMigration && legacy) {
+        try {
+          if (legacy.preferences) {
+            await preferencesApi.update(legacy.preferences);
+          }
+          if (legacy.savedArticles?.length) {
+            await savedApi.migrate(
+              legacy.savedArticles.map(
+                ({ lawId, title, code, note, tags }) => ({
+                  lawId,
+                  title,
+                  code,
+                  note: note ?? "",
+                  tags: tags ?? [],
+                }),
+              ),
+            );
+          }
+          if (legacy.focusTopics?.length) {
+            await topicsApi.migrate(
+              legacy.focusTopics.map(({ label }) => ({ label })),
+            );
+          }
+          clearLegacyWorkspace(userId);
+        } catch {
+          // migration failed — will retry next session
+        }
+        markWorkspaceMigrationDone(userId);
+
+        // refresh after migration
+        const [s, t] = await Promise.allSettled([
+          savedApi.getAll(),
+          topicsApi.getAll(),
+        ]);
+        if (s.status === "fulfilled") setSavedArticles(s.value);
+        if (t.status === "fulfilled") setFocusTopics(t.value);
+      }
+    })();
+  }, [userId]);
+
+  const stats = useMemo(() => {
+    if (!user) return [];
     return [
       {
         label: "Збережені статті",
-        value: workspace.savedArticles.length,
+        value: savedArticles.length,
         note: "Закріплені юридичні документи, готові для швидкого доступу.",
       },
       {
@@ -87,7 +161,7 @@ export function ClientWorkspaceHome() {
       },
       {
         label: "Режим робочого простору",
-        value: workspace.preferences.compactMode ? "Компактний" : "Класичний",
+        value: preferences.compactMode ? "Компактний" : "Класичний",
         note: "Поточний макет читання для щоденних досліджень.",
       },
       {
@@ -107,11 +181,12 @@ export function ClientWorkspaceHome() {
     subscription?.description,
     subscription?.plan?.label,
     user,
-    workspace,
+    savedArticles.length,
     notes.length,
+    preferences.compactMode,
   ]);
 
-  const latestSaved = workspace?.savedArticles[0] ?? null;
+  const latestSaved = savedArticles[0] ?? null;
   const pinnedNote = notes.find((note) => note.pinned) ?? notes[0] ?? null;
 
   const pinnedNoteTitle = useMemo(() => {
@@ -123,139 +198,113 @@ export function ClientWorkspaceHome() {
         : (pinnedNote.noteText.slice(0, 60) ?? "Нотатка");
   }, [pinnedNote]);
 
-  const recentActivity = workspace?.activity.slice(0, 6) ?? [];
-
-  if (!user || !workspace) {
-    return null;
-  }
+  if (!user) return null;
 
   async function handleProfileSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     const result = await updateProfile(displayName);
-
     if (!result.ok) {
       notify.warning(result.error ?? "Не вдалося оновити профіль.");
       return;
     }
-
-    if (userId) {
-      setWorkspace(
-        appendWorkspaceActivity(userId, {
-          type: "profile",
-          title: "Профіль оновлено",
-          detail: `Відображуване ім'я змінено на ${displayName.trim()}.`,
-        }),
-      );
-    }
-
     notify.success("Ім'я оновлено.");
   }
 
   async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (nextPassword.length < 8) {
       notify.warning("Пароль має містити щонайменше 8 символів.");
       return;
     }
-
     if (nextPassword !== confirmPassword) {
       notify.warning("Новий пароль і підтвердження не збігаються.");
       return;
     }
-
     const result = await changePassword(currentPassword, nextPassword);
-
     if (!result.ok) {
       notify.warning(result.error ?? "Не вдалося змінити пароль.");
       return;
     }
-
     notify.success("Пароль успішно оновлено.");
     setCurrentPassword("");
     setNextPassword("");
     setConfirmPassword("");
+  }
 
-    if (userId) {
-      setWorkspace(
-        appendWorkspaceActivity(userId, {
-          type: "security",
-          title: "Пароль змінено",
-          detail: "Облікові дані оновлено.",
-        }),
-      );
+  async function handleTogglePreference(key: WorkspacePreferenceKey) {
+    const patch = {
+      [key]: !preferences[key],
+    } as Partial<ClientWorkspacePreferences>;
+    // optimistic update
+    setPreferences((prev) => ({ ...prev, ...patch }));
+    try {
+      const updated = await preferencesApi.update(patch);
+      setPreferences({ ...DEFAULT_PREFS, ...updated });
+    } catch {
+      // revert
+      setPreferences((prev) => ({ ...prev, [key]: !patch[key] }));
+      notify.warning("Не вдалося зберегти налаштування.");
     }
   }
 
-  function handleTogglePreference(key: WorkspacePreferenceKey) {
-    if (!userId || !workspace) {
-      return;
-    }
-
-    const nextWorkspace = updateWorkspacePreferences(userId, {
-      [key]: !workspace.preferences[key],
-    } as Partial<ClientWorkspacePreferences>);
-
-    setWorkspace(nextWorkspace);
-  }
-
-  function handleAddFocusTopic(event: FormEvent<HTMLFormElement>) {
+  async function handleAddFocusTopic(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (!userId || !workspace) {
-      return;
-    }
-
     if (focusTopic.trim().length < 2) {
       notify.warning("Введіть конкретнішу юридичну тему перед збереженням.");
       return;
     }
-
-    const nextWorkspace = addWorkspaceFocusTopic(userId, focusTopic);
-
-    if (nextWorkspace.focusTopics.length === workspace.focusTopics.length) {
+    const exists = focusTopics.some(
+      (t) => t.label.toLowerCase() === focusTopic.trim().toLowerCase(),
+    );
+    if (exists) {
       notify.info("Ця тема вже відстежується в кабінеті.");
       return;
     }
-
-    setWorkspace(nextWorkspace);
-    setFocusTopic("");
-    notify.success("Тему досліджень додано.");
+    try {
+      const topic = await topicsApi.create(focusTopic.trim());
+      setFocusTopics((prev) => [topic, ...prev]);
+      setFocusTopic("");
+      notify.success("Тему досліджень додано.");
+    } catch {
+      notify.warning("Не вдалося додати тему.");
+    }
   }
 
-  function handleRemoveFocusTopic(topicId: string) {
-    if (!userId) {
-      return;
+  async function handleRemoveFocusTopic(topicId: string) {
+    try {
+      await topicsApi.delete(topicId);
+      setFocusTopics((prev) => prev.filter((t) => t.id !== topicId));
+      notify.info("Тему досліджень видалено.");
+    } catch {
+      notify.warning("Не вдалося видалити тему.");
     }
-
-    const nextWorkspace = removeWorkspaceFocusTopic(userId, topicId);
-    setWorkspace(nextWorkspace);
-    notify.info("Тему досліджень видалено.");
   }
 
   function handleExportWorkspace() {
-    if (!userId) {
-      return;
-    }
-
-    const json = exportClientWorkspaceSnapshot(userId);
+    if (!user) return;
+    const json = JSON.stringify(
+      {
+        exportedAt: new Date().toISOString(),
+        user: { id: user.id, displayName: user.displayName, email: user.email },
+        summary: {
+          savedArticles: savedArticles.length,
+          focusTopics: focusTopics.length,
+          notes: notes.length,
+        },
+        savedArticles,
+        focusTopics,
+        preferences,
+      },
+      null,
+      2,
+    );
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
-
     anchor.href = url;
     anchor.download = `low-analysis-workspace-${userId}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
-
-    setWorkspace(
-      appendWorkspaceActivity(userId, {
-        type: "export",
-        title: "Кабінет експортовано",
-        detail: "Знімок кабінету завантажено як JSON-файл.",
-      }),
-    );
     notify.success("Експорт кабінету завантажено.");
   }
 
@@ -326,37 +375,37 @@ export function ClientWorkspaceHome() {
         </Link>
       </div>
 
-      {(workspace.lastViewedLawId || workspace.lastSearchQuery) && (
+      {(uiCache.lastViewedLawId || uiCache.lastSearchQuery) && (
         <div className={styles.continuePanel}>
           <span className={`mono ${styles.continueEyebrow}`}>
             Продовжити роботу
           </span>
 
-          {workspace.lastViewedLawId && (
+          {uiCache.lastViewedLawId && (
             <Link
-              href={`/laws/${workspace.lastViewedLawId}`}
+              href={`/laws/${uiCache.lastViewedLawId}`}
               className={styles.continueItem}
             >
               <span className={styles.continueIcon}>§</span>
               <span className={styles.continueText}>
-                {workspace.lastViewedLawTitle ?? "Закон"}
+                {uiCache.lastViewedLawTitle ?? "Закон"}
               </span>
-              {workspace.lastViewedArticleNum && (
+              {uiCache.lastViewedArticleNum && (
                 <span className={styles.continueDetail}>
-                  → ст. {workspace.lastViewedArticleNum}
+                  → ст. {uiCache.lastViewedArticleNum}
                 </span>
               )}
             </Link>
           )}
 
-          {workspace.lastSearchQuery && (
+          {uiCache.lastSearchQuery && (
             <Link
-              href={`/search/results?q=${encodeURIComponent(workspace.lastSearchQuery)}`}
+              href={`/search/results?q=${encodeURIComponent(uiCache.lastSearchQuery)}`}
               className={styles.continueItem}
             >
               <span className={styles.continueIcon}>⌕</span>
               <span className={styles.continueText}>
-                "{workspace.lastSearchQuery}"
+                "{uiCache.lastSearchQuery}"
               </span>
             </Link>
           )}
@@ -602,9 +651,9 @@ export function ClientWorkspaceHome() {
             </div>
           </form>
 
-          {workspace.focusTopics.length > 0 ? (
+          {focusTopics.length > 0 ? (
             <div className={styles.focusList}>
-              {workspace.focusTopics.map((topic) => (
+              {focusTopics.map((topic) => (
                 <div key={topic.id} className={styles.focusChip}>
                   <span>{topic.label}</span>
                   <button
@@ -645,10 +694,10 @@ export function ClientWorkspaceHome() {
 
                 <button
                   type="button"
-                  className={`${styles.ghostButton} ${workspace.preferences[item.key] ? styles.toggleButtonActive : ""}`}
+                  className={`${styles.ghostButton} ${preferences[item.key] ? styles.toggleButtonActive : ""}`}
                   onClick={() => handleTogglePreference(item.key)}
                 >
-                  {workspace.preferences[item.key] ? "Увімкнено" : "Вимкнено"}
+                  {preferences[item.key] ? "Увімкнено" : "Вимкнено"}
                 </button>
               </div>
             ))}
@@ -656,40 +705,6 @@ export function ClientWorkspaceHome() {
         </article>
 
         <article className={`${styles.panel} ${styles.panelWide}`}>
-          <div className={styles.panelHeader}>
-            <div>
-              <span className={styles.panelEyebrow}>Активність</span>
-              <h2 className={styles.panelTitle}>Остання хронологія простору</h2>
-            </div>
-          </div>
-
-          {recentActivity.length > 0 ? (
-            <div className={styles.activityList}>
-              {recentActivity.map((item) => (
-                <div key={item.id} className={styles.activityRow}>
-                  <div className={styles.activityDot} />
-                  <div className={styles.activityContent}>
-                    <div className={styles.activityTopRow}>
-                      <span className={styles.activityTitle}>{item.title}</span>
-                      <span className={styles.activityTime}>
-                        {formatDateFull(item.createdAt)}
-                      </span>
-                    </div>
-                    <div className={styles.activityDetail}>{item.detail}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className={styles.emptyState}>
-              Дії в робочому просторі з'являться тут, коли ви зберігатимете
-              закони, редагуватимете нотатки, оновлюватимете налаштування та
-              формуватимете свій дослідницький процес.
-            </div>
-          )}
-        </article>
-
-        <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
               <span className={styles.panelEyebrow}>Простір</span>
@@ -708,7 +723,7 @@ export function ClientWorkspaceHome() {
               </div>
               <div className={styles.workspaceActions}>
                 <span className={styles.badge}>
-                  {workspace.savedArticles.length} елем.
+                  {savedArticles.length} елем.
                 </span>
                 <Link href={ROUTES.accountSaved} className={styles.linkText}>
                   Відкрити список

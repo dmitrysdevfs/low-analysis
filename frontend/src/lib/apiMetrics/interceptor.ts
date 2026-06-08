@@ -16,7 +16,14 @@ function normalizePath(rawUrl: string): string {
 
 function getCostHint(normalized: string): CostHint {
   if (normalized.includes("/tree")) return "heavy";
-  if (normalized.includes("/stats") || normalized.includes("/articles"))
+  if (normalized.includes("/parse")) return "critical";
+  if (normalized.includes("/chat/stream")) return "heavy";
+  if (
+    normalized.includes("/stats") ||
+    normalized.includes("/articles") ||
+    normalized.includes("/heatmap") ||
+    normalized.includes("/sessions")
+  )
     return "medium";
   return "light";
 }

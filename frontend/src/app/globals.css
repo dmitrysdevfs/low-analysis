@@ -14,6 +14,72 @@
   --color-ink-soft: #d6e0f0;
   --color-smoke: #7a98c0;
   --color-smoke-light: #a8bedd;
+
+  /* ── Theme variables (default: Navy + Gold) ───────────────────────── */
+  --th-accent: #c8a843;
+  --th-accent-bg-subtle: rgba(200, 168, 67, 0.08);
+  --th-accent-bg: rgba(200, 168, 67, 0.12);
+  --th-accent-bg-strong: rgba(200, 168, 67, 0.16);
+  --th-accent-border-subtle: rgba(200, 168, 67, 0.24);
+  --th-accent-border: rgba(200, 168, 67, 0.35);
+  --th-accent-border-strong: rgba(200, 168, 67, 0.45);
+  --th-topbar-bg: rgba(7, 17, 38, 0.6);
+  --th-sidebar-bg: rgba(6, 13, 28, 0.94);
+  --th-canvas: #080f20;
+  --th-muted: #9eb5d9;
+  --th-bg-grad-top: rgba(26, 62, 138, 0.28);
+  --th-bg-grad-bottom: rgba(200, 168, 67, 0.08);
+}
+
+[data-theme="teal"] {
+  --color-canvas: #01181e;
+  --th-accent: #bdd9d7;
+  --th-accent-bg-subtle: rgba(189, 217, 215, 0.08);
+  --th-accent-bg: rgba(189, 217, 215, 0.12);
+  --th-accent-bg-strong: rgba(189, 217, 215, 0.16);
+  --th-accent-border-subtle: rgba(189, 217, 215, 0.24);
+  --th-accent-border: rgba(189, 217, 215, 0.35);
+  --th-accent-border-strong: rgba(189, 217, 215, 0.45);
+  --th-topbar-bg: rgba(2, 25, 30, 0.6);
+  --th-sidebar-bg: rgba(2, 18, 22, 0.94);
+  --th-canvas: #01181e;
+  --th-muted: #7ab5b0;
+  --th-bg-grad-top: rgba(3, 54, 61, 0.28);
+  --th-bg-grad-bottom: rgba(189, 217, 215, 0.08);
+}
+
+[data-theme="violet"] {
+  --color-canvas: #0d0d2a;
+  --th-accent: #6260ff;
+  --th-accent-bg-subtle: rgba(98, 96, 255, 0.08);
+  --th-accent-bg: rgba(98, 96, 255, 0.12);
+  --th-accent-bg-strong: rgba(98, 96, 255, 0.16);
+  --th-accent-border-subtle: rgba(98, 96, 255, 0.24);
+  --th-accent-border: rgba(98, 96, 255, 0.35);
+  --th-accent-border-strong: rgba(98, 96, 255, 0.45);
+  --th-topbar-bg: rgba(10, 10, 38, 0.6);
+  --th-sidebar-bg: rgba(7, 7, 26, 0.94);
+  --th-canvas: #0d0d2a;
+  --th-muted: #aeadf5;
+  --th-bg-grad-top: rgba(60, 58, 200, 0.28);
+  --th-bg-grad-bottom: rgba(98, 96, 255, 0.08);
+}
+
+[data-theme="sun"] {
+  --color-canvas: #141d38;
+  --th-accent: #fcdb32;
+  --th-accent-bg-subtle: rgba(252, 219, 50, 0.08);
+  --th-accent-bg: rgba(252, 219, 50, 0.12);
+  --th-accent-bg-strong: rgba(252, 219, 50, 0.16);
+  --th-accent-border-subtle: rgba(252, 219, 50, 0.24);
+  --th-accent-border: rgba(252, 219, 50, 0.35);
+  --th-accent-border-strong: rgba(252, 219, 50, 0.45);
+  --th-topbar-bg: rgba(18, 26, 50, 0.6);
+  --th-sidebar-bg: rgba(13, 20, 40, 0.94);
+  --th-canvas: #141d38;
+  --th-muted: #bcc5e0;
+  --th-bg-grad-top: rgba(26, 62, 138, 0.28);
+  --th-bg-grad-bottom: rgba(252, 219, 50, 0.08);
 }
 
 @theme inline {
@@ -38,15 +104,15 @@ body {
   background:
     radial-gradient(
       circle at top right,
-      rgba(26, 62, 138, 0.28),
+      var(--th-bg-grad-top),
       transparent 28%
     ),
     radial-gradient(
       circle at bottom left,
-      rgba(200, 168, 67, 0.08),
+      var(--th-bg-grad-bottom),
       transparent 24%
     ),
-    var(--color-canvas);
+    var(--th-canvas);
   color: var(--color-ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
