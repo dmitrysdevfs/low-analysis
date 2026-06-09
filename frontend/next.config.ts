@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
 };
 
 export default withSentryConfig(nextConfig, {
+  org: "law-analysis",
+  project: "javascript-nextjs",
   silent: true,
   disableLogger: true,
   hideSourceMaps: true,

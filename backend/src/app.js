@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -131,6 +132,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });
 });
 
+Sentry.setupExpressErrorHandler(app);
 app.use(errorHandler);
 
 export default app;
