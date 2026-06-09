@@ -219,8 +219,8 @@ describe('GET /api/laws', () => {
     expect(res.body.message).toMatch(/limit/);
   });
 
-  it('returns 400 for limit=101', async () => {
-    const res = await request(app).get('/api/laws?limit=101');
+  it('returns 400 for limit=501', async () => {
+    const res = await request(app).get('/api/laws?limit=501');
 
     expect(res.status).toBe(400);
     expect(res.body.message).toMatch(/limit/);
