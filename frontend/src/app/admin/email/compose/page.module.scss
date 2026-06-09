@@ -1,4 +1,6 @@
-.root { min-height: 0; }
+.root {
+  min-height: 0;
+}
 .successBanner {
   display: flex;
   align-items: center;
@@ -53,9 +55,13 @@
   font-size: 14px;
   box-sizing: border-box;
   outline: none;
-  &:focus { border-color: var(--th-accent, #c9a96e); }
+  &:focus {
+    border-color: var(--th-accent, #c9a96e);
+  }
 }
-.inputMt { margin-top: 8px; }
+.inputMt {
+  margin-top: 8px;
+}
 .select {
   width: 100%;
   padding: 8px 12px;
@@ -66,7 +72,9 @@
   font-size: 14px;
   box-sizing: border-box;
   outline: none;
-  &:focus { border-color: var(--th-accent, #c9a96e); }
+  &:focus {
+    border-color: var(--th-accent, #c9a96e);
+  }
 }
 .textarea {
   width: 100%;
@@ -80,7 +88,9 @@
   resize: vertical;
   outline: none;
   margin-top: 8px;
-  &:focus { border-color: var(--th-accent, #c9a96e); }
+  &:focus {
+    border-color: var(--th-accent, #c9a96e);
+  }
 }
 .themeGrid {
   display: grid;
@@ -96,7 +106,10 @@
   font-size: 13px;
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { border-color: var(--th-accent, #c9a96e); color: var(--th-text, #e8e6df); }
+  &:hover {
+    border-color: var(--th-accent, #c9a96e);
+    color: var(--th-text, #e8e6df);
+  }
 }
 .themeBtnActive {
   border-color: var(--th-accent, #c9a96e);
@@ -121,7 +134,9 @@
   margin-top: 8px;
   font-size: 13px;
   color: var(--th-muted, #8892a4);
-  strong { color: var(--th-accent, #c9a96e); }
+  strong {
+    color: var(--th-accent, #c9a96e);
+  }
 }
 .actions {
   display: flex;
@@ -140,7 +155,10 @@
   font-weight: 700;
   cursor: pointer;
   transition: opacity 0.15s;
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 .btnSecondary {
   padding: 10px 20px;
@@ -152,7 +170,10 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 .errorMsg {
   color: #f87171;

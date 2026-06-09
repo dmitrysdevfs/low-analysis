@@ -32,7 +32,9 @@
   color: var(--th-muted, #8892a4);
   text-decoration: none;
   border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
   margin-bottom: -1px;
   &:hover {
     color: var(--th-text, #e8e6df);

@@ -10,7 +10,9 @@ export default function AdminEmailSettingsPage() {
         <div className={styles.grid}>
           <div className={styles.field}>
             <span className={styles.fieldLabel}>Email відправника</span>
-            <span className={styles.fieldValue}>law.analysis.donate@gmail.com</span>
+            <span className={styles.fieldValue}>
+              law.analysis.donate@gmail.com
+            </span>
           </div>
           <div className={styles.field}>
             <span className={styles.fieldLabel}>Ім&apos;я відправника</span>

@@ -10,7 +10,11 @@ const TABS = [
   { href: ROUTES.adminEmailSettings, label: "Налаштування" },
 ];
 
-export default function AdminEmailLayout({ children }: { children: ReactNode }) {
+export default function AdminEmailLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <div className={styles.root}>
       <div className={styles.header}>

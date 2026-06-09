@@ -13,13 +13,24 @@ const TEMPLATES = [
     slug: "maintenance",
     name: "Технічне обслуговування",
     description: "Сповіщення про заплановані роботи або збої",
-    fields: ["Заголовок", "Текст", "Час початку", "Час завершення", "Кнопка CTA (опціонально)"],
+    fields: [
+      "Заголовок",
+      "Текст",
+      "Час початку",
+      "Час завершення",
+      "Кнопка CTA (опціонально)",
+    ],
   },
   {
     slug: "product-update",
     name: "Оновлення продукту",
     description: "Релізні нотатки та анонс нових функцій",
-    fields: ["Заголовок", "Текст", "Список функцій", "Кнопка CTA (опціонально)"],
+    fields: [
+      "Заголовок",
+      "Текст",
+      "Список функцій",
+      "Кнопка CTA (опціонально)",
+    ],
   },
 ];
 
@@ -34,7 +45,9 @@ export default function AdminEmailTemplatesPage() {
             <div className={styles.cardDesc}>{t.description}</div>
             <div className={styles.cardFields}>
               {t.fields.map((f) => (
-                <span key={f} className={styles.field}>{f}</span>
+                <span key={f} className={styles.field}>
+                  {f}
+                </span>
               ))}
             </div>
           </div>

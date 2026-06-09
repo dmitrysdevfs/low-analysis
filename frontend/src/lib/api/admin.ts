@@ -105,7 +105,7 @@ export type AdminDashboardApiSnapshot = {
 
 export type EmailTheme = { slug: string; name: string };
 export type EmailAudience = {
-  type: 'all' | 'role' | 'billing' | 'custom';
+  type: "all" | "role" | "billing" | "custom";
   roles?: string[];
   billingPlans?: string[];
   customEmails?: string[];
@@ -117,7 +117,7 @@ export type EmailCampaign = {
   templateSlug: string;
   theme: string;
   audience: EmailAudience;
-  status: 'draft' | 'sending' | 'sent' | 'failed';
+  status: "draft" | "sending" | "sent" | "failed";
   sentAt?: string;
   recipientCount: number;
   deliveredCount: number;
@@ -131,10 +131,15 @@ export type EmailLog = {
   campaignId: string;
   recipientEmail: string;
   recipientName?: string;
-  status: 'sent' | 'delivered' | 'opened' | 'clicked' | 'bounced' | 'failed';
+  status: "sent" | "delivered" | "opened" | "clicked" | "bounced" | "failed";
   createdAt: string;
 };
-export type EmailSendResult = { ok: boolean; campaignId: string; sent: number; total: number };
+export type EmailSendResult = {
+  ok: boolean;
+  campaignId: string;
+  sent: number;
+  total: number;
+};
 export type EmailComposePayload = {
   subject: string;
   previewText?: string;
@@ -229,17 +234,33 @@ export const adminApi = {
       body: JSON.stringify({ items }),
     }),
 
-  getEmailThemes: () => adminFetch<EmailTheme[]>('/email/themes'),
-  previewEmail: (payload: Omit<EmailComposePayload, 'audience'>) =>
-    adminFetch<{ html: string }>('/email/preview', { method: 'POST', body: JSON.stringify(payload) }),
+  getEmailThemes: () => adminFetch<EmailTheme[]>("/email/themes"),
+  previewEmail: (payload: Omit<EmailComposePayload, "audience">) =>
+    adminFetch<{ html: string }>("/email/preview", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   previewAudienceCount: (audience: EmailAudience) =>
-    adminFetch<{ count: number }>('/email/audience-preview', { method: 'POST', body: JSON.stringify(audience) }),
-  getEmailCampaigns: () => adminFetch<EmailCampaign[]>('/email/campaigns'),
+    adminFetch<{ count: number }>("/email/audience-preview", {
+      method: "POST",
+      body: JSON.stringify(audience),
+    }),
+  getEmailCampaigns: () => adminFetch<EmailCampaign[]>("/email/campaigns"),
   sendEmail: (payload: EmailComposePayload) =>
-    adminFetch<EmailSendResult>('/email/send', { method: 'POST', body: JSON.stringify(payload) }),
+    adminFetch<EmailSendResult>("/email/send", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   saveDraftCampaign: (payload: EmailComposePayload) =>
-    adminFetch<EmailCampaign>('/email/campaigns', { method: 'POST', body: JSON.stringify(payload) }),
+    adminFetch<EmailCampaign>("/email/campaigns", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   sendCampaign: (id: string) =>
-    adminFetch<{ ok: boolean; sent: number; total: number }>(`/email/campaigns/${id}/send`, { method: 'POST' }),
-  getCampaignLogs: (id: string) => adminFetch<EmailLog[]>(`/email/campaigns/${id}/logs`),
+    adminFetch<{ ok: boolean; sent: number; total: number }>(
+      `/email/campaigns/${id}/send`,
+      { method: "POST" },
+    ),
+  getCampaignLogs: (id: string) =>
+    adminFetch<EmailLog[]>(`/email/campaigns/${id}/logs`),
 };

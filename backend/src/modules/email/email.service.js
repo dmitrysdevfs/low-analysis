@@ -26,8 +26,8 @@ export async function sendBulkEmails({ recipients, subject, htmlContent }) {
     const batch = recipients.slice(i, i + batchSize);
     const promises = batch.map(({ email, name }) =>
       sendTransactionalEmail({ to: [{ email, name }], subject, htmlContent })
-        .then(res => ({ email, success: true, messageId: res?.messageId }))
-        .catch(err => ({ email, success: false, error: err.message }))
+        .then((res) => ({ email, success: true, messageId: res?.messageId }))
+        .catch((err) => ({ email, success: false, error: err.message })),
     );
     const batchResults = await Promise.all(promises);
     results.push(...batchResults);

@@ -1,8 +1,13 @@
 import User from '../../models/User.js';
 
-export async function buildAudience({ type, roles, billingPlans, customEmails }) {
+export async function buildAudience({
+  type,
+  roles,
+  billingPlans,
+  customEmails,
+}) {
   if (type === 'custom') {
-    return customEmails.map(email => ({ email, name: email }));
+    return customEmails.map((email) => ({ email, name: email }));
   }
 
   const query = { status: 'active' };
@@ -14,10 +19,15 @@ export async function buildAudience({ type, roles, billingPlans, customEmails })
   }
 
   const users = await User.find(query).select('email fullName').lean();
-  return users.map(u => ({ email: u.email, name: u.fullName || u.email }));
+  return users.map((u) => ({ email: u.email, name: u.fullName || u.email }));
 }
 
-export async function previewAudienceCount({ type, roles, billingPlans, customEmails }) {
+export async function previewAudienceCount({
+  type,
+  roles,
+  billingPlans,
+  customEmails,
+}) {
   if (type === 'custom') {
     return customEmails?.length || 0;
   }

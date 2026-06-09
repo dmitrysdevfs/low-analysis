@@ -68,7 +68,9 @@ export function ForgotPasswordScreen() {
         {sent ? (
           <div>
             <p className={styles.subtitle}>
-              Якщо акаунт з такою поштою існує — ми надіслали лист із посиланням для відновлення. Перевірте папку &quot;Вхідні&quot; та &quot;Спам&quot;.
+              Якщо акаунт з такою поштою існує — ми надіслали лист із посиланням
+              для відновлення. Перевірте папку &quot;Вхідні&quot; та
+              &quot;Спам&quot;.
             </p>
             <button
               type="button"
@@ -82,7 +84,8 @@ export function ForgotPasswordScreen() {
         ) : (
           <>
             <p className={styles.subtitle}>
-              Введіть email вашого акаунту — ми надішлемо посилання для відновлення паролю.
+              Введіть email вашого акаунту — ми надішлемо посилання для
+              відновлення паролю.
             </p>
 
             <form className={styles.form} onSubmit={handleSubmit} noValidate>

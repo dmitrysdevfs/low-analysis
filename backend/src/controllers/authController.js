@@ -235,20 +235,28 @@ export const forgotPassword = async (req, res) => {
   }
 
   // Always respond 200 to avoid confirming email existence
-  const user = await User.findOne({ email: email.toLowerCase().trim() }).select('+resetPasswordToken +resetPasswordExpiry');
+  const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
+    '+resetPasswordToken +resetPasswordExpiry',
+  );
   if (!user) {
-    return res.json({ message: 'If this email exists, a reset link was sent.' });
+    return res.json({
+      message: 'If this email exists, a reset link was sent.',
+    });
   }
 
   // Generate token
   const rawToken = crypto.randomBytes(32).toString('hex');
-  const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(rawToken)
+    .digest('hex');
 
   user.resetPasswordToken = hashedToken;
   user.resetPasswordExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
   await user.save({ validateBeforeSave: false });
 
-  const frontendUrl = process.env.FRONTEND_URL || 'https://low-analysis-frontend.vercel.app';
+  const frontendUrl =
+    process.env.FRONTEND_URL || 'https://low-analysis-frontend.vercel.app';
   const resetUrl = `${frontendUrl}/auth/reset-password?token=${rawToken}`;
 
   const htmlContent = `<!DOCTYPE html>
@@ -284,7 +292,9 @@ export const forgotPassword = async (req, res) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpiry = undefined;
     await user.save({ validateBeforeSave: false });
-    return res.status(500).json({ message: 'Email could not be sent. Please try again.' });
+    return res
+      .status(500)
+      .json({ message: 'Email could not be sent. Please try again.' });
   }
 
   res.json({ message: 'If this email exists, a reset link was sent.' });
@@ -298,10 +308,14 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
   const { token, password } = req.body;
   if (!token || !password) {
-    return res.status(400).json({ message: 'Token and new password are required' });
+    return res
+      .status(400)
+      .json({ message: 'Token and new password are required' });
   }
   if (password.length < 8) {
-    return res.status(400).json({ message: 'Password must be at least 8 characters' });
+    return res
+      .status(400)
+      .json({ message: 'Password must be at least 8 characters' });
   }
 
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');

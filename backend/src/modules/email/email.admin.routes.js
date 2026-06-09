@@ -53,8 +53,15 @@ router.get('/campaigns', async (_req, res) => {
 // POST /api/admin/email/campaigns (save draft)
 router.post('/campaigns', async (req, res) => {
   try {
-    const { subject, previewText, templateSlug, theme, props, audience } = req.body;
-    const body = renderEmailTemplate({ templateSlug, theme, subject, previewText, props });
+    const { subject, previewText, templateSlug, theme, props, audience } =
+      req.body;
+    const body = renderEmailTemplate({
+      templateSlug,
+      theme,
+      subject,
+      previewText,
+      props,
+    });
     const campaign = await EmailCampaign.create({
       subject,
       previewText,
@@ -76,7 +83,8 @@ router.post('/campaigns/:id/send', async (req, res) => {
   try {
     const campaign = await EmailCampaign.findById(req.params.id);
     if (!campaign) return res.status(404).json({ error: 'Campaign not found' });
-    if (campaign.status === 'sent') return res.status(400).json({ error: 'Already sent' });
+    if (campaign.status === 'sent')
+      return res.status(400).json({ error: 'Already sent' });
 
     campaign.status = 'sending';
     await campaign.save();
@@ -90,7 +98,7 @@ router.post('/campaigns/:id/send', async (req, res) => {
       htmlContent: campaign.body,
     });
 
-    const logs = results.map(r => ({
+    const logs = results.map((r) => ({
       campaignId: campaign._id,
       recipientEmail: r.email,
       status: r.success ? 'sent' : 'failed',
@@ -99,13 +107,17 @@ router.post('/campaigns/:id/send', async (req, res) => {
     }));
     await EmailLog.insertMany(logs);
 
-    campaign.deliveredCount = results.filter(r => r.success).length;
+    campaign.deliveredCount = results.filter((r) => r.success).length;
     campaign.status = 'sent';
     campaign.sentAt = new Date();
     campaign.sentBy = req.user._id;
     await campaign.save();
 
-    res.json({ ok: true, sent: campaign.deliveredCount, total: campaign.recipientCount });
+    res.json({
+      ok: true,
+      sent: campaign.deliveredCount,
+      total: campaign.recipientCount,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -114,21 +126,37 @@ router.post('/campaigns/:id/send', async (req, res) => {
 // POST /api/admin/email/send (compose + send in one step)
 router.post('/send', async (req, res) => {
   try {
-    const { subject, previewText, templateSlug, theme, props, audience } = req.body;
-    const body = renderEmailTemplate({ templateSlug, theme, subject, previewText, props });
+    const { subject, previewText, templateSlug, theme, props, audience } =
+      req.body;
+    const body = renderEmailTemplate({
+      templateSlug,
+      theme,
+      subject,
+      previewText,
+      props,
+    });
 
     const recipients = await buildAudience(audience);
 
     const campaign = await EmailCampaign.create({
-      subject, previewText, templateSlug, theme, body, audience,
+      subject,
+      previewText,
+      templateSlug,
+      theme,
+      body,
+      audience,
       status: 'sending',
       sentBy: req.user._id,
       recipientCount: recipients.length,
     });
 
-    const results = await sendBulkEmails({ recipients, subject, htmlContent: body });
+    const results = await sendBulkEmails({
+      recipients,
+      subject,
+      htmlContent: body,
+    });
 
-    const logs = results.map(r => ({
+    const logs = results.map((r) => ({
       campaignId: campaign._id,
       recipientEmail: r.email,
       status: r.success ? 'sent' : 'failed',
@@ -137,12 +165,17 @@ router.post('/send', async (req, res) => {
     }));
     await EmailLog.insertMany(logs);
 
-    campaign.deliveredCount = results.filter(r => r.success).length;
+    campaign.deliveredCount = results.filter((r) => r.success).length;
     campaign.status = 'sent';
     campaign.sentAt = new Date();
     await campaign.save();
 
-    res.json({ ok: true, campaignId: campaign._id, sent: campaign.deliveredCount, total: campaign.recipientCount });
+    res.json({
+      ok: true,
+      campaignId: campaign._id,
+      sent: campaign.deliveredCount,
+      total: campaign.recipientCount,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

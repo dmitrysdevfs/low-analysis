@@ -10,7 +10,13 @@ const TEMPLATE_MAP = {
   'product-update': productUpdateTemplate,
 };
 
-export function renderEmailTemplate({ templateSlug, theme = 'default', subject, previewText, props }) {
+export function renderEmailTemplate({
+  templateSlug,
+  theme = 'default',
+  subject,
+  previewText,
+  props,
+}) {
   const themeObj = THEMES[theme] || THEMES.default;
   const templateFn = TEMPLATE_MAP[templateSlug];
   if (!templateFn) throw new Error(`Unknown template: ${templateSlug}`);

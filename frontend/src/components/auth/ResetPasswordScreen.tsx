@@ -145,7 +145,9 @@ export function ResetPasswordScreen() {
                 type="button"
                 className={styles.iconButton}
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? "Приховати пароль" : "Показати пароль"}
+                aria-label={
+                  showPassword ? "Приховати пароль" : "Показати пароль"
+                }
               >
                 <EyeIcon off={showPassword} />
               </button>
@@ -177,7 +179,9 @@ export function ResetPasswordScreen() {
                     Пароль має відповідати всім вимогам нижче
                   </div>
                 </div>
-                <div className={`${styles.strengthPill} ${styles[`strengthPill${strength.tone}`]}`}>
+                <div
+                  className={`${styles.strengthPill} ${styles[`strengthPill${strength.tone}`]}`}
+                >
                   {strength.label}
                 </div>
               </div>

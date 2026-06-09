@@ -1,5 +1,11 @@
-.root { padding: 0; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.root {
+  padding: 0;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
 .card {
   background: var(--th-surface, #12192e);
   border: 1px solid var(--th-border, #1e2d4a);
@@ -9,8 +15,35 @@
   flex-direction: column;
   gap: 8px;
 }
-.cardSlug { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--th-accent, #c9a96e); }
-.cardName { font-size: 16px; font-weight: 700; color: var(--th-text, #e8e6df); }
-.cardDesc { font-size: 13px; color: var(--th-muted, #8892a4); line-height: 1.5; }
-.cardFields { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.field { font-size: 11px; padding: 3px 8px; background: color-mix(in srgb, var(--th-accent, #c9a96e) 10%, transparent); border: 1px solid color-mix(in srgb, var(--th-accent, #c9a96e) 30%, transparent); border-radius: 4px; color: var(--th-accent, #c9a96e); }
+.cardSlug {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--th-accent, #c9a96e);
+}
+.cardName {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--th-text, #e8e6df);
+}
+.cardDesc {
+  font-size: 13px;
+  color: var(--th-muted, #8892a4);
+  line-height: 1.5;
+}
+.cardFields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.field {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: color-mix(in srgb, var(--th-accent, #c9a96e) 10%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--th-accent, #c9a96e) 30%, transparent);
+  border-radius: 4px;
+  color: var(--th-accent, #c9a96e);
+}

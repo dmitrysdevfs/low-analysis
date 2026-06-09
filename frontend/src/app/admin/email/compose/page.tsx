@@ -37,7 +37,9 @@ export default function AdminEmailComposePage() {
   const [selectedBilling, setSelectedBilling] = useState<string[]>([]);
   const [customEmails, setCustomEmails] = useState("");
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
-  const [sent, setSent] = useState<{ sent: number; total: number } | null>(null);
+  const [sent, setSent] = useState<{ sent: number; total: number } | null>(
+    null,
+  );
 
   const themesQuery = useQuery({
     queryKey: ["email-themes"],
@@ -46,13 +48,27 @@ export default function AdminEmailComposePage() {
 
   function buildAudience(): EmailAudience {
     if (audience.type === "role") return { type: "role", roles: selectedRoles };
-    if (audience.type === "billing") return { type: "billing", billingPlans: selectedBilling };
-    if (audience.type === "custom") return { type: "custom", customEmails: customEmails.split("\n").map(e => e.trim()).filter(Boolean) };
+    if (audience.type === "billing")
+      return { type: "billing", billingPlans: selectedBilling };
+    if (audience.type === "custom")
+      return {
+        type: "custom",
+        customEmails: customEmails
+          .split("\n")
+          .map((e) => e.trim())
+          .filter(Boolean),
+      };
     return { type: "all" };
   }
 
   const audienceQuery = useQuery({
-    queryKey: ["email-audience", audience.type, selectedRoles, selectedBilling, customEmails],
+    queryKey: [
+      "email-audience",
+      audience.type,
+      selectedRoles,
+      selectedBilling,
+      customEmails,
+    ],
     queryFn: () => {
       const a = buildAudience();
       return adminApi.previewAudienceCount(a);
@@ -61,15 +77,27 @@ export default function AdminEmailComposePage() {
   });
 
   const previewMutation = useMutation({
-    mutationFn: () => adminApi.previewEmail({ subject, previewText, templateSlug, theme, props }),
+    mutationFn: () =>
+      adminApi.previewEmail({
+        subject,
+        previewText,
+        templateSlug,
+        theme,
+        props,
+      }),
     onSuccess: (data) => setPreviewHtml(data.html),
   });
 
   const sendMutation = useMutation({
-    mutationFn: () => adminApi.sendEmail({
-      subject, previewText, templateSlug, theme, props,
-      audience: buildAudience(),
-    }),
+    mutationFn: () =>
+      adminApi.sendEmail({
+        subject,
+        previewText,
+        templateSlug,
+        theme,
+        props,
+        audience: buildAudience(),
+      }),
     onSuccess: (data) => setSent({ sent: data.sent, total: data.total }),
   });
 
@@ -83,7 +111,13 @@ export default function AdminEmailComposePage() {
       {sent && (
         <div className={styles.successBanner}>
           Відправлено {sent.sent} з {sent.total} отримувачів
-          <button type="button" onClick={() => setSent(null)} className={styles.dismissBtn}>×</button>
+          <button
+            type="button"
+            onClick={() => setSent(null)}
+            className={styles.dismissBtn}
+          >
+            ×
+          </button>
         </div>
       )}
       <div className={styles.layout}>
@@ -109,16 +143,29 @@ export default function AdminEmailComposePage() {
           </div>
           <div className={styles.section}>
             <label className={styles.label}>Шаблон</label>
-            <select className={styles.select} value={templateSlug} onChange={(e) => setTemplateSlug(e.target.value)}>
+            <select
+              className={styles.select}
+              value={templateSlug}
+              onChange={(e) => setTemplateSlug(e.target.value)}
+            >
               {TEMPLATE_OPTIONS.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
               ))}
             </select>
           </div>
           <div className={styles.section}>
             <label className={styles.label}>Тема оформлення</label>
             <div className={styles.themeGrid}>
-              {(themesQuery.data || [{ slug: "default", name: "Default" }, { slug: "teal", name: "Teal" }, { slug: "violet", name: "Violet" }, { slug: "sun", name: "Sun" }]).map((t) => (
+              {(
+                themesQuery.data || [
+                  { slug: "default", name: "Default" },
+                  { slug: "teal", name: "Teal" },
+                  { slug: "violet", name: "Violet" },
+                  { slug: "sun", name: "Sun" },
+                ]
+              ).map((t) => (
                 <button
                   key={t.slug}
                   type="button"
@@ -132,9 +179,17 @@ export default function AdminEmailComposePage() {
           </div>
           <div className={styles.section}>
             <label className={styles.label}>Аудиторія</label>
-            <select className={styles.select} value={audience.type} onChange={(e) => setAudience({ type: e.target.value as EmailAudience["type"] })}>
+            <select
+              className={styles.select}
+              value={audience.type}
+              onChange={(e) =>
+                setAudience({ type: e.target.value as EmailAudience["type"] })
+              }
+            >
               {AUDIENCE_TYPES.map((a) => (
-                <option key={a.value} value={a.value}>{a.label}</option>
+                <option key={a.value} value={a.value}>
+                  {a.label}
+                </option>
               ))}
             </select>
             {audience.type === "role" && (
@@ -144,7 +199,13 @@ export default function AdminEmailComposePage() {
                     <input
                       type="checkbox"
                       checked={selectedRoles.includes(r)}
-                      onChange={(e) => setSelectedRoles(e.target.checked ? [...selectedRoles, r] : selectedRoles.filter((x) => x !== r))}
+                      onChange={(e) =>
+                        setSelectedRoles(
+                          e.target.checked
+                            ? [...selectedRoles, r]
+                            : selectedRoles.filter((x) => x !== r),
+                        )
+                      }
                     />
                     {r}
                   </label>
@@ -158,7 +219,13 @@ export default function AdminEmailComposePage() {
                     <input
                       type="checkbox"
                       checked={selectedBilling.includes(p)}
-                      onChange={(e) => setSelectedBilling(e.target.checked ? [...selectedBilling, p] : selectedBilling.filter((x) => x !== p))}
+                      onChange={(e) =>
+                        setSelectedBilling(
+                          e.target.checked
+                            ? [...selectedBilling, p]
+                            : selectedBilling.filter((x) => x !== p),
+                        )
+                      }
                     />
                     {p}
                   </label>
@@ -189,7 +256,9 @@ export default function AdminEmailComposePage() {
             <input
               className={styles.input}
               value={props.headline}
-              onChange={(e) => setProps((p) => ({ ...p, headline: e.target.value }))}
+              onChange={(e) =>
+                setProps((p) => ({ ...p, headline: e.target.value }))
+              }
               placeholder="Основний заголовок листа..."
             />
           </div>
@@ -199,32 +268,81 @@ export default function AdminEmailComposePage() {
               className={styles.textarea}
               rows={8}
               value={props.body}
-              onChange={(e) => setProps((p) => ({ ...p, body: e.target.value }))}
+              onChange={(e) =>
+                setProps((p) => ({ ...p, body: e.target.value }))
+              }
               placeholder="Основний текст повідомлення..."
             />
           </div>
           {templateSlug === "maintenance" && (
             <>
               <div className={styles.section}>
-                <label className={styles.label}>Початок (необов&apos;язково)</label>
-                <input className={styles.input} value={(props as Record<string, string>).startTime || ""} onChange={(e) => setProps((p) => ({ ...p, startTime: e.target.value }))} placeholder="наприклад: 10 червня, 22:00" />
+                <label className={styles.label}>
+                  Початок (необов&apos;язково)
+                </label>
+                <input
+                  className={styles.input}
+                  value={(props as Record<string, string>).startTime || ""}
+                  onChange={(e) =>
+                    setProps((p) => ({ ...p, startTime: e.target.value }))
+                  }
+                  placeholder="наприклад: 10 червня, 22:00"
+                />
               </div>
               <div className={styles.section}>
-                <label className={styles.label}>Завершення (необов&apos;язково)</label>
-                <input className={styles.input} value={(props as Record<string, string>).endTime || ""} onChange={(e) => setProps((p) => ({ ...p, endTime: e.target.value }))} placeholder="наприклад: 11 червня, 02:00" />
+                <label className={styles.label}>
+                  Завершення (необов&apos;язково)
+                </label>
+                <input
+                  className={styles.input}
+                  value={(props as Record<string, string>).endTime || ""}
+                  onChange={(e) =>
+                    setProps((p) => ({ ...p, endTime: e.target.value }))
+                  }
+                  placeholder="наприклад: 11 червня, 02:00"
+                />
               </div>
             </>
           )}
           {templateSlug === "product-update" && (
             <div className={styles.section}>
-              <label className={styles.label}>Нові можливості (необов&apos;язково)</label>
-              <textarea className={styles.textarea} rows={4} value={(props as Record<string, string>).features || ""} onChange={(e) => setProps((p) => ({ ...p, features: e.target.value.split("\n") }))} placeholder="Один рядок — одна функція" />
+              <label className={styles.label}>
+                Нові можливості (необов&apos;язково)
+              </label>
+              <textarea
+                className={styles.textarea}
+                rows={4}
+                value={(props as Record<string, string>).features || ""}
+                onChange={(e) =>
+                  setProps((p) => ({
+                    ...p,
+                    features: e.target.value.split("\n"),
+                  }))
+                }
+                placeholder="Один рядок — одна функція"
+              />
             </div>
           )}
           <div className={styles.section}>
-            <label className={styles.label}>Кнопка CTA (необов&apos;язково)</label>
-            <input className={styles.input} value={props.ctaText} onChange={(e) => setProps((p) => ({ ...p, ctaText: e.target.value }))} placeholder="Текст кнопки" />
-            <input className={`${styles.input} ${styles.inputMt}`} value={props.ctaUrl} onChange={(e) => setProps((p) => ({ ...p, ctaUrl: e.target.value }))} placeholder="URL кнопки" />
+            <label className={styles.label}>
+              Кнопка CTA (необов&apos;язково)
+            </label>
+            <input
+              className={styles.input}
+              value={props.ctaText}
+              onChange={(e) =>
+                setProps((p) => ({ ...p, ctaText: e.target.value }))
+              }
+              placeholder="Текст кнопки"
+            />
+            <input
+              className={`${styles.input} ${styles.inputMt}`}
+              value={props.ctaUrl}
+              onChange={(e) =>
+                setProps((p) => ({ ...p, ctaUrl: e.target.value }))
+              }
+              placeholder="URL кнопки"
+            />
           </div>
           <div className={styles.actions}>
             <button
@@ -239,13 +357,20 @@ export default function AdminEmailComposePage() {
               type="button"
               className={styles.btnPrimary}
               onClick={() => sendMutation.mutate()}
-              disabled={sendMutation.isPending || !subject || !props.headline || !props.body}
+              disabled={
+                sendMutation.isPending ||
+                !subject ||
+                !props.headline ||
+                !props.body
+              }
             >
               {sendMutation.isPending ? "Надсилаю..." : "Надіслати"}
             </button>
           </div>
           {sendMutation.isError && (
-            <div className={styles.errorMsg}>Помилка: {(sendMutation.error as Error).message}</div>
+            <div className={styles.errorMsg}>
+              Помилка: {(sendMutation.error as Error).message}
+            </div>
           )}
         </div>
 

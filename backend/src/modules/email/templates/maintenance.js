@@ -1,4 +1,11 @@
-export function maintenanceTemplate({ headline, body, startTime, endTime, ctaText, ctaUrl }) {
+export function maintenanceTemplate({
+  headline,
+  body,
+  startTime,
+  endTime,
+  ctaText,
+  ctaUrl,
+}) {
   return `
     <h1 style="margin-top:0;">${headline}</h1>
     <p>${body}</p>
