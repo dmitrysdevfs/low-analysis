@@ -379,9 +379,7 @@ export function AdminTopbar({
                 <span className={styles.notifPanelTitle}>
                   Сповіщення
                   {badgeCount > 0 && (
-                    <span className={styles.notifPanelCount}>
-                      {badgeCount}
-                    </span>
+                    <span className={styles.notifPanelCount}>{badgeCount}</span>
                   )}
                 </span>
                 {securityItems.length > 0 && (
