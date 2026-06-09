@@ -296,6 +296,7 @@ function renderBlock(block: PageBuilderBlock) {
             <h3 className={styles.blockTitle}>{image.data.title}</h3>
           )}
           {image.data.src && (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={image.data.src}
               alt={image.data.alt || image.data.title}
@@ -326,7 +327,7 @@ export function ProjectPageRenderer({
       page.blocks.filter((block) =>
         embedded ? block.enabled : block.enabled && !block.style.hideOnMobile,
       ),
-    [page.blocks],
+    [page.blocks, embedded],
   );
 
   return (

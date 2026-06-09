@@ -300,6 +300,57 @@
   scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
 
+.notifPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.notifPanelTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #d6e0f0;
+}
+
+.notifPanelCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(233, 119, 75, 0.2);
+  color: #e9774b;
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.notifMarkAllBtn {
+  background: none;
+  border: none;
+  color: var(--th-muted);
+  font-size: 0.68rem;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 5px;
+  transition:
+    color 0.12s ease,
+    background 0.12s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: #d6e0f0;
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
 .notifEmpty {
   padding: 16px;
   color: var(--th-muted);
@@ -316,14 +367,40 @@
   }
 }
 
-.notifGroupTitle {
+.notifGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 0 14px 6px;
+}
+
+.notifGroupTitle {
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--th-accent);
   font-family: var(--font-mono);
+}
+
+.notifGroupAction {
+  background: none;
+  border: none;
+  color: var(--th-muted);
+  font-size: 0.66rem;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition:
+    color 0.12s ease,
+    background 0.12s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: #d6e0f0;
+    background: rgba(255, 255, 255, 0.06);
+  }
 }
 
 .notifItem {

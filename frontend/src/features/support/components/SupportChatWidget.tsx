@@ -227,10 +227,7 @@ export function SupportChatWidget() {
                 {conversationQuery.isLoading ? (
                   <div className={styles.emptyState}>Завантаження чату…</div>
                 ) : messages.length === 0 ? (
-                  <div className={styles.emptyState}>
-                    Напиши нам у support. Повідомлення одразу з’явиться в
-                    адмінці, а при підключеному Telegram ще й у боті.
-                  </div>
+                  <div className={styles.emptyState} />
                 ) : (
                   <div className={styles.messagesList}>
                     {messages.map((item) => {
@@ -277,9 +274,6 @@ export function SupportChatWidget() {
                   }
                 />
                 <div className={styles.composerFooter}>
-                  <span className={styles.footerNote}>
-                    Відповідь з’явиться тут і в окремому support-чаті адмінки.
-                  </span>
                   <button
                     type="button"
                     className={styles.sendButton}

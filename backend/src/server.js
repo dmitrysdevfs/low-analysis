@@ -1,3 +1,4 @@
+import './instrument.js';
 import './bootstrap/loadEnv.js';
 
 const { default: app } = await import('./app.js');

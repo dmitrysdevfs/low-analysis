@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -25,6 +26,7 @@ import notesRoutes from './routes/notesRoutes.js';
 import meRoutes from './routes/meRoutes.js';
 import graphRoutes from './routes/graphRoutes.js';
 import supportRoutes from './modules/support/support.routes.js';
+import billingRoutes from './routes/billingRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -126,11 +128,13 @@ app.use('/api/notes', notesRoutes);
 app.use('/api/me', meRoutes);
 app.use('/api/graph', graphRoutes);
 app.use('/api/support', supportRoutes);
+app.use('/api/billing', billingRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });
 });
 
+Sentry.setupExpressErrorHandler(app);
 app.use(errorHandler);
 
 export default app;

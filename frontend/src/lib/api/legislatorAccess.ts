@@ -1,7 +1,6 @@
 "use client";
 
-import { getJson } from "./laws";
-import { requestJson } from "./_client";
+import { getJson, requestJson } from "./_client";
 import type { LegislatorAccessRequest } from "@/types/law-change.types";
 
 // User: submit request for legislator role

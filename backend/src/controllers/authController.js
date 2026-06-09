@@ -1,6 +1,19 @@
+import crypto from 'crypto';
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import { getActiveCode } from '../services/admin/superCode.service.js';
+import { sendTransactionalEmail } from '../modules/email/email.service.js';
+import { renderEmailTemplate } from '../modules/email/email.renderer.js';
+
+function getFrontendUrl() {
+  const url = process.env.FRONTEND_URL;
+  if (!url && process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'FRONTEND_URL environment variable is required in production',
+    );
+  }
+  return url || 'http://localhost:3001';
+}
 
 const COOKIE_NAME = 'token';
 const COOKIE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -219,4 +232,97 @@ export const updateUserPassword = async (req, res) => {
 export const logoutUser = (req, res) => {
   clearCookieToken(res);
   res.json({ message: 'Logged out successfully' });
+};
+
+/**
+ * @desc    Request password reset — sends email with token
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ */
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: 'Please provide email' });
+  }
+
+  // Always respond 200 to avoid confirming email existence
+  const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
+    '+resetPasswordToken +resetPasswordExpiry',
+  );
+  if (!user) {
+    return res.json({
+      message: 'If this email exists, a reset link was sent.',
+    });
+  }
+
+  // Generate token
+  const rawToken = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(rawToken)
+    .digest('hex');
+
+  user.resetPasswordToken = hashedToken;
+  user.resetPasswordExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+  await user.save({ validateBeforeSave: false });
+
+  const resetUrl = `${getFrontendUrl()}/auth/reset-password?token=${rawToken}`;
+
+  const htmlContent = renderEmailTemplate({
+    templateSlug: 'password-reset',
+    subject: 'Відновлення паролю — Law Analysis',
+    props: { resetUrl },
+  });
+
+  try {
+    await sendTransactionalEmail({
+      to: [{ email: user.email, name: user.fullName }],
+      subject: 'Відновлення паролю — Law Analysis',
+      htmlContent,
+    });
+  } catch (err) {
+    console.error('Failed to send password reset email:', err);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiry = undefined;
+    await user.save({ validateBeforeSave: false });
+  }
+
+  res.json({ message: 'If this email exists, a reset link was sent.' });
+};
+
+/**
+ * @desc    Reset password using token
+ * @route   POST /api/auth/reset-password
+ * @access  Public
+ */
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) {
+    return res
+      .status(400)
+      .json({ message: 'Token and new password are required' });
+  }
+  if (password.length < 8) {
+    return res
+      .status(400)
+      .json({ message: 'Password must be at least 8 characters' });
+  }
+
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpiry: { $gt: new Date() },
+  }).select('+password +resetPasswordToken +resetPasswordExpiry');
+
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid or expired reset token' });
+  }
+
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpiry = undefined;
+  await user.save();
+
+  res.json({ message: 'Password reset successfully' });
 };

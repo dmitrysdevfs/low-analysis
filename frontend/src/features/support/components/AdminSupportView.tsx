@@ -60,7 +60,10 @@ export function AdminSupportView() {
     selectedConversationId,
   });
 
-  const conversations = conversationsQuery.data ?? [];
+  const conversations = useMemo(
+    () => conversationsQuery.data ?? [],
+    [conversationsQuery.data],
+  );
   const detail = conversationQuery.data;
   const conversation = detail?.conversation ?? null;
   const messages = detail?.messages ?? [];

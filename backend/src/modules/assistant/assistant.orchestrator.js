@@ -1,6 +1,11 @@
+import * as Sentry from '@sentry/node';
 import { getAssistantMode, CHAT_LLM_CONFIG } from './assistant.config.js';
 import { generateStubResponse } from './assistant.stub.js';
-import { SSE_EVENTS, MAX_HISTORY_MESSAGES } from './assistant.constants.js';
+import {
+  SSE_EVENTS,
+  MAX_HISTORY_MESSAGES,
+  ASSISTANT_MESSAGES,
+} from './assistant.constants.js';
 import AssistantSession from './assistant.session.model.js';
 import { retrieveRelevantArticles } from './assistant.retriever.js';
 
@@ -68,6 +73,16 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
     sendSSE(res, { type: SSE_EVENTS.DONE, sources: finalSources });
     return { content: finalContent, sources: finalSources };
   } catch (err) {
+    if (err.message === 'ASSISTANT_DAILY_LIMIT_REACHED') {
+      sendSSE(res, {
+        type: SSE_EVENTS.LIMIT,
+        message: ASSISTANT_MESSAGES.GLOBAL_LIMIT,
+      });
+      return { content: '', sources: [] };
+    }
+    Sentry.captureException(err, {
+      tags: { module: 'assistant.orchestrator', fn: 'streamLLM' },
+    });
     console.error('[assistant.orchestrator] LLM stream error:', err.message);
     const { content, sources: stubSources } = generateStubResponse(userMessage);
     await streamStub(res, content, stubSources);
@@ -95,6 +110,8 @@ export async function handleStreamChat({
   contextLawId,
   contextArticleNum,
   mode,
+  role,
+  lawTitle,
 }) {
   res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -150,7 +167,13 @@ export async function handleStreamChat({
         message,
         contextLawId,
       );
-      const systemPrompt = buildSystemPrompt(mode, context, retrievedSources);
+      const systemPrompt = buildSystemPrompt(
+        mode,
+        context,
+        retrievedSources,
+        role,
+        lawTitle,
+      );
       const history = session.messages
         .slice(0, -1)
         .slice(-MAX_HISTORY_MESSAGES)
@@ -185,14 +208,39 @@ export async function handleStreamChat({
       title: session.title,
     });
   } catch (err) {
+    Sentry.captureException(err, {
+      tags: { module: 'assistant.orchestrator', fn: 'handleStreamChat' },
+    });
     console.error('[assistant.orchestrator] error:', err.message);
-    sendSSE(res, { type: SSE_EVENTS.ERROR, message: 'Помилка обробки запиту' });
+    sendSSE(res, {
+      type: SSE_EVENTS.ERROR,
+      message: ASSISTANT_MESSAGES.REQUEST_ERROR,
+    });
   } finally {
     res.end();
   }
 }
 
-function buildSystemPrompt(mode, context, articles = []) {
+const ROLE_ADDONS = {
+  lawyer:
+    'Ти консультуєш практикуючого адвоката. Звертай увагу на процесуальні норми, строки, санкції та судову практику.',
+  prosecutor:
+    'Ти консультуєш прокурора. Акцентуй на публічному інтересі, підставах для позовів та кримінально-правових нормах.',
+  judge:
+    'Ти консультуєш суддю. Давай збалансований аналіз, посилайся на процесуальні кодекси і практику Верховного Суду.',
+  notary:
+    'Ти консультуєш нотаріуса. Акцентуй на документах, нотаріальних діях, реєстрах і формальних вимогах.',
+  business:
+    'Ти консультуєш підприємця. Акцентуй на практичних наслідках для бізнесу, відповідальності та ліцензуванні.',
+};
+
+function buildSystemPrompt(
+  mode,
+  context,
+  articles = [],
+  role = 'general',
+  lawTitle = null,
+) {
   let base =
     'Ти — Lex, AI Помічник платформи Law Analysis. ' +
     'Відповідай українською мовою. ' +
@@ -200,11 +248,17 @@ function buildSystemPrompt(mode, context, articles = []) {
     'Будь точним, коротким і корисним. ' +
     'Якщо не знаєш відповіді — чесно скажи про це.';
 
+  if (role && ROLE_ADDONS[role]) {
+    base += ' ' + ROLE_ADDONS[role];
+  }
+
   if (mode === 'law' && context.lawId) {
-    base += ` Поточний контекст: закон з ID "${context.lawId}".`;
+    const label = lawTitle || context.lawId;
+    base += ` Поточний контекст: закон "${label}".`;
   }
   if (mode === 'article' && context.lawId && context.articleNum) {
-    base += ` Поточний контекст: стаття ${context.articleNum} закону "${context.lawId}".`;
+    const label = lawTitle || context.lawId;
+    base += ` Поточний контекст: стаття ${context.articleNum} закону "${label}".`;
   }
 
   if (articles.length) {

@@ -70,3 +70,9 @@ GEMINI.md
 
 # Copilot
 .github/copilot-instructions.md
+
+# Temporary and sensitive files
+.tmp_*
+.tmp_inbox_cookies.txt
+.tmp_login_payload.json
+.tmp_login_response.json

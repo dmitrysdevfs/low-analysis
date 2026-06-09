@@ -18,7 +18,8 @@ export async function getFlatDataset(lawId, filters = {}) {
   // Fetch all elements for this law to reconstruct hierarchy in memory
   const elements = await Element.find({ lawId })
     .populate('subjects.subject_id')
-    .sort({ order: 1 });
+    .sort({ order: 1 })
+    .limit(10000);
 
   // Map to easily access elements by ID
   const elementMap = new Map(elements.map((el) => [el._id.toString(), el]));
@@ -159,7 +160,8 @@ export async function getNestedDataset(lawId, filters = {}) {
   // Fetch all elements for this law
   const elements = await Element.find({ lawId })
     .populate('subjects.subject_id')
-    .sort({ order: 1 });
+    .sort({ order: 1 })
+    .limit(10000);
 
   // Map to build the tree hierarchy
   const elementMap = new Map();

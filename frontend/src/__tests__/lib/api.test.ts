@@ -34,7 +34,7 @@ describe("frontend API client", () => {
 
     await expect(getLaws()).resolves.toEqual([LAW_FIXTURE]);
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/laws?limit=100",
+      "/api/laws?limit=500",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
   });
@@ -47,7 +47,7 @@ describe("frontend API client", () => {
 
     await getLaws("  конституція україни  ");
 
-    const params = new URLSearchParams({ limit: "100" });
+    const params = new URLSearchParams({ limit: "500" });
     params.set("q", "конституція україни");
     expect(fetchMock).toHaveBeenCalledWith(
       `/api/laws?${params.toString()}`,

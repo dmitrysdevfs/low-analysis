@@ -97,11 +97,11 @@ router.use(guestRateLimit);
  *       - in: query
  *         name: limit
  *         required: false
- *         description: Кількість результатів на сторінку (максимум 100)
+ *         description: Кількість результатів на сторінку (максимум 500)
  *         schema:
  *           type: integer
  *           minimum: 1
- *           maximum: 100
+ *           maximum: 500
  *           default: 20
  *           example: 20
  *     responses:

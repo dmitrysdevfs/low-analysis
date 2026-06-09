@@ -23,3 +23,9 @@ export const SSE_EVENTS = {
   ERROR: 'error',
   LIMIT: 'limit',
 };
+
+export const ASSISTANT_MESSAGES = {
+  GLOBAL_LIMIT:
+    'Глобальний денний ліміт AI-запитів вичерпано. Спробуйте пізніше.',
+  REQUEST_ERROR: 'Помилка обробки запиту',
+};
