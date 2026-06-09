@@ -13,7 +13,5 @@ Sentry.init({
   // Logs
   _experiments: { enableLogs: true },
 
-  integrations: [
-    nodeProfilingIntegration(),
-  ],
+  integrations: [nodeProfilingIntegration()],
 });
