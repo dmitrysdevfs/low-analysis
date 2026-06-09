@@ -1,21 +1,38 @@
-import * as SibApiV3Sdk from '@getbrevo/brevo';
+import * as BrevoTransactionalEmails from '@getbrevo/brevo/transactionalEmails';
 
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-apiInstance.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+let cachedClient = null;
 
-const SENDER = {
-  email: process.env.BREVO_SENDER_EMAIL,
-  name: process.env.BREVO_SENDER_NAME,
-};
+function getClient() {
+  if (cachedClient) {
+    return cachedClient;
+  }
+
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
+    throw new Error('BREVO_API_KEY is not configured');
+  }
+
+  cachedClient = new BrevoTransactionalEmails.TransactionalEmailsClient({
+    apiKey,
+  });
+  return cachedClient;
+}
+
+function getSender() {
+  return {
+    email: process.env.BREVO_SENDER_EMAIL,
+    name: process.env.BREVO_SENDER_NAME,
+  };
+}
 
 export async function sendTransactionalEmail({ to, subject, htmlContent }) {
-  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-  sendSmtpEmail.sender = SENDER;
-  sendSmtpEmail.to = to; // [{ email, name }]
-  sendSmtpEmail.subject = subject;
-  sendSmtpEmail.htmlContent = htmlContent;
-  const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
-  return response.body;
+  const response = await getClient().sendTransacEmail({
+    sender: getSender(),
+    to,
+    subject,
+    htmlContent,
+  });
+  return response.data ?? response.body ?? response;
 }
 
 export async function sendBulkEmails({ recipients, subject, htmlContent }) {

@@ -9,6 +9,7 @@ import legislatorRequestsRoutes from './legislatorRequests.js';
 import activityRoutes from './activity.js';
 import notificationsRoutes from './notifications.js';
 import emailAdminRoutes from '../../modules/email/email.admin.routes.js';
+import billingRoutes from './billing.js';
 
 const router = Router();
 router.use('/dashboard', dashboardRoutes);
@@ -21,4 +22,5 @@ router.use('/legislator-requests', legislatorRequestsRoutes);
 router.use('/activity', activityRoutes);
 router.use('/notifications', notificationsRoutes);
 router.use('/email', emailAdminRoutes);
+router.use('/billing', billingRoutes);
 export default router;
