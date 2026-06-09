@@ -5,10 +5,10 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 
   // Tracing
-  tracesSampleRate: 1.0,
+  tracesSampleRate: process.env.SENTRY_TRACES_SAMPLE_RATE ? parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE) : 1.0,
 
   // Profiling
-  profilesSampleRate: 1.0,
+  profilesSampleRate: process.env.SENTRY_PROFILES_SAMPLE_RATE ? parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE) : 1.0,
 
   // Logs
   _experiments: { enableLogs: true },
