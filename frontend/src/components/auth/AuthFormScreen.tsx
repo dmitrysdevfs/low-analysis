@@ -550,11 +550,7 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
                 <button
                   type="button"
                   className={styles.inlineLink}
-                  onClick={() =>
-                    notify.info(
-                      "Відновлення паролю буде доступне найближчим часом.",
-                    )
-                  }
+                  onClick={() => router.push(ROUTES.authForgotPassword)}
                 >
                   Забули пароль?
                 </button>

@@ -16,6 +16,7 @@ import {
   KeyRound,
   Layers,
   LayoutDashboard,
+  Mail,
   MessageSquare,
   ScrollText,
   ShieldCheck,
@@ -72,6 +73,12 @@ const NAV_ITEMS = [
     label: "Inbox",
     icon: Inbox,
     note: "Gmail-скринька, треди та відповіді",
+  },
+  {
+    href: ROUTES.adminEmail,
+    label: "Email",
+    icon: Mail,
+    note: "Розсилки, шаблони, аналітика",
   },
   {
     href: ROUTES.adminAnalytics,

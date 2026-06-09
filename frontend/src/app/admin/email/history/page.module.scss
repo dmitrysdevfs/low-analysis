@@ -1,0 +1,29 @@
+.root { padding: 0; }
+.loading, .empty { color: var(--th-muted, #8892a4); font-size: 14px; padding: 40px; text-align: center; }
+.list { display: flex; flex-direction: column; gap: 8px; }
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--th-surface, #12192e);
+  border: 1px solid var(--th-border, #1e2d4a);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+.rowMain { flex: 1; min-width: 0; }
+.subject { font-size: 14px; font-weight: 600; color: var(--th-text, #e8e6df); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meta { font-size: 12px; color: var(--th-muted, #8892a4); margin-top: 2px; }
+.stats { display: flex; gap: 12px; flex-shrink: 0; }
+.stat { font-size: 12px; color: var(--th-muted, #8892a4); }
+.badge {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.badge_draft { background: color-mix(in srgb, #8892a4 15%, transparent); color: #8892a4; }
+.badge_sending { background: color-mix(in srgb, #fbbf24 15%, transparent); color: #fbbf24; }
+.badge_sent { background: color-mix(in srgb, #4ecdc4 15%, transparent); color: #4ecdc4; }
+.badge_failed { background: color-mix(in srgb, #f87171 15%, transparent); color: #f87171; }
+.date { font-size: 12px; color: var(--th-muted, #8892a4); flex-shrink: 0; }

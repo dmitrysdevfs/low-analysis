@@ -67,6 +67,14 @@ const userSchema = new mongoose.Schema(
       compactMode: { type: Boolean, default: false },
       weeklyDigest: { type: Boolean, default: true },
     },
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+    resetPasswordExpiry: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: true,

@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@getbrevo/brevo": "^5.0.4",
     "@google/genai": "^2.1.0",
     "@sentry/node": "^10.56.0",
     "@sentry/profiling-node": "^10.56.0",
