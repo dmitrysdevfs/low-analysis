@@ -97,7 +97,7 @@ describe('Password Reset Flow', () => {
       expect(urlMatch[1]).not.toBe(mockUser.resetPasswordToken);
     });
 
-    it('clears token and returns 500 if email service throws', async () => {
+    it('clears token and returns 200 if email service throws (prevents email enumeration)', async () => {
       const mockUser = {
         _id: 'user-id-1',
         email: 'test@example.com',
@@ -115,7 +115,8 @@ describe('Password Reset Flow', () => {
         .post('/api/auth/forgot-password')
         .send({ email: 'test@example.com' });
 
-      expect(res.status).toBe(500);
+      expect(res.status).toBe(200);
+      expect(res.body.message).toMatch(/reset link/i);
       // Token must be cleared on failure
       expect(mockUser.resetPasswordToken).toBeUndefined();
       expect(mockUser.resetPasswordExpiry).toBeUndefined();

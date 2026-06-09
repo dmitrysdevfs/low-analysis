@@ -280,13 +280,11 @@ export const forgotPassword = async (req, res) => {
       subject: 'Відновлення паролю — Law Analysis',
       htmlContent,
     });
-  } catch {
+  } catch (err) {
+    console.error('Failed to send password reset email:', err);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpiry = undefined;
     await user.save({ validateBeforeSave: false });
-    return res
-      .status(500)
-      .json({ message: 'Email could not be sent. Please try again.' });
   }
 
   res.json({ message: 'If this email exists, a reset link was sent.' });
