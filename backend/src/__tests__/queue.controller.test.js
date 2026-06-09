@@ -42,6 +42,49 @@ describe('POST /api/queue/parse-law', () => {
   });
 });
 
+describe('POST /api/queue/analyze-subjects', () => {
+  it('enqueues an analyze_subjects job and returns 202 with jobId', async () => {
+    mockAdd.mockResolvedValue({ id: '43' });
+
+    const res = await request(app)
+      .post('/api/queue/analyze-subjects')
+      .send({ lawId: 'law1' });
+
+    expect(res.status).toBe(202);
+    expect(res.body).toEqual({
+      jobId: '43',
+      queue: 'analyze_subjects',
+      state: 'queued',
+    });
+    expect(getQueue).toHaveBeenCalledWith('analyze_subjects');
+    expect(mockAdd).toHaveBeenCalledWith('analyze_subjects', {
+      lawId: 'law1',
+      force: false,
+    });
+  });
+
+  it('passes force through to the job payload', async () => {
+    mockAdd.mockResolvedValue({ id: '44' });
+
+    await request(app)
+      .post('/api/queue/analyze-subjects')
+      .send({ lawId: 'law1', force: true });
+
+    expect(mockAdd).toHaveBeenCalledWith('analyze_subjects', {
+      lawId: 'law1',
+      force: true,
+    });
+  });
+
+  it('returns 400 when lawId is missing', async () => {
+    const res = await request(app).post('/api/queue/analyze-subjects').send({});
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/required/i);
+    expect(mockAdd).not.toHaveBeenCalled();
+  });
+});
+
 describe('GET /api/queue/status/:jobId', () => {
   it('returns 200 with the full job status when the job exists', async () => {
     mockGetJob.mockResolvedValue({
