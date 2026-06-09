@@ -15,6 +15,10 @@ const QUEUE_JOB_OPTIONS = {
     attempts: 2,
     backoff: { type: 'fixed', delay: 10_000 },
   },
+  [QUEUE_NAMES.ANALYZE_SUBJECTS]: {
+    attempts: 2,
+    backoff: { type: 'fixed', delay: 10_000 },
+  },
 };
 
 const queues = new Map();

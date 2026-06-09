@@ -3,11 +3,13 @@ import '#bootstrap/loadEnv.js';
 const { default: connectDB } = await import('#config/db.js');
 const { createParseLawWorker } =
   await import('#modules/queue/workers/parseLaw.worker.js');
+const { createAnalyzeSubjectsWorker } =
+  await import('#modules/queue/workers/analyzeSubjects.worker.js');
 
 const startWorker = async () => {
   await connectDB();
 
-  const workers = [createParseLawWorker()];
+  const workers = [createParseLawWorker(), createAnalyzeSubjectsWorker()];
 
   console.log(`[worker] started ${workers.length} worker(s), waiting for jobs`);
 
