@@ -3,6 +3,32 @@
 import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
 import { readStoredToken } from "@/lib/auth/authClient";
 
+const API_BASE = "/api";
+
+export async function getJson<T>(
+  path: string,
+  options?: RequestInit,
+): Promise<T> {
+  const token = readStoredToken();
+  const headers = new Headers(options?.headers);
+
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const res = await fetchWithTimeout(`${API_BASE}${path}`, {
+    ...options,
+    credentials: "include",
+    headers,
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json() as Promise<T>;
+}
+
 export async function requestJson<T>(
   path: string,
   method: string,

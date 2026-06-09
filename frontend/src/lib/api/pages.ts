@@ -4,7 +4,7 @@ import type {
   PageBuilderSnapshot,
   PageCatalogItem,
 } from "@/types";
-import { getJson } from "./laws";
+import { getJson } from "./_client";
 
 export async function getPageCatalog(
   options?: RequestInit,

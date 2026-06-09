@@ -3,6 +3,15 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import { getActiveCode } from '../services/admin/superCode.service.js';
 import { sendTransactionalEmail } from '../modules/email/email.service.js';
+import { renderEmailTemplate } from '../modules/email/email.renderer.js';
+
+function getFrontendUrl() {
+  const url = process.env.FRONTEND_URL;
+  if (!url && process.env.NODE_ENV === 'production') {
+    throw new Error('FRONTEND_URL environment variable is required in production');
+  }
+  return url || 'http://localhost:3001';
+}
 
 const COOKIE_NAME = 'token';
 const COOKIE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -255,32 +264,13 @@ export const forgotPassword = async (req, res) => {
   user.resetPasswordExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
   await user.save({ validateBeforeSave: false });
 
-  const frontendUrl =
-    process.env.FRONTEND_URL || 'https://low-analysis-frontend.vercel.app';
-  const resetUrl = `${frontendUrl}/auth/reset-password?token=${rawToken}`;
+  const resetUrl = `${getFrontendUrl()}/auth/reset-password?token=${rawToken}`;
 
-  const htmlContent = `<!DOCTYPE html>
-<html lang="uk">
-<head><meta charset="utf-8"><title>Відновлення паролю</title></head>
-<body style="margin:0;padding:0;background:#0a0f1e;font-family:Inter,Arial,sans-serif;color:#e8e6df;">
-  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
-    <div style="border-bottom:1px solid #1e2d4a;padding-bottom:20px;margin-bottom:28px;">
-      <span style="font-size:18px;font-weight:700;color:#c9a96e;letter-spacing:.04em;">Law Analysis</span>
-    </div>
-    <div style="background:#12192e;border:1px solid #1e2d4a;border-radius:8px;padding:32px;">
-      <h1 style="margin:0 0 16px;font-size:20px;font-weight:700;color:#e8e6df;">Відновлення паролю</h1>
-      <p style="color:#8892a4;line-height:1.7;margin:0 0 24px;">Ви запросили скидання паролю для вашого акаунту Law Analysis. Натисніть кнопку нижче, щоб встановити новий пароль.</p>
-      <p style="text-align:center;margin:0 0 24px;">
-        <a href="${resetUrl}" style="display:inline-block;background:#c9a96e;color:#0a0f1e;text-decoration:none;padding:12px 32px;border-radius:6px;font-weight:700;font-size:14px;">Встановити новий пароль</a>
-      </p>
-      <p style="color:#8892a4;font-size:12px;line-height:1.6;margin:0;">Посилання дійсне 1 годину. Якщо ви не запитували скидання паролю — просто ігноруйте цей лист.</p>
-    </div>
-    <div style="margin-top:24px;text-align:center;font-size:11px;color:#8892a4;">
-      © ${new Date().getFullYear()} Law Analysis. Всі права захищені.
-    </div>
-  </div>
-</body>
-</html>`;
+  const htmlContent = renderEmailTemplate({
+    templateSlug: 'password-reset',
+    subject: 'Відновлення паролю — Law Analysis',
+    props: { resetUrl },
+  });
 
   try {
     await sendTransactionalEmail({

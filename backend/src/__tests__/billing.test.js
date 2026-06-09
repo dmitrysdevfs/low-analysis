@@ -1,14 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import request from 'supertest';
-import dotenv from 'dotenv';
 import app from '../app.js';
 import BillingSubscription from '../models/BillingSubscription.js';
 import BillingTransaction from '../models/BillingTransaction.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
-dotenv.config();
-process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_secret_key_12345';
 
 vi.mock('../models/BillingSubscription.js');
 vi.mock('../models/BillingTransaction.js');

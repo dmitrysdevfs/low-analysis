@@ -1,7 +1,7 @@
 "use client";
 
 import type { Taxonomy, TaxonomyTreeNode } from "@/types";
-import { getJson } from "./laws";
+import { getJson } from "./_client";
 
 export async function getTaxonomies(
   options?: RequestInit,

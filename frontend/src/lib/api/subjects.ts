@@ -1,7 +1,7 @@
 "use client";
 
 import type { Subject, SubjectElements } from "@/types";
-import { getJson } from "./laws";
+import { getJson } from "./_client";
 
 export async function getSubjects(options?: RequestInit): Promise<Subject[]> {
   return getJson<Subject[]>("/subjects", options);

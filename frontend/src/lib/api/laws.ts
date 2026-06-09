@@ -8,41 +8,15 @@ import type {
   PaginatedLawsResponse,
   TreeNode,
 } from "@/types";
-import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
-import { readStoredToken } from "@/lib/auth/authClient";
-
-const API_BASE = "/api";
-
-export async function getJson<T>(
-  path: string,
-  options?: RequestInit,
-): Promise<T> {
-  const token = readStoredToken();
-  const headers = new Headers(options?.headers);
-
-  if (token && !headers.has("Authorization")) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  const res = await fetchWithTimeout(`${API_BASE}${path}`, {
-    ...options,
-    credentials: "include",
-    headers,
-  });
-
-  if (!res.ok) {
-    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-  }
-
-  return res.json() as Promise<T>;
-}
+import { getJson } from "./_client";
+export { getJson } from "./_client";
 
 export async function getLaws(
   q = "",
   options?: RequestInit,
   queryOptions?: { wordField?: "title" | "text" | "code" },
 ): Promise<Law[]> {
-  const params = new URLSearchParams({ limit: "100" });
+  const params = new URLSearchParams({ limit: "500" });
   if (q.trim()) params.set("q", q.trim());
   if (queryOptions?.wordField && queryOptions.wordField !== "title") {
     params.set("wordField", queryOptions.wordField);

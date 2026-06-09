@@ -26,5 +26,7 @@ export default withSentryConfig(nextConfig, {
   project: "javascript-nextjs",
   silent: true,
   disableLogger: true,
-  hideSourceMaps: true,
+  sourcemaps: {
+    disable: true,
+  },
 });

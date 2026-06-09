@@ -1,6 +1,7 @@
+import * as Sentry from '@sentry/node';
 import { getAssistantMode, CHAT_LLM_CONFIG } from './assistant.config.js';
 import { generateStubResponse } from './assistant.stub.js';
-import { SSE_EVENTS, MAX_HISTORY_MESSAGES } from './assistant.constants.js';
+import { SSE_EVENTS, MAX_HISTORY_MESSAGES, ASSISTANT_MESSAGES } from './assistant.constants.js';
 import AssistantSession from './assistant.session.model.js';
 import { retrieveRelevantArticles } from './assistant.retriever.js';
 
@@ -68,15 +69,12 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
     sendSSE(res, { type: SSE_EVENTS.DONE, sources: finalSources });
     return { content: finalContent, sources: finalSources };
   } catch (err) {
-    console.error('[assistant.orchestrator] LLM stream error:', err.message);
     if (err.message === 'ASSISTANT_DAILY_LIMIT_REACHED') {
-      sendSSE(res, {
-        type: SSE_EVENTS.LIMIT,
-        message:
-          'Глобальний денний ліміт AI-запитів вичерпано. Спробуйте пізніше.',
-      });
+      sendSSE(res, { type: SSE_EVENTS.LIMIT, message: ASSISTANT_MESSAGES.GLOBAL_LIMIT });
       return { content: '', sources: [] };
     }
+    Sentry.captureException(err, { tags: { module: 'assistant.orchestrator', fn: 'streamLLM' } });
+    console.error('[assistant.orchestrator] LLM stream error:', err.message);
     const { content, sources: stubSources } = generateStubResponse(userMessage);
     await streamStub(res, content, stubSources);
     return { content, sources: stubSources };
@@ -201,8 +199,9 @@ export async function handleStreamChat({
       title: session.title,
     });
   } catch (err) {
+    Sentry.captureException(err, { tags: { module: 'assistant.orchestrator', fn: 'handleStreamChat' } });
     console.error('[assistant.orchestrator] error:', err.message);
-    sendSSE(res, { type: SSE_EVENTS.ERROR, message: 'Помилка обробки запиту' });
+    sendSSE(res, { type: SSE_EVENTS.ERROR, message: ASSISTANT_MESSAGES.REQUEST_ERROR });
   } finally {
     res.end();
   }

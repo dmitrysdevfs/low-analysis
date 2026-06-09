@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import Element from '../../models/Element.js';
 import Law from '../../models/Law.js';
 
@@ -68,7 +69,6 @@ export async function retrieveRelevantArticles(query, contextLawId = null) {
       const lawTitle = law.title || el.lawId;
       const articleNum = el.number || '';
       const articleTitle = el.title || '';
-      const sourceUrl = law.source || null;
       return {
         // RAG fields — used for system prompt injection
         index: idx,
@@ -77,14 +77,14 @@ export async function retrieveRelevantArticles(query, contextLawId = null) {
         articleNum,
         articleTitle,
         text: (el.text || '').slice(0, TEXT_TRUNCATE),
-        sourceUrl,
         // Standard source fields — required by session model and frontend
         title: `Стаття ${articleNum}${articleTitle ? ` "${articleTitle}"` : ''} — ${lawTitle}`,
-        href: sourceUrl,
+        href: law.source || null,
         type: 'article',
       };
     });
   } catch (err) {
+    Sentry.captureException(err, { tags: { module: 'assistant.retriever' } });
     console.error('[assistant.retriever] error:', err.message);
     return [];
   }

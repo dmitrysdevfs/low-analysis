@@ -4,7 +4,7 @@ import type {
   RoadmapApiResponse,
   RoadmapContent,
 } from "@/features/roadmap/types";
-import { getJson } from "./laws";
+import { getJson } from "./_client";
 
 export async function getRoadmap(
   options?: RequestInit,

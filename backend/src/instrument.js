@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 Sentry.init({
-  dsn: 'https://bee8f789a738550040709ae2a6215689@o4511532554518528.ingest.de.sentry.io/4511532614549584',
+  dsn: process.env.SENTRY_DSN,
 
   // Tracing
   tracesSampleRate: 1.0,
