@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { enqueueParseLaw, getJobStatus } from './queue.controller.js';
+import {
+  enqueueParseLaw,
+  enqueueAnalyzeSubjects,
+  getJobStatus,
+} from './queue.controller.js';
 
 const router = Router();
 
@@ -53,6 +57,56 @@ const router = Router();
  *         description: Не передано url
  */
 router.post('/parse-law', enqueueParseLaw);
+
+/**
+ * @swagger
+ * /api/queue/analyze-subjects:
+ *   post:
+ *     summary: Поставити закон у чергу на аналіз суб'єктів
+ *     description: >
+ *       Кладе job batch-аналізу суб'єктів (SRL/LLM) у чергу й одразу повертає
+ *       jobId (202 Accepted). Сам аналіз — довга фонова операція, виконується
+ *       воркером. Прогрес/результат — через GET /api/queue/status/{jobId}.
+ *     tags: [Queue]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [lawId]
+ *             properties:
+ *               lawId:
+ *                 type: string
+ *                 description: MongoDB ObjectId закону
+ *                 example: "665b1f2d6671c86dc22d27b0"
+ *               force:
+ *                 type: boolean
+ *                 description: >
+ *                   Перерахувати елементи, що вже мають subjects[].
+ *                   За замовчуванням false — аналізуються лише ще не оброблені.
+ *                 default: false
+ *     responses:
+ *       202:
+ *         description: Job прийнято в чергу
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 jobId:
+ *                   type: string
+ *                   example: "43"
+ *                 queue:
+ *                   type: string
+ *                   example: analyze_subjects
+ *                 state:
+ *                   type: string
+ *                   example: queued
+ *       400:
+ *         description: Не передано lawId
+ */
+router.post('/analyze-subjects', enqueueAnalyzeSubjects);
 
 /**
  * @swagger

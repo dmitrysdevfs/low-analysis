@@ -25,6 +25,31 @@ export async function enqueueParseLaw(req, res, next) {
   }
 }
 
+export async function enqueueAnalyzeSubjects(req, res, next) {
+  try {
+    const { lawId, force = false } = req.body;
+    if (!lawId) {
+      return res.status(400).json({ message: 'lawId is required' });
+    }
+
+    const job = await getQueue(QUEUE_NAMES.ANALYZE_SUBJECTS).add(
+      QUEUE_NAMES.ANALYZE_SUBJECTS,
+      {
+        lawId,
+        force,
+      },
+    );
+
+    return res.status(202).json({
+      jobId: job.id,
+      queue: QUEUE_NAMES.ANALYZE_SUBJECTS,
+      state: 'queued',
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function findJob(jobId) {
   for (const queueName of Object.values(QUEUE_NAMES)) {
     const job = await getQueue(queueName).getJob(jobId);
