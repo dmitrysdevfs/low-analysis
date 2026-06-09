@@ -8,7 +8,9 @@ import { renderEmailTemplate } from '../modules/email/email.renderer.js';
 function getFrontendUrl() {
   const url = process.env.FRONTEND_URL;
   if (!url && process.env.NODE_ENV === 'production') {
-    throw new Error('FRONTEND_URL environment variable is required in production');
+    throw new Error(
+      'FRONTEND_URL environment variable is required in production',
+    );
   }
   return url || 'http://localhost:3001';
 }

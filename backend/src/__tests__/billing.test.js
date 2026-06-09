@@ -6,7 +6,6 @@ import BillingTransaction from '../models/BillingTransaction.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
-
 vi.mock('../models/BillingSubscription.js');
 vi.mock('../models/BillingTransaction.js');
 vi.mock('../models/User.js');

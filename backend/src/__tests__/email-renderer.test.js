@@ -18,7 +18,10 @@ describe('renderEmailTemplate', () => {
     const html = renderEmailTemplate({
       templateSlug: 'verify-email',
       subject: 'Підтвердіть email',
-      props: { fullName: 'Іван Франко', verifyUrl: 'https://example.com/verify?token=xyz' },
+      props: {
+        fullName: 'Іван Франко',
+        verifyUrl: 'https://example.com/verify?token=xyz',
+      },
     });
 
     expect(html).toContain('Іван Франко');
@@ -28,7 +31,11 @@ describe('renderEmailTemplate', () => {
 
   it('throws on unknown templateSlug', () => {
     expect(() =>
-      renderEmailTemplate({ templateSlug: 'nonexistent', subject: 'x', props: {} }),
+      renderEmailTemplate({
+        templateSlug: 'nonexistent',
+        subject: 'x',
+        props: {},
+      }),
     ).toThrow('Unknown template: nonexistent');
   });
 

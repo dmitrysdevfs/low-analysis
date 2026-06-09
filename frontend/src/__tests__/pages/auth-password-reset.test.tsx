@@ -31,14 +31,20 @@ describe("ForgotPasswordScreen", () => {
 
   it("shows warning when submitted with empty email", async () => {
     render(<ForgotPasswordScreen />);
-    fireEvent.submit(screen.getByRole("button", { name: "Надіслати посилання" }).closest("form")!);
+    fireEvent.submit(
+      screen
+        .getByRole("button", { name: "Надіслати посилання" })
+        .closest("form")!,
+    );
     expect(notify.warning).toHaveBeenCalled();
   });
 
   it("shows success state after successful API response", async () => {
     server.use(
       http.post("/api/auth/forgot-password", () =>
-        HttpResponse.json({ message: "If this email exists, a reset link was sent." }),
+        HttpResponse.json({
+          message: "If this email exists, a reset link was sent.",
+        }),
       ),
     );
 
@@ -46,7 +52,9 @@ describe("ForgotPasswordScreen", () => {
     fireEvent.change(screen.getByLabelText("Електронна пошта"), {
       target: { value: "user@example.com" },
     });
-    fireEvent.submit(screen.getByLabelText("Електронна пошта").closest("form")!);
+    fireEvent.submit(
+      screen.getByLabelText("Електронна пошта").closest("form")!,
+    );
 
     await waitFor(() => {
       expect(
@@ -67,7 +75,9 @@ describe("ForgotPasswordScreen", () => {
     fireEvent.change(screen.getByLabelText("Електронна пошта"), {
       target: { value: "user@example.com" },
     });
-    fireEvent.submit(screen.getByLabelText("Електронна пошта").closest("form")!);
+    fireEvent.submit(
+      screen.getByLabelText("Електронна пошта").closest("form")!,
+    );
 
     await waitFor(() => {
       expect(notify.error).toHaveBeenCalledWith("Server error");
@@ -89,9 +99,7 @@ describe("ResetPasswordScreen", () => {
   it("shows invalid link message when no token in URL", () => {
     // searchParams is empty by default (reset in afterEach)
     render(<ResetPasswordScreen />);
-    expect(
-      screen.getByText(/Недійсне посилання/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Недійсне посилання/i)).toBeInTheDocument();
     expect(screen.queryByLabelText("Новий пароль")).not.toBeInTheDocument();
   });
 
@@ -113,7 +121,9 @@ describe("ResetPasswordScreen", () => {
       target: { value: "DifferentPass1!" },
     });
     fireEvent.submit(
-      screen.getByRole("button", { name: "Встановити пароль" }).closest("form")!,
+      screen
+        .getByRole("button", { name: "Встановити пароль" })
+        .closest("form")!,
     );
 
     expect(notify.warning).toHaveBeenCalledWith(
@@ -143,9 +153,7 @@ describe("ResetPasswordScreen", () => {
       expect(notify.success).toHaveBeenCalledWith("Пароль успішно змінено!");
     });
     await waitFor(() => {
-      expect(
-        screen.getByText(/Пароль успішно змінено/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Пароль успішно змінено/i)).toBeInTheDocument();
     });
   });
 
@@ -171,7 +179,9 @@ describe("ResetPasswordScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: "Встановити пароль" }));
 
     await waitFor(() => {
-      expect(notify.error).toHaveBeenCalledWith("Invalid or expired reset token");
+      expect(notify.error).toHaveBeenCalledWith(
+        "Invalid or expired reset token",
+      );
     });
   });
 });

@@ -4,7 +4,6 @@ import app from '../app.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
-
 vi.mock('../models/User.js');
 vi.mock('../services/admin/superCode.service.js', () => ({
   getActiveCode: vi.fn().mockResolvedValue('SUPER-001'),

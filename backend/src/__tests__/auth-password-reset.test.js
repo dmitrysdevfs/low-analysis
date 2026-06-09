@@ -3,7 +3,6 @@ import request from 'supertest';
 import app from '../app.js';
 import User from '../models/User.js';
 
-
 vi.mock('../models/User.js');
 vi.mock('../modules/email/email.service.js', () => ({
   sendTransactionalEmail: vi.fn().mockResolvedValue({ messageId: 'mock-id' }),
@@ -67,7 +66,9 @@ describe('Password Reset Flow', () => {
       const callArgs = sendTransactionalEmail.mock.calls[0][0];
       expect(callArgs.to[0].email).toBe('test@example.com');
       expect(callArgs.subject).toMatch(/пароль/i);
-      expect(callArgs.htmlContent).toContain('http://localhost:3001/auth/reset-password');
+      expect(callArgs.htmlContent).toContain(
+        'http://localhost:3001/auth/reset-password',
+      );
     });
 
     it('stores hashed token (not raw) on the user', async () => {
