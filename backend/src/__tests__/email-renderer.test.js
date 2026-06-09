@@ -49,21 +49,21 @@ describe('renderEmailTemplate', () => {
     expect(html).toContain('Law Analysis');
   });
 
-  it('applies dark theme correctly', () => {
+  it('different themes produce different HTML output', () => {
     const htmlDefault = renderEmailTemplate({
       templateSlug: 'password-reset',
       subject: 'Test',
       props: { resetUrl: 'https://example.com' },
       theme: 'default',
     });
-    const htmlLight = renderEmailTemplate({
+    const htmlTeal = renderEmailTemplate({
       templateSlug: 'password-reset',
       subject: 'Test',
       props: { resetUrl: 'https://example.com' },
-      theme: 'light',
+      theme: 'teal',
     });
     // Different themes produce different HTML (different color values)
-    expect(htmlDefault).not.toBe(htmlLight);
+    expect(htmlDefault).not.toBe(htmlTeal);
   });
 
   it('includes previewText in output when provided', () => {

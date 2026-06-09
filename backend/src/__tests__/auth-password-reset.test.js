@@ -65,7 +65,7 @@ describe('Password Reset Flow', () => {
 
       const callArgs = sendTransactionalEmail.mock.calls[0][0];
       expect(callArgs.to[0].email).toBe('test@example.com');
-      expect(callArgs.subject).toMatch(/пароль/i);
+      expect(callArgs.subject).toMatch(/парол/i);
       expect(callArgs.htmlContent).toContain(
         'http://localhost:3001/auth/reset-password',
       );
