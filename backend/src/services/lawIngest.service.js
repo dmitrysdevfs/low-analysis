@@ -68,3 +68,22 @@ export async function parseAndSaveLawByUrl(url) {
 
   return { lawId: law._id, elementsCount: elementsToSave.length };
 }
+
+export async function batchUpdateLawTrees(codes) {
+  const results = [];
+  let updated = 0;
+  let failed = 0;
+
+  for (const code of codes) {
+    try {
+      const { lawId, elementsCount } = await parseAndSaveLawByUrl(code);
+      updated += 1;
+      results.push({ code, ok: true, lawId, elementsCount });
+    } catch (error) {
+      failed += 1;
+      results.push({ code, ok: false, error: error.message });
+    }
+  }
+
+  return { total: codes.length, updated, failed, results };
+}
