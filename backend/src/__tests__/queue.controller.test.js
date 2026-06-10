@@ -30,7 +30,11 @@ describe('POST /api/queue/parse-law', () => {
       state: 'queued',
     });
     expect(getQueue).toHaveBeenCalledWith('parse_law');
-    expect(mockAdd).toHaveBeenCalledWith('parse_law', { url: '580-19' });
+    expect(mockAdd).toHaveBeenCalledWith(
+      'parse_law',
+      { url: '580-19' },
+      { jobId: expect.stringMatching(/^parse_law-/) },
+    );
   });
 
   it('returns 400 when url is missing', async () => {
@@ -57,10 +61,11 @@ describe('POST /api/queue/analyze-subjects', () => {
       state: 'queued',
     });
     expect(getQueue).toHaveBeenCalledWith('analyze_subjects');
-    expect(mockAdd).toHaveBeenCalledWith('analyze_subjects', {
-      lawId: 'law1',
-      force: false,
-    });
+    expect(mockAdd).toHaveBeenCalledWith(
+      'analyze_subjects',
+      { lawId: 'law1', force: false },
+      { jobId: expect.stringMatching(/^analyze_subjects-/) },
+    );
   });
 
   it('passes force through to the job payload', async () => {
@@ -70,10 +75,11 @@ describe('POST /api/queue/analyze-subjects', () => {
       .post('/api/queue/analyze-subjects')
       .send({ lawId: 'law1', force: true });
 
-    expect(mockAdd).toHaveBeenCalledWith('analyze_subjects', {
-      lawId: 'law1',
-      force: true,
-    });
+    expect(mockAdd).toHaveBeenCalledWith(
+      'analyze_subjects',
+      { lawId: 'law1', force: true },
+      { jobId: expect.stringMatching(/^analyze_subjects-/) },
+    );
   });
 
   it('returns 400 when lawId is missing', async () => {
@@ -100,9 +106,11 @@ describe('POST /api/queue/batch-update-law-tree', () => {
       state: 'queued',
     });
     expect(getQueue).toHaveBeenCalledWith('batch_update_law_tree');
-    expect(mockAdd).toHaveBeenCalledWith('batch_update_law_tree', {
-      codes: ['254к/96-вр', '580-19'],
-    });
+    expect(mockAdd).toHaveBeenCalledWith(
+      'batch_update_law_tree',
+      { codes: ['254к/96-вр', '580-19'] },
+      { jobId: expect.stringMatching(/^batch_update_law_tree-/) },
+    );
   });
 
   it('returns 400 when codes is missing', async () => {

@@ -47,7 +47,7 @@ const router = Router();
  *               properties:
  *                 jobId:
  *                   type: string
- *                   example: "42"
+ *                   example: "parse_law-3f9a1c2e-9b4f-4c21-a8d1-1e2f3a4b5c6d"
  *                 queue:
  *                   type: string
  *                   example: parse_law
@@ -97,7 +97,7 @@ router.post('/parse-law', enqueueParseLaw);
  *               properties:
  *                 jobId:
  *                   type: string
- *                   example: "43"
+ *                   example: "analyze_subjects-7b1d2c3e-4f5a-6b7c-8d9e-0a1b2c3d4e5f"
  *                 queue:
  *                   type: string
  *                   example: analyze_subjects
@@ -146,7 +146,7 @@ router.post('/analyze-subjects', enqueueAnalyzeSubjects);
  *               properties:
  *                 jobId:
  *                   type: string
- *                   example: "51"
+ *                   example: "batch_update_law_tree-99e0a1b2-c3d4-5e6f-7a8b-9c0d1e2f3a4b"
  *                 queue:
  *                   type: string
  *                   example: batch_update_law_tree
@@ -184,7 +184,7 @@ router.post('/batch-update-law-tree', enqueueBatchUpdateLawTree);
  *               properties:
  *                 jobId:
  *                   type: string
- *                   example: "42"
+ *                   example: "parse_law-3f9a1c2e-9b4f-4c21-a8d1-1e2f3a4b5c6d"
  *                 queue:
  *                   type: string
  *                   example: parse_law

@@ -1,5 +1,11 @@
+import { randomUUID } from 'node:crypto';
+
 import { QUEUE_NAMES } from './queue.constants.js';
 import { getQueue } from './queue.client.js';
+
+function newJobId(queueName) {
+  return `${queueName}-${randomUUID()}`;
+}
 
 export async function enqueueParseLaw(req, res, next) {
   try {
@@ -13,6 +19,7 @@ export async function enqueueParseLaw(req, res, next) {
       {
         url,
       },
+      { jobId: newJobId(QUEUE_NAMES.PARSE_LAW) },
     );
 
     return res.status(202).json({
@@ -38,6 +45,7 @@ export async function enqueueAnalyzeSubjects(req, res, next) {
         lawId,
         force,
       },
+      { jobId: newJobId(QUEUE_NAMES.ANALYZE_SUBJECTS) },
     );
 
     return res.status(202).json({
@@ -64,6 +72,7 @@ export async function enqueueBatchUpdateLawTree(req, res, next) {
       {
         codes,
       },
+      { jobId: newJobId(QUEUE_NAMES.BATCH_UPDATE_LAW_TREE) },
     );
 
     return res.status(202).json({
