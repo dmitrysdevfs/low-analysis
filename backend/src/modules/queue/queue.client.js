@@ -19,6 +19,9 @@ const QUEUE_JOB_OPTIONS = {
     attempts: 2,
     backoff: { type: 'fixed', delay: 10_000 },
   },
+  [QUEUE_NAMES.BATCH_UPDATE_LAW_TREE]: {
+    attempts: 1,
+  },
 };
 
 const queues = new Map();

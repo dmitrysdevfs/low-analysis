@@ -5,11 +5,17 @@ const { createParseLawWorker } =
   await import('#modules/queue/workers/parseLaw.worker.js');
 const { createAnalyzeSubjectsWorker } =
   await import('#modules/queue/workers/analyzeSubjects.worker.js');
+const { createBatchUpdateLawTreeWorker } =
+  await import('#modules/queue/workers/batchUpdateLawTree.worker.js');
 
 const startWorker = async () => {
   await connectDB();
 
-  const workers = [createParseLawWorker(), createAnalyzeSubjectsWorker()];
+  const workers = [
+    createParseLawWorker(),
+    createAnalyzeSubjectsWorker(),
+    createBatchUpdateLawTreeWorker(),
+  ];
 
   console.log(`[worker] started ${workers.length} worker(s), waiting for jobs`);
 
