@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   enqueueParseLaw,
   enqueueAnalyzeSubjects,
+  enqueueBatchUpdateLawTree,
   getJobStatus,
 } from './queue.controller.js';
 
@@ -107,6 +108,55 @@ router.post('/parse-law', enqueueParseLaw);
  *         description: Не передано lawId
  */
 router.post('/analyze-subjects', enqueueAnalyzeSubjects);
+
+/**
+ * @swagger
+ * /api/queue/batch-update-law-tree:
+ *   post:
+ *     summary: Поставити масове оновлення дерев законів у чергу
+ *     description: >
+ *       Кладе job масового re-ingest у чергу й одразу повертає jobId
+ *       (202 Accepted). Воркер для кожного коду заново фетчить і парсить закон
+ *       з zakon.rada.gov.ua та оновлює дерево елементів (idempotent upsert +
+ *       видалення відсутніх). Помилка по окремому коду не валить увесь job —
+ *       вона потрапляє у failed/results. Прогрес/результат — через
+ *       GET /api/queue/status/{jobId}.
+ *     tags: [Queue]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [codes]
+ *             properties:
+ *               codes:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Коди законів на zakon.rada.gov.ua (або їх URL)
+ *                 example: ["254к/96-вр", "580-19"]
+ *     responses:
+ *       202:
+ *         description: Job прийнято в чергу
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 jobId:
+ *                   type: string
+ *                   example: "51"
+ *                 queue:
+ *                   type: string
+ *                   example: batch_update_law_tree
+ *                 state:
+ *                   type: string
+ *                   example: queued
+ *       400:
+ *         description: codes не передано або порожній/не масив
+ */
+router.post('/batch-update-law-tree', enqueueBatchUpdateLawTree);
 
 /**
  * @swagger

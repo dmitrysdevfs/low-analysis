@@ -50,6 +50,32 @@ export async function enqueueAnalyzeSubjects(req, res, next) {
   }
 }
 
+export async function enqueueBatchUpdateLawTree(req, res, next) {
+  try {
+    const { codes } = req.body;
+    if (!Array.isArray(codes) || codes.length === 0) {
+      return res
+        .status(400)
+        .json({ message: 'codes must be a non-empty array' });
+    }
+
+    const job = await getQueue(QUEUE_NAMES.BATCH_UPDATE_LAW_TREE).add(
+      QUEUE_NAMES.BATCH_UPDATE_LAW_TREE,
+      {
+        codes,
+      },
+    );
+
+    return res.status(202).json({
+      jobId: job.id,
+      queue: QUEUE_NAMES.BATCH_UPDATE_LAW_TREE,
+      state: 'queued',
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function findJob(jobId) {
   for (const queueName of Object.values(QUEUE_NAMES)) {
     const job = await getQueue(queueName).getJob(jobId);
