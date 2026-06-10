@@ -157,6 +157,7 @@ export const swaggerOptions = {
     './src/modules/pages/*.js',
     './src/modules/roadmap/*.js',
     './src/modules/assistant/*.js',
+    './src/modules/queue/*.js',
   ],
 };
 
