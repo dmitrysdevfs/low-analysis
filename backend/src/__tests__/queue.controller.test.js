@@ -85,6 +85,55 @@ describe('POST /api/queue/analyze-subjects', () => {
   });
 });
 
+describe('POST /api/queue/batch-update-law-tree', () => {
+  it('enqueues a batch_update_law_tree job and returns 202 with jobId', async () => {
+    mockAdd.mockResolvedValue({ id: '51' });
+
+    const res = await request(app)
+      .post('/api/queue/batch-update-law-tree')
+      .send({ codes: ['254к/96-вр', '580-19'] });
+
+    expect(res.status).toBe(202);
+    expect(res.body).toEqual({
+      jobId: '51',
+      queue: 'batch_update_law_tree',
+      state: 'queued',
+    });
+    expect(getQueue).toHaveBeenCalledWith('batch_update_law_tree');
+    expect(mockAdd).toHaveBeenCalledWith('batch_update_law_tree', {
+      codes: ['254к/96-вр', '580-19'],
+    });
+  });
+
+  it('returns 400 when codes is missing', async () => {
+    const res = await request(app)
+      .post('/api/queue/batch-update-law-tree')
+      .send({});
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/codes/i);
+    expect(mockAdd).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when codes is an empty array', async () => {
+    const res = await request(app)
+      .post('/api/queue/batch-update-law-tree')
+      .send({ codes: [] });
+
+    expect(res.status).toBe(400);
+    expect(mockAdd).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when codes is not an array', async () => {
+    const res = await request(app)
+      .post('/api/queue/batch-update-law-tree')
+      .send({ codes: '580-19' });
+
+    expect(res.status).toBe(400);
+    expect(mockAdd).not.toHaveBeenCalled();
+  });
+});
+
 describe('GET /api/queue/status/:jobId', () => {
   it('returns 200 with the full job status when the job exists', async () => {
     mockGetJob.mockResolvedValue({
