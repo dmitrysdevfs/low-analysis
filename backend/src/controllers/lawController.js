@@ -1,7 +1,5 @@
 import * as lawService from '../services/lawService.js';
-import * as fetchService from '../services/fetchService.js';
-import { parseLawHtml } from '../services/parserService.js';
-import { performStatisticalAnalysis } from '../services/statisticalAnalysisService.js';
+import { parseAndSaveLawByUrl } from '../services/lawIngest.service.js';
 import {
   getLawsQuerySchema,
   formatZodError,
@@ -126,68 +124,13 @@ export const getLawHeatmap = async (req, res, next) => {
 export const parseLawFromUrl = async (req, res, next) => {
   try {
     const { url } = req.body;
-    if (!url) {
-      return res.status(400).json({ message: 'URL or law code is required' });
-    }
 
-    const code = fetchService.extractLawCode(url);
-    if (!code) {
-      return res.status(400).json({
-        message: 'Could not extract valid law code from the provided URL',
-      });
-    }
-
-    // 1. Fetch HTMLs
-    const { mainHtml, frameHtml } = await fetchService.fetchLawData(code);
-
-    // 2. Parse HTML
-    const parsedData = parseLawHtml(frameHtml, mainHtml);
-
-    if (!parsedData.code) parsedData.code = code;
-    if (!parsedData.title || !parsedData.code) {
-      return res
-        .status(500)
-        .json({ message: 'Failed to parse the law. Invalid HTML structure.' });
-    }
-
-    // 3. Upsert Law
-    const law = await lawService.upsertLaw({
-      title: parsedData.title,
-      code: parsedData.code,
-      source: `https://zakon.rada.gov.ua/laws/show/${parsedData.code}#Text`,
-      status: parsedData.status,
-      preamble: parsedData.preamble,
-      signatory: parsedData.signatory,
-      adoptedDate: parsedData.adoptedDate,
-      documentType: parsedData.documentType,
-      global_context: parsedData.global_context,
-    });
-
-    // 4. Attach lawId, generate _id, and link parentId
-    const { elementsToSave, activeCodes } =
-      await lawService.resolveElementHierarchy(law._id, parsedData.elements);
-
-    await lawService.bulkUpsertElements(elementsToSave);
-    await lawService.deleteMissingElements(law._id, activeCodes);
-
-    // 5. Update law stats from the actual DB state (BE-2).
-    // This runs AFTER bulk write + delete so counts reflect reality,
-    // and filters out "{...виключено...}" placeholders (BE-4 Option B).
-    await lawService.updateLawStatsFromDb(law._id);
-
-    // 6. Calculate statistical metrics
-    try {
-      await performStatisticalAnalysis(law._id);
-    } catch (statsError) {
-      console.warn(
-        `[WARN] Failed to calculate statistics for law ${law._id}: ${statsError.message}`,
-      );
-    }
+    const result = await parseAndSaveLawByUrl(url);
 
     res.json({
       message: 'Law successfully parsed and saved',
-      lawId: law._id,
-      elementsCount: elementsToSave.length,
+      lawId: result.lawId,
+      elementsCount: result.elementsCount,
     });
   } catch (error) {
     next(error);
