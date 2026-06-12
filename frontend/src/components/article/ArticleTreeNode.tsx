@@ -11,6 +11,7 @@ import {
 import type { TreeBranch, RiskLevel } from "@/lib/tree";
 
 const RISK_DOT_COLOR: Record<RiskLevel, string> = {
+  orange: "#e67e22",
   green: "#4a9e6b",
   yellow: "#c8a843",
   red: "#c0392b",

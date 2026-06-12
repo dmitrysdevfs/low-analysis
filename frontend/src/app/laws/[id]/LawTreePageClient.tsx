@@ -151,7 +151,10 @@ export function LawTreePageClient() {
           const computedRisk = articleRiskMap.get(child._id);
           if (computedRisk === riskFilter) {
             // Override risk_level so ArticleEntry dot shows the computed level
-            articles.push({ ...child, risk_level: computedRisk });
+            articles.push({
+              ...child,
+              risk_level: computedRisk as RiskLevel,
+            });
           }
         }
       }
@@ -187,7 +190,7 @@ export function LawTreePageClient() {
   };
 
   const updateRisk = useCallback(
-    (level: RiskLevel) => {
+    (level: RiskLevel | "orange") => {
       const nextSearchParams = new URLSearchParams(searchParams.toString());
       if (searchParams.get("risk") === level) {
         nextSearchParams.delete("risk");
@@ -328,7 +331,7 @@ export function LawTreePageClient() {
             {!loading && !error && (stats ?? computedStats) ? (
               <VolumeChipBar
                 stats={(stats ?? computedStats)!}
-                activeLevel={riskFilter}
+                activeLevel={riskFilter as RiskLevel}
                 onLevelClick={updateRisk}
               />
             ) : null}

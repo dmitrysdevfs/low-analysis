@@ -69,9 +69,9 @@ export function ArticlePageClient() {
   const lawTitle = law?.title ?? "Закон";
   const lawCode = law?.code ?? "";
 
-  const [activeRiskLevel, setActiveRiskLevel] = useState<RiskLevel | null>(
-    null,
-  );
+  const [activeRiskLevel, setActiveRiskLevel] = useState<
+    RiskLevel | "orange" | null
+  >(null);
 
   const { filteredChildren, semanticCount } = useMemo(() => {
     if (!activeRiskLevel)

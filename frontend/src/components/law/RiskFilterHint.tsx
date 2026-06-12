@@ -4,14 +4,16 @@ import type { RiskLevel } from "@/lib/tree";
 import styles from "./RiskFilterHint.module.scss";
 
 const COLORS: Record<RiskLevel, string> = {
+  orange: "#e67e22",
   green: "#4a9e6b",
   yellow: "#c8a843",
   red: "#c0392b",
 };
 
 const LABELS: Record<RiskLevel, string> = {
+  orange: "Помірна (нижче середнього)",
   green: "Норма",
-  yellow: "Помірна складність",
+  yellow: "Помірна (вище середнього)",
   red: "Об'ємні",
 };
 
