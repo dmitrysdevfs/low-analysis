@@ -9,6 +9,8 @@
     "dev": "concurrently -n backend,frontend -c yellow,cyan \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm run dev --workspace=backend",
     "dev:frontend": "npm run dev --workspace=frontend",
+    "worker": "npm run worker --workspace=backend",
+    "dev:worker": "npm run worker:dev --workspace=backend",
     "install:all": "npm install",
     "lint": "npm run lint --workspaces",
     "typecheck": "npm run typecheck --workspace=frontend",

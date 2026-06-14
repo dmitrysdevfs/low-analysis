@@ -99,6 +99,21 @@ export const parseLawHtml = (html, mainHtml = null) => {
     }
   });
 
+  // Fallback: Extract from canonical link or og:url in mainHtml if provided
+  if (!code && mainHtml) {
+    const $main = cheerio.load(mainHtml);
+    const canonical =
+      $main('link[rel="canonical"]').attr('href') ||
+      $main('meta[property="og:url"]').attr('content') ||
+      '';
+    const match =
+      canonical.match(/\/go\/(.+)$/) ||
+      canonical.match(/\/show\/(.+?)(?:\/|$)/);
+    if (match) {
+      code = decodeURIComponent(match[1]);
+    }
+  }
+
   // ── 3. Parse elements & Extract metadata ──────────────────────────────────
   const elements = [];
   let order = 0;
@@ -108,6 +123,7 @@ export const parseLawHtml = (html, mainHtml = null) => {
   let preambleText = [];
   let signatoryText = [];
   let hasHitFirstDataTree = false;
+  let preambleEnded = false;
 
   // We iterate over all <p> tags inside #article
   $('#article p').each((_, el) => {
@@ -126,6 +142,10 @@ export const parseLawHtml = (html, mainHtml = null) => {
     const dataTree = anchor.length ? anchor.attr('data-tree') || '' : '';
     const anchorName = anchor.length ? anchor.attr('name') || '' : '';
 
+    if (preambleEnded) {
+      hasHitFirstDataTree = true;
+    }
+
     // A real body element (section, article, or sub-element) signals the end of the preamble zone
     const isBodyElement =
       dataTree.startsWith('rz') ||
@@ -134,6 +154,9 @@ export const parseLawHtml = (html, mainHtml = null) => {
       dataTree.startsWith('kn') || // Book structures like kn_1 or knpersha_1
       dataTree.startsWith('gl') ||
       dataTree.includes(':st') ||
+      ((dataTree.startsWith('pu') || dataTree.startsWith('ch')) &&
+        !dataTree.startsWith('pu_') &&
+        !dataTree.startsWith('ch_')) ||
       text.toLowerCase().startsWith('книга ') ||
       text.toLowerCase().startsWith('глава ') ||
       text.toLowerCase().startsWith('розділ ') ||
@@ -174,6 +197,21 @@ export const parseLawHtml = (html, mainHtml = null) => {
         (lowerText.includes('відомості верховної ради') ||
           lowerText.includes('офіційний вісник') ||
           lowerText.includes('урядовий кур'));
+
+      if (
+        !isEditorial &&
+        !isLawTitleOrType &&
+        (lowerText.endsWith('постановляє:') ||
+          lowerText.endsWith('наказує:') ||
+          lowerText.endsWith('наказую:') ||
+          lowerText.endsWith('наказуємо:') ||
+          lowerText.endsWith('постановляю:') ||
+          /\b(постановляє|наказує|наказую|наказуємо|постановляю):$/i.test(
+            lowerText,
+          ))
+      ) {
+        preambleEnded = true;
+      }
 
       if (
         text &&
