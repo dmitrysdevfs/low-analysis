@@ -53,6 +53,15 @@ export const updateProposal = async (req, res, next) => {
   }
 };
 
+export const deleteProposal = async (req, res, next) => {
+  try {
+    await proposalService.deleteProposal(req.params.id, req.user._id);
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const submitProposal = async (req, res, next) => {
   try {
     const proposal = await proposalService.submitProposal(

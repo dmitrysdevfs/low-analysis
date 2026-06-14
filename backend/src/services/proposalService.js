@@ -113,6 +113,28 @@ export const updateProposal = async (id, userId, data) => {
 };
 
 /**
+ * Delete a draft proposal and cascade-delete its amendments.
+ */
+export const deleteProposal = async (id, userId) => {
+  const proposal = await Proposal.findById(id);
+  if (!proposal)
+    throw Object.assign(new Error('Proposal not found'), { statusCode: 404 });
+
+  if (!compareIds(proposal.created_by, userId))
+    throw Object.assign(new Error('Not authorized to delete this proposal'), {
+      statusCode: 403,
+    });
+
+  if (proposal.status !== 'draft')
+    throw Object.assign(new Error('Only draft proposals can be deleted'), {
+      statusCode: 400,
+    });
+
+  await Amendment.deleteMany({ proposal_id: id });
+  await proposal.deleteOne();
+};
+
+/**
  * Submit proposal - change status to 'review'.
  */
 export const submitProposal = async (id, userId) => {
