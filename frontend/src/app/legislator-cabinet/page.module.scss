@@ -1,3 +1,5 @@
+$delete-btn-font-size: 1.1rem;
+
 .container {
   padding: 2.5rem 2rem;
   max-width: 1200px;
@@ -213,7 +215,7 @@
   color: #ff6b6b;
   cursor: pointer;
   padding: 2px 6px;
-  font-size: 0.95rem;
+  font-size: $delete-btn-font-size;
   transition: opacity 0.15s;
   line-height: 1;
 
@@ -266,10 +268,18 @@
 
 .amendmentMeta {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
   font-size: 0.72rem;
   color: #7a98c0;
   font-family: var(--font-mono, monospace);
+}
+
+@media (min-width: 640px) {
+  .amendmentMeta {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 .amendmentContext {
@@ -301,4 +311,11 @@
   color: #7a98c0;
   font-size: 0.9rem;
   margin: 0;
+}
+
+.lawRef {
+  font-size: 0.8rem;
+  color: #7a98c0;
+  font-family: var(--font-mono, monospace);
+  font-style: italic;
 }
