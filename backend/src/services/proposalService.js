@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Proposal from '../models/Proposal.js';
 import Amendment from '../models/Amendment.js';
 import { compareIds } from '../utils/id.js';
@@ -130,8 +131,18 @@ export const deleteProposal = async (id, userId) => {
       statusCode: 400,
     });
 
-  await Amendment.deleteMany({ proposal_id: id });
-  await proposal.deleteOne();
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await Amendment.deleteMany({ proposal_id: id }, { session });
+    await proposal.deleteOne({ session });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
 };
 
 /**
