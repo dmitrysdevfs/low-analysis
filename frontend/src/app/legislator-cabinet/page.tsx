@@ -15,6 +15,8 @@ import { ROUTES } from "@/constants/routes";
 import { notify } from "@/lib/toast";
 import { LegislatorCabinetSection } from "@/features/law-change/LegislatorCabinetSection";
 import styles from "./page.module.scss";
+import { getLawTitle } from "@/lib/utils/getLawTitle";
+import { normalizeLawTitle } from "@/lib/utils/normalizeLawTitle";
 
 export default function LegislatorCabinetPage() {
   const { user, isLegislator } = useAuth();
@@ -150,6 +152,11 @@ function LegislatorWorkspace({
                 href={ROUTES.legislatorProposal(proposal._id)}
                 className={styles.cardLink}
               >
+                {getLawTitle(proposal.law_id) && (
+                  <p className={styles.lawRef}>
+                    📄 {normalizeLawTitle(getLawTitle(proposal.law_id))}
+                  </p>
+                )}
                 <h3>{proposal.title}</h3>
                 <p>{proposal.description || "Без опису"}</p>
               </Link>
@@ -185,6 +192,11 @@ function LegislatorWorkspace({
           {amendments?.map((amendment) => (
             <div key={amendment._id} className={styles.amendmentCard}>
               <div className={styles.amendmentMeta}>
+                {getLawTitle(amendment.law_id) && (
+                  <p className={styles.lawRef}>
+                    📄 {normalizeLawTitle(getLawTitle(amendment.law_id))}
+                  </p>
+                )}
                 <span className={styles.amendmentContext}>
                   {amendment.context?.article_num
                     ? `Стаття ${amendment.context.article_num} · `
