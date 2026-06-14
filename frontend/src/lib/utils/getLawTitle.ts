@@ -1,7 +1,8 @@
-import { Proposal } from "@/types";
+import { Proposal, Law } from "@/types";
 
-export function getLawTitle(law: Proposal["law_id"]) {
-  if (!law) return "";
-  if (typeof law === "string") return "";
-  return law.title;
+export function getLawTitle(
+  law: Proposal["law_id"] | Law | string | null | undefined,
+): string {
+  if (!law || typeof law === "string") return "";
+  return "title" in law ? law.title : "";
 }
