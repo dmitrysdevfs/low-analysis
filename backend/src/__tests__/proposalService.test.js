@@ -16,9 +16,13 @@ vi.mock('mongoose', async () => {
     ...actual,
     default: {
       ...actual.default,
-      startSession: vi.fn().mockImplementation(() => Promise.resolve(mockSession)),
+      startSession: vi
+        .fn()
+        .mockImplementation(() => Promise.resolve(mockSession)),
     },
-    startSession: vi.fn().mockImplementation(() => Promise.resolve(mockSession)),
+    startSession: vi
+      .fn()
+      .mockImplementation(() => Promise.resolve(mockSession)),
   };
 });
 
@@ -83,7 +87,10 @@ describe('proposalService', () => {
 
       await proposalService.deleteProposal('p1', 'u1');
 
-      expect(Amendment.deleteMany).toHaveBeenCalledWith({ proposal_id: 'p1' }, { session: mockSession });
+      expect(Amendment.deleteMany).toHaveBeenCalledWith(
+        { proposal_id: 'p1' },
+        { session: mockSession },
+      );
       expect(deleteOne).toHaveBeenCalledWith({ session: mockSession });
       expect(mockSession.startTransaction).toHaveBeenCalled();
       expect(mockSession.commitTransaction).toHaveBeenCalled();
@@ -102,9 +109,9 @@ describe('proposalService', () => {
       Proposal.findById.mockResolvedValue(mockProposal);
       Amendment.deleteMany.mockResolvedValue({ deletedCount: 2 });
 
-      await expect(
-        proposalService.deleteProposal('p1', 'u1')
-      ).rejects.toThrow('DB error');
+      await expect(proposalService.deleteProposal('p1', 'u1')).rejects.toThrow(
+        'DB error',
+      );
 
       expect(mockSession.startTransaction).toHaveBeenCalled();
       expect(mockSession.abortTransaction).toHaveBeenCalled();
