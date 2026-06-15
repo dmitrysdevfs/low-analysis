@@ -61,15 +61,28 @@ describe("useSearch", () => {
       docType: "ЗАКОН УКРАЇНИ",
       sort: "title",
     });
-    expect(result.current.results).toEqual([LAW_FIXTURE_3]);
+    expect(getLaws).toHaveBeenCalledWith(
+      "закон",
+      expect.anything(),
+      expect.objectContaining({
+        documentType: "ЗАКОН УКРАЇНИ",
+        sortBy: "title",
+        sortOrder: "asc",
+      }),
+    );
+    expect(result.current.results).toEqual([
+      LAW_FIXTURE_3,
+      LAW_FIXTURE,
+      LAW_FIXTURE_2,
+    ]);
     expect(result.current.searched).toBe(true);
   });
 
   it("sorts by createdAt when requested", async () => {
     vi.mocked(getLaws).mockResolvedValue([
+      LAW_FIXTURE_3,
       LAW_FIXTURE,
       LAW_FIXTURE_2,
-      LAW_FIXTURE_3,
     ]);
 
     const { result } = renderHook(() => useSearch());
@@ -80,11 +93,36 @@ describe("useSearch", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
+    expect(getLaws).toHaveBeenCalledWith(
+      "кодекс",
+      expect.anything(),
+      expect.objectContaining({ sortBy: "date", sortOrder: "desc" }),
+    );
     expect(result.current.results).toEqual([
       LAW_FIXTURE_3,
       LAW_FIXTURE,
       LAW_FIXTURE_2,
     ]);
+  });
+
+  it("searches by a filter alone, without a keyword or number", async () => {
+    vi.mocked(getLaws).mockResolvedValue([LAW_FIXTURE]);
+
+    const { result } = renderHook(() => useSearch());
+
+    act(() => {
+      result.current.search({ type: "ЗАКОН УКРАЇНИ" });
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(getLaws).toHaveBeenCalledWith(
+      "",
+      expect.anything(),
+      expect.objectContaining({ documentType: "ЗАКОН УКРАЇНИ" }),
+    );
+    expect(result.current.results).toEqual([LAW_FIXTURE]);
+    expect(result.current.searched).toBe(true);
   });
 
   it("keeps server order for relevance sort", async () => {

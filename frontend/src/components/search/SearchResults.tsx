@@ -80,7 +80,9 @@ export function SearchResults({
         <div className={styles.emptyIconSearch}>⌕</div>
         <div className={`display ${styles.emptyTitle}`}>Нічого не знайдено</div>
         <div className={`mono ${styles.emptySubtext}`}>
-          За запитом «{query}» результатів немає
+          {query.trim()
+            ? `За запитом «${query}» результатів немає`
+            : "За заданими параметрами результатів немає"}
         </div>
       </div>
     );
