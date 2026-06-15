@@ -188,6 +188,33 @@ describe('GET /api/laws', () => {
     );
   });
 
+  it('passes number and numberType to the service', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    await request(app).get('/api/laws?number=889-19&numberType=contains');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ number: '889-19', numberType: 'contains' }),
+    );
+  });
+
+  it('defaults numberType to "starts" when only number is provided', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    await request(app).get('/api/laws?number=889');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ number: '889', numberType: 'starts' }),
+    );
+  });
+
+  it('returns 400 for invalid numberType', async () => {
+    const res = await request(app).get('/api/laws?numberType=invalid');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/numberType/);
+  });
+
   it('passes page and limit to the service', async () => {
     lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 

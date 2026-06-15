@@ -14,13 +14,16 @@ export const getAllLaws = async ({
   dateFrom,
   dateTo,
   documentType,
+  number,
+  numberType = 'starts',
   page = 1,
   limit = 10,
 } = {}) => {
   const filter = {};
+  const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   if (q) {
-    const qRegex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    const qRegex = new RegExp(escapeRegex(q), 'i');
     if (searchIn === 'text') {
       filter.$or = [
         { preamble: { $regex: qRegex } },
@@ -34,22 +37,37 @@ export const getAllLaws = async ({
     }
   }
 
+  if (number) {
+    const escaped = escapeRegex(number);
+    let pattern;
+    if (numberType === 'exact') {
+      pattern = `^${escaped}$`;
+    } else if (numberType === 'contains') {
+      pattern = escaped;
+    } else {
+      pattern = `^${escaped}`;
+    }
+    const numberCondition = { $regex: new RegExp(pattern, 'i') };
+
+    // If `q` with searchIn=code already targets `code`, keep both conditions.
+    if (filter.code) {
+      filter.$and = [{ code: filter.code }, { code: numberCondition }];
+      delete filter.code;
+    } else {
+      filter.code = numberCondition;
+    }
+  }
+
   if (status) {
     filter.status = {
-      $regex: new RegExp(
-        `^${status.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
-        'i',
-      ),
+      $regex: new RegExp(`^${escapeRegex(status)}$`, 'i'),
     };
   }
 
   if (documentType) {
     filter.documentType = {
       $elemMatch: {
-        $regex: new RegExp(
-          `^${documentType.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
-          'i',
-        ),
+        $regex: new RegExp(`^${escapeRegex(documentType)}$`, 'i'),
       },
     };
   }

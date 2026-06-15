@@ -54,6 +54,21 @@ router.use(guestRateLimit);
  *           type: string
  *           example: Закон України
  *       - in: query
+ *         name: number
+ *         required: false
+ *         description: Фільтр за кодом/номером акта (працює разом з numberType)
+ *         schema:
+ *           type: string
+ *           example: 889-19
+ *       - in: query
+ *         name: numberType
+ *         required: false
+ *         description: Режим зіставлення для number — починається з / містить / точний збіг
+ *         schema:
+ *           type: string
+ *           enum: [starts, contains, exact]
+ *           default: starts
+ *       - in: query
  *         name: dateFrom
  *         required: false
  *         description: Фільтр за датою прийняття — від (включно)
