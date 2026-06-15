@@ -29,6 +29,19 @@ export async function getJson<T>(
   return res.json() as Promise<T>;
 }
 
+/**
+ * Builds URLSearchParams from a record, skipping undefined/empty values.
+ */
+export function toSearchParams(
+  record: Record<string, string | undefined>,
+): URLSearchParams {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(record)) {
+    if (value !== undefined && value !== "") params.set(key, value);
+  }
+  return params;
+}
+
 export async function requestJson<T>(
   path: string,
   method: string,

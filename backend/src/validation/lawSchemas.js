@@ -12,6 +12,8 @@ export const getLawsQuerySchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
   status: z.string().trim().optional(),
   documentType: z.string().trim().optional(),
+  number: z.string().trim().optional(),
+  numberType: z.enum(['starts', 'contains', 'exact']).default('starts'),
   dateFrom: isoDate.optional(),
   dateTo: isoDate.optional(),
   page: z.coerce.number().int().min(1).default(1),

@@ -8,19 +8,43 @@ import type {
   PaginatedLawsResponse,
   TreeNode,
 } from "@/types";
-import { getJson } from "./_client";
+import { getJson, toSearchParams } from "./_client";
 export { getJson } from "./_client";
+
+export interface LawsSearchOptions {
+  wordField?: "title" | "text" | "code";
+  status?: string;
+  documentType?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  number?: string;
+  numberType?: "starts" | "contains" | "exact";
+  sortBy?: "date" | "title";
+  sortOrder?: "asc" | "desc";
+}
 
 export async function getLaws(
   q = "",
   options?: RequestInit,
-  queryOptions?: { wordField?: "title" | "text" | "code" },
+  queryOptions?: LawsSearchOptions,
 ): Promise<Law[]> {
-  const params = new URLSearchParams({ limit: "500" });
-  if (q.trim()) params.set("q", q.trim());
-  if (queryOptions?.wordField && queryOptions.wordField !== "title") {
-    params.set("wordField", queryOptions.wordField);
-  }
+  const o = queryOptions;
+  const trimmed = q.trim();
+
+  const params = toSearchParams({
+    limit: "500",
+    q: trimmed || undefined,
+    wordField: o?.wordField !== "title" ? o?.wordField : undefined,
+    status: o?.status,
+    documentType: o?.documentType,
+    dateFrom: o?.dateFrom,
+    dateTo: o?.dateTo,
+    sortBy: o?.sortBy,
+    sortOrder: o?.sortOrder,
+    number: o?.number,
+    numberType: o?.number ? o?.numberType : undefined,
+  });
+
   const res = await getJson<{ data: Law[] } | Law[]>(
     `/laws?${params}`,
     options,

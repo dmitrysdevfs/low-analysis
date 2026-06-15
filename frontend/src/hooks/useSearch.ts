@@ -6,11 +6,19 @@ import { getLaws } from "@/lib/api";
 import { parseApiError } from "@/lib/utils";
 import type { Law } from "@/types";
 import type { SearchParams } from "@/types/search.types";
-import { applySearchFilters, sortLaws } from "@/lib/search/filters";
 
 export type { SearchParams };
 
 export const GUEST_VISIBLE_RESULTS_LIMIT = 12;
+
+function toSortQuery(sort: SearchParams["sort"]): {
+  sortBy?: "date" | "title";
+  sortOrder?: "asc" | "desc";
+} {
+  if (sort === "title") return { sortBy: "title", sortOrder: "asc" };
+  if (sort === "date") return { sortBy: "date", sortOrder: "desc" };
+  return {};
+}
 
 const DEFAULT_PARAMS: SearchParams = {
   q: "",
@@ -60,23 +68,40 @@ export function useSearch() {
 
       setParams(normalizedParams);
 
-      if (!normalizedParams.q.trim() && !normalizedParams.number.trim()) {
+      const hasCriteria =
+        normalizedParams.q.trim() ||
+        normalizedParams.number.trim() ||
+        normalizedParams.docType ||
+        normalizedParams.dateFrom ||
+        normalizedParams.dateTo ||
+        normalizedParams.status;
+
+      if (!hasCriteria) {
         setState({ results: [], loading: false, error: null, searched: false });
         return;
       }
 
-      const applyFilters = (raw: Law[]) => {
-        const filtered = applySearchFilters(raw, normalizedParams);
-        const sorted = sortLaws(filtered, normalizedParams.sort);
-        return isGuest ? sorted.slice(0, GUEST_VISIBLE_RESULTS_LIMIT) : sorted;
-      };
+      const applyResults = (laws: Law[]) =>
+        isGuest ? laws.slice(0, GUEST_VISIBLE_RESULTS_LIMIT) : laws;
 
-      // If we already have raw results for this query — skip network + quota
-      const cacheKey = `${normalizedParams.q}::${normalizedParams.wordField}`;
+      const queryOptions = {
+        wordField: normalizedParams.wordField,
+        status: normalizedParams.status || undefined,
+        documentType: normalizedParams.docType || undefined,
+        dateFrom: normalizedParams.dateFrom || undefined,
+        dateTo: normalizedParams.dateTo || undefined,
+        number: normalizedParams.number.trim() || undefined,
+        numberType: normalizedParams.numberType,
+        ...toSortQuery(normalizedParams.sort),
+      };
+      const cacheKey = JSON.stringify({
+        q: normalizedParams.q.trim(),
+        ...queryOptions,
+      });
       const cached = rawCache.get(cacheKey);
       if (cached && Date.now() - cached.ts < RAW_CACHE_TTL) {
         setState({
-          results: applyFilters(cached.data),
+          results: applyResults(cached.data),
           loading: false,
           error: null,
           searched: true,
@@ -102,15 +127,11 @@ export function useSearch() {
 
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
-      getLaws(
-        normalizedParams.q,
-        { signal },
-        { wordField: normalizedParams.wordField },
-      )
+      getLaws(normalizedParams.q, { signal }, queryOptions)
         .then((laws) => {
           rawCache.set(cacheKey, { data: laws, ts: Date.now() });
           setState({
-            results: applyFilters(laws),
+            results: applyResults(laws),
             loading: false,
             error: null,
             searched: true,
