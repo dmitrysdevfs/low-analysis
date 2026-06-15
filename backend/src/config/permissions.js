@@ -14,6 +14,7 @@ export const ROLE_PERMISSIONS = {
     'amendments:delete',
     'proposals:create',
     'proposals:submit',
+    'proposals:delete',
     'comments:create',
     'comments:read',
     'votes:cast',

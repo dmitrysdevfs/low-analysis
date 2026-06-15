@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Proposal from '../models/Proposal.js';
 import Amendment from '../models/Amendment.js';
 import { compareIds } from '../utils/id.js';
@@ -110,6 +111,38 @@ export const updateProposal = async (id, userId, data) => {
   }
 
   return await Proposal.findByIdAndUpdate(id, data, { new: true });
+};
+
+/**
+ * Delete a draft proposal and cascade-delete its amendments.
+ */
+export const deleteProposal = async (id, userId) => {
+  const proposal = await Proposal.findById(id);
+  if (!proposal)
+    throw Object.assign(new Error('Proposal not found'), { statusCode: 404 });
+
+  if (!compareIds(proposal.created_by, userId))
+    throw Object.assign(new Error('Not authorized to delete this proposal'), {
+      statusCode: 403,
+    });
+
+  if (proposal.status !== 'draft')
+    throw Object.assign(new Error('Only draft proposals can be deleted'), {
+      statusCode: 400,
+    });
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await Amendment.deleteMany({ proposal_id: id }, { session });
+    await proposal.deleteOne({ session });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
 };
 
 /**

@@ -162,6 +162,33 @@ router
  *         description: Законопроєкт не знайдено
  *       500:
  *         $ref: '#/components/responses/ServerError'
+ *
+ *   delete:
+ *     summary: Видалити законопроєкт (Proposal)
+ *     description: Дозволяє автору видалити власний законопроєкт у статусі draft. Разом із законопроєктом каскадно видаляються всі пов'язані поправки (Amendments).
+ *     tags: [Proposals]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID законопроєкту
+ *     responses:
+ *       204:
+ *         description: Законопроєкт видалено
+ *       400:
+ *         description: Видаляти можна лише законопроєкти у статусі draft
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         description: Видалити може тільки автор законопроєкту
+ *       404:
+ *         description: Законопроєкт не знайдено
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router
   .route('/:id')
@@ -170,6 +197,11 @@ router
     protect,
     hasPermission('proposals:create'),
     proposalController.updateProposal,
+  )
+  .delete(
+    protect,
+    hasPermission('proposals:delete'),
+    proposalController.deleteProposal,
   );
 
 /**
