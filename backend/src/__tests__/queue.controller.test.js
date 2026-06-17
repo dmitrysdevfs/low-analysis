@@ -8,6 +8,15 @@ vi.mock('../modules/queue/queue.client.js', () => ({
   getQueue: vi.fn(() => ({ add: mockAdd, getJob: mockGetJob })),
 }));
 
+vi.mock('../middleware/authMiddleware.js', () => ({
+  protect: (req, _res, next) => {
+    req.user = { _id: 'test-user-id', role: 'user' };
+    next();
+  },
+  authorize: () => (_req, _res, next) => next(),
+  hasPermission: () => (_req, _res, next) => next(),
+}));
+
 import app from '../app.js';
 import { getQueue } from '../modules/queue/queue.client.js';
 
@@ -138,6 +147,16 @@ describe('POST /api/queue/batch-update-law-tree', () => {
       .send({ codes: '580-19' });
 
     expect(res.status).toBe(400);
+    expect(mockAdd).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when codes exceeds 100 items', async () => {
+    const res = await request(app)
+      .post('/api/queue/batch-update-law-tree')
+      .send({ codes: Array.from({ length: 101 }, (_, i) => `law-${i}`) });
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/100/);
     expect(mockAdd).not.toHaveBeenCalled();
   });
 });

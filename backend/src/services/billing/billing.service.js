@@ -9,6 +9,8 @@ const BILLING_PLANS = [
     priceUsd: 1,
     durationDays: 7,
     isUnlimited: true,
+    quotaSearch: null,
+    quotaView: null,
   },
   {
     id: 'user',
@@ -16,6 +18,8 @@ const BILLING_PLANS = [
     priceUsd: 9,
     durationDays: 30,
     isUnlimited: false,
+    quotaSearch: 100,
+    quotaView: 200,
   },
   {
     id: 'plus',
@@ -23,6 +27,8 @@ const BILLING_PLANS = [
     priceUsd: 19,
     durationDays: 30,
     isUnlimited: false,
+    quotaSearch: 500,
+    quotaView: 1000,
   },
   {
     id: 'pro',
@@ -30,6 +36,8 @@ const BILLING_PLANS = [
     priceUsd: 39,
     durationDays: 30,
     isUnlimited: true,
+    quotaSearch: null,
+    quotaView: null,
   },
 ];
 
@@ -89,6 +97,22 @@ export async function consumeBillingQuota(userId, type) {
   }
 
   const field = type === 'search' ? 'usageSearch' : 'usageView';
+  const quotaField = type === 'search' ? 'quotaSearch' : 'quotaView';
+
+  const current = await BillingSubscription.findOne({ userId }).lean();
+  if (current) {
+    const plan = PLAN_MAP.get(current.planId);
+    if (plan && !plan.isUnlimited && plan[quotaField] !== null) {
+      const used = current[field] ?? 0;
+      if (used >= plan[quotaField]) {
+        throw Object.assign(
+          new Error(`Ліміт ${type} вичерпано для вашого плану`),
+          { status: 429 },
+        );
+      }
+    }
+  }
+
   const subscription = await BillingSubscription.findOneAndUpdate(
     { userId },
     { $inc: { [field]: 1 } },

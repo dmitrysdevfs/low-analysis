@@ -10,6 +10,7 @@ import {
   getLawHeatmap,
 } from '../controllers/lawController.js';
 import { guestRateLimit } from '../middleware/guestRateLimit.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -362,6 +363,6 @@ router.get('/:id/articles/:num', getArticle);
  *       500:
  *         description: Помилка сервера або парсингу
  */
-router.post('/parse', parseLawFromUrl);
+router.post('/parse', protect, authorize('admin'), parseLawFromUrl);
 
 export default router;

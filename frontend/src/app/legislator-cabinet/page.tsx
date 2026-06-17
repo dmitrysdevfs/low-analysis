@@ -35,7 +35,7 @@ function LegislatorWorkspace({
   user: ReturnType<typeof useAuth>["user"];
 }) {
   const { laws } = useLaws();
-  const { data: proposals, isLoading: proposalsLoading } = useProposals();
+  const { data: proposals, isLoading: proposalsLoading } = useProposals({ userId: user?.id });
   const { data: amendments, isLoading: amendmentsLoading } = useAmendments({
     userId: user?.id,
   });
@@ -63,16 +63,19 @@ function LegislatorWorkspace({
     e.preventDefault();
     if (!title || !lawId) return;
 
-    await createProposalMutation.mutateAsync({
-      title,
-      description,
-      law_id: lawId,
-    });
-
-    setTitle("");
-    setDescription("");
-    setLawId("");
-    setShowCreateForm(false);
+    try {
+      await createProposalMutation.mutateAsync({
+        title,
+        description,
+        law_id: lawId,
+      });
+      setTitle("");
+      setDescription("");
+      setLawId("");
+      setShowCreateForm(false);
+    } catch {
+      notify.error("Не вдалося створити пропозицію");
+    }
   };
 
   if (proposalsLoading || amendmentsLoading) {
