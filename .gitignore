@@ -71,6 +71,9 @@ GEMINI.md
 # Copilot
 .github/copilot-instructions.md
 
+# Playwright screenshots (root level)
+*.png
+
 # Temporary and sensitive files
 .tmp_*
 .tmp_inbox_cookies.txt
