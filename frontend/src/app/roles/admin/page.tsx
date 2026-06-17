@@ -5,7 +5,8 @@ import { ROLES_ADMIN_FALLBACK } from "@/features/page-builder/lib/roleFallbacks"
 
 export const metadata: Metadata = {
   title: "Адміністратор · Law Analysis",
-  description: "Роль Адміністратора: повний контроль над системою та модерацією.",
+  description:
+    "Роль Адміністратора: повний контроль над системою та модерацією.",
 };
 
 export default function RolesAdminPage() {

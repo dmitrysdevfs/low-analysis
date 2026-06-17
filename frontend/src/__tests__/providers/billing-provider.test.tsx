@@ -5,11 +5,7 @@ import {
   useBilling,
 } from "@/components/billing/BillingProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
-import {
-  getMyBilling,
-  demoPurchase,
-  adminAssignPlan,
-} from "@/lib/api/billing";
+import { getMyBilling, demoPurchase, adminAssignPlan } from "@/lib/api/billing";
 import { BILLING_PLAN_CATALOG } from "@/lib/billing/mockBilling";
 
 vi.mock("@/components/auth/AuthProvider", () => ({

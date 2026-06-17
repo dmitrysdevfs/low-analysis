@@ -5,7 +5,8 @@ import { ROLES_SUPERVISOR_FALLBACK } from "@/features/page-builder/lib/roleFallb
 
 export const metadata: Metadata = {
   title: "Супервайзер · Law Analysis",
-  description: "Роль Супервайзера: моніторинг груп студентів та порівняння форків.",
+  description:
+    "Роль Супервайзера: моніторинг груп студентів та порівняння форків.",
 };
 
 export default function RolesSupervisorPage() {

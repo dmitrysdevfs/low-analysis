@@ -17,7 +17,12 @@ import { LegislatorCabinetSection } from "@/features/law-change/LegislatorCabine
 import styles from "./page.module.scss";
 import { getLawTitle } from "@/lib/utils/getLawTitle";
 import { normalizeLawTitle } from "@/lib/utils/normalizeLawTitle";
-import { useMyForks, useCreateFork, useSubmitFork, useAddChange } from "@/hooks/useForks";
+import {
+  useMyForks,
+  useCreateFork,
+  useSubmitFork,
+  useAddChange,
+} from "@/hooks/useForks";
 import { ForkDiffModal } from "@/components/fork/ForkDiffModal";
 
 export default function LegislatorCabinetPage() {
@@ -141,7 +146,10 @@ function LegislatorWorkspace({
         },
       });
       notify.success("Зміну додано");
-      setChangeCode(""); setChangeOriginal(""); setChangeProposed(""); setChangeRationale("");
+      setChangeCode("");
+      setChangeOriginal("");
+      setChangeProposed("");
+      setChangeRationale("");
       setAddChangeForkId(null);
     } catch {
       notify.error("Не вдалося додати зміну");
@@ -402,7 +410,10 @@ function LegislatorWorkspace({
                   </button>
                 )}
                 {fork.status === "draft" && addChangeForkId !== fork._id && (
-                  <button className={styles.btnSmall} onClick={() => setAddChangeForkId(fork._id)}>
+                  <button
+                    className={styles.btnSmall}
+                    onClick={() => setAddChangeForkId(fork._id)}
+                  >
                     + Зміна
                   </button>
                 )}
@@ -410,29 +421,64 @@ function LegislatorWorkspace({
               {addChangeForkId === fork._id && (
                 <form onSubmit={handleAddChange} className={styles.changeForm}>
                   <div className={styles.changeFormRow}>
-                    <select value={changeOp} onChange={e => setChangeOp(e.target.value as "edit" | "add" | "delete")} className={styles.changeSelect}>
+                    <select
+                      value={changeOp}
+                      onChange={(e) =>
+                        setChangeOp(e.target.value as "edit" | "add" | "delete")
+                      }
+                      className={styles.changeSelect}
+                    >
                       <option value="edit">Редагувати</option>
                       <option value="add">Додати</option>
                       <option value="delete">Видалити</option>
                     </select>
                     <input
-                      type="text" placeholder="Код елементу (напр. ст.1.ч.1)" value={changeCode}
-                      onChange={e => setChangeCode(e.target.value)} className={styles.changeInput} required
+                      type="text"
+                      placeholder="Код елементу (напр. ст.1.ч.1)"
+                      value={changeCode}
+                      onChange={(e) => setChangeCode(e.target.value)}
+                      className={styles.changeInput}
+                      required
                     />
                   </div>
                   {changeOp !== "add" && (
-                    <textarea placeholder="Оригінальний текст" value={changeOriginal}
-                      onChange={e => setChangeOriginal(e.target.value)} rows={3} className={styles.changeTextarea} />
+                    <textarea
+                      placeholder="Оригінальний текст"
+                      value={changeOriginal}
+                      onChange={(e) => setChangeOriginal(e.target.value)}
+                      rows={3}
+                      className={styles.changeTextarea}
+                    />
                   )}
                   {changeOp !== "delete" && (
-                    <textarea placeholder="Пропонований текст" value={changeProposed}
-                      onChange={e => setChangeProposed(e.target.value)} rows={3} className={styles.changeTextarea} />
+                    <textarea
+                      placeholder="Пропонований текст"
+                      value={changeProposed}
+                      onChange={(e) => setChangeProposed(e.target.value)}
+                      rows={3}
+                      className={styles.changeTextarea}
+                    />
                   )}
-                  <textarea placeholder="Обґрунтування" value={changeRationale}
-                    onChange={e => setChangeRationale(e.target.value)} rows={2} className={styles.changeTextarea} />
+                  <textarea
+                    placeholder="Обґрунтування"
+                    value={changeRationale}
+                    onChange={(e) => setChangeRationale(e.target.value)}
+                    rows={2}
+                    className={styles.changeTextarea}
+                  />
                   <div className={styles.changeFormActions}>
-                    <button type="button" onClick={() => setAddChangeForkId(null)}>Скасувати</button>
-                    <button type="submit" disabled={addChangeMutation.isPending}>Зберегти зміну</button>
+                    <button
+                      type="button"
+                      onClick={() => setAddChangeForkId(null)}
+                    >
+                      Скасувати
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={addChangeMutation.isPending}
+                    >
+                      Зберегти зміну
+                    </button>
                   </div>
                 </form>
               )}
@@ -442,7 +488,10 @@ function LegislatorWorkspace({
       </section>
 
       {diffForkId && (
-        <ForkDiffModal forkId={diffForkId} onClose={() => setDiffForkId(null)} />
+        <ForkDiffModal
+          forkId={diffForkId}
+          onClose={() => setDiffForkId(null)}
+        />
       )}
     </div>
   );

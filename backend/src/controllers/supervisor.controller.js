@@ -29,7 +29,10 @@ export const createGroup = async (req, res, next) => {
 
 export const getGroup = async (req, res, next) => {
   try {
-    const group = await supervisorService.getGroupById(req.params.id, req.user._id);
+    const group = await supervisorService.getGroupById(
+      req.params.id,
+      req.user._id,
+    );
     res.json(group);
   } catch (err) {
     next(err);
@@ -38,7 +41,11 @@ export const getGroup = async (req, res, next) => {
 
 export const updateGroup = async (req, res, next) => {
   try {
-    const group = await supervisorService.updateGroup(req.params.id, req.user._id, req.body);
+    const group = await supervisorService.updateGroup(
+      req.params.id,
+      req.user._id,
+      req.body,
+    );
     res.json(group);
   } catch (err) {
     next(err);

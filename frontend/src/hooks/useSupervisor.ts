@@ -44,8 +44,13 @@ export function useCreateSupervisorGroup() {
 export function useUpdateSupervisorGroup() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof updateSupervisorGroup>[1] }) =>
-      updateSupervisorGroup(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Parameters<typeof updateSupervisorGroup>[1];
+    }) => updateSupervisorGroup(id, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: KEYS.groups });
       qc.invalidateQueries({ queryKey: KEYS.dashboard });

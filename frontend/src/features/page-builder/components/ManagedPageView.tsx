@@ -12,7 +12,11 @@ interface ManagedPageViewProps {
   eyebrow?: string;
 }
 
-export function ManagedPageView({ slug, fallback, eyebrow }: ManagedPageViewProps) {
+export function ManagedPageView({
+  slug,
+  fallback,
+  eyebrow,
+}: ManagedPageViewProps) {
   const [page, setPage] = useState<ManagedPagePublicResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [fallbackMode, setFallbackMode] = useState(false);
@@ -36,7 +40,9 @@ export function ManagedPageView({ slug, fallback, eyebrow }: ManagedPageViewProp
     }
 
     void load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [slug, fallback]);
 
   if (loading && !page) {

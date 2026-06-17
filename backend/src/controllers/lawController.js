@@ -146,10 +146,16 @@ export const parseLawFromUrl = async (req, res, next) => {
 export const getLawSubjects = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const elements = await Element.find({ lawId: id }).select('subjects').lean();
-    const subjectIds = [...new Set(
-      elements.flatMap(e => (e.subjects ?? []).map(s => String(s.subject_id)))
-    )];
+    const elements = await Element.find({ lawId: id })
+      .select('subjects')
+      .lean();
+    const subjectIds = [
+      ...new Set(
+        elements.flatMap((e) =>
+          (e.subjects ?? []).map((s) => String(s.subject_id)),
+        ),
+      ),
+    ];
     if (!subjectIds.length) return res.json([]);
     const subjects = await Subject.find({ _id: { $in: subjectIds } })
       .select('canonical_name legal_status taxonomies')

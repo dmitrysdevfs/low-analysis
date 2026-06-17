@@ -1,9 +1,18 @@
-.panel { margin-top: 24px; }
-.title { font-size: 1rem; font-weight: 600; margin-bottom: 14px; }
-.empty { color: var(--color-text-muted, #aaa); font-size: 0.9rem; }
+.panel {
+  margin-top: 24px;
+}
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.empty {
+  color: var(--color-text-muted, #aaa);
+  font-size: 0.9rem;
+}
 .card {
   padding: 14px 16px;
-  border: 1px solid var(--color-border, rgba(255,255,255,0.1));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
   border-radius: 10px;
   margin-bottom: 10px;
 }
@@ -15,16 +24,29 @@
   flex-wrap: wrap;
   font-size: 0.9rem;
 }
-.date { font-size: 0.75rem; color: var(--color-text-muted, #aaa); margin-left: auto; }
-.message { font-size: 0.85rem; color: var(--color-text-muted, #999); margin-bottom: 10px; }
-.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #aaa);
+  margin-left: auto;
+}
+.message {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #999);
+  margin-bottom: 10px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
 .noteInput {
   flex: 1;
   min-width: 180px;
   padding: 6px 10px;
-  border: 1px solid var(--color-border, rgba(255,255,255,0.15));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.15));
   border-radius: 6px;
-  background: var(--color-surface, rgba(255,255,255,0.05));
+  background: var(--color-surface, rgba(255, 255, 255, 0.05));
   color: var(--color-text, inherit);
   font-size: 0.8rem;
 }
@@ -36,7 +58,9 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.82rem;
-  &:disabled { opacity: 0.5; }
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 .btnReject {
   padding: 6px 16px;
@@ -46,5 +70,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.82rem;
-  &:disabled { opacity: 0.5; }
+  &:disabled {
+    opacity: 0.5;
+  }
 }

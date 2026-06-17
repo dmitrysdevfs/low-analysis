@@ -92,8 +92,10 @@ function buildSnapshot(
     viewLimit,
     searchUsed,
     viewUsed,
-    searchRemaining: searchLimit !== null ? Math.max(0, searchLimit - searchUsed) : null,
-    viewRemaining: viewLimit !== null ? Math.max(0, viewLimit - viewUsed) : null,
+    searchRemaining:
+      searchLimit !== null ? Math.max(0, searchLimit - searchUsed) : null,
+    viewRemaining:
+      viewLimit !== null ? Math.max(0, viewLimit - viewUsed) : null,
     previewMode: false,
   };
 }
@@ -183,14 +185,20 @@ const EMPTY_BILLING_CONTEXT: BillingContextValue = {
   getBillingRegistry: () => [],
 };
 
-const BillingContext = createContext<BillingContextValue>(EMPTY_BILLING_CONTEXT);
+const BillingContext = createContext<BillingContextValue>(
+  EMPTY_BILLING_CONTEXT,
+);
 
 // ─── provider ────────────────────────────────────────────────────────────────
 
 export function BillingProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [serverSub, setServerSub] = useState<BillingSubscriptionServer | null>(null);
-  const [transactions, setTransactions] = useState<BillingTransactionServer[]>([]);
+  const [serverSub, setServerSub] = useState<BillingSubscriptionServer | null>(
+    null,
+  );
+  const [transactions, setTransactions] = useState<BillingTransactionServer[]>(
+    [],
+  );
   const [localUsage, setLocalUsage] = useState({ search: 0, view: 0 });
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -218,12 +226,21 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   }, [refreshBilling]);
 
   const subscription = useMemo(
-    () => buildSnapshot(serverSub, localUsage, user?.id ?? "", user?.accountType ?? "client"),
+    () =>
+      buildSnapshot(
+        serverSub,
+        localUsage,
+        user?.id ?? "",
+        user?.accountType ?? "client",
+      ),
     [serverSub, localUsage, user],
   );
 
   const purchasePlan = useCallback(
-    async (planId: BillingPlanId, method: BillingPaymentMethod): Promise<BillingActionResult> => {
+    async (
+      planId: BillingPlanId,
+      method: BillingPaymentMethod,
+    ): Promise<BillingActionResult> => {
       if (!user) return { ok: false, error: "Потрібна авторизація" };
       try {
         await demoPurchase(planId, method);
@@ -238,7 +255,10 @@ export function BillingProvider({ children }: { children: ReactNode }) {
   );
 
   const assignPlan = useCallback(
-    async (userId: string, planId: BillingPlanId): Promise<BillingActionResult> => {
+    async (
+      userId: string,
+      planId: BillingPlanId,
+    ): Promise<BillingActionResult> => {
       try {
         await adminAssignPlan(userId, planId);
         await refreshBilling();
@@ -255,9 +275,13 @@ export function BillingProvider({ children }: { children: ReactNode }) {
     (type: BillingQuotaType): BillingQuotaAttemptResult => {
       if (!user) return EMPTY_BILLING_CONTEXT.consumeQuota(type);
 
-      const planDef = BILLING_PLAN_CATALOG.find((p) => p.id === serverSub?.planId);
+      const planDef = BILLING_PLAN_CATALOG.find(
+        (p) => p.id === serverSub?.planId,
+      );
       const limit =
-        type === "search" ? (planDef?.searchLimit ?? null) : (planDef?.viewLimit ?? null);
+        type === "search"
+          ? (planDef?.searchLimit ?? null)
+          : (planDef?.viewLimit ?? null);
       const used =
         type === "search"
           ? (serverSub?.usageSearch ?? 0) + localUsage.search
@@ -294,7 +318,10 @@ export function BillingProvider({ children }: { children: ReactNode }) {
         amountUsd: t.amount,
         paidAt: t.createdAt,
         summary: `${t.planId} — ${t.method}`,
-        actor: t.method === "admin_override" ? "Адміністратор" : user?.displayName ?? "",
+        actor:
+          t.method === "admin_override"
+            ? "Адміністратор"
+            : (user?.displayName ?? ""),
       })),
     [transactions, user?.displayName],
   );
@@ -309,14 +336,30 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       purchasePlan,
       assignPlan,
       consumeQuota,
-      getPlanSnapshotForUser: (userId: string, accountType: "client" | "admin") =>
+      getPlanSnapshotForUser: (
+        userId: string,
+        accountType: "client" | "admin",
+      ) =>
         buildSnapshot(serverSub, { search: 0, view: 0 }, userId, accountType),
       getBillingRegistry: () => [] as never[],
     }),
-    [isHydrated, subscription, payments, refreshBilling, purchasePlan, assignPlan, consumeQuota, serverSub],
+    [
+      isHydrated,
+      subscription,
+      payments,
+      refreshBilling,
+      purchasePlan,
+      assignPlan,
+      consumeQuota,
+      serverSub,
+    ],
   );
 
-  return <BillingContext.Provider value={contextValue}>{children}</BillingContext.Provider>;
+  return (
+    <BillingContext.Provider value={contextValue}>
+      {children}
+    </BillingContext.Provider>
+  );
 }
 
 export function useBilling() {

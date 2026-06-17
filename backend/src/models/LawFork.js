@@ -2,8 +2,18 @@ import mongoose from 'mongoose';
 
 const lawForkSchema = new mongoose.Schema(
   {
-    lawId: { type: mongoose.Schema.Types.ObjectId, ref: 'Law', required: true, index: true },
-    authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    lawId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Law',
+      required: true,
+      index: true,
+    },
+    authorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
     title: { type: String, required: true, trim: true },
     description: { type: String, default: '', trim: true },
     status: {

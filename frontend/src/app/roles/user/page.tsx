@@ -5,7 +5,8 @@ import { ROLES_USER_FALLBACK } from "@/features/page-builder/lib/roleFallbacks";
 
 export const metadata: Metadata = {
   title: "Користувач · Law Analysis",
-  description: "Можливості зареєстрованого користувача на платформі Law Analysis.",
+  description:
+    "Можливості зареєстрованого користувача на платформі Law Analysis.",
 };
 
 export default function RolesUserPage() {

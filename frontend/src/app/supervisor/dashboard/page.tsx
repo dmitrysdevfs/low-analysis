@@ -2,7 +2,10 @@
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Layout } from "@/components/layout/Layout";
-import { useSupervisorDashboard, useCreateSupervisorGroup } from "@/hooks/useSupervisor";
+import {
+  useSupervisorDashboard,
+  useCreateSupervisorGroup,
+} from "@/hooks/useSupervisor";
 import { notify } from "@/lib/toast";
 import { useState } from "react";
 import Link from "next/link";
@@ -25,8 +28,8 @@ export default function SupervisorDashboardPage() {
         <div className={styles.gate}>
           <h1>Доступ обмежено</h1>
           <p>
-            Цей розділ доступний лише для супервайзерів. Якщо ви хочете отримати роль
-            Супервайзера — зверніться до адміністратора платформи.
+            Цей розділ доступний лише для супервайзерів. Якщо ви хочете отримати
+            роль Супервайзера — зверніться до адміністратора платформи.
           </p>
           <div className={styles.gateActions}>
             <Link href="/roles/supervisor" className={styles.btnPrimary}>
@@ -77,8 +80,13 @@ function SupervisorDashboardView() {
     return (
       <div className={styles.errorState}>
         <h2>Дашборд тимчасово недоступний</h2>
-        <p>Бекенд API ще не розгорнуто або вимагає авторизації з роллю supervisor.</p>
-        <p className={styles.hint}>Після пуша змін до репо — перезавантажте сторінку.</p>
+        <p>
+          Бекенд API ще не розгорнуто або вимагає авторизації з роллю
+          supervisor.
+        </p>
+        <p className={styles.hint}>
+          Після пуша змін до репо — перезавантажте сторінку.
+        </p>
       </div>
     );
   }
@@ -92,7 +100,10 @@ function SupervisorDashboardView() {
           <span>{data?.totalTrackedLaws ?? 0} відстежуваних законів</span>
         </div>
         {!showCreateForm && (
-          <button onClick={() => setShowCreateForm(true)} className={styles.btnCreate}>
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className={styles.btnCreate}
+          >
             + Нова група
           </button>
         )}
@@ -136,13 +147,17 @@ function SupervisorDashboardView() {
       <section className={styles.section}>
         <h2>Мої групи</h2>
         {!data?.groups?.length ? (
-          <p className={styles.empty}>Ви ще не створили жодної групи. Натисніть «+ Нова група».</p>
+          <p className={styles.empty}>
+            Ви ще не створили жодної групи. Натисніть «+ Нова група».
+          </p>
         ) : (
           <div className={styles.groupsGrid}>
             {data.groups.map((group) => (
               <div key={group._id} className={styles.groupCard}>
                 <h3>{group.name}</h3>
-                {group.course && <p className={styles.course}>{group.course}</p>}
+                {group.course && (
+                  <p className={styles.course}>{group.course}</p>
+                )}
                 <div className={styles.groupStats}>
                   <span>{group.memberIds.length} учасників</span>
                   <span>{group.trackedLawIds.length} законів</span>
@@ -155,7 +170,9 @@ function SupervisorDashboardView() {
                       </span>
                     ))}
                     {group.trackedLawIds.length > 3 && (
-                      <span className={styles.lawTag}>+{group.trackedLawIds.length - 3}</span>
+                      <span className={styles.lawTag}>
+                        +{group.trackedLawIds.length - 3}
+                      </span>
                     )}
                   </div>
                 )}
@@ -168,7 +185,9 @@ function SupervisorDashboardView() {
       <section className={styles.section}>
         <h2>Моніторинг законопроєктів</h2>
         {!data?.lawActivity?.length ? (
-          <p className={styles.empty}>Поки немає активності по законах. Додайте учасників до груп.</p>
+          <p className={styles.empty}>
+            Поки немає активності по законах. Додайте учасників до груп.
+          </p>
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
@@ -193,7 +212,9 @@ function SupervisorDashboardView() {
                     <td>{item.proposalCount}</td>
                     <td>
                       {item.lastActivityAt
-                        ? new Date(item.lastActivityAt).toLocaleDateString("uk-UA")
+                        ? new Date(item.lastActivityAt).toLocaleDateString(
+                            "uk-UA",
+                          )
                         : "—"}
                     </td>
                   </tr>
@@ -207,7 +228,9 @@ function SupervisorDashboardView() {
       <section className={styles.section}>
         <h2>Остання активність учасників</h2>
         {!data?.recentActivity?.length ? (
-          <p className={styles.empty}>Активності поки немає. Запросіть учасників до груп.</p>
+          <p className={styles.empty}>
+            Активності поки немає. Запросіть учасників до груп.
+          </p>
         ) : (
           <div className={styles.activityList}>
             {data.recentActivity.map((item, idx) => (
@@ -219,7 +242,9 @@ function SupervisorDashboardView() {
                   <strong>{item.title}</strong>
                   <span className={styles.activityMeta}>
                     {item.author} · {item.law} ·{" "}
-                    <span className={`${styles.status} ${styles[`status_${item.status}`]}`}>
+                    <span
+                      className={`${styles.status} ${styles[`status_${item.status}`]}`}
+                    >
                       {item.status}
                     </span>
                   </span>

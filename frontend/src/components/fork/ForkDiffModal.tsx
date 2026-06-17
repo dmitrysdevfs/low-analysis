@@ -3,17 +3,69 @@
 import { useForkDiff } from "@/hooks/useForks";
 import styles from "./ForkDiffModal.module.scss";
 
-function renderInlineDiff(original: string, proposed: string, operation: "edit" | "add" | "delete") {
+function renderInlineDiff(
+  original: string,
+  proposed: string,
+  operation: "edit" | "add" | "delete",
+) {
   if (operation === "add") {
-    return <span style={{ color: "#4caf50", background: "rgba(76,175,80,0.1)", padding: "2px 4px", borderRadius: 3 }}>{proposed}</span>;
+    return (
+      <span
+        style={{
+          color: "#4caf50",
+          background: "rgba(76,175,80,0.1)",
+          padding: "2px 4px",
+          borderRadius: 3,
+        }}
+      >
+        {proposed}
+      </span>
+    );
   }
   if (operation === "delete") {
-    return <span style={{ color: "#f44336", textDecoration: "line-through", background: "rgba(244,67,54,0.1)", padding: "2px 4px", borderRadius: 3 }}>{original}</span>;
+    return (
+      <span
+        style={{
+          color: "#f44336",
+          textDecoration: "line-through",
+          background: "rgba(244,67,54,0.1)",
+          padding: "2px 4px",
+          borderRadius: 3,
+        }}
+      >
+        {original}
+      </span>
+    );
   }
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      {original && <span style={{ color: "#f44336", textDecoration: "line-through", background: "rgba(244,67,54,0.08)", padding: "2px 4px", borderRadius: 3, fontSize: "0.82em" }}>{original}</span>}
-      {proposed && <span style={{ color: "#4caf50", background: "rgba(76,175,80,0.08)", padding: "2px 4px", borderRadius: 3, fontSize: "0.82em" }}>{proposed}</span>}
+      {original && (
+        <span
+          style={{
+            color: "#f44336",
+            textDecoration: "line-through",
+            background: "rgba(244,67,54,0.08)",
+            padding: "2px 4px",
+            borderRadius: 3,
+            fontSize: "0.82em",
+          }}
+        >
+          {original}
+        </span>
+      )}
+      {proposed && (
+        <span
+          style={{
+            color: "#4caf50",
+            background: "rgba(76,175,80,0.08)",
+            padding: "2px 4px",
+            borderRadius: 3,
+            fontSize: "0.82em",
+          }}
+        >
+          {proposed}
+        </span>
+      )}
     </div>
   );
 }
@@ -31,7 +83,9 @@ export function ForkDiffModal({ forkId, onClose }: Props) {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>{data?.fork.title ?? "Diff форку"}</h2>
-          <button className={styles.close} onClick={onClose}>✕</button>
+          <button className={styles.close} onClick={onClose}>
+            ✕
+          </button>
         </div>
 
         {isLoading && <p className={styles.state}>Завантаження...</p>}
@@ -58,7 +112,9 @@ export function ForkDiffModal({ forkId, onClose }: Props) {
                   <tr key={i}>
                     <td className={styles.code}>{c.elementCode}</td>
                     <td>
-                      <span className={`${styles.op} ${styles[("op_" + c.operation) as keyof typeof styles]}`}>
+                      <span
+                        className={`${styles.op} ${styles[("op_" + c.operation) as keyof typeof styles]}`}
+                      >
                         {c.operation}
                       </span>
                     </td>
@@ -69,14 +125,62 @@ export function ForkDiffModal({ forkId, onClose }: Props) {
                 ))}
               </tbody>
             </table>
-            <div style={{ padding: "16px 20px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-              <h3 style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: 12, opacity: 0.7 }}>Візуальний перегляд змін</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div
+              style={{
+                padding: "16px 20px",
+                borderTop: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  marginBottom: 12,
+                  opacity: 0.7,
+                }}
+              >
+                Візуальний перегляд змін
+              </h3>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              >
                 {data.changes.map((c, i) => (
-                  <div key={i} style={{ padding: "10px 12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, borderLeft: "3px solid rgba(255,255,255,0.1)" }}>
-                    <div style={{ fontSize: "0.72rem", opacity: 0.5, marginBottom: 6, fontFamily: "monospace" }}>{c.elementCode}</div>
-                    {renderInlineDiff(c.originalText, c.proposedText, c.operation)}
-                    {c.rationale && <div style={{ fontSize: "0.75rem", opacity: 0.5, marginTop: 6, fontStyle: "italic" }}>💬 {c.rationale}</div>}
+                  <div
+                    key={i}
+                    style={{
+                      padding: "10px 12px",
+                      background: "rgba(255,255,255,0.03)",
+                      borderRadius: 8,
+                      borderLeft: "3px solid rgba(255,255,255,0.1)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "0.72rem",
+                        opacity: 0.5,
+                        marginBottom: 6,
+                        fontFamily: "monospace",
+                      }}
+                    >
+                      {c.elementCode}
+                    </div>
+                    {renderInlineDiff(
+                      c.originalText,
+                      c.proposedText,
+                      c.operation,
+                    )}
+                    {c.rationale && (
+                      <div
+                        style={{
+                          fontSize: "0.75rem",
+                          opacity: 0.5,
+                          marginTop: 6,
+                          fontStyle: "italic",
+                        }}
+                      >
+                        💬 {c.rationale}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

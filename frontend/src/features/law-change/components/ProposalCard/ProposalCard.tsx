@@ -7,8 +7,11 @@ import { VotePanel } from "../VotePanel/VotePanel";
 import styles from "./ProposalCard.module.scss";
 
 const DiffHighlight = dynamic(
-  () => import("../DiffHighlight/DiffHighlight").then(m => ({ default: m.DiffHighlight })),
-  { ssr: false }
+  () =>
+    import("../DiffHighlight/DiffHighlight").then((m) => ({
+      default: m.DiffHighlight,
+    })),
+  { ssr: false },
 );
 
 interface ProposalCardProps {

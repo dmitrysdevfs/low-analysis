@@ -233,7 +233,8 @@ const PROJECT_INFO_BLOCKS = [
 const ROLE_PAGE_DEFAULT_BLOCKS = {
   [PAGE_SLUGS.rolesGuest]: {
     title: 'Гість',
-    description: 'Ви відкрили платформу Law Analysis. Ось що вам доступно без реєстрації.',
+    description:
+      'Ви відкрили платформу Law Analysis. Ось що вам доступно без реєстрації.',
     blocks: [
       {
         id: 'hero-roles-guest',
@@ -243,13 +244,20 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           eyebrow: 'Роль: Гість',
           title: 'Досліджуйте законодавство України',
-          subtitle: "Без реєстрації ви можете переглядати закони, суб'єкти, аналіз та пошук у публічних розділах платформи.",
+          subtitle:
+            "Без реєстрації ви можете переглядати закони, суб'єкти, аналіз та пошук у публічних розділах платформи.",
           primaryButtonLabel: 'Зареєструватися',
           primaryButtonHref: '/auth/register',
           secondaryButtonLabel: 'Переглянути закони',
           secondaryButtonHref: '/laws',
         },
-        style: { theme: 'navy-gold', alignment: 'left', spacingTop: 'xl', spacingBottom: 'lg', background: 'gradient-hero' },
+        style: {
+          theme: 'navy-gold',
+          alignment: 'left',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+          background: 'gradient-hero',
+        },
       },
       {
         id: 'cards-roles-guest',
@@ -259,9 +267,27 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Що доступно гостю',
           items: [
-            { badge: '✓', title: 'Перегляд законів', body: 'Повна структура законодавства, дерево статей та елементів.', linkLabel: 'Закони', linkHref: '/laws' },
-            { badge: '✓', title: 'Пошук', body: 'Параметричний пошук за назвою, датою, типом документа та статусом.', linkLabel: 'Пошук', linkHref: '/search' },
-            { badge: '✓', title: "Суб'єкти та аналіз", body: "Реєстр суб'єктів норм і аналітичний модуль у відкритому доступі.", linkLabel: "Суб'єкти", linkHref: '/subjects' },
+            {
+              badge: '✓',
+              title: 'Перегляд законів',
+              body: 'Повна структура законодавства, дерево статей та елементів.',
+              linkLabel: 'Закони',
+              linkHref: '/laws',
+            },
+            {
+              badge: '✓',
+              title: 'Пошук',
+              body: 'Параметричний пошук за назвою, датою, типом документа та статусом.',
+              linkLabel: 'Пошук',
+              linkHref: '/search',
+            },
+            {
+              badge: '✓',
+              title: "Суб'єкти та аналіз",
+              body: "Реєстр суб'єктів норм і аналітичний модуль у відкритому доступі.",
+              linkLabel: "Суб'єкти",
+              linkHref: '/subjects',
+            },
           ],
         },
         style: { theme: 'surface', spacingTop: 'md', spacingBottom: 'md' },
@@ -285,7 +311,8 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
   },
   [PAGE_SLUGS.rolesUser]: {
     title: 'Користувач',
-    description: 'Активний громадянин або експерт, який пропонує зміни до законодавства.',
+    description:
+      'Активний громадянин або експерт, який пропонує зміни до законодавства.',
     blocks: [
       {
         id: 'hero-roles-user',
@@ -295,13 +322,20 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           eyebrow: 'Роль: Користувач',
           title: 'Пропонуйте зміни до законів',
-          subtitle: 'Як зареєстрований користувач ви можете пропонувати точкові зміни до статей та голосувати за пропозиції інших.',
+          subtitle:
+            'Як зареєстрований користувач ви можете пропонувати точкові зміни до статей та голосувати за пропозиції інших.',
           primaryButtonLabel: 'Розпочати',
           primaryButtonHref: '/auth/register',
           secondaryButtonLabel: 'Переглянути закони',
           secondaryButtonHref: '/laws',
         },
-        style: { theme: 'navy-gold', alignment: 'left', spacingTop: 'xl', spacingBottom: 'lg', background: 'gradient-hero' },
+        style: {
+          theme: 'navy-gold',
+          alignment: 'left',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+          background: 'gradient-hero',
+        },
       },
       {
         id: 'steps-roles-user',
@@ -311,9 +345,18 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Як це працює',
           items: [
-            { title: '1. Знайдіть закон', body: 'Скористайтеся пошуком або навігацією по законах.' },
-            { title: '2. Запропонуйте зміну', body: 'Відкрийте потрібну статтю та натисніть "Запропонувати зміну".' },
-            { title: '3. Голосуйте', body: 'Ваша пропозиція виходить на голосування спільноти.' },
+            {
+              title: '1. Знайдіть закон',
+              body: 'Скористайтеся пошуком або навігацією по законах.',
+            },
+            {
+              title: '2. Запропонуйте зміну',
+              body: 'Відкрийте потрібну статтю та натисніть "Запропонувати зміну".',
+            },
+            {
+              title: '3. Голосуйте',
+              body: 'Ваша пропозиція виходить на голосування спільноти.',
+            },
           ],
         },
         style: { theme: 'muted', spacingTop: 'md', spacingBottom: 'md' },
@@ -337,7 +380,8 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
   },
   [PAGE_SLUGS.rolesLawmaker]: {
     title: 'Законотворець',
-    description: 'Студент права, юрист або аналітик — ви створюєте форки та поправки.',
+    description:
+      'Студент права, юрист або аналітик — ви створюєте форки та поправки.',
     blocks: [
       {
         id: 'hero-roles-lawmaker',
@@ -347,13 +391,20 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           eyebrow: 'Роль: Законотворець',
           title: 'Створюйте форки та поправки',
-          subtitle: 'Законотворець — це студент права, юрист або аналітик, який може створювати повноцінні форки законопроєктів і вносити детальні поправки до конкретних статей.',
+          subtitle:
+            'Законотворець — це студент права, юрист або аналітик, який може створювати повноцінні форки законопроєктів і вносити детальні поправки до конкретних статей.',
           primaryButtonLabel: 'Кабінет законотворця',
           primaryButtonHref: '/legislator-cabinet',
           secondaryButtonLabel: 'Зареєструватися',
           secondaryButtonHref: '/auth/register',
         },
-        style: { theme: 'navy-gold', alignment: 'left', spacingTop: 'xl', spacingBottom: 'lg', background: 'gradient-hero' },
+        style: {
+          theme: 'navy-gold',
+          alignment: 'left',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+          background: 'gradient-hero',
+        },
       },
       {
         id: 'cards-roles-lawmaker',
@@ -363,9 +414,27 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Можливості законотворця',
           items: [
-            { badge: 'Fork', title: 'Форки законопроєктів', body: 'Створіть власну версію закону з набором поправок у статусі draft → review → approved.', linkLabel: '', linkHref: '' },
-            { badge: 'Diff', title: 'Порівняння версій', body: 'Система показує було/стало для кожної поправки з точним diff-переглядом.', linkLabel: '', linkHref: '' },
-            { badge: 'Submit', title: 'Подання на розгляд', body: 'Після завершення форк передається супервайзеру або на публічне голосування.', linkLabel: '', linkHref: '' },
+            {
+              badge: 'Fork',
+              title: 'Форки законопроєктів',
+              body: 'Створіть власну версію закону з набором поправок у статусі draft → review → approved.',
+              linkLabel: '',
+              linkHref: '',
+            },
+            {
+              badge: 'Diff',
+              title: 'Порівняння версій',
+              body: 'Система показує було/стало для кожної поправки з точним diff-переглядом.',
+              linkLabel: '',
+              linkHref: '',
+            },
+            {
+              badge: 'Submit',
+              title: 'Подання на розгляд',
+              body: 'Після завершення форк передається супервайзеру або на публічне голосування.',
+              linkLabel: '',
+              linkHref: '',
+            },
           ],
         },
         style: { theme: 'surface', spacingTop: 'md', spacingBottom: 'md' },
@@ -389,7 +458,8 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
   },
   [PAGE_SLUGS.rolesSupervisor]: {
     title: 'Супервайзер',
-    description: 'Викладач або керівник робочої групи — ви моніторите роботу студентів.',
+    description:
+      'Викладач або керівник робочої групи — ви моніторите роботу студентів.',
     blocks: [
       {
         id: 'hero-roles-supervisor',
@@ -399,13 +469,20 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           eyebrow: 'Роль: Супервайзер',
           title: 'Контролюйте роботу вашої групи',
-          subtitle: 'Супервайзер — це викладач або керівник робочої групи, який бачить активність своїх студентів-законотворців та може моніторити роботу над конкретними законами.',
+          subtitle:
+            'Супервайзер — це викладач або керівник робочої групи, який бачить активність своїх студентів-законотворців та може моніторити роботу над конкретними законами.',
           primaryButtonLabel: 'Дашборд супервайзера',
           primaryButtonHref: '/supervisor/dashboard',
           secondaryButtonLabel: "Зв'язатися з адміном",
           secondaryButtonHref: '/help',
         },
-        style: { theme: 'navy-gold', alignment: 'left', spacingTop: 'xl', spacingBottom: 'lg', background: 'gradient-hero' },
+        style: {
+          theme: 'navy-gold',
+          alignment: 'left',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+          background: 'gradient-hero',
+        },
       },
       {
         id: 'cards-roles-supervisor',
@@ -415,9 +492,27 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Можливості супервайзера',
           items: [
-            { badge: 'Groups', title: 'Мої групи', body: "Створюйте групи студентів і прив'язуйте до них конкретні закони для роботи.", linkLabel: '', linkHref: '' },
-            { badge: 'Monitor', title: 'Моніторинг активності', body: 'Бачите хто і що змінював: форки, поправки, пропозиції — в реальному часі.', linkLabel: '', linkHref: '' },
-            { badge: 'Compare', title: 'Порівняння версій', body: 'Дашборд показує diff між оригіналом і форком кожного студента.', linkLabel: '', linkHref: '' },
+            {
+              badge: 'Groups',
+              title: 'Мої групи',
+              body: "Створюйте групи студентів і прив'язуйте до них конкретні закони для роботи.",
+              linkLabel: '',
+              linkHref: '',
+            },
+            {
+              badge: 'Monitor',
+              title: 'Моніторинг активності',
+              body: 'Бачите хто і що змінював: форки, поправки, пропозиції — в реальному часі.',
+              linkLabel: '',
+              linkHref: '',
+            },
+            {
+              badge: 'Compare',
+              title: 'Порівняння версій',
+              body: 'Дашборд показує diff між оригіналом і форком кожного студента.',
+              linkLabel: '',
+              linkHref: '',
+            },
           ],
         },
         style: { theme: 'surface', spacingTop: 'md', spacingBottom: 'md' },
@@ -430,9 +525,21 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Питання та відповіді',
           items: [
-            { question: 'Як стати супервайзером?', answer: 'Зверніться до адміністратора платформи — він призначить вам роль Supervisor і ви отримаєте доступ до дашборду.' },
-            { question: 'Скільки груп можна створити?', answer: 'На поточному MVP обмеження встановлюється адміністратором. За замовчуванням до 10 груп.' },
-            { question: 'Чи бачать студенти мій моніторинг?', answer: 'Студенти бачать свою роботу, але не знають про моніторинг супервайзера.' },
+            {
+              question: 'Як стати супервайзером?',
+              answer:
+                'Зверніться до адміністратора платформи — він призначить вам роль Supervisor і ви отримаєте доступ до дашборду.',
+            },
+            {
+              question: 'Скільки груп можна створити?',
+              answer:
+                'На поточному MVP обмеження встановлюється адміністратором. За замовчуванням до 10 груп.',
+            },
+            {
+              question: 'Чи бачать студенти мій моніторинг?',
+              answer:
+                'Студенти бачать свою роботу, але не знають про моніторинг супервайзера.',
+            },
           ],
         },
         style: { theme: 'surface', spacingTop: 'md', spacingBottom: 'md' },
@@ -451,13 +558,20 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           eyebrow: 'Роль: Адміністратор',
           title: 'Управляйте платформою',
-          subtitle: 'Адміністратор має повний доступ до всіх функцій: управління користувачами, модерація пропозицій, налаштування системи та аналітика.',
+          subtitle:
+            'Адміністратор має повний доступ до всіх функцій: управління користувачами, модерація пропозицій, налаштування системи та аналітика.',
           primaryButtonLabel: 'Адмін-панель',
           primaryButtonHref: '/admin',
           secondaryButtonLabel: '',
           secondaryButtonHref: '',
         },
-        style: { theme: 'navy-gold', alignment: 'left', spacingTop: 'xl', spacingBottom: 'lg', background: 'gradient-hero' },
+        style: {
+          theme: 'navy-gold',
+          alignment: 'left',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+          background: 'gradient-hero',
+        },
       },
       {
         id: 'cards-roles-admin',
@@ -467,9 +581,27 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Функції адміністратора',
           items: [
-            { badge: 'Users', title: 'Управління користувачами', body: 'Список, ролі, статуси, призначення прав і призупинення акаунтів.', linkLabel: 'Користувачі', linkHref: '/admin/users' },
-            { badge: 'Laws', title: 'Управління законами', body: 'Додавання, редагування та парсинг нових законодавчих актів.', linkLabel: 'Закони', linkHref: '/admin' },
-            { badge: 'Moderation', title: 'Модерація', body: 'Черга пропозицій і поправок на розгляд, скарги та аудит дій.', linkLabel: 'Аудит', linkHref: '/admin/audit' },
+            {
+              badge: 'Users',
+              title: 'Управління користувачами',
+              body: 'Список, ролі, статуси, призначення прав і призупинення акаунтів.',
+              linkLabel: 'Користувачі',
+              linkHref: '/admin/users',
+            },
+            {
+              badge: 'Laws',
+              title: 'Управління законами',
+              body: 'Додавання, редагування та парсинг нових законодавчих актів.',
+              linkLabel: 'Закони',
+              linkHref: '/admin',
+            },
+            {
+              badge: 'Moderation',
+              title: 'Модерація',
+              body: 'Черга пропозицій і поправок на розгляд, скарги та аудит дій.',
+              linkLabel: 'Аудит',
+              linkHref: '/admin/audit',
+            },
           ],
         },
         style: { theme: 'surface', spacingTop: 'md', spacingBottom: 'xl' },
@@ -478,7 +610,8 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
   },
   [PAGE_SLUGS.support]: {
     title: 'Підтримати проєкт',
-    description: 'Law Analysis — відкрита платформа. Підтримайте розвиток через Patreon.',
+    description:
+      'Law Analysis — відкрита платформа. Підтримайте розвиток через Patreon.',
     blocks: [
       {
         id: 'hero-support',
@@ -488,13 +621,20 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           eyebrow: '♥ Підтримка',
           title: 'Підтримайте Law Analysis',
-          subtitle: 'Проєкт розвивається силами ентузіастів. Ваша підтримка допоможе розвивати платформу, додавати нові закони та покращувати інструменти аналізу.',
+          subtitle:
+            'Проєкт розвивається силами ентузіастів. Ваша підтримка допоможе розвивати платформу, додавати нові закони та покращувати інструменти аналізу.',
           primaryButtonLabel: '♥ Підтримати на Patreon',
           primaryButtonHref: 'https://www.patreon.com/LawAnalysis',
           secondaryButtonLabel: 'Дізнатися більше',
           secondaryButtonHref: '/project-info',
         },
-        style: { theme: 'navy-gold', alignment: 'left', spacingTop: 'xl', spacingBottom: 'lg', background: 'gradient-hero' },
+        style: {
+          theme: 'navy-gold',
+          alignment: 'left',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+          background: 'gradient-hero',
+        },
       },
       {
         id: 'cards-support',
@@ -504,9 +644,27 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Рівні підтримки',
           items: [
-            { badge: '$3/міс', title: 'Supporter', body: "Базова підтримка проєкту. Ваше ім'я в списку меценатів платформи.", linkLabel: 'Підтримати', linkHref: 'https://www.patreon.com/LawAnalysis' },
-            { badge: '$15/міс', title: 'Professional', body: 'Розширений доступ до аналітики та пріоритетна підтримка.', linkLabel: 'Підтримати', linkHref: 'https://www.patreon.com/LawAnalysis' },
-            { badge: '$100/міс', title: 'Organization', body: 'Для університетів і команд. Логотип організації на сторінці проєкту.', linkLabel: "Зв'язатися", linkHref: 'https://www.patreon.com/LawAnalysis' },
+            {
+              badge: '$3/міс',
+              title: 'Supporter',
+              body: "Базова підтримка проєкту. Ваше ім'я в списку меценатів платформи.",
+              linkLabel: 'Підтримати',
+              linkHref: 'https://www.patreon.com/LawAnalysis',
+            },
+            {
+              badge: '$15/міс',
+              title: 'Professional',
+              body: 'Розширений доступ до аналітики та пріоритетна підтримка.',
+              linkLabel: 'Підтримати',
+              linkHref: 'https://www.patreon.com/LawAnalysis',
+            },
+            {
+              badge: '$100/міс',
+              title: 'Organization',
+              body: 'Для університетів і команд. Логотип організації на сторінці проєкту.',
+              linkLabel: "Зв'язатися",
+              linkHref: 'https://www.patreon.com/LawAnalysis',
+            },
           ],
         },
         style: { theme: 'surface', spacingTop: 'md', spacingBottom: 'md' },
@@ -526,7 +684,8 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
   },
   [PAGE_SLUGS.docs]: {
     title: 'Документація',
-    description: 'Технічна документація для розробників і аналітиків платформи.',
+    description:
+      'Технічна документація для розробників і аналітиків платформи.',
     blocks: [
       {
         id: 'hero-docs',
@@ -536,13 +695,20 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           eyebrow: 'Developer Docs',
           title: 'Документація платформи',
-          subtitle: 'Все необхідне для швидкого старту: архітектура, API, структура фронту та покроковий onboarding для нових розробників.',
+          subtitle:
+            'Все необхідне для швидкого старту: архітектура, API, структура фронту та покроковий onboarding для нових розробників.',
           primaryButtonLabel: 'Start Here',
           primaryButtonHref: '/docs',
           secondaryButtonLabel: 'API Docs',
           secondaryButtonHref: '/api-docs',
         },
-        style: { theme: 'navy-gold', alignment: 'left', spacingTop: 'xl', spacingBottom: 'lg', background: 'gradient-hero' },
+        style: {
+          theme: 'navy-gold',
+          alignment: 'left',
+          spacingTop: 'xl',
+          spacingBottom: 'lg',
+          background: 'gradient-hero',
+        },
       },
       {
         id: 'steps-docs',
@@ -552,10 +718,22 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Start Here: підняти проєкт за 1 день',
           items: [
-            { title: '1. Prerequisites', body: 'Node.js 20+, MongoDB 7+, Redis. Встановіть залежності: npm install з кореня монорепо.' },
-            { title: '2. Налаштування env', body: 'Скопіюйте backend/.env.example → backend/.env та frontend/.env.example → frontend/.env.local.' },
-            { title: '3. Запуск', body: 'npm run dev запускає backend (порт 3000) та frontend (порт 3001) через concurrently.' },
-            { title: '4. Перша фіча', body: 'Backend: новий роут у src/routes/, Frontend: нова сторінка у src/app/. Дивіться AGENTS.md.' },
+            {
+              title: '1. Prerequisites',
+              body: 'Node.js 20+, MongoDB 7+, Redis. Встановіть залежності: npm install з кореня монорепо.',
+            },
+            {
+              title: '2. Налаштування env',
+              body: 'Скопіюйте backend/.env.example → backend/.env та frontend/.env.example → frontend/.env.local.',
+            },
+            {
+              title: '3. Запуск',
+              body: 'npm run dev запускає backend (порт 3000) та frontend (порт 3001) через concurrently.',
+            },
+            {
+              title: '4. Перша фіча',
+              body: 'Backend: новий роут у src/routes/, Frontend: нова сторінка у src/app/. Дивіться AGENTS.md.',
+            },
           ],
         },
         style: { theme: 'muted', spacingTop: 'md', spacingBottom: 'md' },
@@ -568,9 +746,27 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         data: {
           title: 'Розділи документації',
           items: [
-            { badge: 'Frontend', title: 'Структура фронту', body: 'App Router, компоненти, хуки, стан, API-клієнт, types та constants.', linkLabel: '', linkHref: '' },
-            { badge: 'Backend', title: 'API та моделі', body: 'Express роути, Mongoose моделі, middleware, BullMQ черга та auth flow.', linkLabel: 'Swagger', linkHref: '/api-docs' },
-            { badge: 'QA', title: 'Тестування', body: 'Vitest unit тести (backend + frontend), Playwright E2E, CI pipeline.', linkLabel: '', linkHref: '' },
+            {
+              badge: 'Frontend',
+              title: 'Структура фронту',
+              body: 'App Router, компоненти, хуки, стан, API-клієнт, types та constants.',
+              linkLabel: '',
+              linkHref: '',
+            },
+            {
+              badge: 'Backend',
+              title: 'API та моделі',
+              body: 'Express роути, Mongoose моделі, middleware, BullMQ черга та auth flow.',
+              linkLabel: 'Swagger',
+              linkHref: '/api-docs',
+            },
+            {
+              badge: 'QA',
+              title: 'Тестування',
+              body: 'Vitest unit тести (backend + frontend), Playwright E2E, CI pipeline.',
+              linkLabel: '',
+              linkHref: '',
+            },
           ],
         },
         style: { theme: 'surface', spacingTop: 'md', spacingBottom: 'xl' },
@@ -600,7 +796,11 @@ export function buildDefaultPageSnapshot(slug) {
     return {
       title: def.title,
       description: def.description,
-      seo: { title: `${def.title} | Law Analysis`, description: def.description, ogImage: '' },
+      seo: {
+        title: `${def.title} | Law Analysis`,
+        description: def.description,
+        ogImage: '',
+      },
       blocks: def.blocks,
     };
   }

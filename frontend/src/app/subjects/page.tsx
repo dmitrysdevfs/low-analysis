@@ -27,7 +27,9 @@ export default function SubjectsPage() {
   const [lawSubjectIds, setLawSubjectIds] = useState<Set<string> | null>(null);
 
   useEffect(() => {
-    getLaws("").then(setLaws).catch(() => {});
+    getLaws("")
+      .then(setLaws)
+      .catch(() => {});
   }, []);
 
   useEffect(() => {

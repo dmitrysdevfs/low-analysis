@@ -66,8 +66,15 @@ export function useSubmitFork() {
 export function useAddChange() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ forkId, change }: { forkId: string; change: Omit<LawChange, "_id" | "forkId"> }) =>
-      addChange(forkId, change),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["forks"] }); },
+    mutationFn: ({
+      forkId,
+      change,
+    }: {
+      forkId: string;
+      change: Omit<LawChange, "_id" | "forkId">;
+    }) => addChange(forkId, change),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["forks"] });
+    },
   });
 }
