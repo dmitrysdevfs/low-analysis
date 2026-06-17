@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
@@ -113,12 +112,17 @@ const NAV_ITEMS = [
 ] as const;
 
 interface AdminSidebarNavProps {
+  collapsed: boolean;
+  onToggleCollapse: () => void;
   userDisplayName?: string;
 }
 
-export function AdminSidebarNav({ userDisplayName }: AdminSidebarNavProps) {
+export function AdminSidebarNav({
+  collapsed,
+  onToggleCollapse,
+  userDisplayName,
+}: AdminSidebarNavProps) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <aside
@@ -134,7 +138,11 @@ export function AdminSidebarNav({ userDisplayName }: AdminSidebarNavProps) {
         <button
           type="button"
           className={styles.collapseBtn}
-          onClick={() => setCollapsed((value) => !value)}
+          onClick={onToggleCollapse}
+          aria-label={
+            collapsed ? "Розгорнути бічну панель" : "Згорнути бічну панель"
+          }
+          aria-pressed={collapsed}
           title={collapsed ? "Розгорнути" : "Згорнути"}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}

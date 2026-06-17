@@ -23,18 +23,20 @@ export const setUserStatus = async (id, status, actor) => {
 };
 
 export const setUserRole = async (id, role, actor) => {
-  const allowed = ['user', 'paid_user', 'legislator', 'admin'];
+  const allowed = ['user', 'paid_user', 'legislator', 'supervisor', 'admin'];
   if (!allowed.includes(role))
     throw Object.assign(new Error('Invalid role'), { status: 400 });
   const user = await User.findByIdAndUpdate(id, { role }, { new: true }).select(
     '-password',
   );
   if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  const actionLabel =
+    role === 'admin' ? 'Акаунт підвищено до адміна'
+    : role === 'supervisor' ? 'Призначено супервайзером'
+    : role === 'legislator' ? 'Призначено законотворцем'
+    : 'Роль змінено';
   await appendAuditEntry({
-    action:
-      role === 'admin'
-        ? 'Акаунт підвищено до адміна'
-        : 'Права адміністратора знято',
+    action: actionLabel,
     detail: `Акаунт ${user.email} отримав роль ${role}.`,
     actor,
     severity: 'security',

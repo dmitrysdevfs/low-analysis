@@ -40,8 +40,8 @@
 .hero {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 24px;
+  gap: 16px;
+  padding: 14px 16px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 14px;
@@ -50,13 +50,13 @@
 
 .avatar {
   flex-shrink: 0;
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
@@ -65,9 +65,17 @@
   min-width: 0;
 }
 
+.heroNameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
 .heroName {
-  margin: 0 0 4px;
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  margin: 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
   color: #ffffff;
   line-height: 1.2;
 }
@@ -187,12 +195,25 @@
 }
 
 .cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #c8a843;
   font-family: var(--font-mono);
+}
+
+.cardTitleIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* ── Definition list ─────────────────────────────── */
@@ -283,6 +304,9 @@
 }
 
 .actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   padding: 8px 12px;
   border-radius: 8px;
   font-size: 0.8rem;
@@ -296,9 +320,18 @@
     background 0.12s ease,
     color 0.12s ease;
 
+  svg {
+    flex-shrink: 0;
+    opacity: 0.65;
+  }
+
   &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
+
+    svg {
+      opacity: 1;
+    }
   }
 
   &:disabled {
@@ -573,6 +606,17 @@
   color: rgba(158, 181, 217, 0.6);
   font-family: var(--font-mono);
   word-break: break-all;
+}
+
+/* ── Modules label in billing card ──────────────── */
+.modulesLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(158, 181, 217, 0.45);
+  font-family: var(--font-mono);
+  padding-top: 4px;
 }
 
 /* ── Empty / future states ───────────────────────── */

@@ -2,7 +2,17 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import {
+  ChevronLeft,
+  UserCircle,
+  Key,
+  Zap,
+  PowerOff,
+  ArrowUpCircle,
+  ShieldOff,
+  Crown,
+  LogOut,
+} from "lucide-react";
 import {
   adminApi,
   AdminUserRecord,
@@ -38,6 +48,7 @@ const ROLE_LABELS: Record<string, string> = {
   user: "Клієнт",
   paid_user: "Платний клієнт",
   legislator: "Законотворець",
+  supervisor: "Супервайзер",
   admin: "Адмін",
 };
 
@@ -172,6 +183,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
 
   const isAdmin = user.role === "admin";
   const isLegislator = user.role === "legislator";
+  const isSupervisor = user.role === "supervisor";
   const isActive = user.status === "active";
   const avatarColor = hashColor(user.fullName);
   const regSource = user.registrationSource;
@@ -195,16 +207,18 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
           {user.fullName.charAt(0).toUpperCase()}
         </div>
         <div className={styles.heroInfo}>
-          <h1 className={styles.heroName}>{user.fullName}</h1>
+          <div className={styles.heroNameRow}>
+            <h1 className={styles.heroName}>{user.fullName}</h1>
+            <span className={isActive ? styles.badgeAccent : styles.badgeDanger}>
+              {isActive ? "Активний" : "Неактивний"}
+            </span>
+          </div>
           <div className={styles.heroEmail}>{user.email}</div>
           <div className={styles.heroId}>ID: …{user._id.slice(-8)}</div>
         </div>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
             {ROLE_LABELS[user.role] ?? user.role}
-          </span>
-          <span className={isActive ? styles.badgeAccent : styles.badgeDanger}>
-            {isActive ? "✓ Активний" : "✕ Неактивний"}
           </span>
         </div>
       </div>
@@ -238,7 +252,12 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
           <div className={styles.infoGrid}>
             {/* Account card */}
             <div className={styles.card}>
-              <div className={styles.cardTitle}>Акаунт</div>
+              <div className={styles.cardTitle}>
+                <span className={styles.cardTitleIcon} style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}>
+                  <UserCircle size={13} />
+                </span>
+                Деталі акаунта
+              </div>
               <dl className={styles.dl}>
                 <dt>Роль</dt>
                 <dd>{ROLE_LABELS[user.role] ?? user.role}</dd>
@@ -255,13 +274,19 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
 
             {/* Billing card */}
             <div className={styles.card}>
-              <div className={styles.cardTitle}>Білінг</div>
+              <div className={styles.cardTitle}>
+                <span className={styles.cardTitleIcon} style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}>
+                  <Key size={13} />
+                </span>
+                Доступ і план
+              </div>
               <dl className={styles.dl}>
                 <dt>Поточний план</dt>
                 <dd className={styles.accent}>
                   {formatPlanLabel(user.billingPlan)}
                 </dd>
               </dl>
+              <div className={styles.modulesLabel}>Права та модулі</div>
               <div className={styles.planRow}>
                 {BILLING_PLANS.map((plan) => (
                   <button
@@ -284,7 +309,12 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
 
             {/* Actions card */}
             <div className={styles.card}>
-              <div className={styles.cardTitle}>Дії</div>
+              <div className={styles.cardTitle}>
+                <span className={styles.cardTitleIcon} style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}>
+                  <Zap size={13} />
+                </span>
+                Дії
+              </div>
               <div className={styles.actionsList}>
                 <button
                   type="button"
@@ -301,6 +331,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                     )
                   }
                 >
+                  <PowerOff size={14} />
                   {isActive ? "Деактивувати" : "Активувати"}
                 </button>
                 <button
@@ -320,6 +351,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                     )
                   }
                 >
+                  {isAdmin ? <ShieldOff size={14} /> : <ArrowUpCircle size={14} />}
                   {isAdmin ? "Знизити до клієнта" : "Підвищити до адміна"}
                 </button>
                 {!isAdmin && (
@@ -340,9 +372,34 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                       )
                     }
                   >
+                    <ShieldOff size={14} />
                     {isLegislator
                       ? "Зняти роль законотворця"
                       : "Призначити законотворцем"}
+                  </button>
+                )}
+                {!isAdmin && (
+                  <button
+                    type="button"
+                    className={styles.actionBtn}
+                    disabled={actLoading}
+                    onClick={() =>
+                      act(
+                        () =>
+                          adminApi.setUserRole(
+                            user._id,
+                            isSupervisor ? "user" : "supervisor",
+                          ),
+                        isSupervisor
+                          ? "Роль супервайзера знято."
+                          : "Призначено супервайзером.",
+                      )
+                    }
+                  >
+                    <Crown size={14} />
+                    {isSupervisor
+                      ? "Зняти роль супервайзера"
+                      : "Призначити супервайзером"}
                   </button>
                 )}
                 <button
@@ -356,6 +413,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                     )
                   }
                 >
+                  <LogOut size={14} />
                   Примусовий вихід
                 </button>
               </div>

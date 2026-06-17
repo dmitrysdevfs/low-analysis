@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { motion } from "framer-motion";
 import { SparklineChart } from "../SparklineChart/SparklineChart";
 import styles from "./MetricCard.module.scss";
@@ -11,6 +12,7 @@ interface MetricCardProps {
   trend?: number[];
   delta?: { value: number; positive: boolean };
   color?: string;
+  icon?: React.ReactNode;
   loading?: boolean;
 }
 
@@ -21,6 +23,7 @@ export function MetricCard({
   trend,
   delta,
   color = "#c8a843",
+  icon,
   loading = false,
 }: MetricCardProps) {
   if (loading) {
@@ -46,6 +49,14 @@ export function MetricCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28 }}
     >
+      {icon && (
+        <span
+          className={styles.iconBadge}
+          style={{ background: `${color}1f`, color }}
+        >
+          {icon}
+        </span>
+      )}
       <span className={styles.label}>{label}</span>
       <div className={styles.valueRow}>
         <strong className={styles.value}>{value}</strong>
