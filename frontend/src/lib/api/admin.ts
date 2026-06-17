@@ -134,8 +134,9 @@ export type AdminDashboardApiSnapshot = {
     subjects: boolean;
     search: boolean;
     account: boolean;
-    adminPanel: boolean;
     legislatorCabinet: boolean;
+    supervisorDashboard: boolean;
+    adminPanel: boolean;
   }>;
 };
 

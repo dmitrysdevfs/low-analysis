@@ -10,7 +10,12 @@ const auditLogSchema = new mongoose.Schema(
       enum: ['info', 'warning', 'security'],
       default: 'info',
     },
-    targetUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, index: true },
+    targetUserId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+      index: true,
+    },
     targetEmail: { type: String, default: null },
     ipAddress: { type: String, default: null },
   },

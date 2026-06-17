@@ -102,6 +102,7 @@ export type AdminAuditLogEntry = {
   actor: string;
   createdAt: string;
   severity: "info" | "warning" | "security";
+  ipAddress?: string | null;
 };
 
 export type AdminGuestPressureSnapshot = {

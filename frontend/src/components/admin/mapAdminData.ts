@@ -102,6 +102,7 @@ export function mapApiToSnapshot(
       actor: e.actor,
       severity: e.severity,
       createdAt: e.createdAt,
+      ipAddress: e.ipAddress ?? null,
     })) as AdminDashboardSnapshot["auditLog"],
     guestPressure: {
       searchUsed: guest.search.used,

@@ -9,7 +9,15 @@ export const appendAuditEntry = async ({
   targetEmail = null,
   ipAddress = null,
 }) => {
-  return await AuditLog.create({ action, detail, actor, severity, targetUserId, targetEmail, ipAddress });
+  return await AuditLog.create({
+    action,
+    detail,
+    actor,
+    severity,
+    targetUserId,
+    targetEmail,
+    ipAddress,
+  });
 };
 
 export const getAuditLog = async ({

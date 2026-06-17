@@ -4,17 +4,21 @@
 
 /* ── Skeleton ────────────────────────────────────── */
 @keyframes shimmer {
-  0% { background-position: -600px 0; }
-  100% { background-position: 600px 0; }
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
 }
 
 .skeleton {
   border-radius: 6px;
   background: linear-gradient(
     90deg,
-    rgba(255,255,255,0.04) 25%,
-    rgba(255,255,255,0.09) 50%,
-    rgba(255,255,255,0.04) 75%
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
   );
   background-size: 600px 100%;
   animation: shimmer 1.4s infinite linear;
@@ -48,7 +52,9 @@
   text-decoration: none;
   margin-bottom: 20px;
 
-  &:hover { color: #f2d06c; }
+  &:hover {
+    color: #f2d06c;
+  }
 }
 
 /* ── Hero ────────────────────────────────────────── */
@@ -142,8 +148,12 @@
   background: rgba(12, 22, 44, 0.6);
   min-width: 100px;
 
-  &:first-child { border-radius: 10px 0 0 10px; }
-  &:last-child { border-radius: 0 10px 10px 0; }
+  &:first-child {
+    border-radius: 10px 0 0 10px;
+  }
+  &:last-child {
+    border-radius: 0 10px 10px 0;
+  }
 }
 
 .heroMetaLabel {
@@ -220,9 +230,13 @@
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 
-  &:hover { color: #d6e0f0; }
+  &:hover {
+    color: #d6e0f0;
+  }
 }
 
 .tabActive {
@@ -361,8 +375,12 @@
   color: #d6e0f0;
   outline: none;
 
-  &::placeholder { color: rgba(158, 181, 217, 0.35); }
-  &:focus { border-color: rgba(200, 168, 67, 0.4); }
+  &::placeholder {
+    color: rgba(158, 181, 217, 0.35);
+  }
+  &:focus {
+    border-color: rgba(200, 168, 67, 0.4);
+  }
 }
 
 .toolbarSelect {
@@ -375,9 +393,13 @@
   outline: none;
   cursor: pointer;
 
-  &:focus { border-color: rgba(200, 168, 67, 0.4); }
+  &:focus {
+    border-color: rgba(200, 168, 67, 0.4);
+  }
 
-  option { background: #0a1628; }
+  option {
+    background: #0a1628;
+  }
 }
 
 .toolbarBtn {
@@ -393,9 +415,14 @@
   color: #9eb5d9;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 
-  &:hover { background: rgba(255,255,255,0.08); color: #d6e0f0; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #d6e0f0;
+  }
 }
 
 /* ── Journal table ───────────────────────────────── */
@@ -431,8 +458,12 @@
   gap: 6px;
   transition: background 0.1s;
 
-  &:last-child { border-bottom: none; }
-  &:hover { background: rgba(255, 255, 255, 0.03); }
+  &:last-child {
+    border-bottom: none;
+  }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
 
   @media (max-width: 900px) {
     grid-template-columns: 36px 1fr 100px 80px;
@@ -495,7 +526,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 
-  @media (max-width: 900px) { display: none; }
+  @media (max-width: 900px) {
+    display: none;
+  }
 }
 
 .journalEmpty {
@@ -519,9 +552,14 @@
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 
-  &:hover { background: rgba(255,255,255,0.05); color: #c8a843; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #c8a843;
+  }
 }
 
 /* ── Right sidebar ───────────────────────────────── */
@@ -547,7 +585,9 @@
   user-select: none;
   transition: background 0.12s;
 
-  &:hover { background: rgba(255,255,255,0.03); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
 }
 
 .sidePanelTitle {
@@ -593,7 +633,9 @@
   padding: 5px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .sidePanelKey {
@@ -616,7 +658,7 @@
   gap: 5px;
 
   &::before {
-    content: '';
+    content: "";
     display: inline-block;
     width: 6px;
     height: 6px;
@@ -626,7 +668,9 @@
   }
 }
 
-.statusDotOff::before { background: rgba(158, 181, 217, 0.3); }
+.statusDotOff::before {
+  background: rgba(158, 181, 217, 0.3);
+}
 
 .resourceUrl {
   font-size: 0.7rem;
@@ -653,7 +697,9 @@
   gap: 4px;
   cursor: pointer;
 
-  &:hover { color: #f2d06c; }
+  &:hover {
+    color: #f2d06c;
+  }
 }
 
 /* ── Profile tab: 3-card grid ────────────────────── */
@@ -731,9 +777,15 @@
 }
 
 /* ── Color helpers ───────────────────────────────── */
-.accent  { color: #52b788 !important; }
-.danger  { color: #e9774b !important; }
-.muted   { color: rgba(158, 181, 217, 0.5); }
+.accent {
+  color: #52b788 !important;
+}
+.danger {
+  color: #e9774b !important;
+}
+.muted {
+  color: rgba(158, 181, 217, 0.5);
+}
 
 /* ── Billing plan pills ──────────────────────────── */
 .modulesLabel {
@@ -762,7 +814,10 @@
   background: rgba(255, 255, 255, 0.04);
   color: #9eb5d9;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    color 0.12s;
 
   &:hover:not(:disabled) {
     background: rgba(200, 168, 67, 0.12);
@@ -770,7 +825,10 @@
     color: #c8a843;
   }
 
-  &:disabled { cursor: default; opacity: 0.5; }
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
 }
 
 .planBtnActive {
@@ -801,17 +859,27 @@
   background: rgba(255, 255, 255, 0.04);
   color: #d6e0f0;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 
-  svg { flex-shrink: 0; opacity: 0.65; }
+  svg {
+    flex-shrink: 0;
+    opacity: 0.65;
+  }
 
   &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
-    svg { opacity: 1; }
+    svg {
+      opacity: 1;
+    }
   }
 
-  &:disabled { opacity: 0.4; cursor: default; }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 }
 
 .actionBtnDanger {
@@ -857,8 +925,12 @@
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-  &:last-child { border-bottom: none; }
-  &:hover { background: rgba(255, 255, 255, 0.04); }
+  &:last-child {
+    border-bottom: none;
+  }
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
 }
 
 .auditSeverity {
@@ -869,9 +941,15 @@
   background: rgba(158, 181, 217, 0.3);
 }
 
-.severityInfo     { background: rgba(74, 128, 212, 0.6); }
-.severityWarning  { background: rgba(200, 168, 67, 0.7); }
-.severitySecurity { background: rgba(233, 119, 75, 0.7); }
+.severityInfo {
+  background: rgba(74, 128, 212, 0.6);
+}
+.severityWarning {
+  background: rgba(200, 168, 67, 0.7);
+}
+.severitySecurity {
+  background: rgba(233, 119, 75, 0.7);
+}
 
 .auditBody {
   flex: 1;
@@ -881,8 +959,16 @@
   gap: 3px;
 }
 
-.auditAction { font-size: 0.82rem; font-weight: 700; color: #d6e0f0; }
-.auditDetail { font-size: 0.76rem; color: #9eb5d9; line-height: 1.45; }
+.auditAction {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #d6e0f0;
+}
+.auditDetail {
+  font-size: 0.76rem;
+  color: #9eb5d9;
+  line-height: 1.45;
+}
 .auditMeta {
   display: flex;
   gap: 12px;
@@ -893,7 +979,11 @@
 }
 
 /* ── Legislator requests ─────────────────────────── */
-.requestsList { display: flex; flex-direction: column; gap: 8px; }
+.requestsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
 .requestItem {
   padding: 12px 14px;
@@ -905,8 +995,16 @@
   gap: 4px;
 }
 
-.requestOrg    { font-size: 0.84rem; font-weight: 700; color: #d6e0f0; }
-.requestReason { font-size: 0.78rem; color: #9eb5d9; line-height: 1.5; }
+.requestOrg {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #d6e0f0;
+}
+.requestReason {
+  font-size: 0.78rem;
+  color: #9eb5d9;
+  line-height: 1.5;
+}
 
 .requestMeta {
   display: flex;
@@ -940,8 +1038,17 @@
   border-radius: 10px;
 }
 
-.statNum   { font-size: 1.3rem; font-weight: 700; color: #c8a843; font-family: var(--font-mono); line-height: 1; }
-.statLabel { font-size: 0.74rem; color: #9eb5d9; }
+.statNum {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #c8a843;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+.statLabel {
+  font-size: 0.74rem;
+  color: #9eb5d9;
+}
 
 /* ── Activity table ──────────────────────────────── */
 .activityTable {
@@ -972,7 +1079,9 @@
   font-size: 0.8rem;
   gap: 12px;
 
-  &:hover { background: rgba(255, 255, 255, 0.03); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
 }
 
 .activityPath {
@@ -1005,11 +1114,22 @@
   gap: 6px;
 }
 
-.sourceLabel    { font-size: 0.88rem; font-weight: 700; }
-.sourceReferrer { font-size: 0.74rem; color: rgba(158, 181, 217, 0.6); font-family: var(--font-mono); word-break: break-all; }
+.sourceLabel {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.sourceReferrer {
+  font-size: 0.74rem;
+  color: rgba(158, 181, 217, 0.6);
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
 
 /* ── Empty / future states ───────────────────────── */
-.emptyNote { font-size: 0.8rem; color: rgba(158, 181, 217, 0.5); }
+.emptyNote {
+  font-size: 0.8rem;
+  color: rgba(158, 181, 217, 0.5);
+}
 
 /* ── Skeleton placeholders ───────────────────────── */
 .skeletonHero {
@@ -1024,7 +1144,9 @@
   gap: 10px;
   margin-bottom: 16px;
 
-  @media (max-width: 860px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 860px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .skeletonMetricCard {
@@ -1037,7 +1159,9 @@
   grid-template-columns: 1fr 300px;
   gap: 14px;
 
-  @media (max-width: 1100px) { grid-template-columns: 1fr; }
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .skeletonPanel {

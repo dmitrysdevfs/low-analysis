@@ -1,0 +1,386 @@
+$glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
+  rgba(9, 18, 38, 0.84);
+$glass-border: 1px solid rgba(255, 255, 255, 0.1);
+$glass-shadow: 0 18px 34px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+$glass-blur: blur(18px);
+$radius: 20px;
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+.page {
+  display: grid;
+  gap: 10px;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: $radius;
+  border: $glass-border;
+  background: $glass-bg;
+  box-shadow: $glass-shadow;
+  backdrop-filter: $glass-blur;
+}
+
+.heroCopy {
+  display: grid;
+  gap: 10px;
+  align-content: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  color: var(--th-accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+  line-height: 1.15;
+}
+
+.description {
+  color: #c7d5ea;
+  line-height: 1.58;
+  font-size: 0.84rem;
+  max-width: 520px;
+}
+
+.heroShield {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 28px;
+  background: rgba(82, 183, 136, 0.06);
+  border: 1px solid rgba(82, 183, 136, 0.18);
+  border-radius: 14px;
+  min-width: 180px;
+  text-align: center;
+}
+
+.shieldIcon {
+  color: #52b788;
+  margin-bottom: 4px;
+}
+
+.shieldCount {
+  display: block;
+  color: #ffffff;
+  font-size: clamp(1.6rem, 2vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.shieldLabel {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(158, 181, 217, 0.45);
+  font-family: var(--font-mono);
+}
+
+.shieldMeta {
+  margin: 6px 0 0;
+  font-size: 0.72rem;
+  color: rgba(158, 181, 217, 0.4);
+  line-height: 1.45;
+  max-width: 140px;
+}
+
+/* ============================================================
+   ROLE TILES
+   ============================================================ */
+.roleTiles {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.roleTile {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px 18px;
+  border-radius: $radius;
+  border: $glass-border;
+  background: $glass-bg;
+  box-shadow: $glass-shadow;
+  backdrop-filter: $glass-blur;
+  overflow: hidden;
+}
+
+.roleTileAccent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+}
+
+.roleTileIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.roleTileName {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(158, 181, 217, 0.55);
+  font-family: var(--font-mono);
+}
+
+.roleTileCount {
+  display: block;
+  color: #ffffff;
+  font-size: clamp(1.15rem, 1.5vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.roleTileDesc {
+  font-size: 0.72rem;
+  color: #c7d5ea;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ============================================================
+   MATRIX PANEL
+   ============================================================ */
+.matrixPanel {
+  border-radius: $radius;
+  border: $glass-border;
+  background: $glass-bg;
+  box-shadow: $glass-shadow;
+  backdrop-filter: $glass-blur;
+  overflow: hidden;
+}
+
+.matrixPanelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+}
+
+.matrixPanelTitles {
+  display: grid;
+  gap: 3px;
+}
+
+.matrixPanelEyebrow {
+  display: inline-flex;
+  color: var(--th-accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.matrixPanelTitle {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Toolbar */
+.matrixToolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.matrixSelect {
+  background: rgba(158, 181, 217, 0.06);
+  border: 1px solid rgba(158, 181, 217, 0.12);
+  border-radius: 8px;
+  color: rgba(232, 241, 255, 0.75);
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: rgba(158, 181, 217, 0.25);
+  }
+
+  option {
+    background: #0e1a30;
+  }
+}
+
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 9px;
+  color: rgba(158, 181, 217, 0.35);
+  pointer-events: none;
+}
+
+.matrixSearch {
+  background: rgba(158, 181, 217, 0.06);
+  border: 1px solid rgba(158, 181, 217, 0.12);
+  border-radius: 8px;
+  color: rgba(232, 241, 255, 0.75);
+  font-size: 0.75rem;
+  padding: 5px 10px 5px 28px;
+  outline: none;
+  width: 150px;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: rgba(158, 181, 217, 0.3);
+  }
+
+  &:focus {
+    border-color: rgba(158, 181, 217, 0.3);
+  }
+}
+
+.diffToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: rgba(158, 181, 217, 0.5);
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid rgba(158, 181, 217, 0.12);
+  border-radius: 8px;
+  background: transparent;
+  white-space: nowrap;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    border-color: rgba(158, 181, 217, 0.25);
+    color: rgba(158, 181, 217, 0.75);
+  }
+
+  &.active {
+    color: #c8a843;
+    border-color: rgba(200, 168, 67, 0.35);
+    background: rgba(200, 168, 67, 0.07);
+  }
+}
+
+/* Table */
+.matrix {
+  overflow-x: auto;
+}
+
+.matrixHead {
+  display: grid;
+  padding: 8px 18px;
+  gap: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.matrixHeadCell {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: rgba(158, 181, 217, 0.35);
+  text-align: center;
+  font-family: var(--font-mono);
+
+  &:first-child {
+    text-align: left;
+  }
+}
+
+.matrixRow {
+  display: grid;
+  padding: 9px 18px;
+  gap: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  align-items: center;
+  transition: background 0.12s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(158, 181, 217, 0.03);
+  }
+}
+
+.matrixRoleCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.matrixRoleName {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(232, 241, 255, 0.85);
+}
+
+.matrixCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.iconYes {
+  color: #52b788;
+}
+
+.iconNo {
+  color: rgba(158, 181, 217, 0.2);
+}
+
+/* Legend */
+.matrixLegend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: rgba(158, 181, 217, 0.45);
+}

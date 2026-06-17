@@ -97,7 +97,12 @@ function buildJournal(
         : e.type === "search"
           ? `Пошук: "${e.query ?? ""}"`
           : `Закон: ${e.lawId ?? ""}`,
-    sub: e.type === "page_view" ? "page_view" : e.type === "search" ? "search" : "law_view",
+    sub:
+      e.type === "page_view"
+        ? "page_view"
+        : e.type === "search"
+          ? "search"
+          : "law_view",
     actor: "Користувач",
     ip: e.ipAddress,
     time: e.createdAt,
@@ -120,20 +125,33 @@ function buildJournal(
 }
 
 function kindIcon(kind: JournalKind, severity?: string) {
-  if (kind === "page_view") return { icon: Eye, bg: "rgba(74,128,212,0.12)", color: "#6aa1ff" };
-  if (kind === "search") return { icon: Search, bg: "rgba(82,183,136,0.12)", color: "#52b788" };
-  if (kind === "law_view") return { icon: FileText, bg: "rgba(200,168,67,0.12)", color: "#c8a843" };
-  if (severity === "security") return { icon: Shield, bg: "rgba(233,119,75,0.12)", color: "#ffb39b" };
-  if (severity === "warning") return { icon: AlertTriangle, bg: "rgba(200,168,67,0.12)", color: "#c8a843" };
+  if (kind === "page_view")
+    return { icon: Eye, bg: "rgba(74,128,212,0.12)", color: "#6aa1ff" };
+  if (kind === "search")
+    return { icon: Search, bg: "rgba(82,183,136,0.12)", color: "#52b788" };
+  if (kind === "law_view")
+    return { icon: FileText, bg: "rgba(200,168,67,0.12)", color: "#c8a843" };
+  if (severity === "security")
+    return { icon: Shield, bg: "rgba(233,119,75,0.12)", color: "#ffb39b" };
+  if (severity === "warning")
+    return {
+      icon: AlertTriangle,
+      bg: "rgba(200,168,67,0.12)",
+      color: "#c8a843",
+    };
   return { icon: Info, bg: "rgba(74,128,212,0.12)", color: "#6aa1ff" };
 }
 
 function exportJournalCSV(entries: JournalEntry[]) {
   const header = "Тип,Подія,Актор,Роль,Час,IP";
   const rows = entries.map((e) =>
-    [e.kind, `"${e.action}"`, e.actor, e.role ?? "—", e.time, e.ip ?? "—"].join(","),
+    [e.kind, `"${e.action}"`, e.actor, e.role ?? "—", e.time, e.ip ?? "—"].join(
+      ",",
+    ),
   );
-  const blob = new Blob([[header, ...rows].join("\n")], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([[header, ...rows].join("\n")], {
+    type: "text/csv;charset=utf-8;",
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -149,14 +167,20 @@ function SkeletonView() {
       <div className={`${styles.skeleton} ${styles.skeletonHero}`} />
       <div className={styles.skeletonMetrics}>
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className={`${styles.skeleton} ${styles.skeletonMetricCard}`} />
+          <div
+            key={i}
+            className={`${styles.skeleton} ${styles.skeletonMetricCard}`}
+          />
         ))}
       </div>
       <div className={styles.skeletonWorkspace}>
         <div className={`${styles.skeleton} ${styles.skeletonPanel}`} />
         <div className={styles.skeletonSidebar}>
           {[0, 1, 2].map((i) => (
-            <div key={i} className={`${styles.skeleton} ${styles.skeletonSideCard}`} />
+            <div
+              key={i}
+              className={`${styles.skeleton} ${styles.skeletonSideCard}`}
+            />
           ))}
         </div>
       </div>
@@ -189,7 +213,10 @@ function SidePanel({
         onClick={() => setOpen((v) => !v)}
       >
         <span className={styles.sidePanelTitle}>
-          <span className={styles.sidePanelIcon} style={{ background: iconBg, color: iconColor }}>
+          <span
+            className={styles.sidePanelIcon}
+            style={{ background: iconBg, color: iconColor }}
+          >
             <Icon size={13} />
           </span>
           {title}
@@ -253,9 +280,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
 
   const journal = useMemo(
     () =>
-      overview
-        ? buildJournal(overview.activity, overview.auditEntries)
-        : [],
+      overview ? buildJournal(overview.activity, overview.auditEntries) : [],
     [overview],
   );
 
@@ -268,7 +293,8 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
   const filteredJournal = useMemo(() => {
     let list = journal;
     if (kindFilter !== "all") list = list.filter((e) => e.kind === kindFilter);
-    if (actorFilter !== "all") list = list.filter((e) => e.actor === actorFilter);
+    if (actorFilter !== "all")
+      list = list.filter((e) => e.actor === actorFilter);
     return list;
   }, [journal, kindFilter, actorFilter]);
 
@@ -277,8 +303,12 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
   if (error || !overview) {
     return (
       <div className={styles.stateScreen}>
-        <div className={styles.stateText}>{error ?? "Користувача не знайдено."}</div>
-        <Link href="/admin/users" className={styles.backLink}>← Повернутися</Link>
+        <div className={styles.stateText}>
+          {error ?? "Користувача не знайдено."}
+        </div>
+        <Link href="/admin/users" className={styles.backLink}>
+          ← Повернутися
+        </Link>
       </div>
     );
   }
@@ -310,7 +340,9 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
         <div className={styles.heroInfo}>
           <div className={styles.heroNameRow}>
             <h1 className={styles.heroName}>{user.fullName}</h1>
-            <span className={isActive ? styles.badgeAccent : styles.badgeDanger}>
+            <span
+              className={isActive ? styles.badgeAccent : styles.badgeDanger}
+            >
               {isActive ? "Активний" : "Неактивний"}
             </span>
           </div>
@@ -376,7 +408,13 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
             {/* Account card */}
             <div className={styles.card}>
               <div className={styles.cardTitle}>
-                <span className={styles.cardTitleIcon} style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}>
+                <span
+                  className={styles.cardTitleIcon}
+                  style={{
+                    background: "rgba(74,128,212,0.12)",
+                    color: "#6aa1ff",
+                  }}
+                >
                   <UserCircle size={13} />
                 </span>
                 Деталі акаунта
@@ -398,14 +436,22 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
             {/* Billing card */}
             <div className={styles.card}>
               <div className={styles.cardTitle}>
-                <span className={styles.cardTitleIcon} style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}>
+                <span
+                  className={styles.cardTitleIcon}
+                  style={{
+                    background: "rgba(200,168,67,0.12)",
+                    color: "#c8a843",
+                  }}
+                >
                   <Key size={13} />
                 </span>
                 Доступ і план
               </div>
               <dl className={styles.dl}>
                 <dt>Поточний план</dt>
-                <dd className={styles.accent}>{formatPlanLabel(user.billingPlan)}</dd>
+                <dd className={styles.accent}>
+                  {formatPlanLabel(user.billingPlan)}
+                </dd>
               </dl>
               <div className={styles.modulesLabel}>Права та модулі</div>
               <div className={styles.planRow}>
@@ -431,7 +477,13 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
             {/* Actions card */}
             <div className={styles.card}>
               <div className={styles.cardTitle}>
-                <span className={styles.cardTitleIcon} style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}>
+                <span
+                  className={styles.cardTitleIcon}
+                  style={{
+                    background: "rgba(233,119,75,0.12)",
+                    color: "#ffb39b",
+                  }}
+                >
                   <Zap size={13} />
                 </span>
                 Дії
@@ -443,7 +495,11 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   disabled={actLoading}
                   onClick={() =>
                     act(
-                      () => adminApi.setUserStatus(user._id, isActive ? "inactive" : "active"),
+                      () =>
+                        adminApi.setUserStatus(
+                          user._id,
+                          isActive ? "inactive" : "active",
+                        ),
                       isActive ? "Акаунт деактивовано." : "Акаунт активовано.",
                     )
                   }
@@ -457,12 +513,22 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   disabled={actLoading}
                   onClick={() =>
                     act(
-                      () => adminApi.setUserRole(user._id, isAdmin ? "user" : "admin"),
-                      isAdmin ? "Права адміна знято." : "Акаунт підвищено до адміна.",
+                      () =>
+                        adminApi.setUserRole(
+                          user._id,
+                          isAdmin ? "user" : "admin",
+                        ),
+                      isAdmin
+                        ? "Права адміна знято."
+                        : "Акаунт підвищено до адміна.",
                     )
                   }
                 >
-                  {isAdmin ? <ShieldOff size={14} /> : <ArrowUpCircle size={14} />}
+                  {isAdmin ? (
+                    <ShieldOff size={14} />
+                  ) : (
+                    <ArrowUpCircle size={14} />
+                  )}
                   {isAdmin ? "Знизити до клієнта" : "Підвищити до адміна"}
                 </button>
                 {!isAdmin && (
@@ -472,13 +538,21 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                     disabled={actLoading}
                     onClick={() =>
                       act(
-                        () => adminApi.setUserRole(user._id, isLegislator ? "user" : "legislator"),
-                        isLegislator ? "Роль законотворця знято." : "Призначено законотворцем.",
+                        () =>
+                          adminApi.setUserRole(
+                            user._id,
+                            isLegislator ? "user" : "legislator",
+                          ),
+                        isLegislator
+                          ? "Роль законотворця знято."
+                          : "Призначено законотворцем.",
                       )
                     }
                   >
                     <ShieldOff size={14} />
-                    {isLegislator ? "Зняти роль законотворця" : "Призначити законотворцем"}
+                    {isLegislator
+                      ? "Зняти роль законотворця"
+                      : "Призначити законотворцем"}
                   </button>
                 )}
                 {!isAdmin && (
@@ -488,13 +562,21 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                     disabled={actLoading}
                     onClick={() =>
                       act(
-                        () => adminApi.setUserRole(user._id, isSupervisor ? "user" : "supervisor"),
-                        isSupervisor ? "Роль супервайзера знято." : "Призначено супервайзером.",
+                        () =>
+                          adminApi.setUserRole(
+                            user._id,
+                            isSupervisor ? "user" : "supervisor",
+                          ),
+                        isSupervisor
+                          ? "Роль супервайзера знято."
+                          : "Призначено супервайзером.",
                       )
                     }
                   >
                     <Crown size={14} />
-                    {isSupervisor ? "Зняти роль супервайзера" : "Призначити супервайзером"}
+                    {isSupervisor
+                      ? "Зняти роль супервайзера"
+                      : "Призначити супервайзером"}
                   </button>
                 )}
                 <button
@@ -502,7 +584,10 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
                   disabled={actLoading}
                   onClick={() =>
-                    act(() => adminApi.forceLogout(user._id), "Примусовий вихід виконано.")
+                    act(
+                      () => adminApi.forceLogout(user._id),
+                      "Примусовий вихід виконано.",
+                    )
                   }
                 >
                   <LogOut size={14} />
@@ -520,32 +605,60 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
           {/* 4 metric cards */}
           <div className={styles.metricsRow}>
             <div className={styles.metricCard}>
-              <span className={styles.metricIconBadge} style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}>
+              <span
+                className={styles.metricIconBadge}
+                style={{
+                  background: "rgba(74,128,212,0.12)",
+                  color: "#6aa1ff",
+                }}
+              >
                 <Activity size={14} />
               </span>
               <span className={styles.metricLabel}>Події</span>
-              <strong className={styles.metricValue}>{stats.totalEvents}</strong>
+              <strong className={styles.metricValue}>
+                {stats.totalEvents}
+              </strong>
             </div>
             <div className={styles.metricCard}>
-              <span className={styles.metricIconBadge} style={{ background: "rgba(82,183,136,0.12)", color: "#52b788" }}>
+              <span
+                className={styles.metricIconBadge}
+                style={{
+                  background: "rgba(82,183,136,0.12)",
+                  color: "#52b788",
+                }}
+              >
                 <Eye size={14} />
               </span>
               <span className={styles.metricLabel}>Перегляди</span>
               <strong className={styles.metricValue}>{stats.pageViews}</strong>
             </div>
             <div className={styles.metricCard}>
-              <span className={styles.metricIconBadge} style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}>
+              <span
+                className={styles.metricIconBadge}
+                style={{
+                  background: "rgba(200,168,67,0.12)",
+                  color: "#c8a843",
+                }}
+              >
                 <Search size={14} />
               </span>
               <span className={styles.metricLabel}>Пошуки</span>
               <strong className={styles.metricValue}>{stats.searches}</strong>
             </div>
             <div className={styles.metricCard}>
-              <span className={styles.metricIconBadge} style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}>
+              <span
+                className={styles.metricIconBadge}
+                style={{
+                  background: "rgba(233,119,75,0.12)",
+                  color: "#ffb39b",
+                }}
+              >
                 <Globe size={14} />
               </span>
               <span className={styles.metricLabel}>Ресурси</span>
-              <strong className={styles.metricValue}>{verifiedResources.length || stats.lawViews}</strong>
+              <strong className={styles.metricValue}>
+                {verifiedResources.length || stats.lawViews}
+              </strong>
             </div>
           </div>
 
@@ -586,7 +699,9 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                 >
                   <option value="all">Актор: Усі</option>
                   {actors.map((a) => (
-                    <option key={a} value={a}>{a}</option>
+                    <option key={a} value={a}>
+                      {a}
+                    </option>
                   ))}
                 </select>
                 <button
@@ -617,10 +732,11 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   const auditEntry = overview.auditEntries.find(
                     (a) => a._id === entry.id,
                   );
-                  const { icon: IconComp, bg, color } = kindIcon(
-                    entry.kind,
-                    auditEntry?.severity,
-                  );
+                  const {
+                    icon: IconComp,
+                    bg,
+                    color,
+                  } = kindIcon(entry.kind, auditEntry?.severity);
                   return (
                     <div key={entry.id} className={styles.journalRow}>
                       <span
@@ -630,17 +746,23 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                         <IconComp size={13} />
                       </span>
                       <div style={{ minWidth: 0 }}>
-                        <div className={styles.journalAction}>{entry.action}</div>
+                        <div className={styles.journalAction}>
+                          {entry.action}
+                        </div>
                         {entry.sub && entry.sub !== entry.action && (
                           <div className={styles.journalSub}>{entry.sub}</div>
                         )}
                       </div>
                       <span className={styles.journalActor}>{entry.actor}</span>
-                      <span className={styles.journalRole}>{entry.role ?? "—"}</span>
+                      <span className={styles.journalRole}>
+                        {entry.role ?? "—"}
+                      </span>
                       <span className={styles.journalTime}>
                         {formatDateShort(entry.time)}
                       </span>
-                      <span className={styles.journalIp}>{entry.ip ?? "—"}</span>
+                      <span className={styles.journalIp}>
+                        {entry.ip ?? "—"}
+                      </span>
                     </div>
                   );
                 })
@@ -652,7 +774,8 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   className={styles.showMore}
                   onClick={() => setJournalLimit((l) => l + 25)}
                 >
-                  Показати ще ({filteredJournal.length - journalLimit} залишилось)
+                  Показати ще ({filteredJournal.length - journalLimit}{" "}
+                  залишилось)
                 </button>
               )}
             </div>
@@ -668,13 +791,17 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
               >
                 <div className={styles.sidePanelRow}>
                   <span className={styles.sidePanelKey}>Трекінг подій</span>
-                  <span className={`${styles.sidePanelVal} ${styles.statusDot}`}>
+                  <span
+                    className={`${styles.sidePanelVal} ${styles.statusDot}`}
+                  >
                     Увімкнено
                   </span>
                 </div>
                 <div className={styles.sidePanelRow}>
                   <span className={styles.sidePanelKey}>Збір логів</span>
-                  <span className={`${styles.sidePanelVal} ${styles.statusDot}`}>
+                  <span
+                    className={`${styles.sidePanelVal} ${styles.statusDot}`}
+                  >
                     Активний
                   </span>
                 </div>
@@ -717,7 +844,9 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                       <div className={styles.resourceUrl}>{r.url}</div>
                       <div className={styles.sidePanelRow}>
                         <span className={styles.sidePanelKey}>Статус</span>
-                        <span className={`${styles.sidePanelVal} ${styles.statusDot}`}>
+                        <span
+                          className={`${styles.sidePanelVal} ${styles.statusDot}`}
+                        >
                           Активне
                         </span>
                       </div>

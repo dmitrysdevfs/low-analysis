@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import { getActiveCode } from '../services/admin/superCode.service.js';
+import { appendAuditEntry } from '../services/admin/audit.service.js';
 import { sendTransactionalEmail } from '../modules/email/email.service.js';
 import { renderEmailTemplate } from '../modules/email/email.renderer.js';
 
@@ -95,6 +96,13 @@ export const registerUser = async (req, res) => {
   if (accountType === 'admin') {
     const activeCode = await getActiveCode();
     if (!superCode || superCode !== activeCode) {
+      appendAuditEntry({
+        action: 'Спроба підключення з невалідним кодом',
+        detail: `Спроба реєстрації адміністратора з невалідним супер-кодом. Email: ${email}.`,
+        actor: email || 'Невідомо',
+        severity: 'security',
+        ipAddress: getClientIp(req),
+      }).catch(() => {});
       return res
         .status(400)
         .json({ message: 'Недійсний супер-код для реєстрації адміністратора' });
@@ -115,6 +123,15 @@ export const registerUser = async (req, res) => {
   });
 
   if (user) {
+    if (role === 'admin') {
+      appendAuditEntry({
+        action: 'Успішне підключення адміністратора',
+        detail: `Новий адмін-акаунт зареєстровано: ${email}.`,
+        actor: email,
+        severity: 'security',
+        ipAddress: getClientIp(req),
+      }).catch(() => {});
+    }
     const token = generateToken(user._id);
     setCookieToken(res, token);
     res.status(201).json({
