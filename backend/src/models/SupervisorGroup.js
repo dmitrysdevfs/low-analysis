@@ -34,6 +34,9 @@ const supervisorGroupSchema = new mongoose.Schema(
 supervisorGroupSchema.index({ supervisorId: 1, status: 1 });
 supervisorGroupSchema.index({ memberIds: 1 });
 
-const SupervisorGroup = mongoose.model('SupervisorGroup', supervisorGroupSchema);
+const SupervisorGroup = mongoose.model(
+  'SupervisorGroup',
+  supervisorGroupSchema,
+);
 
 export default SupervisorGroup;

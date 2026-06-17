@@ -14,7 +14,9 @@ async function run() {
   await mongoose.connect(process.env.MONGODB_URI);
   console.log('Connected to DB');
 
-  const collection = mongoose.connection.db.collection('legislatoraccessrequests');
+  const collection = mongoose.connection.db.collection(
+    'legislatoraccessrequests',
+  );
   const docs = await collection.find({}).toArray();
 
   console.log(`Found ${docs.length} access requests to process.`);
@@ -52,13 +54,16 @@ async function run() {
         parts.push(`Причина: ${doc.reason}`);
       }
       updateFields.message = parts.join('. ');
-      
+
       if ('organization' in doc) unsetFields.organization = '';
       if ('reason' in doc) unsetFields.reason = '';
     }
 
     // Apply updates if there are any changes to be made
-    if (Object.keys(updateFields).length > 0 || Object.keys(unsetFields).length > 0) {
+    if (
+      Object.keys(updateFields).length > 0 ||
+      Object.keys(unsetFields).length > 0
+    ) {
       const updateDoc = {};
       if (Object.keys(updateFields).length > 0) {
         updateDoc.$set = updateFields;
