@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { useSubjects } from "@/hooks/useSubjects";
@@ -8,6 +8,8 @@ import { useTaxonomies } from "@/hooks/useTaxonomies";
 import { getLegalStatusLabel } from "@/lib/tree";
 import { SubjectCard } from "@/components/subject/SubjectCard";
 import { ExpandingSearch } from "@/components/ui/ExpandingSearch";
+import { getLaws, getLawSubjects } from "@/lib/api/laws";
+import type { Law } from "@/types/law.types";
 import styles from "./page.module.scss";
 
 const ALL_FILTER = "Всі";
@@ -20,6 +22,25 @@ export default function SubjectsPage() {
   const [activeTaxonomy, setActiveTaxonomy] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const [laws, setLaws] = useState<Law[]>([]);
+  const [activeLawId, setActiveLawId] = useState<string | null>(null);
+  const [lawSubjectIds, setLawSubjectIds] = useState<Set<string> | null>(null);
+
+  useEffect(() => {
+    getLaws("")
+      .then(setLaws)
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!activeLawId) {
+      setLawSubjectIds(null);
+      return;
+    }
+    getLawSubjects(activeLawId)
+      .then((items) => setLawSubjectIds(new Set(items.map((i) => i._id))))
+      .catch(() => setLawSubjectIds(null));
+  }, [activeLawId]);
 
   const filterTypes = useMemo(() => {
     const unique = Array.from(
@@ -49,10 +70,13 @@ export default function SubjectsPage() {
     if (activeTaxonomy) {
       base = base.filter((s) => s.taxonomies?.includes(activeTaxonomy));
     }
+    if (lawSubjectIds) {
+      base = base.filter((s) => lawSubjectIds.has(s._id));
+    }
     if (!query.trim()) return base;
     const q = query.toLowerCase();
     return base.filter((s) => s.canonical_name.toLowerCase().includes(q));
-  }, [sortedByFrequency, activeFilter, activeTaxonomy, query]);
+  }, [sortedByFrequency, activeFilter, activeTaxonomy, lawSubjectIds, query]);
 
   const isSearchActive = query.trim().length > 0;
   const hasMore = !isSearchActive && filteredSubjects.length > TOP_LIMIT;
@@ -146,6 +170,27 @@ export default function SubjectsPage() {
                   {t.name}
                 </button>
               ))}
+            </div>
+          ) : null}
+
+          {!loading && !error && laws.length > 0 ? (
+            <div className={styles.lawFilterBar}>
+              <span className={`mono ${styles.taxonomyLabel}`}>Закон:</span>
+              <select
+                className={`mono ${styles.lawSelect}`}
+                value={activeLawId ?? ""}
+                onChange={(e) => {
+                  setActiveLawId(e.target.value || null);
+                  setShowAll(false);
+                }}
+              >
+                <option value="">Всі закони</option>
+                {laws.map((law) => (
+                  <option key={law._id} value={law._id}>
+                    {law.code} — {law.title?.slice(0, 60)}
+                  </option>
+                ))}
+              </select>
             </div>
           ) : null}
 

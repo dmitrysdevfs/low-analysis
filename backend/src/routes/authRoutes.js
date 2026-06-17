@@ -13,6 +13,32 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+// 5 attempts per 15 minutes per IP for password-reset endpoints
+const _pwdResetStore = new Map();
+function passwordResetRateLimit(req, res, next) {
+  if (process.env.NODE_ENV === 'test') return next();
+  const ip =
+    (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    req.socket?.remoteAddress ||
+    'unknown';
+  const now = Date.now();
+  const WINDOW = 15 * 60 * 1000;
+  const MAX = 5;
+  let entry = _pwdResetStore.get(ip) ?? { timestamps: [] };
+  entry.timestamps = entry.timestamps.filter((t) => now - t < WINDOW);
+  if (entry.timestamps.length >= MAX) {
+    const retryAfter = Math.ceil((entry.timestamps[0] + WINDOW - now) / 1000);
+    res.set('Retry-After', String(retryAfter));
+    return res.status(429).json({
+      message: 'Забагато спроб. Спробуйте через 15 хвилин.',
+      retryAfterSeconds: retryAfter,
+    });
+  }
+  entry.timestamps.push(now);
+  _pwdResetStore.set(ip, entry);
+  return next();
+}
+
 /**
  * @swagger
  * /api/auth/register:
@@ -227,7 +253,7 @@ router.put('/password', protect, updateUserPassword);
  */
 router.post('/logout', logoutUser);
 
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+router.post('/forgot-password', passwordResetRateLimit, forgotPassword);
+router.post('/reset-password', passwordResetRateLimit, resetPassword);
 
 export default router;

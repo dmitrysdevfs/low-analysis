@@ -328,3 +328,27 @@
   border-color: #4a80d4;
   color: #eef3fb;
 }
+
+.lawFilterBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.lawSelect {
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border, rgba(255, 255, 255, 0.15));
+  background: var(--color-surface, rgba(255, 255, 255, 0.05));
+  color: var(--color-text, inherit);
+  font-size: 0.8rem;
+  cursor: pointer;
+  max-width: 400px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent, #c9a84c);
+  }
+}

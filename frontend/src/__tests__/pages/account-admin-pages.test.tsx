@@ -47,6 +47,10 @@ vi.mock("@/components/admin/AdminDashboardView", () => ({
   AdminDashboardView: () => <div>admin-dashboard-view</div>,
 }));
 
+vi.mock("@/features/admin/AccessRequestsPanel", () => ({
+  AccessRequestsPanel: () => null,
+}));
+
 vi.mock("@/components/admin/AdminUsersView", () => ({
   AdminUsersView: () => <div>admin-users-view</div>,
 }));

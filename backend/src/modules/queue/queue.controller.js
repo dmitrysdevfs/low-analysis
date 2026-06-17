@@ -66,6 +66,11 @@ export async function enqueueBatchUpdateLawTree(req, res, next) {
         .status(400)
         .json({ message: 'codes must be a non-empty array' });
     }
+    if (codes.length > 100) {
+      return res
+        .status(400)
+        .json({ message: 'codes array must not exceed 100 items' });
+    }
 
     const job = await getQueue(QUEUE_NAMES.BATCH_UPDATE_LAW_TREE).add(
       QUEUE_NAMES.BATCH_UPDATE_LAW_TREE,

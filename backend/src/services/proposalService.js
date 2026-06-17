@@ -110,18 +110,23 @@ export const updateProposal = async (id, userId, data) => {
     throw new Error('Cannot update a non-draft proposal');
   }
 
-  return await Proposal.findByIdAndUpdate(id, data, { new: true });
+  const { title, description } = data;
+  return await Proposal.findByIdAndUpdate(
+    id,
+    { title, description },
+    { new: true },
+  );
 };
 
 /**
  * Delete a draft proposal and cascade-delete its amendments.
  */
-export const deleteProposal = async (id, userId) => {
+export const deleteProposal = async (id, userId, userRole = null) => {
   const proposal = await Proposal.findById(id);
   if (!proposal)
     throw Object.assign(new Error('Proposal not found'), { statusCode: 404 });
 
-  if (!compareIds(proposal.created_by, userId))
+  if (!compareIds(proposal.created_by, userId) && userRole !== 'admin')
     throw Object.assign(new Error('Not authorized to delete this proposal'), {
       statusCode: 403,
     });

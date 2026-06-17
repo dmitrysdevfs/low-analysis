@@ -1,41 +1,59 @@
 import type { ReactNode } from "react";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import {
   BillingProvider,
   useBilling,
 } from "@/components/billing/BillingProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
-import {
-  adminAssignDemoPlan,
-  BILLING_PAYMENTS_STORAGE_KEY,
-  BILLING_PLAN_CATALOG,
-  BILLING_SUBSCRIPTIONS_STORAGE_KEY,
-  consumeBillingQuota,
-  getBillingPaymentsForUser,
-  getBillingRegistrySnapshot,
-  getBillingSubscriptionSnapshot,
-  purchaseDemoPlan,
-} from "@/lib/billing/mockBilling";
+import { getMyBilling, demoPurchase, adminAssignPlan } from "@/lib/api/billing";
+import { BILLING_PLAN_CATALOG } from "@/lib/billing/mockBilling";
 
 vi.mock("@/components/auth/AuthProvider", () => ({
   useAuth: vi.fn(),
 }));
 
 vi.mock("@/lib/billing/mockBilling", () => ({
-  BILLING_PAYMENTS_STORAGE_KEY: "billing-payments",
-  BILLING_PLAN_CATALOG: [{ id: "trial", label: "Trial" }],
-  BILLING_SUBSCRIPTIONS_STORAGE_KEY: "billing-subscriptions",
-  adminAssignDemoPlan: vi.fn(),
-  consumeBillingQuota: vi.fn(),
-  getBillingPaymentsForUser: vi.fn(),
-  getBillingRegistrySnapshot: vi.fn(),
-  getBillingSubscriptionSnapshot: vi.fn(),
-  purchaseDemoPlan: vi.fn(),
+  BILLING_PLAN_CATALOG: [
+    {
+      id: "trial",
+      label: "Trial",
+      badge: "$1",
+      description: "Trial plan",
+      priceUsd: 1,
+      durationDays: 7,
+      periodLabel: "7-day trial",
+      isUnlimited: true,
+      searchLimit: null,
+      viewLimit: null,
+      features: [],
+    },
+  ],
+}));
+
+vi.mock("@/lib/api/billing", () => ({
+  getMyBilling: vi.fn(),
+  demoPurchase: vi.fn(),
+  adminAssignPlan: vi.fn(),
+}));
+
+vi.mock("@/lib/api/_client", () => ({
+  requestJson: vi.fn(),
 }));
 
 function wrapper({ children }: { children: ReactNode }) {
   return <BillingProvider>{children}</BillingProvider>;
 }
+
+const mockSubscription = {
+  _id: "sub-1",
+  userId: "user-1",
+  planId: "trial" as const,
+  status: "trialing" as const,
+  usageSearch: 4,
+  usageView: 2,
+  startedAt: new Date().toISOString(),
+  endsAt: new Date(Date.now() + 7 * 86_400_000).toISOString(),
+};
 
 describe("BillingProvider", () => {
   beforeEach(() => {
@@ -46,38 +64,22 @@ describe("BillingProvider", () => {
         displayName: "Alice",
       },
     } as never);
-    vi.mocked(getBillingSubscriptionSnapshot).mockReturnValue({
-      userId: "user-1",
-      accountType: "client",
-      planId: "trial",
-      plan: BILLING_PLAN_CATALOG[0],
-      status: "trialing",
-      accessLabel: "Trial",
-      description: "Trial access",
-      daysRemaining: 7,
-      isUnlimited: false,
-      searchLimit: 30,
-      viewLimit: 10,
-      searchUsed: 4,
-      viewUsed: 2,
-      searchRemaining: 26,
-      viewRemaining: 8,
-      previewMode: false,
-    } as never);
-    vi.mocked(getBillingPaymentsForUser).mockReturnValue([
-      {
-        id: "payment-1",
-        userId: "user-1",
-      },
-    ] as never);
-    vi.mocked(getBillingRegistrySnapshot).mockReturnValue([] as never);
-    vi.mocked(purchaseDemoPlan).mockReturnValue({ ok: true } as never);
-    vi.mocked(adminAssignDemoPlan).mockReturnValue({ ok: true } as never);
-    vi.mocked(consumeBillingQuota).mockReturnValue({
-      allowed: true,
-      snapshot: vi.mocked(getBillingSubscriptionSnapshot).mock.results[0]
-        ?.value,
-    } as never);
+
+    vi.mocked(getMyBilling).mockResolvedValue({
+      subscription: mockSubscription,
+      transactions: [
+        {
+          _id: "txn-1",
+          userId: "user-1",
+          planId: "trial",
+          amount: 1,
+          method: "card",
+          status: "completed",
+          provider: "demo",
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    });
   });
 
   it("hydrates subscription and payments for an authenticated user", async () => {
@@ -85,12 +87,9 @@ describe("BillingProvider", () => {
 
     await waitFor(() => expect(result.current.isHydrated).toBe(true));
 
-    expect(getBillingSubscriptionSnapshot).toHaveBeenCalledWith(
-      "user-1",
-      "client",
-    );
-    expect(getBillingPaymentsForUser).toHaveBeenCalledWith("user-1");
-    expect(result.current.subscription?.accessLabel).toBe("Trial");
+    expect(getMyBilling).toHaveBeenCalled();
+    expect(result.current.subscription?.planId).toBe("trial");
+    expect(result.current.subscription?.status).toBe("trialing");
     expect(result.current.payments).toHaveLength(1);
   });
 
@@ -101,70 +100,45 @@ describe("BillingProvider", () => {
 
     await waitFor(() => expect(result.current.isHydrated).toBe(true));
 
-    expect(result.current.subscription).toBeNull();
+    expect(result.current.subscription?.planId).toBeNull();
     expect(result.current.payments).toEqual([]);
   });
 
-  it("refreshes on storage updates", async () => {
+  it("exposes planCatalog from BILLING_PLAN_CATALOG", async () => {
     const { result } = renderHook(() => useBilling(), { wrapper });
     await waitFor(() => expect(result.current.isHydrated).toBe(true));
 
-    act(() => {
-      window.dispatchEvent(
-        new StorageEvent("storage", {
-          key: BILLING_SUBSCRIPTIONS_STORAGE_KEY,
-        }),
-      );
-    });
-
-    expect(getBillingSubscriptionSnapshot).toHaveBeenCalledTimes(2);
-
-    act(() => {
-      window.dispatchEvent(
-        new StorageEvent("storage", {
-          key: BILLING_PAYMENTS_STORAGE_KEY,
-        }),
-      );
-    });
-
-    expect(getBillingPaymentsForUser).toHaveBeenCalledTimes(3);
     expect(result.current.planCatalog).toEqual(BILLING_PLAN_CATALOG);
   });
 
-  it("runs purchase, assign and quota actions through the mock billing layer", async () => {
+  it("purchasePlan calls demoPurchase and refreshBilling", async () => {
+    vi.mocked(demoPurchase).mockResolvedValue({
+      ok: true,
+      subscription: mockSubscription,
+      transaction: {} as never,
+    });
+
     const { result } = renderHook(() => useBilling(), { wrapper });
     await waitFor(() => expect(result.current.isHydrated).toBe(true));
 
-    act(() => {
-      expect(result.current.purchasePlan("trial", "apple_pay")).toEqual({
-        ok: true,
-      });
-    });
-    expect(purchaseDemoPlan).toHaveBeenCalledWith(
-      "user-1",
-      "trial",
-      "apple_pay",
-      "Alice",
-    );
+    const res = await result.current.purchasePlan("trial", "card");
 
-    act(() => {
-      expect(result.current.assignPlan("user-2", "trial", "Admin")).toEqual({
-        ok: true,
-      });
-    });
-    expect(adminAssignDemoPlan).toHaveBeenCalledWith(
-      "user-2",
-      "trial",
-      "Admin",
-    );
+    expect(demoPurchase).toHaveBeenCalledWith("trial", "card");
+    expect(res.ok).toBe(true);
+  });
 
-    act(() => {
-      expect(result.current.consumeQuota("search").allowed).toBe(true);
+  it("assignPlan calls adminAssignPlan and refreshBilling", async () => {
+    vi.mocked(adminAssignPlan).mockResolvedValue({
+      ok: true,
+      subscription: mockSubscription,
     });
-    expect(consumeBillingQuota).toHaveBeenCalledWith(
-      "user-1",
-      "client",
-      "search",
-    );
+
+    const { result } = renderHook(() => useBilling(), { wrapper });
+    await waitFor(() => expect(result.current.isHydrated).toBe(true));
+
+    const res = await result.current.assignPlan("user-2", "trial");
+
+    expect(adminAssignPlan).toHaveBeenCalledWith("user-2", "trial");
+    expect(res.ok).toBe(true);
   });
 });

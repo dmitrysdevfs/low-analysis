@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { protect } from '../../middleware/authMiddleware.js';
 import {
   enqueueParseLaw,
   enqueueAnalyzeSubjects,
@@ -7,6 +8,8 @@ import {
 } from './queue.controller.js';
 
 const router = Router();
+
+router.use(protect);
 
 /**
  * @swagger

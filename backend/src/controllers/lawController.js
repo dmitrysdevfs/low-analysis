@@ -4,6 +4,8 @@ import {
   getLawsQuerySchema,
   formatZodError,
 } from '../validation/lawSchemas.js';
+import Element from '../models/Element.js';
+import Subject from '../models/Subject.js';
 
 export const getAllLaws = async (req, res, next) => {
   try {
@@ -138,5 +140,28 @@ export const parseLawFromUrl = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const getLawSubjects = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const elements = await Element.find({ lawId: id })
+      .select('subjects')
+      .lean();
+    const subjectIds = [
+      ...new Set(
+        elements.flatMap((e) =>
+          (e.subjects ?? []).map((s) => String(s.subject_id)),
+        ),
+      ),
+    ];
+    if (!subjectIds.length) return res.json([]);
+    const subjects = await Subject.find({ _id: { $in: subjectIds } })
+      .select('canonical_name legal_status taxonomies')
+      .lean();
+    res.json(subjects);
+  } catch (err) {
+    next(err);
   }
 };

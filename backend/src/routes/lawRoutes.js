@@ -8,8 +8,10 @@ import {
   parseLawFromUrl,
   getElement,
   getLawHeatmap,
+  getLawSubjects,
 } from '../controllers/lawController.js';
 import { guestRateLimit } from '../middleware/guestRateLimit.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -321,6 +323,7 @@ router.get('/elements/:id', getElement);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
+router.get('/:id/subjects', getLawSubjects);
 router.get('/:id/articles/:num', getArticle);
 
 /**
@@ -362,6 +365,6 @@ router.get('/:id/articles/:num', getArticle);
  *       500:
  *         description: Помилка сервера або парсингу
  */
-router.post('/parse', parseLawFromUrl);
+router.post('/parse', protect, authorize('admin'), parseLawFromUrl);
 
 export default router;

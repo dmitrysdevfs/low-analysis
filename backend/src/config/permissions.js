@@ -22,6 +22,15 @@ export const ROLE_PERMISSIONS = {
     'law_changes:vote',
     'law_changes:propose',
   ],
+  supervisor: [
+    'laws:read',
+    'proposals:read',
+    'forks:read',
+    'groups:manage',
+    'activity:read',
+    'comments:read',
+    'law_changes:read',
+  ],
   admin: ['*'],
 };
 

@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/node';
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -28,6 +29,9 @@ import meRoutes from './routes/meRoutes.js';
 import graphRoutes from './routes/graphRoutes.js';
 import supportRoutes from './modules/support/support.routes.js';
 import billingRoutes from './routes/billingRoutes.js';
+import supervisorRoutes from './routes/supervisorRoutes.js';
+import forkRoutes from './routes/forkRoutes.js';
+import accessRequestRoutes from './routes/accessRequestRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -86,6 +90,7 @@ const corsOptions = {
 const spec = swaggerJsdoc(swaggerOptions);
 const app = express();
 
+app.use(compression());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
@@ -127,6 +132,9 @@ app.use('/api/me', meRoutes);
 app.use('/api/graph', graphRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/supervisor', supervisorRoutes);
+app.use('/api/forks', forkRoutes);
+app.use('/api/legislator-requests', accessRequestRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

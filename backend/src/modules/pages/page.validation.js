@@ -198,9 +198,17 @@ export function normalizePageSnapshot(input = {}) {
   };
 }
 
+const SLUG_TITLES = {
+  [PAGE_SLUGS.projectInfo]: 'Інформація про проєкт',
+  [PAGE_SLUGS.rolesGuest]: 'Гість',
+  [PAGE_SLUGS.rolesUser]: 'Користувач',
+  [PAGE_SLUGS.rolesLawmaker]: 'Законотворець',
+  [PAGE_SLUGS.rolesSupervisor]: 'Супервайзер',
+  [PAGE_SLUGS.rolesAdmin]: 'Адміністратор',
+  [PAGE_SLUGS.support]: 'Підтримати проєкт',
+  [PAGE_SLUGS.docs]: 'Документація',
+};
+
 export function createEmptyDraftTitleForSlug(slug) {
-  if (slug === PAGE_SLUGS.projectInfo) {
-    return 'Інформація про проєкт';
-  }
-  return slug;
+  return SLUG_TITLES[slug] ?? slug;
 }

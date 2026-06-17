@@ -1,10 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { LawChangeProposal } from "@/types/law-change.types";
 import { useWithdrawProposal } from "@/features/law-change/hooks/useProposalMutations";
-import { DiffHighlight } from "../DiffHighlight/DiffHighlight";
 import { VotePanel } from "../VotePanel/VotePanel";
 import styles from "./ProposalCard.module.scss";
+
+const DiffHighlight = dynamic(
+  () =>
+    import("../DiffHighlight/DiffHighlight").then((m) => ({
+      default: m.DiffHighlight,
+    })),
+  { ssr: false },
+);
 
 interface ProposalCardProps {
   proposal: LawChangeProposal;

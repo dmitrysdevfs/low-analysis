@@ -79,7 +79,7 @@ export function CheckoutDemo() {
     }));
   }
 
-  function handleCheckout(event: FormEvent<HTMLFormElement>) {
+  async function handleCheckout(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (paymentMethod === "card") {
@@ -98,7 +98,7 @@ export function CheckoutDemo() {
       }
     }
 
-    const result = purchasePlan(planId, paymentMethod);
+    const result = await purchasePlan(planId, paymentMethod);
 
     setCard({
       holder: "",

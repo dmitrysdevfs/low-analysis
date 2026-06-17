@@ -110,3 +110,9 @@ export async function getArticle(
 ): Promise<ArticleResponse> {
   return getJson<ArticleResponse>(`/laws/${id}/articles/${num}`, options);
 }
+
+export async function getLawSubjects(
+  lawId: string,
+): Promise<{ _id: string }[]> {
+  return getJson<{ _id: string }[]>(`/laws/${lawId}/subjects`);
+}

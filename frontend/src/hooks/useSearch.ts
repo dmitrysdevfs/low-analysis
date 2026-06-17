@@ -97,6 +97,7 @@ export function useSearch() {
       const cacheKey = JSON.stringify({
         q: normalizedParams.q.trim(),
         ...queryOptions,
+        _g: isGuest,
       });
       const cached = rawCache.get(cacheKey);
       if (cached && Date.now() - cached.ts < RAW_CACHE_TTL) {
