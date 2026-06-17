@@ -55,7 +55,11 @@ export const updateProposal = async (req, res, next) => {
 
 export const deleteProposal = async (req, res, next) => {
   try {
-    await proposalService.deleteProposal(req.params.id, req.user._id, req.user.role);
+    await proposalService.deleteProposal(
+      req.params.id,
+      req.user._id,
+      req.user.role,
+    );
     res.status(204).end();
   } catch (error) {
     next(error);

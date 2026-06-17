@@ -111,7 +111,11 @@ export const updateProposal = async (id, userId, data) => {
   }
 
   const { title, description } = data;
-  return await Proposal.findByIdAndUpdate(id, { title, description }, { new: true });
+  return await Proposal.findByIdAndUpdate(
+    id,
+    { title, description },
+    { new: true },
+  );
 };
 
 /**

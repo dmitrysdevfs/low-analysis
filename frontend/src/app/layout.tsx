@@ -16,8 +16,8 @@ import { BillingProvider } from "@/components/billing/BillingProvider";
 import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { AppQueryProvider } from "@/providers/AppQueryProvider";
-import { AiAssistant } from "@/components/ai/AiAssistant";
 import { AssistantProvider } from "@/features/assistant";
+import { AiAssistantLazy } from "@/components/ai/AiAssistantLazy";
 import { SupportChatWidget } from "@/features/support";
 import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
@@ -111,7 +111,7 @@ export default function RootLayout({
                         <div className="site-content">
                           <RouteAccessGate>{children}</RouteAccessGate>
                         </div>
-                        <AiAssistant />
+                        <AiAssistantLazy />
                         <SupportChatWidget />
                         <FooterStats />
                         <Footer />

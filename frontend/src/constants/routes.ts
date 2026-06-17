@@ -47,4 +47,12 @@ export const ROUTES = {
   legislatorProposal: (id: string) => `/legislator-cabinet/${id}`,
   graph: "/graph",
   radiant: "/radiant",
+  support: "/support",
+  docs: "/docs",
+  rolesGuest: "/roles/guest",
+  rolesUser: "/roles/user",
+  rolesLawmaker: "/roles/lawmaker",
+  rolesSupervisor: "/roles/supervisor",
+  rolesAdmin: "/roles/admin",
+  supervisorDashboard: "/supervisor/dashboard",
 } as const;

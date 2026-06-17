@@ -1,5 +1,12 @@
 export const PAGE_SLUGS = {
   projectInfo: 'project-info',
+  rolesGuest: 'roles-guest',
+  rolesUser: 'roles-user',
+  rolesLawmaker: 'roles-lawmaker',
+  rolesSupervisor: 'roles-supervisor',
+  rolesAdmin: 'roles-admin',
+  support: 'support',
+  docs: 'docs',
 };
 
 export const ALLOWED_PAGE_SLUGS = Object.values(PAGE_SLUGS);

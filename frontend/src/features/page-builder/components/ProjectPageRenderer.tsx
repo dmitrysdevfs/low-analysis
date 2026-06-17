@@ -318,9 +318,11 @@ function renderBlock(block: PageBuilderBlock) {
 export function ProjectPageRenderer({
   page,
   embedded = false,
+  eyebrow,
 }: {
   page: RenderablePage | PageBuilderSnapshot;
   embedded?: boolean;
+  eyebrow?: string;
 }) {
   const visibleBlocks = useMemo(
     () =>
@@ -337,7 +339,7 @@ export function ProjectPageRenderer({
       {!embedded && (
         <header className={styles.publicPageHeader}>
           <span className={styles.publicPageEyebrow}>
-            Інформація про платформу
+            {eyebrow ?? "Інформація про платформу"}
           </span>
           <h1>{page.title}</h1>
           {page.description && <p>{page.description}</p>}

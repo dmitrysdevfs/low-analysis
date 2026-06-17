@@ -8,6 +8,7 @@ import {
   parseLawFromUrl,
   getElement,
   getLawHeatmap,
+  getLawSubjects,
 } from '../controllers/lawController.js';
 import { guestRateLimit } from '../middleware/guestRateLimit.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
@@ -322,6 +323,7 @@ router.get('/elements/:id', getElement);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
+router.get('/:id/subjects', getLawSubjects);
 router.get('/:id/articles/:num', getArticle);
 
 /**

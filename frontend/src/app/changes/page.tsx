@@ -1,8 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Layout } from "@/components/layout/Layout";
-import { ChangeFeed } from "@/features/law-change/components/ChangeFeed/ChangeFeed";
 import styles from "./page.module.scss";
+
+const ChangeFeed = dynamic(
+  () => import("@/features/law-change/components/ChangeFeed/ChangeFeed").then(m => ({ default: m.ChangeFeed })),
+  { ssr: false, loading: () => <p style={{ padding: "24px", opacity: 0.5 }}>Завантаження...</p> }
+);
 
 export default function ChangesPage() {
   return (
