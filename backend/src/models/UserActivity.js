@@ -17,6 +17,8 @@ const userActivitySchema = new mongoose.Schema(
     query: { type: String, default: null },
     lawId: { type: String, default: null },
     meta: { type: mongoose.Schema.Types.Mixed, default: null },
+    ipAddress: { type: String, default: null },
+    userAgent: { type: String, default: null },
   },
   { timestamps: true },
 );

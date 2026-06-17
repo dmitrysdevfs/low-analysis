@@ -34,6 +34,9 @@ export type AdminUserRecord = {
   billingPlan: "preview" | "trial" | "user" | "plus" | "pro";
   createdAt: string;
   updatedAt: string;
+  lastLoginAt: string | null;
+  lastLoginIp: string | null;
+  lastLoginDevice: string | null;
   registrationSource?: {
     referrer: string | null;
     source: "direct" | "google" | "bing" | "social" | "link" | "unknown";
@@ -47,6 +50,8 @@ export type UserActivityEntry = {
   path?: string;
   query?: string;
   lawId?: string;
+  ipAddress?: string | null;
+  userAgent?: string | null;
   createdAt: string;
 };
 
@@ -62,7 +67,38 @@ export type AdminAuditEntry = {
   detail: string;
   actor: string;
   severity: "info" | "warning" | "security";
+  targetUserId?: string | null;
+  targetEmail?: string | null;
+  ipAddress?: string | null;
   createdAt: string;
+};
+
+export type AdminVerifiedResource = {
+  url: string;
+  source: string;
+  verifiedAt: string;
+  status: "active" | "inactive";
+};
+
+export type AdminTrackingStatus = {
+  enabled: boolean;
+  logsActive: boolean;
+  retentionDays: number;
+  lastUpdatedAt: string | null;
+};
+
+export type AdminUserOverview = {
+  user: AdminUserRecord;
+  stats: {
+    pageViews: number;
+    searches: number;
+    lawViews: number;
+    totalEvents: number;
+  };
+  activity: UserActivityEntry[];
+  auditEntries: AdminAuditEntry[];
+  verifiedResources: AdminVerifiedResource[];
+  tracking: AdminTrackingStatus;
 };
 
 export type AdminSuperCodeEntry = {
@@ -178,6 +214,9 @@ export const adminApi = {
     }),
 
   getUserById: (id: string) => adminFetch<AdminUserRecord>(`/users/${id}`),
+
+  getUserOverview: (id: string) =>
+    adminFetch<AdminUserOverview>(`/users/${id}/overview`),
 
   getUserActivity: (
     userId: string,

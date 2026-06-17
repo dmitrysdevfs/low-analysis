@@ -10,10 +10,14 @@ const auditLogSchema = new mongoose.Schema(
       enum: ['info', 'warning', 'security'],
       default: 'info',
     },
+    targetUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, index: true },
+    targetEmail: { type: String, default: null },
+    ipAddress: { type: String, default: null },
   },
   { timestamps: true },
 );
 
 auditLogSchema.index({ createdAt: -1 });
+auditLogSchema.index({ targetUserId: 1, createdAt: -1 });
 
 export default mongoose.model('AuditLog', auditLogSchema);

@@ -32,6 +32,37 @@ function clearCookieToken(res) {
   res.clearCookie(COOKIE_NAME, { path: '/' });
 }
 
+function parseDevice(userAgent) {
+  if (!userAgent) return null;
+  const os = /Mac OS X/.test(userAgent)
+    ? 'macOS'
+    : /Windows NT/.test(userAgent)
+      ? 'Windows'
+      : /Linux/.test(userAgent)
+        ? 'Linux'
+        : /Android/.test(userAgent)
+          ? 'Android'
+          : /iPhone|iPad/.test(userAgent)
+            ? 'iOS'
+            : null;
+  const chromeVer = /Chrome\/(\d+)/.exec(userAgent);
+  const firefoxVer = /Firefox\/(\d+)/.exec(userAgent);
+  const browser = chromeVer
+    ? `Chrome ${chromeVer[1]}`
+    : firefoxVer
+      ? `Firefox ${firefoxVer[1]}`
+      : /Safari\//.test(userAgent)
+        ? 'Safari'
+        : null;
+  return [browser, os].filter(Boolean).join(' / ') || null;
+}
+
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.ip || req.socket?.remoteAddress || null;
+}
+
 function detectRegistrationSource(referrer) {
   if (!referrer) return { referrer: null, source: 'direct' };
   if (/google\./i.test(referrer)) return { referrer, source: 'google' };
@@ -121,6 +152,12 @@ export const loginUser = async (req, res) => {
   if (user && (await user.comparePassword(password))) {
     const token = generateToken(user._id);
     setCookieToken(res, token);
+    // Update session tracking fields (fire-and-forget, no await needed)
+    User.findByIdAndUpdate(user._id, {
+      lastLoginAt: new Date(),
+      lastLoginIp: getClientIp(req),
+      lastLoginDevice: parseDevice(req.headers['user-agent']),
+    }).catch(() => {});
     res.json({
       _id: user._id,
       fullName: user.fullName,

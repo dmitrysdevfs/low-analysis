@@ -67,6 +67,9 @@ const userSchema = new mongoose.Schema(
       compactMode: { type: Boolean, default: false },
       weeklyDigest: { type: Boolean, default: true },
     },
+    lastLoginAt: { type: Date, default: null },
+    lastLoginIp: { type: String, default: null },
+    lastLoginDevice: { type: String, default: null },
     resetPasswordToken: {
       type: String,
       select: false,

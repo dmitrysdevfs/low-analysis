@@ -20,8 +20,14 @@ export function AccessRequestsPanel() {
 
   const handleAction = async (id: string, action: "approve" | "reject") => {
     try {
-      await reviewMutation.mutateAsync({ id, action, adminNote: notes[id] ?? "" });
-      notify.success(action === "approve" ? "Запит схвалено" : "Запит відхилено");
+      await reviewMutation.mutateAsync({
+        id,
+        action,
+        adminNote: notes[id] ?? "",
+      });
+      notify.success(
+        action === "approve" ? "Запит схвалено" : "Запит відхилено",
+      );
       refetch();
     } catch {
       notify.error("Помилка при обробці запиту");
@@ -54,7 +60,9 @@ export function AccessRequestsPanel() {
           </div>
           <div className={styles.emptyText}>
             <p className={styles.emptyTitle}>Нових заявок немає</p>
-            <p className={styles.emptyNote}>Коли користувачі подаватимуть заявки — вони з'являться тут.</p>
+            <p className={styles.emptyNote}>
+              Коли користувачі подаватимуть заявки — вони з'являться тут.
+            </p>
           </div>
         </div>
       ) : (
@@ -62,7 +70,12 @@ export function AccessRequestsPanel() {
           {requests.map((req) => {
             const u = typeof req.userId === "object" ? req.userId : null;
             const initials = u?.fullName
-              ? u.fullName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()
+              ? u.fullName
+                  .split(" ")
+                  .map((w: string) => w[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()
               : "?";
 
             return (
@@ -71,22 +84,26 @@ export function AccessRequestsPanel() {
                   <span className={styles.avatar}>{initials}</span>
                   <span className={styles.name}>{u?.fullName ?? "—"}</span>
                   <span className={styles.email}>
-                    {u?.email ?? (typeof req.userId === "string" ? req.userId : req.userId._id)}
+                    {u?.email ??
+                      (typeof req.userId === "string"
+                        ? req.userId
+                        : req.userId._id)}
                   </span>
                   <span className={styles.date}>
                     {new Date(req.createdAt).toLocaleDateString("uk-UA")}
                   </span>
                 </div>
-                {req.message && (
-                  <p className={styles.message}>{req.message}</p>
-                )}
+                {req.message && <p className={styles.message}>{req.message}</p>}
                 <div className={styles.actions}>
                   <input
                     type="text"
                     placeholder="Примітка адміна (необов'язково)"
                     value={notes[req._id] ?? ""}
                     onChange={(e) =>
-                      setNotes((prev) => ({ ...prev, [req._id]: e.target.value }))
+                      setNotes((prev) => ({
+                        ...prev,
+                        [req._id]: e.target.value,
+                      }))
                     }
                     className={styles.noteInput}
                   />

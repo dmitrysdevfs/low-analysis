@@ -66,3 +66,12 @@ export const forceLogout = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getOverview = async (req, res, next) => {
+  try {
+    const overview = await usersService.getUserOverview(req.params.id);
+    res.json(overview);
+  } catch (err) {
+    next(err);
+  }
+};

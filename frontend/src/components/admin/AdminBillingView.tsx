@@ -294,17 +294,25 @@ export function AdminBillingView() {
 
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}
+          >
             <Eye size={15} />
           </span>
           <span className={styles.metricLabel}>Прев'ю</span>
-          <strong className={styles.metricValue}>{billingCounts.preview}</strong>
+          <strong className={styles.metricValue}>
+            {billingCounts.preview}
+          </strong>
           <p className={styles.metricNote}>
             Акаунти без активного платного циклу на прев'ю-квотах.
           </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(82,183,136,0.12)", color: "#52b788" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(82,183,136,0.12)", color: "#52b788" }}
+          >
             <Clock size={15} />
           </span>
           <span className={styles.metricLabel}>Тріал</span>
@@ -314,17 +322,24 @@ export function AdminBillingView() {
           </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}
+          >
             <CreditCard size={15} />
           </span>
           <span className={styles.metricLabel}>Платні тарифи</span>
           <strong className={styles.metricValue}>{paidAccounts}</strong>
           <p className={styles.metricNote}>
-            Користувач {billingCounts.user}, Плюс {billingCounts.plus}, Про {billingCounts.pro}
+            Користувач {billingCounts.user}, Плюс {billingCounts.plus}, Про{" "}
+            {billingCounts.pro}
           </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}
+          >
             <AlertTriangle size={15} />
           </span>
           <span className={styles.metricLabel}>Скоро завершаться</span>

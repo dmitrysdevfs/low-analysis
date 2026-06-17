@@ -96,41 +96,61 @@ export function AdminUsersView() {
 
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}
+          >
             <Users size={15} />
           </span>
           <span className={styles.metricLabel}>Усього</span>
-          <strong className={styles.metricValue}>{snapshot.totalAccounts}</strong>
+          <strong className={styles.metricValue}>
+            {snapshot.totalAccounts}
+          </strong>
           <p className={styles.metricNote}>
             Усі збережені та вбудовані розробницькі ідентичності.
           </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(74,158,107,0.12)", color: "#7ee8a2" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(74,158,107,0.12)", color: "#7ee8a2" }}
+          >
             <User size={15} />
           </span>
           <span className={styles.metricLabel}>Клієнти</span>
-          <strong className={styles.metricValue}>{snapshot.clientAccounts}</strong>
+          <strong className={styles.metricValue}>
+            {snapshot.clientAccounts}
+          </strong>
           <p className={styles.metricNote}>
             Клієнтські сесії зі стандартним доступом до законів.
           </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}
+          >
             <ShieldCheck size={15} />
           </span>
           <span className={styles.metricLabel}>Адміни</span>
-          <strong className={styles.metricValue}>{snapshot.adminAccounts}</strong>
+          <strong className={styles.metricValue}>
+            {snapshot.adminAccounts}
+          </strong>
           <p className={styles.metricNote}>
             Ідентичності з доступом до адмін-простору.
           </p>
         </article>
         <article className={styles.metricCard}>
-          <span className={styles.metricIconBadge} style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}
+          >
             <UserX size={15} />
           </span>
           <span className={styles.metricLabel}>Неактивні</span>
-          <strong className={styles.metricValue}>{statusCounts.inactive}</strong>
+          <strong className={styles.metricValue}>
+            {statusCounts.inactive}
+          </strong>
           <p className={styles.metricNote}>
             Акаунти, вимкнені у сховищі автентифікації.
           </p>

@@ -34,8 +34,7 @@ function getAdminContentMode(
   const isConstrainedRoute =
     matchesRoutePrefix(pathname, ROUTES.adminArchitecture) ||
     matchesRoutePrefix(pathname, ROUTES.adminHelp) ||
-    matchesRoutePrefix(pathname, ROUTES.adminEmailSettings) ||
-    isNestedRoute(pathname, ROUTES.adminUsers);
+    matchesRoutePrefix(pathname, ROUTES.adminEmailSettings);
 
   if (sidebarCollapsed && !isConstrainedRoute) {
     return "expanded";

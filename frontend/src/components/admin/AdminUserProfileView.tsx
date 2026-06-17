@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ChevronLeft,
+  ChevronDown,
   UserCircle,
   Key,
   Zap,
@@ -12,21 +13,29 @@ import {
   ShieldOff,
   Crown,
   LogOut,
+  Eye,
+  Search,
+  FileText,
+  Shield,
+  AlertTriangle,
+  Info,
+  Activity,
+  Globe,
+  Lock,
+  Download,
 } from "lucide-react";
 import {
   adminApi,
-  AdminUserRecord,
+  AdminUserOverview,
   AdminAuditEntry,
   UserActivityEntry,
-  UserActivityStats,
 } from "@/lib/api/admin";
-import { getAllAccessRequests } from "@/lib/api/legislatorAccess";
-import type { LegislatorAccessRequest } from "@/types/law-change.types";
 import { notify } from "@/lib/toast";
 import { formatDateShort, formatDateFull } from "@/lib/utils";
 import { formatPlanLabel } from "./adminLabels";
 import styles from "./AdminUserProfile.module.scss";
 
+/* ── helpers ─────────────────────────────────────── */
 const AVATAR_COLORS = [
   { bg: "rgba(200,168,67,0.2)", text: "#c8a843" },
   { bg: "rgba(74,128,212,0.2)", text: "#4a80d4" },
@@ -61,88 +70,170 @@ const SOURCE_LABELS: Record<string, string> = {
   unknown: "Невідомо",
 };
 
-const SOURCE_COLORS: Record<string, string> = {
-  direct: "#9eb5d9",
-  google: "#4a80d4",
-  bing: "#4a80d4",
-  social: "#e91e9a",
-  link: "#52b788",
-  unknown: "rgba(158,181,217,0.4)",
+/* ── unified journal entry ───────────────────────── */
+type JournalKind = "page_view" | "search" | "law_view" | "audit";
+
+type JournalEntry = {
+  id: string;
+  kind: JournalKind;
+  action: string;
+  sub?: string;
+  actor: string;
+  role?: string;
+  ip?: string | null;
+  time: string;
 };
 
-const SEVERITY_COLORS: Record<string, string> = {
-  info: styles.severityInfo,
-  warning: styles.severityWarning,
-  security: styles.severitySecurity,
-};
+function buildJournal(
+  activity: UserActivityEntry[],
+  audit: AdminAuditEntry[],
+): JournalEntry[] {
+  const actEntries: JournalEntry[] = activity.map((e) => ({
+    id: e._id,
+    kind: e.type as JournalKind,
+    action:
+      e.type === "page_view"
+        ? (e.path ?? "Перегляд сторінки")
+        : e.type === "search"
+          ? `Пошук: "${e.query ?? ""}"`
+          : `Закон: ${e.lawId ?? ""}`,
+    sub: e.type === "page_view" ? "page_view" : e.type === "search" ? "search" : "law_view",
+    actor: "Користувач",
+    ip: e.ipAddress,
+    time: e.createdAt,
+  }));
+
+  const auditEntries: JournalEntry[] = audit.map((e) => ({
+    id: e._id,
+    kind: "audit",
+    action: e.action,
+    sub: e.detail,
+    actor: e.actor,
+    role: "АДМІН",
+    ip: e.ipAddress,
+    time: e.createdAt,
+  }));
+
+  return [...actEntries, ...auditEntries].sort(
+    (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime(),
+  );
+}
+
+function kindIcon(kind: JournalKind, severity?: string) {
+  if (kind === "page_view") return { icon: Eye, bg: "rgba(74,128,212,0.12)", color: "#6aa1ff" };
+  if (kind === "search") return { icon: Search, bg: "rgba(82,183,136,0.12)", color: "#52b788" };
+  if (kind === "law_view") return { icon: FileText, bg: "rgba(200,168,67,0.12)", color: "#c8a843" };
+  if (severity === "security") return { icon: Shield, bg: "rgba(233,119,75,0.12)", color: "#ffb39b" };
+  if (severity === "warning") return { icon: AlertTriangle, bg: "rgba(200,168,67,0.12)", color: "#c8a843" };
+  return { icon: Info, bg: "rgba(74,128,212,0.12)", color: "#6aa1ff" };
+}
+
+function exportJournalCSV(entries: JournalEntry[]) {
+  const header = "Тип,Подія,Актор,Роль,Час,IP";
+  const rows = entries.map((e) =>
+    [e.kind, `"${e.action}"`, e.actor, e.role ?? "—", e.time, e.ip ?? "—"].join(","),
+  );
+  const blob = new Blob([[header, ...rows].join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `journal-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ── Skeleton ────────────────────────────────────── */
+function SkeletonView() {
+  return (
+    <div className={styles.page}>
+      <div className={`${styles.skeleton} ${styles.skeletonHero}`} />
+      <div className={styles.skeletonMetrics}>
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className={`${styles.skeleton} ${styles.skeletonMetricCard}`} />
+        ))}
+      </div>
+      <div className={styles.skeletonWorkspace}>
+        <div className={`${styles.skeleton} ${styles.skeletonPanel}`} />
+        <div className={styles.skeletonSidebar}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className={`${styles.skeleton} ${styles.skeletonSideCard}`} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Collapsible side panel ──────────────────────── */
+function SidePanel({
+  icon: Icon,
+  iconBg,
+  iconColor,
+  title,
+  defaultOpen = true,
+  children,
+}: {
+  icon: React.ElementType;
+  iconBg: string;
+  iconColor: string;
+  title: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className={styles.sidePanel}>
+      <button
+        type="button"
+        className={styles.sidePanelHeader}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span className={styles.sidePanelTitle}>
+          <span className={styles.sidePanelIcon} style={{ background: iconBg, color: iconColor }}>
+            <Icon size={13} />
+          </span>
+          {title}
+        </span>
+        <ChevronDown
+          size={14}
+          className={`${styles.sidePanelChevron} ${open ? styles.sidePanelChevronOpen : ""}`}
+        />
+      </button>
+      {open && <div className={styles.sidePanelBody}>{children}</div>}
+    </div>
+  );
+}
 
 type Tab = "profile" | "activity";
 
+/* ── Main component ──────────────────────────────── */
 export function AdminUserProfileView({ userId }: { userId: string }) {
   const [tab, setTab] = useState<Tab>("profile");
-  const [user, setUser] = useState<AdminUserRecord | null>(null);
-  const [auditEntries, setAuditEntries] = useState<AdminAuditEntry[]>([]);
-  const [activity, setActivity] = useState<UserActivityEntry[]>([]);
-  const [activityStats, setActivityStats] = useState<UserActivityStats | null>(
-    null,
-  );
-  const [requests, setRequests] = useState<LegislatorAccessRequest[]>([]);
+  const [overview, setOverview] = useState<AdminUserOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actLoading, setActLoading] = useState(false);
 
-  const fetchUser = useCallback(async () => {
+  /* ── journal filters ── */
+  const [kindFilter, setKindFilter] = useState<"all" | JournalKind>("all");
+  const [actorFilter, setActorFilter] = useState("all");
+  const [journalLimit, setJournalLimit] = useState(25);
+
+  const fetchOverview = useCallback(async () => {
+    setLoading(true);
     try {
-      const data = await adminApi.getUserById(userId);
-      setUser(data);
+      const data = await adminApi.getUserOverview(userId);
+      setOverview(data);
     } catch {
-      try {
-        const users = await adminApi.getUsers();
-        const found = users.find((u) => u._id === userId);
-        if (found) setUser(found);
-        else setError("Користувача не знайдено.");
-      } catch {
-        setError("Не вдалося завантажити дані користувача.");
-      }
+      setError("Не вдалося завантажити дані користувача.");
     } finally {
       setLoading(false);
     }
   }, [userId]);
 
-  const fetchActivity = useCallback(
-    async (email: string) => {
-      const [auditRes, activityRes, requestsRes] = await Promise.allSettled([
-        adminApi.getAuditLogByTarget(email),
-        adminApi.getUserActivity(userId),
-        getAllAccessRequests(),
-      ]);
-
-      if (auditRes.status === "fulfilled")
-        setAuditEntries(auditRes.value ?? []);
-
-      if (activityRes.status === "fulfilled") {
-        setActivity(activityRes.value.entries ?? []);
-        setActivityStats(activityRes.value.stats ?? null);
-      }
-
-      if (requestsRes.status === "fulfilled") {
-        const userReqs = (requestsRes.value ?? []).filter((r) => {
-          const uid = typeof r.user_id === "string" ? r.user_id : r.user_id._id;
-          return uid === userId;
-        });
-        setRequests(userReqs);
-      }
-    },
-    [userId],
-  );
-
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
-  useEffect(() => {
-    if (user?.email) fetchActivity(user.email);
-  }, [user?.email, fetchActivity]);
+    fetchOverview();
+  }, [fetchOverview]);
 
   const act = useCallback(
     async (fn: () => Promise<unknown>, successMsg: string) => {
@@ -150,46 +241,56 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
       try {
         await fn();
         notify.success(successMsg);
-        await fetchUser();
+        await fetchOverview();
       } catch {
         notify.warning("Дію не виконано. Спробуйте ще раз.");
       } finally {
         setActLoading(false);
       }
     },
-    [fetchUser],
+    [fetchOverview],
   );
 
-  if (loading) {
+  const journal = useMemo(
+    () =>
+      overview
+        ? buildJournal(overview.activity, overview.auditEntries)
+        : [],
+    [overview],
+  );
+
+  const actors = useMemo(() => {
+    const set = new Set<string>();
+    journal.forEach((e) => set.add(e.actor));
+    return Array.from(set);
+  }, [journal]);
+
+  const filteredJournal = useMemo(() => {
+    let list = journal;
+    if (kindFilter !== "all") list = list.filter((e) => e.kind === kindFilter);
+    if (actorFilter !== "all") list = list.filter((e) => e.actor === actorFilter);
+    return list;
+  }, [journal, kindFilter, actorFilter]);
+
+  if (loading) return <SkeletonView />;
+
+  if (error || !overview) {
     return (
       <div className={styles.stateScreen}>
-        <div className={styles.stateText}>Завантаження…</div>
+        <div className={styles.stateText}>{error ?? "Користувача не знайдено."}</div>
+        <Link href="/admin/users" className={styles.backLink}>← Повернутися</Link>
       </div>
     );
   }
 
-  if (error || !user) {
-    return (
-      <div className={styles.stateScreen}>
-        <div className={styles.stateText}>
-          {error ?? "Користувача не знайдено."}
-        </div>
-        <Link href="/admin/users" className={styles.backLink}>
-          ← Повернутися до списку
-        </Link>
-      </div>
-    );
-  }
-
+  const { user, stats, tracking, verifiedResources } = overview;
   const isAdmin = user.role === "admin";
   const isLegislator = user.role === "legislator";
   const isSupervisor = user.role === "supervisor";
   const isActive = user.status === "active";
   const avatarColor = hashColor(user.fullName);
-  const regSource = user.registrationSource;
 
-  const pageViews = activity.filter((e) => e.type === "page_view");
-  const searches = activity.filter((e) => e.type === "search");
+  const visibleJournal = filteredJournal.slice(0, journalLimit);
 
   return (
     <div className={styles.page}>
@@ -198,7 +299,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
         Користувачі
       </Link>
 
-      {/* Hero */}
+      {/* ── Hero ── */}
       <div className={styles.hero}>
         <div
           className={styles.avatar}
@@ -216,14 +317,36 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
           <div className={styles.heroEmail}>{user.email}</div>
           <div className={styles.heroId}>ID: …{user._id.slice(-8)}</div>
         </div>
-        <div className={styles.heroBadges}>
-          <span className={styles.badge}>
-            {ROLE_LABELS[user.role] ?? user.role}
-          </span>
+        <div className={styles.heroMeta}>
+          <div className={styles.heroMetaCell}>
+            <span className={styles.heroMetaLabel}>Роль</span>
+            <span className={styles.heroMetaValue}>
+              {ROLE_LABELS[user.role] ?? user.role}
+            </span>
+          </div>
+          <div className={styles.heroMetaCell}>
+            <span className={styles.heroMetaLabel}>План</span>
+            <span className={styles.heroMetaValue}>
+              {formatPlanLabel(user.billingPlan)}
+            </span>
+          </div>
+          <div className={styles.heroMetaCell}>
+            <span className={styles.heroMetaLabel}>Остання активність</span>
+            <span className={styles.heroMetaValue}>
+              {user.lastLoginAt ? (
+                <>
+                  <span className={styles.heroMetaDot} />
+                  {formatDateShort(user.lastLoginAt)}
+                </>
+              ) : (
+                "—"
+              )}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* ── Tabs ── */}
       <div className={styles.tabs}>
         <button
           type="button"
@@ -238,15 +361,15 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
           onClick={() => setTab("activity")}
         >
           Активність
-          {activityStats &&
-            activityStats.pageViews + activityStats.searches > 0 && (
-              <span className={styles.tabCount}>
-                {activityStats.pageViews + activityStats.searches}
-              </span>
-            )}
+          {stats.totalEvents + stats.pageViews + stats.searches > 0 && (
+            <span className={styles.tabCount}>
+              {stats.totalEvents + stats.pageViews + stats.searches}
+            </span>
+          )}
         </button>
       </div>
 
+      {/* ── PROFILE TAB ── */}
       {tab === "profile" && (
         <div className={styles.content}>
           <div className={styles.infoGrid}>
@@ -282,9 +405,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
               </div>
               <dl className={styles.dl}>
                 <dt>Поточний план</dt>
-                <dd className={styles.accent}>
-                  {formatPlanLabel(user.billingPlan)}
-                </dd>
+                <dd className={styles.accent}>{formatPlanLabel(user.billingPlan)}</dd>
               </dl>
               <div className={styles.modulesLabel}>Права та модулі</div>
               <div className={styles.planRow}>
@@ -322,11 +443,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   disabled={actLoading}
                   onClick={() =>
                     act(
-                      () =>
-                        adminApi.setUserStatus(
-                          user._id,
-                          isActive ? "inactive" : "active",
-                        ),
+                      () => adminApi.setUserStatus(user._id, isActive ? "inactive" : "active"),
                       isActive ? "Акаунт деактивовано." : "Акаунт активовано.",
                     )
                   }
@@ -340,14 +457,8 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   disabled={actLoading}
                   onClick={() =>
                     act(
-                      () =>
-                        adminApi.setUserRole(
-                          user._id,
-                          isAdmin ? "user" : "admin",
-                        ),
-                      isAdmin
-                        ? "Права адміна знято."
-                        : "Акаунт підвищено до адміна.",
+                      () => adminApi.setUserRole(user._id, isAdmin ? "user" : "admin"),
+                      isAdmin ? "Права адміна знято." : "Акаунт підвищено до адміна.",
                     )
                   }
                 >
@@ -361,21 +472,13 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                     disabled={actLoading}
                     onClick={() =>
                       act(
-                        () =>
-                          adminApi.setUserRole(
-                            user._id,
-                            isLegislator ? "user" : "legislator",
-                          ),
-                        isLegislator
-                          ? "Роль законотворця знято."
-                          : "Призначено законотворцем.",
+                        () => adminApi.setUserRole(user._id, isLegislator ? "user" : "legislator"),
+                        isLegislator ? "Роль законотворця знято." : "Призначено законотворцем.",
                       )
                     }
                   >
                     <ShieldOff size={14} />
-                    {isLegislator
-                      ? "Зняти роль законотворця"
-                      : "Призначити законотворцем"}
+                    {isLegislator ? "Зняти роль законотворця" : "Призначити законотворцем"}
                   </button>
                 )}
                 {!isAdmin && (
@@ -385,21 +488,13 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                     disabled={actLoading}
                     onClick={() =>
                       act(
-                        () =>
-                          adminApi.setUserRole(
-                            user._id,
-                            isSupervisor ? "user" : "supervisor",
-                          ),
-                        isSupervisor
-                          ? "Роль супервайзера знято."
-                          : "Призначено супервайзером.",
+                        () => adminApi.setUserRole(user._id, isSupervisor ? "user" : "supervisor"),
+                        isSupervisor ? "Роль супервайзера знято." : "Призначено супервайзером.",
                       )
                     }
                   >
                     <Crown size={14} />
-                    {isSupervisor
-                      ? "Зняти роль супервайзера"
-                      : "Призначити супервайзером"}
+                    {isSupervisor ? "Зняти роль супервайзера" : "Призначити супервайзером"}
                   </button>
                 )}
                 <button
@@ -407,10 +502,7 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                   className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
                   disabled={actLoading}
                   onClick={() =>
-                    act(
-                      () => adminApi.forceLogout(user._id),
-                      "Примусовий вихід виконано.",
-                    )
+                    act(() => adminApi.forceLogout(user._id), "Примусовий вихід виконано.")
                   }
                 >
                   <LogOut size={14} />
@@ -419,176 +511,277 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
               </div>
             </div>
           </div>
-
-          {requests.length > 0 && (
-            <div className={styles.section}>
-              <div className={styles.sectionTitle}>
-                Заявки на доступ законотворця
-              </div>
-              <div className={styles.requestsList}>
-                {requests.map((r) => (
-                  <div key={r._id} className={styles.requestItem}>
-                    <div className={styles.requestOrg}>{r.organization}</div>
-                    <div className={styles.requestReason}>{r.reason}</div>
-                    <div className={styles.requestMeta}>
-                      <span
-                        className={`${styles.requestStatus} ${
-                          r.status === "approved"
-                            ? styles.accent
-                            : r.status === "rejected"
-                              ? styles.danger
-                              : styles.muted
-                        }`}
-                      >
-                        {r.status === "approved"
-                          ? "Схвалено"
-                          : r.status === "rejected"
-                            ? "Відхилено"
-                            : "Очікує"}
-                      </span>
-                      <span className={styles.muted}>
-                        {formatDateShort(r.createdAt)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
+      {/* ── ACTIVITY TAB ── */}
       {tab === "activity" && (
-        <div className={styles.content}>
-          {/* Stats row */}
-          {activityStats && (
-            <div className={styles.statsRow}>
-              <div className={styles.statChip}>
-                <span className={styles.statNum}>
-                  {activityStats.pageViews}
-                </span>
-                <span className={styles.statLabel}>переглядів</span>
-              </div>
-              <div className={styles.statChip}>
-                <span className={styles.statNum}>{activityStats.searches}</span>
-                <span className={styles.statLabel}>пошуків</span>
-              </div>
-              <div className={styles.statChip}>
-                <span className={styles.statNum}>{activityStats.lawViews}</span>
-                <span className={styles.statLabel}>законів переглянуто</span>
-              </div>
+        <>
+          {/* 4 metric cards */}
+          <div className={styles.metricsRow}>
+            <div className={styles.metricCard}>
+              <span className={styles.metricIconBadge} style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}>
+                <Activity size={14} />
+              </span>
+              <span className={styles.metricLabel}>Події</span>
+              <strong className={styles.metricValue}>{stats.totalEvents}</strong>
             </div>
-          )}
-
-          {/* Page views */}
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Перегляди сторінок</div>
-            {pageViews.length === 0 ? (
-              <div className={styles.emptyNote}>
-                Переглядів ще немає — з&apos;являться після першого
-                відвідування.
-              </div>
-            ) : (
-              <div className={styles.activityTable}>
-                <div className={styles.activityTableHead}>
-                  <span>Сторінка</span>
-                  <span>Час</span>
-                </div>
-                {pageViews.map((e) => (
-                  <div key={e._id} className={styles.activityRow}>
-                    <span className={styles.activityPath}>{e.path ?? "—"}</span>
-                    <span className={styles.muted}>
-                      {formatDateShort(e.createdAt)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className={styles.metricCard}>
+              <span className={styles.metricIconBadge} style={{ background: "rgba(82,183,136,0.12)", color: "#52b788" }}>
+                <Eye size={14} />
+              </span>
+              <span className={styles.metricLabel}>Перегляди</span>
+              <strong className={styles.metricValue}>{stats.pageViews}</strong>
+            </div>
+            <div className={styles.metricCard}>
+              <span className={styles.metricIconBadge} style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}>
+                <Search size={14} />
+              </span>
+              <span className={styles.metricLabel}>Пошуки</span>
+              <strong className={styles.metricValue}>{stats.searches}</strong>
+            </div>
+            <div className={styles.metricCard}>
+              <span className={styles.metricIconBadge} style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}>
+                <Globe size={14} />
+              </span>
+              <span className={styles.metricLabel}>Ресурси</span>
+              <strong className={styles.metricValue}>{verifiedResources.length || stats.lawViews}</strong>
+            </div>
           </div>
 
-          {/* Search activity */}
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Пошукова активність</div>
-            {searches.length === 0 ? (
-              <div className={styles.emptyNote}>
-                Пошуків ще немає. Трекінг пошуку підключається окремо до
-                компонента пошуку.
-              </div>
-            ) : (
-              <div className={styles.activityTable}>
-                <div className={styles.activityTableHead}>
-                  <span>Запит</span>
-                  <span>Час</span>
+          {/* 2-column workspace */}
+          <div className={styles.workspace}>
+            {/* Left: unified journal */}
+            <div className={styles.panel}>
+              <div className={styles.panelHeader}>
+                <div>
+                  <span className={styles.panelEyebrow}>Журнал</span>
+                  <h3 className={styles.panelTitle}>Журнал активності</h3>
                 </div>
-                {searches.map((e) => (
-                  <div key={e._id} className={styles.activityRow}>
-                    <span className={styles.activityQuery}>
-                      &ldquo;{e.query}&rdquo;
-                    </span>
-                    <span className={styles.muted}>
-                      {formatDateShort(e.createdAt)}
+              </div>
+
+              {/* Toolbar */}
+              <div className={styles.toolbar}>
+                <select
+                  className={styles.toolbarSelect}
+                  value={kindFilter}
+                  onChange={(e) => {
+                    setKindFilter(e.target.value as typeof kindFilter);
+                    setJournalLimit(25);
+                  }}
+                >
+                  <option value="all">Тип подій: Усі</option>
+                  <option value="page_view">Перегляди</option>
+                  <option value="search">Пошуки</option>
+                  <option value="law_view">Закони</option>
+                  <option value="audit">Адмін-події</option>
+                </select>
+                <select
+                  className={styles.toolbarSelect}
+                  value={actorFilter}
+                  onChange={(e) => {
+                    setActorFilter(e.target.value);
+                    setJournalLimit(25);
+                  }}
+                >
+                  <option value="all">Актор: Усі</option>
+                  {actors.map((a) => (
+                    <option key={a} value={a}>{a}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className={styles.toolbarBtn}
+                  onClick={() => exportJournalCSV(filteredJournal)}
+                >
+                  <Download size={13} />
+                  Експорт
+                </button>
+              </div>
+
+              {/* Table head */}
+              <div className={styles.journalHead}>
+                <span />
+                <span>Подія</span>
+                <span>Актор</span>
+                <span>Роль</span>
+                <span>Час</span>
+                <span>Джерело</span>
+              </div>
+
+              {/* Rows */}
+              {visibleJournal.length === 0 ? (
+                <div className={styles.journalEmpty}>Подій не знайдено</div>
+              ) : (
+                visibleJournal.map((entry) => {
+                  const auditEntry = overview.auditEntries.find(
+                    (a) => a._id === entry.id,
+                  );
+                  const { icon: IconComp, bg, color } = kindIcon(
+                    entry.kind,
+                    auditEntry?.severity,
+                  );
+                  return (
+                    <div key={entry.id} className={styles.journalRow}>
+                      <span
+                        className={styles.journalIcon}
+                        style={{ background: bg, color }}
+                      >
+                        <IconComp size={13} />
+                      </span>
+                      <div style={{ minWidth: 0 }}>
+                        <div className={styles.journalAction}>{entry.action}</div>
+                        {entry.sub && entry.sub !== entry.action && (
+                          <div className={styles.journalSub}>{entry.sub}</div>
+                        )}
+                      </div>
+                      <span className={styles.journalActor}>{entry.actor}</span>
+                      <span className={styles.journalRole}>{entry.role ?? "—"}</span>
+                      <span className={styles.journalTime}>
+                        {formatDateShort(entry.time)}
+                      </span>
+                      <span className={styles.journalIp}>{entry.ip ?? "—"}</span>
+                    </div>
+                  );
+                })
+              )}
+
+              {filteredJournal.length > journalLimit && (
+                <button
+                  type="button"
+                  className={styles.showMore}
+                  onClick={() => setJournalLimit((l) => l + 25)}
+                >
+                  Показати ще ({filteredJournal.length - journalLimit} залишилось)
+                </button>
+              )}
+            </div>
+
+            {/* Right: sidebar panels */}
+            <div className={styles.sidebar}>
+              {/* Tracking status */}
+              <SidePanel
+                icon={Activity}
+                iconBg="rgba(74,128,212,0.12)"
+                iconColor="#6aa1ff"
+                title="Стан трекінгу"
+              >
+                <div className={styles.sidePanelRow}>
+                  <span className={styles.sidePanelKey}>Трекінг подій</span>
+                  <span className={`${styles.sidePanelVal} ${styles.statusDot}`}>
+                    Увімкнено
+                  </span>
+                </div>
+                <div className={styles.sidePanelRow}>
+                  <span className={styles.sidePanelKey}>Збір логів</span>
+                  <span className={`${styles.sidePanelVal} ${styles.statusDot}`}>
+                    Активний
+                  </span>
+                </div>
+                <div className={styles.sidePanelRow}>
+                  <span className={styles.sidePanelKey}>Зберігання логів</span>
+                  <span className={styles.sidePanelVal}>
+                    {tracking.retentionDays} днів
+                  </span>
+                </div>
+                <div className={styles.sidePanelRow}>
+                  <span className={styles.sidePanelKey}>Останнє оновлення</span>
+                  <span className={styles.sidePanelVal}>
+                    {tracking.lastUpdatedAt
+                      ? formatDateShort(tracking.lastUpdatedAt)
+                      : "—"}
+                  </span>
+                </div>
+              </SidePanel>
+
+              {/* Verified resources */}
+              <SidePanel
+                icon={Globe}
+                iconBg="rgba(82,183,136,0.12)"
+                iconColor="#52b788"
+                title="Перевірені ресурси"
+              >
+                {verifiedResources.length === 0 ? (
+                  <div className={styles.sidePanelRow}>
+                    <span className={styles.sidePanelKey}>
+                      {user.registrationSource?.source === "direct"
+                        ? "Прямий вхід"
+                        : user.registrationSource?.source
+                          ? SOURCE_LABELS[user.registrationSource.source]
+                          : "Джерело невідоме"}
                     </span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Audit log */}
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Адмін-події</div>
-            {auditEntries.length === 0 ? (
-              <div className={styles.emptyNote}>
-                Жодних адмін-подій для цього акаунта не знайдено.
-              </div>
-            ) : (
-              <div className={styles.auditList}>
-                {auditEntries.map((e) => (
-                  <div key={e._id} className={styles.auditItem}>
-                    <div
-                      className={`${styles.auditSeverity} ${SEVERITY_COLORS[e.severity] ?? ""}`}
-                    />
-                    <div className={styles.auditBody}>
-                      <div className={styles.auditAction}>{e.action}</div>
-                      <div className={styles.auditDetail}>{e.detail}</div>
-                      <div className={styles.auditMeta}>
-                        <span>{e.actor}</span>
-                        <span className={styles.muted}>
-                          {formatDateShort(e.createdAt)}
+                ) : (
+                  verifiedResources.map((r, i) => (
+                    <div key={i} style={{ paddingBottom: 6 }}>
+                      <div className={styles.resourceUrl}>{r.url}</div>
+                      <div className={styles.sidePanelRow}>
+                        <span className={styles.sidePanelKey}>Статус</span>
+                        <span className={`${styles.sidePanelVal} ${styles.statusDot}`}>
+                          Активне
+                        </span>
+                      </div>
+                      <div className={styles.sidePanelRow}>
+                        <span className={styles.sidePanelKey}>Перевірено</span>
+                        <span className={styles.sidePanelVal}>
+                          {formatDateShort(r.verifiedAt)}
+                        </span>
+                      </div>
+                      <div className={styles.sidePanelRow}>
+                        <span className={styles.sidePanelKey}>Тип</span>
+                        <span className={styles.sidePanelVal}>
+                          {SOURCE_LABELS[r.source] ?? r.source}
                         </span>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Registration source */}
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Джерело реєстрації</div>
-            {!regSource || regSource.source === "unknown" ? (
-              <div className={styles.emptyNote}>
-                Джерело не визначено — користувач зареєстрований до впровадження
-                трекінгу.
-              </div>
-            ) : (
-              <div className={styles.sourceCard}>
-                <div
-                  className={styles.sourceLabel}
-                  style={{ color: SOURCE_COLORS[regSource.source] }}
-                >
-                  {SOURCE_LABELS[regSource.source]}
-                </div>
-                {regSource.referrer && (
-                  <div className={styles.sourceReferrer}>
-                    {regSource.referrer}
-                  </div>
+                  ))
                 )}
-              </div>
-            )}
+              </SidePanel>
+
+              {/* Sessions & Security */}
+              <SidePanel
+                icon={Lock}
+                iconBg="rgba(200,168,67,0.12)"
+                iconColor="#c8a843"
+                title="Сесії та безпека"
+              >
+                <div className={styles.sidePanelRow}>
+                  <span className={styles.sidePanelKey}>Останній вхід</span>
+                  <span className={styles.sidePanelVal}>
+                    {user.lastLoginAt ? formatDateShort(user.lastLoginAt) : "—"}
+                  </span>
+                </div>
+                <div className={styles.sidePanelRow}>
+                  <span className={styles.sidePanelKey}>IP-адреса</span>
+                  <span className={styles.sidePanelVal}>
+                    {user.lastLoginIp ?? "—"}
+                  </span>
+                </div>
+                <div className={styles.sidePanelRow}>
+                  <span className={styles.sidePanelKey}>Пристрій</span>
+                  <span className={styles.sidePanelVal}>
+                    {user.lastLoginDevice ?? "—"}
+                  </span>
+                </div>
+                <div className={styles.sidePanelSessions}>
+                  <span className={styles.sidePanelKey}>Активні сесії</span>
+                  <button
+                    type="button"
+                    className={styles.sidePanelSessionsLink}
+                    onClick={() =>
+                      act(
+                        () => adminApi.forceLogout(user._id),
+                        "Примусовий вихід виконано.",
+                      )
+                    }
+                  >
+                    Завершити сесії
+                  </button>
+                </div>
+              </SidePanel>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
