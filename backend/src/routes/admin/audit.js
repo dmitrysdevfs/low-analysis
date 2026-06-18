@@ -4,6 +4,7 @@ import * as ctrl from '../../controllers/admin/audit.controller.js';
 
 const router = Router();
 router.use(protect, authorize('admin'));
+router.get('/overview', ctrl.getAuditOverview);
 router.get('/', ctrl.getAuditLog);
 router.post('/', ctrl.appendAuditEntry);
 export default router;

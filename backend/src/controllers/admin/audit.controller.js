@@ -6,11 +6,13 @@ export const getAuditLog = async (req, res, next) => {
     const skip = parseInt(req.query.skip) || 0;
     const targetEmail = req.query.targetEmail || null;
     const targetUserId = req.query.targetUserId || null;
+    const severity = req.query.severity || null;
+    const actor = req.query.actor || null;
+    const q = req.query.q || null;
+    const dateFrom = req.query.dateFrom || null;
+    const dateTo = req.query.dateTo || null;
     const entries = await auditService.getAuditLog({
-      limit,
-      skip,
-      targetEmail,
-      targetUserId,
+      limit, skip, targetEmail, targetUserId, severity, actor, q, dateFrom, dateTo,
     });
     res.json(entries);
   } catch (err) {
@@ -23,13 +25,17 @@ export const appendAuditEntry = async (req, res, next) => {
     const { action, detail, actor, severity } = req.body;
     if (!action || !actor)
       return res.status(400).json({ message: 'action and actor are required' });
-    const entry = await auditService.appendAuditEntry({
-      action,
-      detail,
-      actor,
-      severity,
-    });
+    const entry = await auditService.appendAuditEntry({ action, detail, actor, severity });
     res.status(201).json(entry);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAuditOverview = async (req, res, next) => {
+  try {
+    const overview = await auditService.getAuditOverview();
+    res.json(overview);
   } catch (err) {
     next(err);
   }

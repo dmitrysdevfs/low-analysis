@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Key,
   History,
@@ -23,6 +24,7 @@ import {
   Database,
 } from "lucide-react";
 import { formatDateShort } from "@/lib/utils";
+import { ROUTES } from "@/constants/routes";
 import { formatCodeStatusLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import type { AdminAuditLogEntry } from "@/lib/auth/mockAuth";
@@ -226,11 +228,13 @@ function RegenConfirmModal({
 }
 
 export function AdminCodesView() {
+  const router = useRouter();
   const { snapshot, handleCopyCode, handleRegenerateCode } =
     useAdminWorkspace();
   const [codeRevealed, setCodeRevealed] = useState(false);
   const [confirmRegen, setConfirmRegen] = useState(false);
-  const [journalExpanded, setJournalExpanded] = useState(false);
+  const [journalLimit, setJournalLimit] = useState(10);
+  const [openNote, setOpenNote] = useState<number | null>(null);
 
   if (!snapshot) return null;
 
@@ -244,7 +248,7 @@ export function AdminCodesView() {
     : "Початковий";
 
   const journal = buildJournal(snapshot.auditLog);
-  const visibleJournal = journalExpanded ? journal : journal.slice(0, 5);
+  const visibleJournal = journal.slice(0, journalLimit);
 
   const recentEvents = snapshot.auditLog
     .filter((e) => e.severity === "security" || e.severity === "warning")
@@ -274,9 +278,7 @@ export function AdminCodesView() {
 
         <div className={styles.heroSecurity}>
           <ShieldCheck size={32} className={styles.heroSecurityIcon} />
-          <span className={styles.heroSecurityLabel}>
-            Стан безпеки системи
-          </span>
+          <span className={styles.heroSecurityLabel}>Стан безпеки системи</span>
           <div className={styles.heroSecurityBadge}>
             <span className={styles.heroSecurityDot} />
             <span className={styles.heroSecurityStatus}>Захищено</span>
@@ -384,20 +386,14 @@ export function AdminCodesView() {
               <span className={styles.codeValue}>
                 {codeRevealed
                   ? snapshot.activeSuperCode
-                  : "•".repeat(
-                      Math.max(8, snapshot.activeSuperCode.length),
-                    )}
+                  : "•".repeat(Math.max(8, snapshot.activeSuperCode.length))}
               </span>
               <button
                 type="button"
                 className={styles.revealBtn}
                 onClick={() => setCodeRevealed((r) => !r)}
               >
-                {codeRevealed ? (
-                  <EyeOff size={12} />
-                ) : (
-                  <Eye size={12} />
-                )}
+                {codeRevealed ? <EyeOff size={12} /> : <Eye size={12} />}
                 {codeRevealed ? "Сховати" : "Показати"}
               </button>
             </div>
@@ -459,7 +455,7 @@ export function AdminCodesView() {
               <span className={styles.journalHeadCell}>Статус</span>
             </div>
 
-            <div className={styles.journalBody}>
+            <div className={styles.journalScrollable}>
               {visibleJournal.length === 0 ? (
                 <div
                   style={{
@@ -473,7 +469,11 @@ export function AdminCodesView() {
                 </div>
               ) : (
                 visibleJournal.map((row) => (
-                  <div key={row.id} className={styles.journalRow}>
+                  <div
+                    key={row.id}
+                    className={styles.journalRow}
+                    onClick={() => router.push(ROUTES.adminAudit)}
+                  >
                     <div className={styles.journalEventCell}>
                       <JournalEventIcon kind={row.kind} />
                       <span className={styles.journalEventName}>
@@ -498,15 +498,13 @@ export function AdminCodesView() {
               )}
             </div>
 
-            {journal.length > 5 && (
+            {journalLimit < journal.length && (
               <button
                 type="button"
                 className={styles.showMoreBtn}
-                onClick={() => setJournalExpanded((e) => !e)}
+                onClick={() => setJournalLimit((prev) => prev + 5)}
               >
-                {journalExpanded
-                  ? "Згорнути"
-                  : `Показати ще (${journal.length - 5})`}
+                Показати ще ({Math.min(5, journal.length - journalLimit)})
               </button>
             )}
           </article>
@@ -569,7 +567,13 @@ export function AdminCodesView() {
           <article className={styles.railCard}>
             <div className={styles.railCardTitle}>
               <span className={styles.railCardEyebrow}>Останні події</span>
-              <span className={styles.railCardLink}>Дивитись усі &rsaquo;</span>
+              <button
+                type="button"
+                className={styles.railCardLink}
+                onClick={() => router.push(ROUTES.adminAudit)}
+              >
+                Дивитись усі &rsaquo;
+              </button>
             </div>
 
             {recentEvents.length === 0 ? (
@@ -635,7 +639,10 @@ export function AdminCodesView() {
             <div className={styles.railCardTitle}>
               <span className={styles.railCardEyebrow}>Контекст доступу</span>
             </div>
-            <div className={styles.contextBlock}>
+            <div
+              className={styles.contextBlock}
+              onClick={() => router.push(ROUTES.adminUsers)}
+            >
               <Users size={18} className={styles.contextIcon} />
               <div className={styles.contextBody}>
                 <div className={styles.contextTitle}>
@@ -664,20 +671,42 @@ export function AdminCodesView() {
               {
                 icon: Lock,
                 text: "Для підключення адміністратора, як і раніше, потрібен саме поточний активний супер-код.",
+                detail:
+                  "Старі коди зберігаються в журналі але не є дійсними для реєстрації.",
               },
               {
                 icon: History,
                 text: "Історія лишається локальною для демо-адмінки й доступна для перегляду.",
+                detail:
+                  "Записи журналу зберігаються в MongoDB і не залежать від стану браузера.",
               },
               {
                 icon: ShieldCheck,
                 text: "Кожна перегенерація лишає старий код видимим, але більше не активним.",
+                detail:
+                  "Тільки один код є активним у будь-який момент часу.",
               },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className={styles.noteRow}>
-                <Icon size={13} className={styles.noteIcon} />
-                <span className={styles.noteText}>{text}</span>
-                <ChevronRight size={12} className={styles.noteChev} />
+            ].map(({ icon: Icon, text, detail }, idx) => (
+              <div key={text}>
+                <div
+                  className={styles.noteRow}
+                  onClick={() => setOpenNote(openNote === idx ? null : idx)}
+                >
+                  <Icon size={13} className={styles.noteIcon} />
+                  <span className={styles.noteText}>{text}</span>
+                  <ChevronRight
+                    size={12}
+                    className={styles.noteChev}
+                    style={{
+                      transform:
+                        openNote === idx ? "rotate(90deg)" : "rotate(0deg)",
+                      transition: "transform 0.2s ease",
+                    }}
+                  />
+                </div>
+                {openNote === idx && (
+                  <div className={styles.noteBody}>{detail}</div>
+                )}
               </div>
             ))}
           </article>

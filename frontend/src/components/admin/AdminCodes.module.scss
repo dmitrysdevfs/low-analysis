@@ -1,7 +1,14 @@
-$glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%),
+$glass-bg:
+  linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  ),
   rgba(9, 18, 38, 0.84);
 $glass-border: 1px solid rgba(255, 255, 255, 0.1);
-$glass-shadow: 0 18px 34px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+$glass-shadow:
+  0 18px 34px rgba(0, 0, 0, 0.24),
+  inset 0 1px 0 rgba(255, 255, 255, 0.08);
 $glass-blur: blur(18px);
 $radius: 20px;
 $inner-border: 1px solid rgba(255, 255, 255, 0.06);
@@ -367,7 +374,7 @@ $inner-border: 1px solid rgba(255, 255, 255, 0.06);
    ============================================================ */
 .journalHead {
   display: grid;
-  grid-template-columns: 1fr 90px 72px 76px;
+  grid-template-columns: 1fr 185px 88px 80px;
   padding: 7px 16px;
   gap: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -385,13 +392,34 @@ $inner-border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
 }
 
+.journalScrollable {
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(158, 181, 217, 0.18) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(158, 181, 217, 0.18);
+    border-radius: 2px;
+  }
+}
+
 .journalRow {
   display: grid;
-  grid-template-columns: 1fr 90px 72px 76px;
+  grid-template-columns: 1fr 185px 88px 80px;
   padding: 9px 16px;
   gap: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   align-items: center;
+  cursor: pointer;
   transition: background 0.12s ease;
 
   &:last-child {
@@ -399,7 +427,7 @@ $inner-border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   &:hover {
-    background: rgba(158, 181, 217, 0.025);
+    background: rgba(158, 181, 217, 0.04);
   }
 }
 
@@ -429,11 +457,12 @@ $inner-border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .journalActor {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: rgba(158, 181, 217, 0.55);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .journalTime {
@@ -513,6 +542,9 @@ $inner-border: 1px solid rgba(255, 255, 255, 0.06);
   color: rgba(158, 181, 217, 0.4);
   cursor: pointer;
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
   transition: color 0.15s ease;
 
   &:hover {
@@ -729,4 +761,11 @@ $inner-border: 1px solid rgba(255, 255, 255, 0.06);
   color: rgba(158, 181, 217, 0.2);
   flex-shrink: 0;
   margin-top: 2px;
+}
+
+.noteBody {
+  font-size: 0.72rem;
+  color: rgba(158, 181, 217, 0.45);
+  padding: 4px 0 8px 22px;
+  line-height: 1.5;
 }

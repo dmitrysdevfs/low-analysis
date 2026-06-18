@@ -113,9 +113,9 @@ export function AdminAccessView() {
           <span className={styles.eyebrow}>Доступ</span>
           <h2 className={styles.title}>Тримайте права доступу в полі зору.</h2>
           <p className={styles.description}>
-            Матриця ролей платформи — хто і до яких поверхонь має доступ.
-            Захист маршрутів відбувається на рівні RouteAccessGate і
-            підтверджується адмін-оболонкою.
+            Матриця ролей платформи — хто і до яких поверхонь має доступ. Захист
+            маршрутів відбувається на рівні RouteAccessGate і підтверджується
+            адмін-оболонкою.
           </p>
         </div>
         <div className={styles.heroShield}>
@@ -132,32 +132,32 @@ export function AdminAccessView() {
 
       {/* ROLE TILES */}
       <section className={styles.roleTiles}>
-        {(Object.entries(ROLE_META) as [RoleKey, (typeof ROLE_META)[RoleKey]][]).map(
-          ([roleKey, meta]) => {
-            const row = matrix.find((r) => r.role === roleKey);
-            const allowed = row
-              ? MODULES.filter((m) => row[m.key as ModuleKey]).length
-              : 0;
-            const { Icon, color, label, desc } = meta;
-            return (
-              <article key={roleKey} className={styles.roleTile}>
-                <div
-                  className={styles.roleTileIcon}
-                  style={{ background: `${color}1a` }}
-                >
-                  <Icon size={16} style={{ color }} />
-                </div>
-                <span className={styles.roleTileName}>{label}</span>
-                <strong className={styles.roleTileCount}>{allowed}</strong>
-                <p className={styles.roleTileDesc}>{desc}</p>
-                <div
-                  className={styles.roleTileAccent}
-                  style={{ background: color }}
-                />
-              </article>
-            );
-          },
-        )}
+        {(
+          Object.entries(ROLE_META) as [RoleKey, (typeof ROLE_META)[RoleKey]][]
+        ).map(([roleKey, meta]) => {
+          const row = matrix.find((r) => r.role === roleKey);
+          const allowed = row
+            ? MODULES.filter((m) => row[m.key as ModuleKey]).length
+            : 0;
+          const { Icon, color, label, desc } = meta;
+          return (
+            <article key={roleKey} className={styles.roleTile}>
+              <div
+                className={styles.roleTileIcon}
+                style={{ background: `${color}1a` }}
+              >
+                <Icon size={16} style={{ color }} />
+              </div>
+              <span className={styles.roleTileName}>{label}</span>
+              <strong className={styles.roleTileCount}>{allowed}</strong>
+              <p className={styles.roleTileDesc}>{desc}</p>
+              <div
+                className={styles.roleTileAccent}
+                style={{ background: color }}
+              />
+            </article>
+          );
+        })}
         <article className={styles.roleTile}>
           <div
             className={styles.roleTileIcon}
@@ -193,13 +193,16 @@ export function AdminAccessView() {
               onChange={(e) => setRoleFilter(e.target.value)}
             >
               <option value="all">Усі ролі</option>
-              {(Object.entries(ROLE_META) as [RoleKey, (typeof ROLE_META)[RoleKey]][]).map(
-                ([k, m]) => (
-                  <option key={k} value={k}>
-                    {m.label}
-                  </option>
-                ),
-              )}
+              {(
+                Object.entries(ROLE_META) as [
+                  RoleKey,
+                  (typeof ROLE_META)[RoleKey],
+                ][]
+              ).map(([k, m]) => (
+                <option key={k} value={k}>
+                  {m.label}
+                </option>
+              ))}
             </select>
             <select
               className={styles.matrixSelect}

@@ -73,6 +73,23 @@ export type AdminAuditEntry = {
   createdAt: string;
 };
 
+export type AuditOverview = {
+  total: number;
+  bySeverity: { info: number; warning: number; security: number; critical: number };
+  lastHourDelta: {
+    total: number;
+    info: number;
+    warning: number;
+    security: number;
+    critical: number;
+  };
+  streamPercent: { info: number; warning: number; security: number; critical: number };
+  securitySignals: { failedLogins: number; roleChanges: number; newIps: number };
+  lastSyncAt: string;
+  retentionDays: number;
+  integrityPercent: number;
+};
+
 export type AdminVerifiedResource = {
   url: string;
   source: string;
@@ -232,6 +249,8 @@ export const adminApi = {
       stats: UserActivityStats;
     }>(`/activity/${userId}${qs ? `?${qs}` : ""}`);
   },
+
+  getAuditOverview: () => adminFetch<AuditOverview>("/audit/overview"),
 
   getAuditLog: (limit = 50, skip = 0) =>
     adminFetch<AdminAuditEntry[]>(`/audit?limit=${limit}&skip=${skip}`),
