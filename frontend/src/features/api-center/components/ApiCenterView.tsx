@@ -5,6 +5,8 @@ import {
   AlertTriangle,
   BookOpen,
   Braces,
+  Check,
+  Copy,
   ExternalLink,
   FileCode2,
   Lock,
@@ -85,8 +87,79 @@ function securityText(security: ApiSecurityMode) {
   }
 }
 
-function compact(value: string) {
-  return value.length > 160 ? `${value.slice(0, 157)}…` : value;
+function generateCurl(endpoint: ApiEndpointRecord, baseUrl: string): string {
+  const qParams =
+    (
+      endpoint.operation.parameters as
+        | Array<{ in: string; name: string; schema?: { type?: string } }>
+        | undefined
+    )?.filter((p) => p.in === "query") ?? [];
+
+  const qs = qParams.length
+    ? "?" +
+      qParams.map((p) => `${p.name}=<${p.schema?.type ?? "value"}>`).join("&")
+    : "";
+
+  const parts: string[] = [`curl -X ${endpoint.method} \\`];
+  parts.push(`  '${baseUrl}${endpoint.path}${qs}' \\`);
+  if (endpoint.security !== "public") {
+    parts.push(`  -H 'Authorization: Bearer YOUR_TOKEN' \\`);
+  }
+  if (endpoint.hasRequestBody) {
+    parts.push(`  -H 'Content-Type: application/json' \\`);
+    parts.push(`  -d '{}'`);
+  } else {
+    parts[parts.length - 1] = parts[parts.length - 1].replace(/ \\$/, "");
+  }
+  return parts.join("\n");
+}
+
+function generateJs(endpoint: ApiEndpointRecord, baseUrl: string): string {
+  const needsAuth = endpoint.security !== "public";
+  const hasBody = endpoint.hasRequestBody;
+  const lines = [
+    `const response = await fetch('${baseUrl}${endpoint.path}', {`,
+    `  method: '${endpoint.method}',`,
+    `  headers: {`,
+  ];
+  if (needsAuth) lines.push(`    'Authorization': 'Bearer YOUR_TOKEN',`);
+  if (hasBody) lines.push(`    'Content-Type': 'application/json',`);
+  lines.push(`  },`);
+  if (hasBody) lines.push(`  body: JSON.stringify({}),`);
+  lines.push(`});`);
+  lines.push(`const data = await response.json();`);
+  return lines.join("\n");
+}
+
+function buildSchemaExample(schema: Record<string, unknown>): unknown {
+  if (schema.example !== undefined) return schema.example;
+  if (schema.type === "object" && schema.properties) {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(
+      schema.properties as Record<string, Record<string, unknown>>,
+    )) {
+      out[k] = buildSchemaExample(v);
+    }
+    return out;
+  }
+  if (schema.type === "string")
+    return Array.isArray(schema.enum) ? (schema.enum[0] as string) : "string";
+  if (schema.type === "integer" || schema.type === "number") return 0;
+  if (schema.type === "boolean") return false;
+  if (schema.type === "array") return [];
+  return null;
+}
+
+function generateJsonExample(endpoint: ApiEndpointRecord): string {
+  const rb = endpoint.operation.requestBody as
+    | {
+        content?: Record<string, { schema?: Record<string, unknown> }>;
+      }
+    | undefined;
+  if (!rb) return "// No request body for this endpoint";
+  const schema = rb.content?.["application/json"]?.schema;
+  if (!schema) return "// Schema not defined in OpenAPI spec";
+  return JSON.stringify(buildSchemaExample(schema), null, 2);
 }
 
 export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
@@ -99,6 +172,26 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
   const [securityFilter, setSecurityFilter] = useState<SecurityFilter>("all");
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [moduleSearch, setModuleSearch] = useState("");
+  const [inspectorTab, setInspectorTab] = useState<"curl" | "js" | "json">(
+    "curl",
+  );
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  function copyText(text: string, key: string) {
+    navigator.clipboard.writeText(text).catch(() => {});
+    setCopiedKey(key);
+    setTimeout(
+      () => setCopiedKey((prev) => (prev === key ? null : prev)),
+      2000,
+    );
+  }
+
+  const filteredModules = useMemo(() => {
+    const term = moduleSearch.trim().toLowerCase();
+    if (!term) return model.modules;
+    return model.modules.filter((m) => m.name.toLowerCase().includes(term));
+  }, [model.modules, moduleSearch]);
 
   const filteredEndpoints = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -145,6 +238,10 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
     );
   }, [filteredEndpoints]);
 
+  useEffect(() => {
+    setInspectorTab("curl");
+  }, [selectedId]);
+
   const selectedEndpoint =
     filteredEndpoints.find((endpoint) => endpoint.id === selectedId) ??
     filteredEndpoints[0] ??
@@ -185,6 +282,18 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
               <FileCode2 size={16} />
               OpenAPI JSON
             </a>
+            <button
+              type="button"
+              className={styles.ghostAction}
+              onClick={() => copyText(payload.backendBaseUrl, "baseUrl")}
+            >
+              {copiedKey === "baseUrl" ? (
+                <Check size={16} />
+              ) : (
+                <Copy size={16} />
+              )}
+              {copiedKey === "baseUrl" ? "Скопійовано!" : "Base URL"}
+            </button>
           </div>
         </div>
 
@@ -275,6 +384,18 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
             <div className={styles.countBadge}>{model.modules.length}</div>
           </div>
 
+          <div className={styles.moduleSearch}>
+            <label className={styles.searchField}>
+              <Search size={13} />
+              <input
+                type="search"
+                value={moduleSearch}
+                onChange={(e) => setModuleSearch(e.target.value)}
+                placeholder="Пошук модуля..."
+              />
+            </label>
+          </div>
+
           <div className={styles.moduleList}>
             <button
               type="button"
@@ -287,16 +408,13 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
                   {model.endpoints.length}
                 </span>
               </div>
-              <div className={styles.moduleDescription}>
-                Повний список маршрутів зі Swagger-специфікації.
-              </div>
               <div className={styles.moduleMeta}>
                 Public: {model.publicCount} · Auth:{" "}
                 {model.protectedCount + model.optionalCount}
               </div>
             </button>
 
-            {model.modules.map((module) => (
+            {filteredModules.map((module) => (
               <button
                 key={module.name}
                 type="button"
@@ -307,11 +425,8 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
                   <span className={styles.moduleName}>{module.name}</span>
                   <span className={styles.moduleCount}>{module.count}</span>
                 </div>
-                <div className={styles.moduleDescription}>
-                  {module.description}
-                </div>
                 <div className={styles.moduleMeta}>
-                  Захищених викликів: {module.protectedCount}
+                  {module.protectedCount} захищених
                 </div>
               </button>
             ))}
@@ -362,7 +477,7 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
               </label>
 
               <label className={styles.selectField}>
-                <span className={styles.selectLabel}>Доступ</span>
+                <span className={styles.selectLabel}>Auth</span>
                 <select
                   value={securityFilter}
                   onChange={(event) =>
@@ -372,6 +487,21 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
                   {Object.entries(SECURITY_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
                       {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className={styles.selectField}>
+                <span className={styles.selectLabel}>Модуль</span>
+                <select
+                  value={moduleFilter}
+                  onChange={(event) => setModuleFilter(event.target.value)}
+                >
+                  <option value="all">Усі модулі</option>
+                  {model.modules.map((m) => (
+                    <option key={m.name} value={m.name}>
+                      {m.name}
                     </option>
                   ))}
                 </select>
@@ -392,58 +522,47 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
                 <button
                   key={endpoint.id}
                   type="button"
-                  className={`${styles.endpointCard} ${selectedEndpoint?.id === endpoint.id ? styles.endpointCardActive : ""}`}
+                  className={`${styles.endpointRow} ${selectedEndpoint?.id === endpoint.id ? styles.endpointRowActive : ""}`}
                   onClick={() => setSelectedId(endpoint.id)}
                 >
-                  <div className={styles.endpointTop}>
-                    <span
-                      className={`${styles.methodBadge} ${getMethodClass(endpoint.method)}`}
-                    >
-                      {endpoint.method}
-                    </span>
-                    <span
-                      className={`${styles.chip} ${securityChipClass(endpoint.security)}`}
-                    >
-                      {securityText(endpoint.security)}
+                  <span
+                    className={`${styles.methodBadge} ${getMethodClass(endpoint.method)}`}
+                  >
+                    {endpoint.method}
+                  </span>
+                  <div className={styles.rowMain}>
+                    <code className={styles.rowPath}>{endpoint.path}</code>
+                    <span className={styles.rowSummary}>
+                      {endpoint.summary}
                     </span>
                   </div>
-
-                  <p className={styles.endpointPath}>{endpoint.path}</p>
-                  <p className={styles.endpointSummary}>{endpoint.summary}</p>
-                  <p className={styles.endpointDescription}>
-                    {compact(endpoint.description)}
-                  </p>
-
-                  <div className={styles.chipRow}>
-                    <span className={styles.chip}>Tag: {endpoint.group}</span>
-                    <span className={styles.chip}>
-                      Params: {endpoint.parameterCount}
-                    </span>
-                    <span className={styles.chip}>
-                      Responses: {endpoint.responseCodes.join(", ")}
-                    </span>
-                    {endpoint.hasRequestBody && (
-                      <span className={styles.chip}>
-                        Body{" "}
-                        {endpoint.requestBodyRequired ? "required" : "optional"}
-                      </span>
-                    )}
-                  </div>
+                  <span className={styles.rowTag}>{endpoint.group}</span>
+                  <span className={styles.rowParams}>
+                    P:{endpoint.parameterCount}
+                  </span>
+                  <span className={styles.rowCodes}>
+                    {endpoint.responseCodes.slice(0, 3).join(" ")}
+                  </span>
+                  <span
+                    className={`${styles.rowSec} ${securityChipClass(endpoint.security)}`}
+                  >
+                    {endpoint.security === "protected"
+                      ? "Auth"
+                      : endpoint.security === "optional"
+                        ? "Opt"
+                        : "Pub"}
+                  </span>
                 </button>
               ))
             )}
           </div>
         </div>
 
-        <aside className={styles.panel}>
+        <aside className={styles.inspectorPanel}>
           <div className={styles.panelHeader}>
             <div>
               <div className={styles.eyebrow}>Деталі</div>
               <h2 className={styles.panelTitle}>Endpoint inspector</h2>
-              <p className={styles.panelSubtitle}>
-                Summary, auth, params, body та response-коди для вибраного
-                маршруту.
-              </p>
             </div>
             <div className={styles.countBadge}>
               {selectedEndpoint ? selectedEndpoint.method : "—"}
@@ -454,129 +573,272 @@ export function ApiCenterView({ payload }: { payload: ApiCenterPayload }) {
             <div className={styles.emptyState}>
               <p className={styles.emptyTitle}>Оберіть endpoint</p>
               <p className={styles.emptyText}>
-                Клікніть по маршруту в центральному списку, щоб подивитися його
-                структуру детальніше.
+                Клікніть по маршруту в центральному списку.
               </p>
             </div>
           ) : (
-            <div className={styles.detailBody}>
-              <div className={styles.detailHeadline}>
+            <div className={styles.inspBody}>
+              <div className={styles.inspHead}>
                 <span
                   className={`${styles.methodBadge} ${getMethodClass(selectedEndpoint.method)}`}
                 >
                   {selectedEndpoint.method}
                 </span>
-                <p className={styles.endpointPath}>{selectedEndpoint.path}</p>
-                <p className={styles.endpointSummary}>
-                  {selectedEndpoint.summary}
-                </p>
-                <p className={styles.detailText}>
-                  {selectedEndpoint.description}
-                </p>
-              </div>
-
-              <div className={styles.chipRow}>
-                {selectedEndpoint.tags.map((tag) => (
-                  <span key={tag} className={styles.chip}>
-                    {tag}
-                  </span>
-                ))}
+                <code className={styles.inspPath}>{selectedEndpoint.path}</code>
                 <span
                   className={`${styles.chip} ${securityChipClass(selectedEndpoint.security)}`}
                 >
                   {securityText(selectedEndpoint.security)}
                 </span>
-                {selectedEndpoint.deprecated && (
-                  <span className={styles.chip}>Deprecated</span>
+              </div>
+
+              <section className={styles.inspSection}>
+                <div className={styles.inspSectionTitle}>ПАРАМЕТРИ ЗАПИТУ</div>
+                {selectedEndpoint.operation.parameters?.length ? (
+                  <table className={styles.paramTable}>
+                    <thead>
+                      <tr>
+                        <th>Параметр</th>
+                        <th>Тип</th>
+                        <th>Опис</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedEndpoint.operation.parameters.map((p) => (
+                        <tr key={`${p.in}:${p.name}`}>
+                          <td>
+                            <code>{p.name}</code>
+                            {p.required && (
+                              <span className={styles.reqStar}>*</span>
+                            )}
+                          </td>
+                          <td className={styles.paramType}>
+                            {p.schema?.type ?? "—"}
+                          </td>
+                          <td className={styles.paramDesc}>
+                            {p.description ?? "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className={styles.inspEmpty}>Параметри відсутні.</p>
                 )}
-              </div>
+              </section>
 
-              <div className={styles.detailGrid}>
-                <article className={styles.detailCard}>
-                  <span className={styles.detailLabel}>Parameters</span>
-                  {selectedEndpoint.operation.parameters?.length ? (
-                    <ul className={styles.list}>
-                      {selectedEndpoint.operation.parameters.map(
-                        (parameter) => (
-                          <li key={`${parameter.in}:${parameter.name}`}>
-                            <strong>{parameter.name}</strong>
-                            {parameter.in ? ` · ${parameter.in}` : ""}
-                            {parameter.required ? " · required" : ""}
-                            {parameter.schema?.type
-                              ? ` · ${parameter.schema.type}`
-                              : ""}
-                            {parameter.description
-                              ? ` — ${parameter.description}`
-                              : ""}
-                          </li>
-                        ),
+              <section className={styles.inspSection}>
+                <div className={styles.inspSectionTitle}>REQUEST BODY</div>
+                {selectedEndpoint.operation.requestBody ? (
+                  <p className={styles.inspText}>
+                    {selectedEndpoint.requestBodyRequired
+                      ? "Body обов’язковий. "
+                      : "Body опціональний. "}
+                    <code className={styles.inlineCode}>
+                      {Object.keys(
+                        (
+                          selectedEndpoint.operation.requestBody as {
+                            content?: Record<string, unknown>;
+                          }
+                        ).content ?? {},
+                      ).join(", ") || "application/json"}
+                    </code>
+                  </p>
+                ) : (
+                  <p className={styles.inspEmpty}>
+                    Тіло запиту не використовується.
+                  </p>
+                )}
+              </section>
+
+              <section className={styles.inspSection}>
+                <div className={styles.inspSectionTitle}>ВІДПОВІДІ</div>
+                <div className={styles.responseList}>
+                  {selectedEndpoint.responseCodes.map((code) => {
+                    const resp = (
+                      selectedEndpoint.operation.responses as Record<
+                        string,
+                        { description?: string }
+                      >
+                    )?.[code];
+                    const cat = code.startsWith("2")
+                      ? styles.resp2xx
+                      : code.startsWith("4")
+                        ? styles.resp4xx
+                        : styles.resp5xx;
+                    return (
+                      <div key={code} className={styles.responseRow}>
+                        <span className={`${styles.respCode} ${cat}`}>
+                          {code}
+                        </span>
+                        <span className={styles.respDesc}>
+                          {resp?.description ?? "—"}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+
+              <section className={styles.inspSection}>
+                <div className={styles.inspSectionHeader}>
+                  <span className={styles.inspSectionTitle}>
+                    ПРИКЛАД ЗАПИТУ
+                  </span>
+                  <div className={styles.codeTabs}>
+                    {(["curl", "js", "json"] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        type="button"
+                        className={`${styles.codeTab} ${inspectorTab === tab ? styles.codeTabActive : ""}`}
+                        onClick={() => setInspectorTab(tab)}
+                      >
+                        {tab === "curl"
+                          ? "cURL"
+                          : tab === "js"
+                            ? "JavaScript"
+                            : "JSON"}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      className={styles.copyInline}
+                      onClick={() => {
+                        const code =
+                          inspectorTab === "curl"
+                            ? generateCurl(
+                                selectedEndpoint,
+                                payload.backendBaseUrl,
+                              )
+                            : inspectorTab === "js"
+                              ? generateJs(
+                                  selectedEndpoint,
+                                  payload.backendBaseUrl,
+                                )
+                              : generateJsonExample(selectedEndpoint);
+                        copyText(code, `code`);
+                      }}
+                    >
+                      {copiedKey === "code" ? (
+                        <Check size={11} />
+                      ) : (
+                        <Copy size={11} />
                       )}
-                    </ul>
-                  ) : (
-                    <p className={styles.detailText}>Параметри не вказані.</p>
-                  )}
-                </article>
+                      {copiedKey === "code" ? "Скопійовано" : "Копіювати"}
+                    </button>
+                  </div>
+                </div>
+                <div className={styles.codeBlock}>
+                  <pre>
+                    {inspectorTab === "curl"
+                      ? generateCurl(selectedEndpoint, payload.backendBaseUrl)
+                      : inspectorTab === "js"
+                        ? generateJs(selectedEndpoint, payload.backendBaseUrl)
+                        : generateJsonExample(selectedEndpoint)}
+                  </pre>
+                </div>
+              </section>
 
-                <article className={styles.detailCard}>
-                  <span className={styles.detailLabel}>Request body</span>
-                  {selectedEndpoint.operation.requestBody ? (
-                    <>
-                      <p className={styles.detailText}>
-                        {selectedEndpoint.requestBodyRequired
-                          ? "Body є обов’язковим для цього виклику."
-                          : "Body підтримується, але не позначений як required."}
-                      </p>
-                      <p className={styles.detailMono}>
-                        {Object.keys(
-                          selectedEndpoint.operation.requestBody.content ?? {},
-                        ).join(", ") || "Content types не вказані"}
-                      </p>
-                    </>
-                  ) : (
-                    <p className={styles.detailText}>
-                      Body для цього endpoint-а не описаний.
-                    </p>
-                  )}
-                </article>
-
-                <article className={styles.detailCard}>
-                  <span className={styles.detailLabel}>Responses</span>
-                  {selectedEndpoint.responseCodes.length ? (
-                    <ul className={styles.list}>
-                      {selectedEndpoint.responseCodes.map((statusCode) => {
-                        const response =
-                          selectedEndpoint.operation.responses?.[statusCode];
-                        return (
-                          <li key={statusCode}>
-                            <strong>{statusCode}</strong>
-                            {response?.description
-                              ? ` — ${response.description}`
-                              : ""}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  ) : (
-                    <p className={styles.detailText}>
-                      Response-коди не вказані.
-                    </p>
-                  )}
-                </article>
-
-                <article className={styles.detailCard}>
-                  <span className={styles.detailLabel}>Links</span>
-                  <p className={styles.detailMono}>
-                    Swagger UI: {payload.swaggerUrl}
-                  </p>
-                  <p className={styles.detailMono}>
-                    OpenAPI JSON: {payload.openApiUrl}
-                  </p>
-                </article>
-              </div>
+              <section className={styles.inspSection}>
+                <div className={styles.inspSectionTitle}>ПОСИЛАННЯ</div>
+                <div className={styles.linksList}>
+                  <a
+                    href={payload.swaggerUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.inspLink}
+                  >
+                    <ExternalLink size={12} />
+                    Swagger UI — Відкрити Swagger
+                  </a>
+                  <a
+                    href={payload.openApiUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.inspLink}
+                  >
+                    <FileCode2 size={12} />
+                    OpenAPI JSON — Завантажити JSON
+                  </a>
+                </div>
+              </section>
             </div>
           )}
         </aside>
       </section>
+
+      <div className={styles.opsStrip}>
+        <div className={styles.opsSection}>
+          <span className={styles.opsSectionTitle}>ПОЛІТИКА АВТОРИЗАЦІЇ</span>
+          <p className={styles.opsSectionValue}>
+            <Lock size={11} />
+            Bearer token (JWT)
+          </p>
+          <p className={styles.opsSectionSub}>
+            Передавайте токен у заголовку Authorization.
+          </p>
+        </div>
+
+        <div className={styles.opsSection}>
+          <span className={styles.opsSectionTitle}>ЛІМІТИ ЗАПИТІВ</span>
+          <p className={styles.opsSectionValue}>100 запитів/хв на IP</p>
+          <p className={styles.opsSectionSub}>
+            Базовий ліміт. Може бути змінено.
+          </p>
+        </div>
+
+        <div className={styles.opsSection}>
+          <span className={styles.opsSectionTitle}>СЕРЕДОВИЩЕ</span>
+          <p className={styles.opsSectionValue}>
+            <span className={styles.greenDot} />
+            Production
+          </p>
+          <p className={styles.opsSectionSub}>{payload.backendBaseUrl}</p>
+        </div>
+
+        <div className={styles.opsSection}>
+          <span className={styles.opsSectionTitle}>КОМПОНЕНТИ ТА СХЕМИ</span>
+          <p className={styles.opsSectionValue}>
+            <Braces size={11} />
+            {model.schemaCount} схем компонентів
+          </p>
+          <a
+            href={payload.openApiUrl}
+            target="_blank"
+            rel="noreferrer"
+            className={styles.opsLink}
+          >
+            Переглянути schemas
+          </a>
+        </div>
+
+        <div className={styles.opsSection}>
+          <span className={styles.opsSectionTitle}>ШВИДКІ ДІЇ</span>
+          <div className={styles.opsActions}>
+            <button
+              type="button"
+              className={styles.opsActionBtn}
+              onClick={() => copyText("Bearer test-token-dev-123", "testToken")}
+            >
+              {copiedKey === "testToken" ? (
+                <Check size={11} />
+              ) : (
+                <Copy size={11} />
+              )}
+              {copiedKey === "testToken" ? "Скопійовано" : "Тестовий токен"}
+            </button>
+            <a
+              href={`${payload.backendBaseUrl}/health`}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.opsActionBtn}
+            >
+              <ShieldCheck size={11} />
+              Перевірити статус API
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

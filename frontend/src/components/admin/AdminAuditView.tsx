@@ -143,7 +143,8 @@ export function AdminAuditView() {
     second: "2-digit",
   });
 
-  const { bySeverity, lastHourDelta, streamPercent, securitySignals } = overview;
+  const { bySeverity, lastHourDelta, streamPercent, securitySignals } =
+    overview;
 
   const router = useRouter();
 
@@ -167,10 +168,25 @@ export function AdminAuditView() {
           <div className={styles.heroStreamRows}>
             {(
               [
-                { key: "security", label: "Безпека", Icon: ShieldAlert, color: "#f08080" },
-                { key: "warning", label: "Попередження", Icon: AlertTriangle, color: "#c8a843" },
+                {
+                  key: "security",
+                  label: "Безпека",
+                  Icon: ShieldAlert,
+                  color: "#f08080",
+                },
+                {
+                  key: "warning",
+                  label: "Попередження",
+                  Icon: AlertTriangle,
+                  color: "#c8a843",
+                },
                 { key: "info", label: "Інфо", Icon: Info, color: "#4a80d4" },
-                { key: "critical", label: "Критичні", Icon: AlertOctagon, color: "#9b5de5" },
+                {
+                  key: "critical",
+                  label: "Критичні",
+                  Icon: AlertOctagon,
+                  color: "#9b5de5",
+                },
               ] as const
             ).map(({ key, label, Icon, color }) => (
               <div key={key} className={styles.heroStreamRow}>
@@ -227,7 +243,9 @@ export function AdminAuditView() {
               {label}
             </span>
             <strong className={styles.kpiValue}>{val}</strong>
-            <span className={`${styles.kpiDelta}${delta === 0 ? ` ${styles.zero}` : ""}`}>
+            <span
+              className={`${styles.kpiDelta}${delta === 0 ? ` ${styles.zero}` : ""}`}
+            >
               +{delta} за останню годину
             </span>
           </article>
@@ -325,9 +343,13 @@ export function AdminAuditView() {
                         <div className={styles.eventCell}>
                           <SeverityIcon sev={sev} />
                           <div className={styles.eventBody}>
-                            <div className={styles.eventTitle}>{item.action}</div>
+                            <div className={styles.eventTitle}>
+                              {item.action}
+                            </div>
                             {item.detail && (
-                              <div className={styles.eventDetail}>{item.detail}</div>
+                              <div className={styles.eventDetail}>
+                                {item.detail}
+                              </div>
                             )}
                           </div>
                         </div>
@@ -402,8 +424,7 @@ export function AdminAuditView() {
             <div className={styles.railCardHeader}>
               <span className={styles.railCardTitle}>Стан потоку</span>
               <span className={styles.liveIndicator}>
-                <span className={styles.liveDot} />
-                У реальному часі
+                <span className={styles.liveDot} />У реальному часі
               </span>
             </div>
             {[
@@ -427,7 +448,9 @@ export function AdminAuditView() {
             ].map(({ key, val, green }) => (
               <div key={key} className={styles.statusRow}>
                 <span className={styles.statusKey}>{key}</span>
-                <span className={`${styles.statusVal}${green ? ` ${styles.green}` : ""}`}>
+                <span
+                  className={`${styles.statusVal}${green ? ` ${styles.green}` : ""}`}
+                >
                   {val}
                 </span>
               </div>
@@ -449,10 +472,22 @@ export function AdminAuditView() {
             </div>
             {(
               [
-                { dot: "security", label: "Безпека", count: bySeverity.security },
-                { dot: "warning", label: "Попередження", count: bySeverity.warning },
+                {
+                  dot: "security",
+                  label: "Безпека",
+                  count: bySeverity.security,
+                },
+                {
+                  dot: "warning",
+                  label: "Попередження",
+                  count: bySeverity.warning,
+                },
                 { dot: "info", label: "Інформаційні", count: bySeverity.info },
-                { dot: "critical", label: "Критичні", count: bySeverity.critical },
+                {
+                  dot: "critical",
+                  label: "Критичні",
+                  count: bySeverity.critical,
+                },
               ] as const
             ).map(({ dot, label, count }) => (
               <div
@@ -460,11 +495,7 @@ export function AdminAuditView() {
                 className={styles.filterRow}
                 onClick={() =>
                   setSeverity(
-                    dot === "critical"
-                      ? "all"
-                      : severity === dot
-                        ? "all"
-                        : dot,
+                    dot === "critical" ? "all" : severity === dot ? "all" : dot,
                   )
                 }
               >

@@ -51,7 +51,13 @@ export function useAuditFeed() {
         setOverview({
           total: t,
           bySeverity: { ...s, critical: 0 },
-          lastHourDelta: { total: 0, info: 0, warning: 0, security: 0, critical: 0 },
+          lastHourDelta: {
+            total: 0,
+            info: 0,
+            warning: 0,
+            security: 0,
+            critical: 0,
+          },
           streamPercent: {
             info: pct(s.info),
             warning: pct(s.warning),

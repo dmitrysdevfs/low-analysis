@@ -121,7 +121,7 @@ export const getLawById = async (id) => {
  * @returns {Promise<object>}
  */
 export const getLawStats = async (lawId) => {
-  const elements = await Element.find({ lawId });
+  const elements = await Element.find({ lawId }).lean();
   if (!elements || elements.length === 0) return null;
 
   const totalElements = elements.length;
@@ -138,24 +138,61 @@ export const getLawStats = async (lawId) => {
     ) / totalElements;
   const standardDeviation = Math.sqrt(variance);
 
-  // Group by risk level
-  const riskLevels = {
-    green: 0,
-    yellow: 0,
-    red: 0,
-    null: 0,
-  };
+  const riskLevels = { green: 0, yellow: 0, red: 0, null: 0 };
   elements.forEach((el) => {
     const level = el.risk_level || 'null';
     riskLevels[level] = (riskLevels[level] || 0) + 1;
   });
 
-  return {
-    totalElements,
-    meanChars,
-    standardDeviation,
-    riskLevels,
-  };
+  return { totalElements, meanChars, standardDeviation, riskLevels };
+};
+
+/**
+ * Returns stats for multiple laws in a single MongoDB aggregation.
+ * Replaces N individual getLawStats calls.
+ * @param {string[]} lawIds
+ * @returns {Promise<Record<string, object>>}
+ */
+export const getLawStatsBulk = async (lawIds) => {
+  if (!lawIds.length) return {};
+
+  const objectIds = lawIds.map((id) => new mongoose.Types.ObjectId(id));
+
+  const results = await Element.aggregate([
+    { $match: { lawId: { $in: objectIds } } },
+    {
+      $group: {
+        _id: '$lawId',
+        totalElements: { $sum: 1 },
+        totalChars: { $sum: { $ifNull: ['$chars_count', 0] } },
+        stdDev: { $stdDevPop: { $ifNull: ['$chars_count', 0] } },
+        green: { $sum: { $cond: [{ $eq: ['$risk_level', 'green'] }, 1, 0] } },
+        yellow: { $sum: { $cond: [{ $eq: ['$risk_level', 'yellow'] }, 1, 0] } },
+        red: { $sum: { $cond: [{ $eq: ['$risk_level', 'red'] }, 1, 0] } },
+        nullCount: {
+          $sum: {
+            $cond: [{ $in: ['$risk_level', [null, '']] }, 1, 0],
+          },
+        },
+      },
+    },
+  ]);
+
+  const map = {};
+  for (const r of results) {
+    map[r._id] = {
+      totalElements: r.totalElements,
+      meanChars: r.totalElements > 0 ? r.totalChars / r.totalElements : 0,
+      standardDeviation: r.stdDev ?? 0,
+      riskLevels: {
+        green: r.green,
+        yellow: r.yellow,
+        red: r.red,
+        null: r.nullCount,
+      },
+    };
+  }
+  return map;
 };
 
 /**

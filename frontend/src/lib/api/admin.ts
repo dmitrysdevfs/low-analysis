@@ -75,7 +75,12 @@ export type AdminAuditEntry = {
 
 export type AuditOverview = {
   total: number;
-  bySeverity: { info: number; warning: number; security: number; critical: number };
+  bySeverity: {
+    info: number;
+    warning: number;
+    security: number;
+    critical: number;
+  };
   lastHourDelta: {
     total: number;
     info: number;
@@ -83,8 +88,17 @@ export type AuditOverview = {
     security: number;
     critical: number;
   };
-  streamPercent: { info: number; warning: number; security: number; critical: number };
-  securitySignals: { failedLogins: number; roleChanges: number; newIps: number };
+  streamPercent: {
+    info: number;
+    warning: number;
+    security: number;
+    critical: number;
+  };
+  securitySignals: {
+    failedLogins: number;
+    roleChanges: number;
+    newIps: number;
+  };
   lastSyncAt: string;
   retentionDays: number;
   integrityPercent: number;

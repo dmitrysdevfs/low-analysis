@@ -81,6 +81,19 @@ export const getLawStats = async (req, res, next) => {
   }
 };
 
+export const getLawStatsBulk = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'ids array is required' });
+    }
+    const stats = await lawService.getLawStatsBulk(ids);
+    res.json(stats);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getArticle = async (req, res, next) => {
   try {
     const { id, num } = req.params;

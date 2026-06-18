@@ -3,6 +3,7 @@ import {
   getAllLaws,
   getLawTree,
   getLawStats,
+  getLawStatsBulk,
   getArticle,
   getLawArticles,
   parseLawFromUrl,
@@ -366,5 +367,39 @@ router.get('/:id/articles/:num', getArticle);
  *         description: Помилка сервера або парсингу
  */
 router.post('/parse', protect, authorize('admin'), parseLawFromUrl);
+
+/**
+ * @swagger
+ * /api/laws/stats-bulk:
+ *   post:
+ *     summary: Масова статистика законів (bulk)
+ *     description: >
+ *       Одним MongoDB aggregation-запитом повертає статистику для масиву lawId.
+ *       Замінює N окремих GET /api/laws/:id/stats викликів.
+ *     tags: [Laws]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [ids]
+ *             properties:
+ *               ids:
+ *                 type: array
+ *                 items: { type: string }
+ *     responses:
+ *       200:
+ *         description: Об'єкт з ключами lawId → LawStats
+ *       400:
+ *         description: ids array is required
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+router.post('/stats-bulk', protect, authorize('admin'), getLawStatsBulk);
 
 export default router;

@@ -1,5 +1,6 @@
 import SupportConversation from './support.conversation.model.js';
 import SupportMessage from './support.message.model.js';
+import SupportNote from './SupportNote.model.js';
 import { appendAuditEntry } from '../../services/admin/audit.service.js';
 import { SUPPORT_ENABLED } from './support.constants.js';
 import {
@@ -49,6 +50,9 @@ function serializeConversation(conversation) {
     guestName: conversation.guestName || '',
     guestEmail: conversation.guestEmail || '',
     status: conversation.status,
+    priority: conversation.priority || 'normal',
+    spamFlag: conversation.spamFlag || false,
+    escalatedAt: conversation.escalatedAt || null,
     subject: conversation.subject,
     startedFromPathname: conversation.startedFromPathname,
     startedFromPageTitle: conversation.startedFromPageTitle,
@@ -62,9 +66,22 @@ function serializeConversation(conversation) {
     assignedAdminId: conversation.assignedAdminId
       ? String(conversation.assignedAdminId)
       : null,
+    assignedAt: conversation.assignedAt || null,
     telegramChatId: conversation.telegramChatId,
+    userId: conversation.userId ? String(conversation.userId) : null,
     createdAt: conversation.createdAt,
     updatedAt: conversation.updatedAt,
+  };
+}
+
+function serializeNote(note) {
+  return {
+    id: note._id.toString(),
+    conversationId: String(note.conversationId),
+    authorName: note.authorName || '',
+    authorEmail: note.authorEmail || '',
+    text: note.text,
+    createdAt: note.createdAt,
   };
 }
 
@@ -188,12 +205,27 @@ export async function getSupportConfig() {
 
 export async function getAdminSupportStatus() {
   const telegram = getTelegramSupportConfig();
-  const [totalConversations, openConversations, unreadConversations] =
-    await Promise.all([
-      SupportConversation.countDocuments(),
-      SupportConversation.countDocuments({ status: { $ne: 'closed' } }),
-      SupportConversation.countDocuments({ unreadForAdmin: { $gt: 0 } }),
-    ]);
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const startOfYesterday = new Date(startOfToday);
+  startOfYesterday.setDate(startOfToday.getDate() - 1);
+
+  const [
+    totalConversations,
+    openConversations,
+    unreadConversations,
+    todayCount,
+    yesterdayCount,
+  ] = await Promise.all([
+    SupportConversation.countDocuments(),
+    SupportConversation.countDocuments({ status: { $ne: 'closed' } }),
+    SupportConversation.countDocuments({ unreadForAdmin: { $gt: 0 } }),
+    SupportConversation.countDocuments({ createdAt: { $gte: startOfToday } }),
+    SupportConversation.countDocuments({
+      createdAt: { $gte: startOfYesterday, $lt: startOfToday },
+    }),
+  ]);
 
   return {
     enabled: SUPPORT_ENABLED,
@@ -202,6 +234,10 @@ export async function getAdminSupportStatus() {
     totalConversations,
     openConversations,
     unreadConversations,
+    todayConversations: todayCount,
+    yesterdayConversations: yesterdayCount,
+    lastSyncAt: telegram.configured ? new Date().toISOString() : null,
+    webhookStatus: telegram.configured ? 'ok' : 'down',
   };
 }
 
@@ -451,6 +487,120 @@ export async function updateConversationStatus({
   });
 
   return { conversation: serializeConversation(conversation) };
+}
+
+export async function assignConversation({
+  conversationId,
+  adminId,
+  adminUser,
+}) {
+  const conversation = await getConversationByIdOrThrow(conversationId);
+  conversation.assignedAdminId = adminId || null;
+  conversation.assignedAt = adminId ? new Date() : null;
+  await conversation.save();
+  await appendAuditEntry({
+    action: 'Support conversation assigned',
+    detail: `Діалог ${conversation._id} призначено адміністратору ${adminUser?.email || adminId}.`,
+    actor: adminUser?.email || 'admin',
+    severity: 'info',
+  });
+  return { conversation: serializeConversation(conversation) };
+}
+
+export async function addInternalNote({ conversationId, adminUser, text }) {
+  const noteText = normalizeText(text);
+  if (!noteText) {
+    throw Object.assign(new Error('Note text is required'), { status: 400 });
+  }
+  await getConversationByIdOrThrow(conversationId);
+  const note = await SupportNote.create({
+    conversationId,
+    authorId: adminUser._id,
+    authorName:
+      adminUser.fullName || adminUser.displayName || adminUser.email || '',
+    authorEmail: adminUser.email || '',
+    text: noteText,
+  });
+  return { note: serializeNote(note) };
+}
+
+export async function listInternalNotes(conversationId) {
+  await getConversationByIdOrThrow(conversationId);
+  const notes = await SupportNote.find({ conversationId })
+    .sort({ createdAt: -1 })
+    .lean();
+  return notes.map(serializeNote);
+}
+
+export async function markAsSpam({ conversationId, adminUser }) {
+  const conversation = await getConversationByIdOrThrow(conversationId);
+  conversation.spamFlag = true;
+  conversation.status = 'closed';
+  await conversation.save();
+  await appendAuditEntry({
+    action: 'Support conversation marked as spam',
+    detail: `Діалог ${conversation._id} позначено як спам і закрито.`,
+    actor: adminUser?.email || 'admin',
+    severity: 'warning',
+  });
+  return { conversation: serializeConversation(conversation) };
+}
+
+export async function escalateConversation({ conversationId, adminUser }) {
+  const conversation = await getConversationByIdOrThrow(conversationId);
+  conversation.priority = 'urgent';
+  conversation.escalatedAt = new Date();
+  await conversation.save();
+  await appendAuditEntry({
+    action: 'Support conversation escalated',
+    detail: `Діалог ${conversation._id} ескаловано до пріоритету Urgent.`,
+    actor: adminUser?.email || 'admin',
+    severity: 'security',
+  });
+  return { conversation: serializeConversation(conversation) };
+}
+
+export async function checkTelegramSync() {
+  const config = getTelegramSupportConfig();
+  if (!config.configured) {
+    return {
+      ok: false,
+      webhookStatus: 'down',
+      error: 'Telegram bot не налаштовано',
+      lastCheckedAt: new Date().toISOString(),
+    };
+  }
+  try {
+    const start = Date.now();
+    const resp = await fetch(
+      `https://api.telegram.org/bot${config.botToken}/getMe`,
+    );
+    const data = await resp.json();
+    const latencyMs = Date.now() - start;
+    if (data.ok) {
+      return {
+        ok: true,
+        webhookStatus: 'ok',
+        botUsername: data.result.username,
+        latencyMs,
+        lastCheckedAt: new Date().toISOString(),
+      };
+    }
+    return {
+      ok: false,
+      webhookStatus: 'degraded',
+      error: data.description,
+      latencyMs,
+      lastCheckedAt: new Date().toISOString(),
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      webhookStatus: 'degraded',
+      error: err.message,
+      lastCheckedAt: new Date().toISOString(),
+    };
+  }
 }
 
 export async function handleTelegramUpdate(update) {

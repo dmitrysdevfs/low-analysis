@@ -51,7 +51,9 @@ export const getAuditLog = async ({
       { detail: { $regex: q, $options: 'i' } },
       { actor: { $regex: q, $options: 'i' } },
     ];
-    filter.$or = filter.$or ? [...filter.$or, ...textConditions] : textConditions;
+    filter.$or = filter.$or
+      ? [...filter.$or, ...textConditions]
+      : textConditions;
   }
 
   if (dateFrom || dateTo) {
@@ -92,9 +94,18 @@ export const getAuditOverview = async () => {
     AuditLog.countDocuments({ severity: 'warning' }),
     AuditLog.countDocuments({ severity: 'security' }),
     AuditLog.countDocuments({ createdAt: { $gte: oneHourAgo } }),
-    AuditLog.countDocuments({ severity: 'info', createdAt: { $gte: oneHourAgo } }),
-    AuditLog.countDocuments({ severity: 'warning', createdAt: { $gte: oneHourAgo } }),
-    AuditLog.countDocuments({ severity: 'security', createdAt: { $gte: oneHourAgo } }),
+    AuditLog.countDocuments({
+      severity: 'info',
+      createdAt: { $gte: oneHourAgo },
+    }),
+    AuditLog.countDocuments({
+      severity: 'warning',
+      createdAt: { $gte: oneHourAgo },
+    }),
+    AuditLog.countDocuments({
+      severity: 'security',
+      createdAt: { $gte: oneHourAgo },
+    }),
     AuditLog.countDocuments({
       createdAt: { $gte: oneDayAgo },
       $or: [
@@ -122,7 +133,12 @@ export const getAuditOverview = async () => {
 
   return {
     total,
-    bySeverity: { info: infoCount, warning: warningCount, security: securityCount, critical: 0 },
+    bySeverity: {
+      info: infoCount,
+      warning: warningCount,
+      security: securityCount,
+      critical: 0,
+    },
     lastHourDelta: {
       total: lastHourTotal,
       info: lastHourInfo,

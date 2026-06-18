@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { formatDateShort } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
-import { formatCodeStatusLabel } from "./adminLabels";
+import { formatCodeStatusLabel as _formatCodeStatusLabel } from "./adminLabels";
 import { useAdminWorkspace } from "./useAdminWorkspace";
 import type { AdminAuditLogEntry } from "@/lib/auth/mockAuth";
 import styles from "./AdminCodes.module.scss";
@@ -683,8 +683,7 @@ export function AdminCodesView() {
               {
                 icon: ShieldCheck,
                 text: "Кожна перегенерація лишає старий код видимим, але більше не активним.",
-                detail:
-                  "Тільки один код є активним у будь-який момент часу.",
+                detail: "Тільки один код є активним у будь-який момент часу.",
               },
             ].map(({ icon: Icon, text, detail }, idx) => (
               <div key={text}>
