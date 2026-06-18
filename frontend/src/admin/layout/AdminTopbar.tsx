@@ -72,6 +72,11 @@ const PAGE_TITLES = [
     title: "Дашборд",
     subtitle: "Ключові метрики та стан платформи",
   },
+  {
+    href: ROUTES.adminHelp,
+    title: "Довідка",
+    subtitle: "База знань для адміністраторів платформи",
+  },
 ] as const;
 
 const SECURITY_ROUTE_MAP: Array<{ keywords: string[]; route: string }> = [

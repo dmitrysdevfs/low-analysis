@@ -13,6 +13,9 @@ import adminUsers from "./admin-users";
 import adminAnalytics from "./admin-analytics";
 import adminAudit from "./admin-audit";
 import adminCodes from "./admin-codes";
+import adminBilling from "./admin-billing";
+import adminApi from "./admin-api";
+import adminSupportHelp from "./admin-support-help";
 
 export const ALL_ARTICLES: HelpArticle[] = [
   howToSearch,
@@ -28,6 +31,9 @@ export const ALL_ARTICLES: HelpArticle[] = [
   adminAnalytics,
   adminAudit,
   adminCodes,
+  adminBilling,
+  adminApi,
+  adminSupportHelp,
 ];
 
 export function getArticleBySlug(slug: string): HelpArticle | undefined {

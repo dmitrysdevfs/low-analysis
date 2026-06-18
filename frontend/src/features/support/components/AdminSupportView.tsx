@@ -959,8 +959,7 @@ export function AdminSupportView() {
               <>
                 {(() => {
                   const elapsedMin = Math.floor(
-                    (now - new Date(conversation.createdAt).getTime()) /
-                      60000,
+                    (now - new Date(conversation.createdAt).getTime()) / 60000,
                   );
                   const slaMin = 480;
                   const pct = Math.min(

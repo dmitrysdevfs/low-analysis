@@ -11,7 +11,12 @@
   padding: 20px 24px;
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: radial-gradient(circle at top right, rgba(233, 119, 75, 0.12), transparent 40%),
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(233, 119, 75, 0.12),
+      transparent 40%
+    ),
     linear-gradient(160deg, rgba(20, 31, 58, 0.96), rgba(12, 19, 37, 0.92));
   box-shadow: 0 20px 44px rgba(5, 10, 20, 0.28);
 }
@@ -110,8 +115,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .syncBtn {
@@ -129,8 +139,13 @@
   font-weight: 700;
   cursor: pointer;
 
-  &:disabled { opacity: 0.55; cursor: default; }
-  &:hover:not(:disabled) { filter: brightness(1.1); }
+  &:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+  &:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
 }
 
 .syncSubtext {
@@ -146,11 +161,27 @@
   font-size: 0.74rem;
 }
 
-.heroStatusKey { color: rgba(158, 181, 217, 0.65); }
-.heroStatusVal { font-weight: 600; color: #dce8fb; font-size: 0.74rem; }
-.heroStatusValGreen { color: #52b788; font-weight: 700; }
-.heroStatusValRed { color: #f08080; font-weight: 700; }
-.heroStatusValOk { color: #52b788; font-size: 0.72rem; font-weight: 700; }
+.heroStatusKey {
+  color: rgba(158, 181, 217, 0.65);
+}
+.heroStatusVal {
+  font-weight: 600;
+  color: #dce8fb;
+  font-size: 0.74rem;
+}
+.heroStatusValGreen {
+  color: #52b788;
+  font-weight: 700;
+}
+.heroStatusValRed {
+  color: #f08080;
+  font-weight: 700;
+}
+.heroStatusValOk {
+  color: #52b788;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
 
 /* ── KPI ──────────────────────────────────────────────── */
 .kpiRow {
@@ -201,10 +232,22 @@
   flex-shrink: 0;
 }
 
-.kpiIconTotal { background: rgba(74, 128, 212, 0.18); color: #4a80d4; }
-.kpiIconOpen  { background: rgba(233, 119, 75, 0.18); color: #e9774b; }
-.kpiIconUnread { background: rgba(240, 100, 100, 0.18); color: #f08080; }
-.kpiIconTelegram { background: rgba(42, 171, 238, 0.15); color: #2aabee; }
+.kpiIconTotal {
+  background: rgba(74, 128, 212, 0.18);
+  color: #4a80d4;
+}
+.kpiIconOpen {
+  background: rgba(233, 119, 75, 0.18);
+  color: #e9774b;
+}
+.kpiIconUnread {
+  background: rgba(240, 100, 100, 0.18);
+  color: #f08080;
+}
+.kpiIconTelegram {
+  background: rgba(42, 171, 238, 0.15);
+  color: #2aabee;
+}
 
 .kpiValue {
   font-size: 1.35rem;
@@ -219,8 +262,12 @@
   white-space: nowrap;
 }
 
-.kpiDeltaPos { color: #52b788; }
-.kpiDeltaNeg { color: #f08080; }
+.kpiDeltaPos {
+  color: #52b788;
+}
+.kpiDeltaNeg {
+  color: #f08080;
+}
 
 .telegramReady {
   display: inline-flex;
@@ -291,7 +338,9 @@
   font-size: 0.76rem;
   box-sizing: border-box;
 
-  &::placeholder { color: rgba(198, 214, 237, 0.4); }
+  &::placeholder {
+    color: rgba(198, 214, 237, 0.4);
+  }
 }
 
 .filterSelect {
@@ -310,7 +359,9 @@
   flex-shrink: 0;
   box-sizing: border-box;
 
-  option { background: #0e1a30; }
+  option {
+    background: #0e1a30;
+  }
 }
 
 .conversationList {
@@ -335,7 +386,9 @@
   flex-direction: column;
   gap: 5px;
 
-  &:hover { background: rgba(255, 255, 255, 0.04); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
 }
 
 .convCardActive {
@@ -361,7 +414,10 @@
   font-weight: 700;
 }
 
-.convCardInfo { flex: 1; min-width: 0; }
+.convCardInfo {
+  flex: 1;
+  min-width: 0;
+}
 
 .convCardName {
   font-size: 0.78rem;
@@ -495,7 +551,9 @@
   align-items: center;
   justify-content: center;
 
-  &:hover { background: rgba(255, 255, 255, 0.06); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
 }
 
 .pageBtnActive {
@@ -543,7 +601,10 @@
   flex-shrink: 0;
 }
 
-.threadClientInfo { flex: 1; min-width: 0; }
+.threadClientInfo {
+  flex: 1;
+  min-width: 0;
+}
 
 .threadClientName {
   font-size: 0.9rem;
@@ -595,20 +656,29 @@
   cursor: pointer;
   white-space: nowrap;
 
-  &:hover { background: rgba(255, 255, 255, 0.07); }
-  &:disabled { opacity: 0.4; cursor: default; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 }
 
 .threadActionBtnDanger {
   border-color: rgba(240, 128, 128, 0.28);
   color: #f08080;
-  &:hover { background: rgba(240, 128, 128, 0.07); }
+  &:hover {
+    background: rgba(240, 128, 128, 0.07);
+  }
 }
 
 .threadActionBtnBlue {
   border-color: rgba(42, 171, 238, 0.28);
   color: #2aabee;
-  &:hover { background: rgba(42, 171, 238, 0.07); }
+  &:hover {
+    background: rgba(42, 171, 238, 0.07);
+  }
 }
 
 .contextLine {
@@ -638,21 +708,32 @@
   padding: 4px 0;
   position: relative;
 
-  &::before, &::after {
-    content: '';
+  &::before,
+  &::after {
+    content: "";
     position: absolute;
     top: 50%;
     width: 30%;
     height: 1px;
     background: rgba(255, 255, 255, 0.05);
   }
-  &::before { left: 0; }
-  &::after { right: 0; }
+  &::before {
+    left: 0;
+  }
+  &::after {
+    right: 0;
+  }
 }
 
-.messageRow { display: flex; }
-.messageRowUser { justify-content: flex-start; }
-.messageRowAdmin { justify-content: flex-end; }
+.messageRow {
+  display: flex;
+}
+.messageRowUser {
+  justify-content: flex-start;
+}
+.messageRowAdmin {
+  justify-content: flex-end;
+}
 
 .messageBubble {
   max-width: 76%;
@@ -764,7 +845,9 @@
   resize: none;
   box-sizing: border-box;
 
-  &::placeholder { color: rgba(198, 214, 237, 0.38); }
+  &::placeholder {
+    color: rgba(198, 214, 237, 0.38);
+  }
 }
 
 .textareaNoteMode {
@@ -791,7 +874,10 @@
   justify-content: center;
   flex-shrink: 0;
 
-  &:hover { background: rgba(255, 255, 255, 0.05); color: rgba(216, 228, 246, 0.8); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(216, 228, 246, 0.8);
+  }
 }
 
 .channelToggle {
@@ -842,8 +928,13 @@
   cursor: pointer;
   white-space: nowrap;
 
-  &:disabled { opacity: 0.4; cursor: default; }
-  &:hover:not(:disabled) { filter: brightness(1.08); }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
 }
 
 .sendBtnGreen {
@@ -893,7 +984,9 @@
   padding: 0;
   display: flex;
   align-items: center;
-  &:hover { color: rgba(216, 228, 246, 0.8); }
+  &:hover {
+    color: rgba(216, 228, 246, 0.8);
+  }
 }
 
 .statusChRow {
@@ -917,8 +1010,13 @@
   color: #dce8fb;
 }
 
-.statusChValGreen { color: #52b788; font-weight: 700; }
-.statusChValRed { color: #f08080; }
+.statusChValGreen {
+  color: #52b788;
+  font-weight: 700;
+}
+.statusChValRed {
+  color: #f08080;
+}
 
 .clientRow {
   display: flex;
@@ -950,9 +1048,17 @@
   font-size: 0.72rem;
 }
 
-.slaKey { color: rgba(158, 181, 217, 0.62); }
-.slaVal { font-weight: 600; color: #dce8fb; }
-.slaValRed { color: #f08080; font-weight: 700; }
+.slaKey {
+  color: rgba(158, 181, 217, 0.62);
+}
+.slaVal {
+  font-weight: 600;
+  color: #dce8fb;
+}
+.slaValRed {
+  color: #f08080;
+  font-weight: 700;
+}
 
 .slaBarWrap {
   display: flex;
@@ -977,8 +1083,12 @@
   transition: width 0.3s;
 }
 
-.slaBarFillWarn { background: #c8a843; }
-.slaBarFillDanger { background: #f08080; }
+.slaBarFillWarn {
+  background: #c8a843;
+}
+.slaBarFillDanger {
+  background: #f08080;
+}
 
 .priorityBadge {
   display: inline-flex;
@@ -1056,7 +1166,9 @@
   resize: none;
   box-sizing: border-box;
 
-  &::placeholder { color: rgba(198, 214, 237, 0.38); }
+  &::placeholder {
+    color: rgba(198, 214, 237, 0.38);
+  }
 }
 
 .noteSubmitBtn {
@@ -1070,7 +1182,10 @@
   cursor: pointer;
   align-self: flex-end;
 
-  &:disabled { opacity: 0.4; cursor: default; }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 }
 
 .quickActions {
@@ -1097,24 +1212,34 @@
   overflow: hidden;
   min-width: 0;
 
-  &:hover { background: rgba(255, 255, 255, 0.05); }
-  &:disabled { opacity: 0.4; cursor: default; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 }
 
 .quickActionBtnDanger {
   border-color: rgba(240, 128, 128, 0.22);
   color: #f08080;
-  &:hover { background: rgba(240, 128, 128, 0.05); }
+  &:hover {
+    background: rgba(240, 128, 128, 0.05);
+  }
 }
 
 .quickActionBtnBlue {
   border-color: rgba(74, 128, 212, 0.22);
   color: #4a80d4;
-  &:hover { background: rgba(74, 128, 212, 0.05); }
+  &:hover {
+    background: rgba(74, 128, 212, 0.05);
+  }
 }
 
 /* ── EMPTY / LOADING ──────────────────────────────────── */
-.emptyState, .loadingState {
+.emptyState,
+.loadingState {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1127,11 +1252,19 @@
 
 /* ── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 1280px) {
-  .workspace { grid-template-columns: 210px 1fr 238px; }
+  .workspace {
+    grid-template-columns: 210px 1fr 238px;
+  }
 }
 
 @media (max-width: 1100px) {
-  .workspace { grid-template-columns: 1fr; }
-  .hero { grid-template-columns: 1fr; }
-  .kpiRow { grid-template-columns: repeat(2, 1fr); }
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .kpiRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

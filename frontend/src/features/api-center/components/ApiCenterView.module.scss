@@ -647,7 +647,9 @@
   color: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
 }
 
 .endpointRow:hover {
@@ -855,9 +857,15 @@
   font-weight: 700;
 }
 
-.resp2xx { color: #7ee2b3; }
-.resp4xx { color: #f6d267; }
-.resp5xx { color: #ff9f9f; }
+.resp2xx {
+  color: #7ee2b3;
+}
+.resp4xx {
+  color: #f6d267;
+}
+.resp5xx {
+  color: #ff9f9f;
+}
 
 .respDesc {
   color: #7787b8;
@@ -879,7 +887,9 @@
   color: #5c6fa0;
   font-size: 0.72rem;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 
   &:hover {
     color: #c8d4f8;
@@ -903,7 +913,9 @@
   font-size: 0.7rem;
   cursor: pointer;
   margin-left: 0.3rem;
-  transition: color 0.12s, border-color 0.12s;
+  transition:
+    color 0.12s,
+    border-color 0.12s;
 
   &:hover {
     color: #f4c84e;
@@ -957,7 +969,9 @@
   color: #7284b6;
   font-size: 0.82rem;
   cursor: pointer;
-  transition: background 0.16s ease, color 0.16s ease;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
 }
 
 .inspectorTabBtn:hover {
@@ -1002,7 +1016,9 @@
   color: #8ea1d6;
   font-size: 0.74rem;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .copyCodeBtn:hover {
@@ -1016,7 +1032,11 @@
   gap: 0;
   border: 1px solid rgba(111, 137, 203, 0.12);
   border-radius: 1.15rem;
-  background: linear-gradient(180deg, rgba(14, 22, 48, 0.96), rgba(9, 15, 34, 0.98));
+  background: linear-gradient(
+    180deg,
+    rgba(14, 22, 48, 0.96),
+    rgba(9, 15, 34, 0.98)
+  );
   overflow: hidden;
 }
 
@@ -1096,7 +1116,9 @@
   font-size: 0.75rem;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 
   &:hover {
     border-color: rgba(200, 168, 67, 0.4);
