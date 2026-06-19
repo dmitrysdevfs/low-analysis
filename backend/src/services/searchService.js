@@ -116,7 +116,7 @@ const searchElements = async (q, lawIds) => {
     Element.find({
       ...baseFilter,
       type: 'article',
-      number: { $regex: new RegExp(`^${escapeRegex(q)}`, 'i') },
+      number: { $regex: new RegExp(`^${escapeRegex(q)}`) },
     })
       .select('lawId type number title text')
       .limit(POOL_LIMIT)
