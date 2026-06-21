@@ -37,8 +37,6 @@ describe("frontend route and config constants", () => {
       { label: "Суб'єкти", href: ROUTES.subjects },
       { label: "Пошук", href: ROUTES.search },
       { label: "Lex AI", href: ROUTES.assistant },
-      { label: "Граф", href: ROUTES.graph },
-      { label: "Радіант", href: ROUTES.radiant },
       { label: "Roadmap", href: ROUTES.roadmap },
       { label: "Довідка", href: ROUTES.help },
     ]);
