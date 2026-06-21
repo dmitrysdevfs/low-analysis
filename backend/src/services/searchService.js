@@ -5,8 +5,6 @@ const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const SNIPPET_RADIUS = 80;
 
-const POOL_LIMIT = 200;
-
 const TIER = {
   LAW_TITLE: 3,
   ARTICLE_TITLE: 2,
@@ -47,6 +45,15 @@ export const buildSnippet = (text, q) => {
 const elementMatchType = (type) =>
   type === 'article' ? 'article' : 'paragraph';
 
+const stripInternal = (row) => {
+  const result = { ...row };
+  delete result._tier;
+  delete result._score;
+  return result;
+};
+
+const byRelevance = (a, b) => b._tier - a._tier || b._score - a._score;
+
 const resolveFilteredLawIds = async ({ status, dateFrom, dateTo }) => {
   if (!status && !dateFrom && !dateTo) return null;
 
@@ -68,6 +75,10 @@ const resolveFilteredLawIds = async ({ status, dateFrom, dateTo }) => {
   return laws.map((l) => l._id);
 };
 
+/**
+ * Law-title hits (tier 3). Laws are a small catalogue, so every match is
+ * fetched and ranked in memory.
+ */
 const searchLaws = async (q, { status, dateFrom, dateTo }) => {
   if (!q) return [];
 
@@ -85,7 +96,7 @@ const searchLaws = async (q, { status, dateFrom, dateTo }) => {
     }
   }
 
-  const laws = await Law.find(filter).select('title').limit(POOL_LIMIT).lean();
+  const laws = await Law.find(filter).select('title').lean();
 
   return laws.map((law) => ({
     law_id: String(law._id),
@@ -99,61 +110,98 @@ const searchLaws = async (q, { status, dateFrom, dateTo }) => {
   }));
 };
 
-const searchElements = async (q, lawIds) => {
-  if (!q) return [];
+/**
+ * Element hits (tier 1-2) as a single aggregation that sorts and paginates
+ * inside MongoDB and returns an exact total via $facet.
+ * @returns {Promise<{docs: object[], total: number}>}
+ */
+const searchElementsPaged = async (q, lawIds, skip, take) => {
+  if (!q) return { docs: [], total: 0 };
 
-  const baseFilter = lawIds ? { lawId: { $in: lawIds } } : {};
+  const baseMatch = lawIds ? { lawId: { $in: lawIds } } : {};
+  const escaped = escapeRegex(q);
 
-  const [textHits, numberHits] = await Promise.all([
-    Element.find(
-      { ...baseFilter, $text: { $search: q } },
-      { score: { $meta: 'textScore' } },
-    )
-      .select('lawId type number title text')
-      .sort({ score: { $meta: 'textScore' } })
-      .limit(POOL_LIMIT)
-      .lean(),
-    Element.find({
-      ...baseFilter,
-      type: 'article',
-      number: { $regex: new RegExp(`^${escapeRegex(q)}`) },
-    })
-      .select('lawId type number title text')
-      .limit(POOL_LIMIT)
-      .lean(),
-  ]);
-
-  const byId = new Map();
-  for (const el of [...textHits, ...numberHits]) {
-    if (!byId.has(String(el._id))) byId.set(String(el._id), el);
+  const facet = { total: [{ $count: 'n' }] };
+  if (take > 0) {
+    facet.data = [{ $skip: skip }, { $limit: take }];
   }
-  const elements = [...byId.values()];
 
-  if (elements.length === 0) return [];
+  const pipeline = [
+    { $match: { ...baseMatch, $text: { $search: q } } },
+    { $addFields: { _score: { $meta: 'textScore' } } },
 
-  const uniqueLawIds = [...new Set(elements.map((el) => String(el.lawId)))];
+    {
+      $unionWith: {
+        coll: Element.collection.name,
+        pipeline: [
+          {
+            $match: {
+              ...baseMatch,
+              type: 'article',
+              number: { $regex: `^${escaped}` },
+            },
+          },
+          { $addFields: { _score: 0 } },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: '$_id',
+        lawId: { $first: '$lawId' },
+        type: { $first: '$type' },
+        number: { $first: '$number' },
+        title: { $first: '$title' },
+        text: { $first: '$text' },
+        _score: { $max: '$_score' },
+      },
+    },
+    {
+      $addFields: {
+        _tier: {
+          $cond: [
+            {
+              $regexMatch: {
+                input: { $ifNull: ['$title', ''] },
+                regex: escaped,
+                options: 'i',
+              },
+            },
+            TIER.ARTICLE_TITLE,
+            TIER.ARTICLE_TEXT,
+          ],
+        },
+      },
+    },
+    { $sort: { _tier: -1, _score: -1, _id: 1 } },
+    { $facet: facet },
+  ];
+
+  const [result] = await Element.aggregate(pipeline).allowDiskUse(true);
+  return {
+    docs: result?.data ?? [],
+    total: result?.total?.[0]?.n ?? 0,
+  };
+};
+
+const mapElementDocs = async (docs, q) => {
+  if (docs.length === 0) return [];
+
+  const uniqueLawIds = [...new Set(docs.map((d) => String(d.lawId)))];
   const laws = await Law.find({ _id: { $in: uniqueLawIds } })
     .select('title')
     .lean();
   const lawTitle = new Map(laws.map((l) => [String(l._id), l.title ?? null]));
 
-  return elements.map((el) => {
-    const titleHit =
-      el.title && el.title.toLowerCase().includes(q.toLowerCase());
-    return {
-      law_id: String(el.lawId),
-      law_name: lawTitle.get(String(el.lawId)) ?? null,
-      article_number: el.number ?? null,
-      article_title: el.title ?? null,
-      snippet: buildSnippet(el.text || el.title, q),
-      match_type: elementMatchType(el.type),
-      _tier: titleHit ? TIER.ARTICLE_TITLE : TIER.ARTICLE_TEXT,
-      _score: el.score ?? 0,
-    };
-  });
+  return docs.map((d) => ({
+    law_id: String(d.lawId),
+    law_name: lawTitle.get(String(d.lawId)) ?? null,
+    article_number: d.number ?? null,
+    article_title: d.title ?? null,
+    snippet: buildSnippet(d.text || d.title, q),
+    match_type: elementMatchType(d.type),
+  }));
 };
-
-const byRelevance = (a, b) => b._tier - a._tier || b._score - a._score;
 
 /**
  * Full-text search across laws and articles.
@@ -181,21 +229,28 @@ export const search = async ({
       ? null
       : await resolveFilteredLawIds({ status, dateFrom, dateTo });
 
-  const [lawResults, elementResults] = await Promise.all([
-    type === 'article' ? [] : searchLaws(q, { status, dateFrom, dateTo }),
-    type === 'law' ? [] : searchElements(q, lawIds),
-  ]);
+  const lawRows =
+    type === 'article' ? [] : await searchLaws(q, { status, dateFrom, dateTo });
+  lawRows.sort(byRelevance);
+  const lawTotal = lawRows.length;
 
-  const merged = [...lawResults, ...elementResults].sort(byRelevance);
-
-  const total = merged.length;
   const skip = (page - 1) * limit;
-  const data = merged.slice(skip, skip + limit).map((row) => {
-    const publicRow = { ...row };
-    delete publicRow._tier;
-    delete publicRow._score;
-    return publicRow;
-  });
+  const elemSkip = Math.max(0, skip - lawTotal);
+  const elemTake = Math.max(0, skip + limit - lawTotal - elemSkip);
+
+  const { docs: elementDocs, total: elementTotal } =
+    type === 'law'
+      ? { docs: [], total: 0 }
+      : await searchElementsPaged(q, lawIds, elemSkip, elemTake);
+
+  const total = lawTotal + elementTotal;
+
+  const lawSlice = lawRows.slice(
+    Math.min(skip, lawTotal),
+    Math.min(skip + limit, lawTotal),
+  );
+  const elementRows = await mapElementDocs(elementDocs, q);
+  const data = [...lawSlice, ...elementRows].map(stripInternal);
 
   const totalPages = Math.ceil(total / limit);
 
