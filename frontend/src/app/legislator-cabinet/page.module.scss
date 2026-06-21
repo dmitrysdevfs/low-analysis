@@ -238,8 +238,16 @@
   border-radius: 18px;
   border: 1px solid rgba(74, 128, 212, 0.26);
   background:
-    radial-gradient(circle at top right, rgba(74, 128, 212, 0.14) 0%, transparent 55%),
-    linear-gradient(180deg, rgba(9, 22, 50, 0.95) 0%, rgba(6, 14, 28, 0.98) 100%);
+    radial-gradient(
+      circle at top right,
+      rgba(74, 128, 212, 0.14) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(9, 22, 50, 0.95) 0%,
+      rgba(6, 14, 28, 0.98) 100%
+    );
   padding: 20px 22px;
   display: flex;
   flex-direction: column;
@@ -287,8 +295,13 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .asideSubtitle {
@@ -626,25 +639,49 @@
 .priorityDot_orange {
   background: rgba(233, 119, 75, 0.2);
   border: 1px solid rgba(233, 119, 75, 0.4);
-  &::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #e97745; }
+  &::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e97745;
+  }
 }
 
 .priorityDot_purple {
   background: rgba(123, 108, 255, 0.16);
   border: 1px solid rgba(123, 108, 255, 0.32);
-  &::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #9087f5; }
+  &::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #9087f5;
+  }
 }
 
 .priorityDot_teal {
   background: rgba(62, 207, 142, 0.14);
   border: 1px solid rgba(62, 207, 142, 0.28);
-  &::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #3ecf8e; }
+  &::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3ecf8e;
+  }
 }
 
 .priorityDot_blue {
   background: rgba(74, 128, 212, 0.14);
   border: 1px solid rgba(74, 128, 212, 0.28);
-  &::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #6098e0; }
+  &::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #6098e0;
+  }
 }
 
 .priorityBody {
@@ -652,8 +689,16 @@
   flex-direction: column;
   gap: 4px;
 
-  strong { font-size: 0.92rem; color: #fff; }
-  p { margin: 0; font-size: 0.82rem; color: var(--color-ink-soft); line-height: 1.5; }
+  strong {
+    font-size: 0.92rem;
+    color: #fff;
+  }
+  p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--color-ink-soft);
+    line-height: 1.5;
+  }
 }
 
 .priorityChevron {
@@ -747,7 +792,10 @@
   justify-content: space-between;
   gap: 10px;
 
-  strong { color: #fff; font-size: 0.92rem; }
+  strong {
+    color: #fff;
+    font-size: 0.92rem;
+  }
 }
 
 .feedDate {
@@ -823,15 +871,28 @@
   border-bottom: 1px solid rgba(28, 50, 96, 0.44);
   transition: color 0.15s;
 
-  &:last-child { border-bottom: 0; }
+  &:last-child {
+    border-bottom: 0;
+  }
 
-  svg:first-child { color: var(--color-smoke); flex-shrink: 0; }
-  svg:last-child { margin-left: auto; color: var(--color-smoke); flex-shrink: 0; }
-  span { flex: 1; }
+  svg:first-child {
+    color: var(--color-smoke);
+    flex-shrink: 0;
+  }
+  svg:last-child {
+    margin-left: auto;
+    color: var(--color-smoke);
+    flex-shrink: 0;
+  }
+  span {
+    flex: 1;
+  }
 
   &:hover {
     color: #f0d57a;
-    svg { color: #f0d57a; }
+    svg {
+      color: #f0d57a;
+    }
   }
 }
 
@@ -848,7 +909,10 @@
   display: grid;
   gap: 8px;
 
-  span { color: var(--color-smoke-light); font-size: 0.84rem; }
+  span {
+    color: var(--color-smoke-light);
+    font-size: 0.84rem;
+  }
 }
 
 .fieldFull {
@@ -932,8 +996,12 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */

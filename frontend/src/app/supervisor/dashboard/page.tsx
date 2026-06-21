@@ -95,16 +95,33 @@ function statusTone(input: {
 }
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard, active: true },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+    active: true,
+  },
   { icon: <Users size={20} />, label: "Групи", href: "#groups" },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.legislatorCabinet },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.legislatorCabinet },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.legislatorCabinet,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.legislatorCabinet,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinet },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
   { icon: <RefreshCcw size={20} />, label: "Зміни", href: "#changes" },
   { icon: <MessagesSquare size={20} />, label: "Коментарі", href: "#comments" },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.rolesSupervisor },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.rolesSupervisor,
+  },
   { icon: <BarChart3 size={20} />, label: "Аналітика", href: "#analytics" },
   { icon: <History size={20} />, label: "Історія", href: "#" },
   { icon: <LayoutGrid size={20} />, label: "Шаблони", href: "#" },

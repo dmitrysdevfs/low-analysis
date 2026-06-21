@@ -236,7 +236,10 @@ $radius: 20px;
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(300px, 0.95fr) minmax(360px, 1.15fr) minmax(300px, 0.95fr);
+  grid-template-columns: minmax(300px, 0.95fr) minmax(360px, 1.15fr) minmax(
+      300px,
+      0.95fr
+    );
   gap: 12px;
   align-items: start;
 }

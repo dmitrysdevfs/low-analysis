@@ -221,7 +221,11 @@ export function AdminNotificationsView() {
 
   const filteredItems = useMemo(() => {
     const source =
-      scope === "active" ? activeItems : scope === "hidden" ? hiddenItems : items;
+      scope === "active"
+        ? activeItems
+        : scope === "hidden"
+          ? hiddenItems
+          : items;
     const normalizedQuery = query.trim().toLowerCase();
 
     return source.filter((item) => {
@@ -247,7 +251,8 @@ export function AdminNotificationsView() {
       requests: items.filter((item) => item.category === "requests").length,
       security: activeItems.filter((item) => item.category === "security")
         .length,
-      warnings: activeItems.filter((item) => item.category === "warning").length,
+      warnings: activeItems.filter((item) => item.category === "warning")
+        .length,
       hidden: hiddenItems.length,
     };
   }, [activeItems, hiddenItems, items]);
@@ -307,7 +312,9 @@ export function AdminNotificationsView() {
       <section className={styles.page}>
         <section className={styles.loadingCard}>
           <span className={styles.eyebrow}>Сповіщення</span>
-          <h2 className={styles.loadingTitle}>Завантаження центру сповіщень…</h2>
+          <h2 className={styles.loadingTitle}>
+            Завантаження центру сповіщень…
+          </h2>
           <p className={styles.loadingText}>
             Підтягуємо сигнали безпеки, role-заявки та поточний потік уваги.
           </p>
@@ -324,8 +331,8 @@ export function AdminNotificationsView() {
           <h2 className={styles.title}>Тримайте потік уваги в одному місці.</h2>
           <p className={styles.description}>
             Центр сповіщень збирає role-заявки, security-сигнали та операційні
-            події, які потребують дії адміністратора. Тут видно, що нове, що
-            вже приховано у bell-потоці, і куди саме треба перейти далі.
+            події, які потребують дії адміністратора. Тут видно, що нове, що вже
+            приховано у bell-потоці, і куди саме треба перейти далі.
           </p>
           <div className={styles.heroActions}>
             <button
@@ -369,7 +376,9 @@ export function AdminNotificationsView() {
             <div className={styles.heroStatusRow}>
               <span>Останнє оновлення</span>
               <strong>
-                {lastRefreshedAt ? formatDateShort(lastRefreshedAt.toISOString()) : "—"}
+                {lastRefreshedAt
+                  ? formatDateShort(lastRefreshedAt.toISOString())
+                  : "—"}
               </strong>
             </div>
             <div className={styles.heroStatusRow}>
@@ -394,7 +403,9 @@ export function AdminNotificationsView() {
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Активні зараз</span>
           <strong className={styles.kpiValue}>{counts.active}</strong>
-          <span className={styles.kpiMeta}>Сигнали, які ще залишаються в полі зору</span>
+          <span className={styles.kpiMeta}>
+            Сигнали, які ще залишаються в полі зору
+          </span>
         </article>
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Role-заявки</span>
@@ -404,12 +415,16 @@ export function AdminNotificationsView() {
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Безпека</span>
           <strong className={styles.kpiValue}>{counts.security}</strong>
-          <span className={styles.kpiMeta}>Поточні security-події у потоці</span>
+          <span className={styles.kpiMeta}>
+            Поточні security-події у потоці
+          </span>
         </article>
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Приховано</span>
           <strong className={styles.kpiValue}>{counts.hidden}</strong>
-          <span className={styles.kpiMeta}>Сховано локально для цього admin</span>
+          <span className={styles.kpiMeta}>
+            Сховано локально для цього admin
+          </span>
         </article>
       </section>
 
@@ -454,9 +469,7 @@ export function AdminNotificationsView() {
             <select
               className={styles.select}
               value={scope}
-              onChange={(event) =>
-                setScope(event.target.value as ScopeFilter)
-              }
+              onChange={(event) => setScope(event.target.value as ScopeFilter)}
             >
               <option value="active">Активні</option>
               <option value="hidden">Приховані</option>
@@ -479,16 +492,24 @@ export function AdminNotificationsView() {
                     }`}
                   >
                     <div className={styles.feedItemMain}>
-                      <span className={`${styles.feedIconWrap} ${meta.iconClass}`}>
+                      <span
+                        className={`${styles.feedIconWrap} ${meta.iconClass}`}
+                      >
                         <MetaIcon size={14} />
                       </span>
 
                       <div className={styles.feedBody}>
                         <div className={styles.feedTop}>
                           <div className={styles.feedTitleBlock}>
-                            <strong className={styles.feedTitle}>{item.title}</strong>
-                            <span className={`${styles.feedBadge} ${meta.toneClass}`}>
-                              <span className={`${styles.feedDot} ${meta.dotClass}`} />
+                            <strong className={styles.feedTitle}>
+                              {item.title}
+                            </strong>
+                            <span
+                              className={`${styles.feedBadge} ${meta.toneClass}`}
+                            >
+                              <span
+                                className={`${styles.feedDot} ${meta.dotClass}`}
+                              />
                               {item.statusLabel}
                             </span>
                             {item.isDismissed && (
@@ -593,7 +614,9 @@ export function AdminNotificationsView() {
                   return (
                     <div key={request._id} className={styles.requestItem}>
                       <div className={styles.requestTop}>
-                        <strong>{user.displayName || user.email || "Користувач"}</strong>
+                        <strong>
+                          {user.displayName || user.email || "Користувач"}
+                        </strong>
                         <span>{formatRelativeLabel(request.createdAt)}</span>
                       </div>
                       <p className={styles.requestRole}>
@@ -607,9 +630,7 @@ export function AdminNotificationsView() {
                 })}
               </div>
             ) : (
-              <p className={styles.railEmpty}>
-                Нових role-заявок зараз немає.
-              </p>
+              <p className={styles.railEmpty}>Нових role-заявок зараз немає.</p>
             )}
             <Link href={ROUTES.adminAccess} className={styles.railAction}>
               Відкрити розгляд заявок

@@ -65,8 +65,7 @@ const PAGE_TITLES = [
   {
     href: ROUTES.adminNotifications,
     title: "Сповіщення",
-    subtitle:
-      "Живий центр role-заявок, security-сигналів та операційної уваги",
+    subtitle: "Живий центр role-заявок, security-сигналів та операційної уваги",
   },
   {
     href: ROUTES.adminJobs,

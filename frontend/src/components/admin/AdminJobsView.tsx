@@ -15,7 +15,11 @@ import {
   Server,
   Wrench,
 } from "lucide-react";
-import { queueApi, type QueueEnqueueResponse, type QueueJobStatus } from "@/lib/api/queue";
+import {
+  queueApi,
+  type QueueEnqueueResponse,
+  type QueueJobStatus,
+} from "@/lib/api/queue";
 import { formatDateFull, formatDateShort } from "@/lib/utils";
 import { notify } from "@/lib/toast";
 import styles from "./AdminJobs.module.scss";
@@ -137,12 +141,22 @@ function createTrackedJob(
 }
 
 function parseCodesInput(value: string) {
-  return [...new Set(value.split(/[\n,]+/).map((item) => item.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      value
+        .split(/[\n,]+/)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ];
 }
 
 function formatRelativeTime(value: string) {
   const date = new Date(value);
-  const diffMinutes = Math.max(1, Math.round((Date.now() - date.getTime()) / 60000));
+  const diffMinutes = Math.max(
+    1,
+    Math.round((Date.now() - date.getTime()) / 60000),
+  );
   if (diffMinutes < 60) return `${diffMinutes} хв тому`;
   const diffHours = Math.round(diffMinutes / 60);
   if (diffHours < 24) return `${diffHours} год тому`;
@@ -171,15 +185,18 @@ export function AdminJobsView() {
   const [analyzeForce, setAnalyzeForce] = useState(false);
   const [batchCodesInput, setBatchCodesInput] = useState("");
 
-  const writeJobs = useCallback((updater: (prev: TrackedJob[]) => TrackedJob[]) => {
-    setJobs((prev) => {
-      const next = updater(prev).slice(0, 30);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      }
-      return next;
-    });
-  }, []);
+  const writeJobs = useCallback(
+    (updater: (prev: TrackedJob[]) => TrackedJob[]) => {
+      setJobs((prev) => {
+        const next = updater(prev).slice(0, 30);
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   const mergeStatuses = useCallback(
     async (targetJobs?: TrackedJob[]) => {
@@ -202,7 +219,9 @@ export function AdminJobsView() {
               status: job.status,
               lastCheckedAt: new Date().toISOString(),
               statusError:
-                error instanceof Error ? error.message : "Не вдалося отримати статус",
+                error instanceof Error
+                  ? error.message
+                  : "Не вдалося отримати статус",
             };
           }
         }),
@@ -210,7 +229,9 @@ export function AdminJobsView() {
 
       writeJobs((prev) =>
         prev.map((job) => {
-          const match = nextStatuses.find((item) => item.localId === job.localId);
+          const match = nextStatuses.find(
+            (item) => item.localId === job.localId,
+          );
           return match
             ? {
                 ...job,
@@ -272,7 +293,10 @@ export function AdminJobsView() {
   const enqueueAndTrack = useCallback(
     async (response: QueueEnqueueResponse, payload: JobPayload | null) => {
       const trackedJob = createTrackedJob(response, payload);
-      writeJobs((prev) => [trackedJob, ...prev.filter((job) => job.jobId !== response.jobId)]);
+      writeJobs((prev) => [
+        trackedJob,
+        ...prev.filter((job) => job.jobId !== response.jobId),
+      ]);
       setSelectedJobId(trackedJob.localId);
       await mergeStatuses([trackedJob]);
       notify.success(`Job ${response.jobId} поставлено в чергу.`);
@@ -295,7 +319,9 @@ export function AdminJobsView() {
         await enqueueAndTrack(response, { task: "parse-law", url });
         setParseUrl("");
       } catch (error) {
-        notify.warning(error instanceof Error ? error.message : "Не вдалося створити job.");
+        notify.warning(
+          error instanceof Error ? error.message : "Не вдалося створити job.",
+        );
       } finally {
         setSubmittingTask(null);
       }
@@ -314,7 +340,10 @@ export function AdminJobsView() {
 
       setSubmittingTask("analyze-subjects");
       try {
-        const response = await queueApi.enqueueAnalyzeSubjects(lawId, analyzeForce);
+        const response = await queueApi.enqueueAnalyzeSubjects(
+          lawId,
+          analyzeForce,
+        );
         await enqueueAndTrack(response, {
           task: "analyze-subjects",
           lawId,
@@ -323,7 +352,9 @@ export function AdminJobsView() {
         setAnalyzeLawId("");
         setAnalyzeForce(false);
       } catch (error) {
-        notify.warning(error instanceof Error ? error.message : "Не вдалося створити job.");
+        notify.warning(
+          error instanceof Error ? error.message : "Не вдалося створити job.",
+        );
       } finally {
         setSubmittingTask(null);
       }
@@ -353,7 +384,9 @@ export function AdminJobsView() {
         });
         setBatchCodesInput("");
       } catch (error) {
-        notify.warning(error instanceof Error ? error.message : "Не вдалося створити job.");
+        notify.warning(
+          error instanceof Error ? error.message : "Не вдалося створити job.",
+        );
       } finally {
         setSubmittingTask(null);
       }
@@ -388,7 +421,9 @@ export function AdminJobsView() {
         setSelectedJobId(trackedJob.localId);
         setLookupJobId("");
       } catch (error) {
-        notify.warning(error instanceof Error ? error.message : "Job не знайдено.");
+        notify.warning(
+          error instanceof Error ? error.message : "Job не знайдено.",
+        );
       } finally {
         setIsRefreshingAll(false);
       }
@@ -408,7 +443,9 @@ export function AdminJobsView() {
   const handleRetry = useCallback(
     async (job: TrackedJob) => {
       if (!job.payload) {
-        notify.info("Для імпортованого job немає payload, тому повторний запуск недоступний.");
+        notify.info(
+          "Для імпортованого job немає payload, тому повторний запуск недоступний.",
+        );
         return;
       }
 
@@ -423,12 +460,16 @@ export function AdminJobsView() {
             job.payload.force,
           );
         } else {
-          response = await queueApi.enqueueBatchUpdateLawTree(job.payload.codes);
+          response = await queueApi.enqueueBatchUpdateLawTree(
+            job.payload.codes,
+          );
         }
         await enqueueAndTrack(response, job.payload);
       } catch (error) {
         notify.warning(
-          error instanceof Error ? error.message : "Не вдалося повторно поставити job у чергу.",
+          error instanceof Error
+            ? error.message
+            : "Не вдалося повторно поставити job у чергу.",
         );
       } finally {
         setSubmittingTask(null);
@@ -447,11 +488,15 @@ export function AdminJobsView() {
   }, [jobs, scope]);
 
   const selectedJob =
-    jobs.find((job) => job.localId === selectedJobId) ?? filteredJobs[0] ?? null;
+    jobs.find((job) => job.localId === selectedJobId) ??
+    filteredJobs[0] ??
+    null;
 
   const metrics = useMemo(() => {
     const live = jobs.filter((job) => isLiveState(job.status?.state)).length;
-    const completed = jobs.filter((job) => job.status?.state === "completed").length;
+    const completed = jobs.filter(
+      (job) => job.status?.state === "completed",
+    ).length;
     const failed = jobs.filter((job) => job.status?.state === "failed").length;
     const retryable = jobs.filter((job) => job.payload).length;
     return {
@@ -468,7 +513,9 @@ export function AdminJobsView() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>Queue operations</span>
-          <h2 className={styles.title}>Один центр для jobs, статусів і повторних запусків.</h2>
+          <h2 className={styles.title}>
+            Один центр для jobs, статусів і повторних запусків.
+          </h2>
           <p className={styles.description}>
             Екран для адміністратора та технічної команди: запуск парсингу,
             аналізу суб&apos;єктів і масового re-ingest, моніторинг прогресу,
@@ -487,7 +534,10 @@ export function AdminJobsView() {
               />
               Оновити всі jobs
             </button>
-            <a href="/api/queue/status/example-job-id" className={styles.secondaryLink}>
+            <a
+              href="/api/queue/status/example-job-id"
+              className={styles.secondaryLink}
+            >
               Queue API
               <ArrowUpRight size={14} />
             </a>
@@ -499,10 +549,13 @@ export function AdminJobsView() {
             <Server size={18} />
             <span>Черга під наглядом</span>
           </div>
-          <strong className={styles.heroStatusValue}>{metrics.live} активних job</strong>
+          <strong className={styles.heroStatusValue}>
+            {metrics.live} активних job
+          </strong>
           <p className={styles.heroStatusMeta}>
             {metrics.total} відстежуваних задач, {metrics.completed} завершених,
-            {metrics.failed} з помилкою, {metrics.retryable} можна перевиставити.
+            {metrics.failed} з помилкою, {metrics.retryable} можна
+            перевиставити.
           </p>
           <div className={styles.heroStatusRows}>
             <div className={styles.heroStatusRow}>
@@ -530,17 +583,23 @@ export function AdminJobsView() {
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Завершені</span>
           <strong className={styles.kpiValue}>{metrics.completed}</strong>
-          <span className={styles.kpiMeta}>completed jobs у локальному центрі</span>
+          <span className={styles.kpiMeta}>
+            completed jobs у локальному центрі
+          </span>
         </article>
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Помилки</span>
           <strong className={styles.kpiValue}>{metrics.failed}</strong>
-          <span className={styles.kpiMeta}>failed jobs, які потребують уваги</span>
+          <span className={styles.kpiMeta}>
+            failed jobs, які потребують уваги
+          </span>
         </article>
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Повторний запуск</span>
           <strong className={styles.kpiValue}>{metrics.retryable}</strong>
-          <span className={styles.kpiMeta}>payload збережено локально для retry</span>
+          <span className={styles.kpiMeta}>
+            payload збережено локально для retry
+          </span>
         </article>
       </section>
 
@@ -578,7 +637,10 @@ export function AdminJobsView() {
               </button>
             </form>
 
-            <form className={styles.operationCard} onSubmit={handleAnalyzeSubjects}>
+            <form
+              className={styles.operationCard}
+              onSubmit={handleAnalyzeSubjects}
+            >
               <div className={styles.operationTitleRow}>
                 <Search size={15} />
                 <strong>Аналіз суб&apos;єктів</strong>
@@ -616,7 +678,8 @@ export function AdminJobsView() {
                 <strong>Batch update law tree</strong>
               </div>
               <p className={styles.operationHint}>
-                Масовий re-ingest до 100 кодів. Один код на рядок або через кому.
+                Масовий re-ingest до 100 кодів. Один код на рядок або через
+                кому.
               </p>
               <textarea
                 className={styles.textarea}
@@ -653,7 +716,11 @@ export function AdminJobsView() {
                 onChange={(event) => setLookupJobId(event.target.value)}
                 placeholder="Вставте jobId з логів або Swagger"
               />
-              <button type="submit" className={styles.secondaryBtn} disabled={isRefreshingAll}>
+              <button
+                type="submit"
+                className={styles.secondaryBtn}
+                disabled={isRefreshingAll}
+              >
                 <Search size={14} />
                 Перевірити статус
               </button>
@@ -697,7 +764,9 @@ export function AdminJobsView() {
                     <div className={styles.jobItemTop}>
                       <div>
                         <span className={styles.jobItemQueue}>{job.queue}</span>
-                        <strong className={styles.jobItemTitle}>{job.label}</strong>
+                        <strong className={styles.jobItemTitle}>
+                          {job.label}
+                        </strong>
                       </div>
                       <span
                         className={`${styles.stateBadge} ${
@@ -722,7 +791,10 @@ export function AdminJobsView() {
                     <p className={styles.jobSummary}>{job.summary}</p>
 
                     <div className={styles.progressTrack}>
-                      <span className={styles.progressFill} style={{ width: `${progress}%` }} />
+                      <span
+                        className={styles.progressFill}
+                        style={{ width: `${progress}%` }}
+                      />
                     </div>
 
                     <div className={styles.jobMeta}>
@@ -738,8 +810,8 @@ export function AdminJobsView() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              Поки що немає job для цього фільтра. Запустіть задачу або імпортуйте
-              існуючий `jobId`.
+              Поки що немає job для цього фільтра. Запустіть задачу або
+              імпортуйте існуючий `jobId`.
             </div>
           )}
         </section>
@@ -757,8 +829,12 @@ export function AdminJobsView() {
               <div className={styles.detailBody}>
                 <div className={styles.detailHeader}>
                   <div>
-                    <strong className={styles.detailTitle}>{selectedJob.label}</strong>
-                    <span className={styles.detailQueue}>{selectedJob.queue}</span>
+                    <strong className={styles.detailTitle}>
+                      {selectedJob.label}
+                    </strong>
+                    <span className={styles.detailQueue}>
+                      {selectedJob.queue}
+                    </span>
                   </div>
                   <span className={styles.detailState}>
                     {stateLabel(selectedJob.status?.state)}
@@ -808,7 +884,10 @@ export function AdminJobsView() {
                   <button
                     type="button"
                     className={styles.actionBtn}
-                    disabled={!selectedJob.payload || submittingTask === selectedJob.task}
+                    disabled={
+                      !selectedJob.payload ||
+                      submittingTask === selectedJob.task
+                    }
                     onClick={() => void handleRetry(selectedJob)}
                   >
                     <RotateCcw size={14} />
@@ -817,14 +896,18 @@ export function AdminJobsView() {
                 </div>
 
                 <div className={styles.detailSection}>
-                  <span className={styles.detailLabel}>Результат / returnvalue</span>
+                  <span className={styles.detailLabel}>
+                    Результат / returnvalue
+                  </span>
                   <pre className={styles.codeBlock}>
                     {stringifyResult(selectedJob.status?.returnvalue)}
                   </pre>
                 </div>
 
                 <div className={styles.detailSection}>
-                  <span className={styles.detailLabel}>Помилка / failedReason</span>
+                  <span className={styles.detailLabel}>
+                    Помилка / failedReason
+                  </span>
                   <pre className={styles.codeBlock}>
                     {selectedJob.statusError ||
                       selectedJob.status?.failedReason ||
@@ -834,8 +917,8 @@ export function AdminJobsView() {
               </div>
             ) : (
               <div className={styles.emptyState}>
-                Оберіть job зі списку, щоб побачити прогрес, результат та причину
-                помилки.
+                Оберіть job зі списку, щоб побачити прогрес, результат та
+                причину помилки.
               </div>
             )}
           </article>
@@ -850,24 +933,35 @@ export function AdminJobsView() {
             <div className={styles.runbookList}>
               <div className={styles.runbookItem}>
                 <CheckCircle2 size={14} />
-                <span>Запускати parse-law, analyze-subjects і batch update без Swagger.</span>
+                <span>
+                  Запускати parse-law, analyze-subjects і batch update без
+                  Swagger.
+                </span>
               </div>
               <div className={styles.runbookItem}>
                 <CheckCircle2 size={14} />
-                <span>Відстежувати зовнішні jobId, якщо задачу створили в іншому місці.</span>
+                <span>
+                  Відстежувати зовнішні jobId, якщо задачу створили в іншому
+                  місці.
+                </span>
               </div>
               <div className={styles.runbookItem}>
                 <CheckCircle2 size={14} />
-                <span>Бачити attempts, progress, failedReason і returnvalue в одному екрані.</span>
+                <span>
+                  Бачити attempts, progress, failedReason і returnvalue в одному
+                  екрані.
+                </span>
               </div>
               <div className={styles.runbookItem}>
                 <CheckCircle2 size={14} />
-                <span>Повторно ставити job у чергу на основі збереженого payload.</span>
+                <span>
+                  Повторно ставити job у чергу на основі збереженого payload.
+                </span>
               </div>
             </div>
             <div className={styles.runbookFooter}>
-              Для глобального списку всіх jobs у системі в майбутньому знадобиться
-              окремий backend endpoint-реєстр черги.
+              Для глобального списку всіх jobs у системі в майбутньому
+              знадобиться окремий backend endpoint-реєстр черги.
             </div>
           </article>
         </aside>
