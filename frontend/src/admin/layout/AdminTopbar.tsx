@@ -75,7 +75,8 @@ const PAGE_TITLES = [
   {
     href: ROUTES.adminDataTools,
     title: "Data tools",
-    subtitle: "Експорт датасетів, parse references та технічні операції над законами",
+    subtitle:
+      "Експорт датасетів, parse references та технічні операції над законами",
   },
   {
     href: ROUTES.adminUsers,

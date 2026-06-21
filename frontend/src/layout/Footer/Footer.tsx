@@ -47,7 +47,11 @@ function CursorBlink({
   return <span className={`${className} ${tick ? onClass : ""}`}>▌</span>;
 }
 
-const WORKSPACE_ROUTES = [ROUTES.admin, ROUTES.supervisorDashboard, ROUTES.legislatorCabinet];
+const WORKSPACE_ROUTES = [
+  ROUTES.admin,
+  ROUTES.supervisorDashboard,
+  ROUTES.legislatorCabinet,
+];
 
 export default function Footer() {
   const pathname = usePathname();

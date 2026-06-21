@@ -23,7 +23,10 @@ export type ParseAllReferencesResult = {
 
 export const adminDataToolsApi = {
   parseAllReferences: () =>
-    requestJson<ParseAllReferencesResult>("/admin/parse-references/all", "POST"),
+    requestJson<ParseAllReferencesResult>(
+      "/admin/parse-references/all",
+      "POST",
+    ),
 
   parseSingleLawReferences: (lawId: string) =>
     requestJson<ParseSingleReferencesResult>(

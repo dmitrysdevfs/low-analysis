@@ -14,7 +14,10 @@ import {
 } from "./icons";
 import styles from "./PlatformBenefitsSection.module.scss";
 
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const ICON_MAP: Record<
+  string,
+  React.ComponentType<{ size?: number; className?: string }>
+> = {
   search: SearchIcon,
   lexai: LexAiIcon,
   analytics: AnalyticsBarsIcon,

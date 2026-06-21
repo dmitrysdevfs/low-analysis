@@ -5,7 +5,10 @@ import { landingStats } from "@/constants/premiumLandingContent";
 import { LaurelIcon, ExpertsIcon, ActsIcon } from "./icons";
 import styles from "./LandingStatsStrip.module.scss";
 
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const ICON_MAP: Record<
+  string,
+  React.ComponentType<{ size?: number; className?: string }>
+> = {
   laurel: LaurelIcon,
   experts: ExpertsIcon,
   acts: ActsIcon,

@@ -89,15 +89,21 @@ export function AdminDataToolsView() {
   const [isParsingAll, setIsParsingAll] = useState(false);
   const [parseResult, setParseResult] = useState<ParseRunResult | null>(null);
 
-  const writeHistory = useCallback((updater: (prev: ActionHistoryEntry[]) => ActionHistoryEntry[]) => {
-    setHistory((prev) => {
-      const next = updater(prev).slice(0, 16);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(next));
-      }
-      return next;
-    });
-  }, []);
+  const writeHistory = useCallback(
+    (updater: (prev: ActionHistoryEntry[]) => ActionHistoryEntry[]) => {
+      setHistory((prev) => {
+        const next = updater(prev).slice(0, 16);
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(
+            HISTORY_STORAGE_KEY,
+            JSON.stringify(next),
+          );
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -124,7 +130,9 @@ export function AdminDataToolsView() {
         }
       } catch {
         if (!cancelled) {
-          notify.warning("Не вдалося завантажити список законів для Data tools.");
+          notify.warning(
+            "Не вдалося завантажити список законів для Data tools.",
+          );
         }
       } finally {
         if (!cancelled) {
@@ -192,7 +200,10 @@ export function AdminDataToolsView() {
       detail: string,
       status: ActionHistoryEntry["status"],
     ) => {
-      writeHistory((prev) => [makeHistoryEntry(kind, title, detail, status), ...prev]);
+      writeHistory((prev) => [
+        makeHistoryEntry(kind, title, detail, status),
+        ...prev,
+      ]);
     },
     [writeHistory],
   );
@@ -236,7 +247,8 @@ export function AdminDataToolsView() {
 
       setIsParsingLaw(true);
       try {
-        const payload = await adminDataToolsApi.parseSingleLawReferences(effectiveLawId);
+        const payload =
+          await adminDataToolsApi.parseSingleLawReferences(effectiveLawId);
         const lawTitle = selectedLaw?.title ?? "Обраний закон";
         setParseResult({
           type: "single",
@@ -254,8 +266,15 @@ export function AdminDataToolsView() {
         notify.success("Посилання для обраного закону успішно перепарсено.");
       } catch (error) {
         const message =
-          error instanceof Error ? error.message : "Не вдалося виконати parse references.";
-        recordHistory("parse-law", "Помилка parse references", message, "error");
+          error instanceof Error
+            ? error.message
+            : "Не вдалося виконати parse references.";
+        recordHistory(
+          "parse-law",
+          "Помилка parse references",
+          message,
+          "error",
+        );
         notify.warning(message);
       } finally {
         setIsParsingLaw(false);
@@ -287,8 +306,15 @@ export function AdminDataToolsView() {
       notify.success("Повний parse references завершено.");
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Не вдалося обробити всю базу.";
-      recordHistory("parse-all", "Помилка parse all references", message, "error");
+        error instanceof Error
+          ? error.message
+          : "Не вдалося обробити всю базу.";
+      recordHistory(
+        "parse-all",
+        "Помилка parse all references",
+        message,
+        "error",
+      );
       notify.warning(message);
     } finally {
       setIsParsingAll(false);
@@ -313,9 +339,10 @@ export function AdminDataToolsView() {
             Експорт датасетів і технічні операції по законах в одному центрі.
           </h2>
           <p className={styles.description}>
-            Цей екран закриває робочі сценарії аналітика, бекенда та адміністратора:
-            швидкий export dataset, parse references для одного закону або всієї бази,
-            а також передача важких batch-операцій у queue-центр.
+            Цей екран закриває робочі сценарії аналітика, бекенда та
+            адміністратора: швидкий export dataset, parse references для одного
+            закону або всієї бази, а також передача важких batch-операцій у
+            queue-центр.
           </p>
           <div className={styles.heroActions}>
             <Link href={ROUTES.adminJobs} className={styles.primaryLink}>
@@ -334,10 +361,12 @@ export function AdminDataToolsView() {
             <Sparkles size={18} />
             <span>Операційний контур</span>
           </div>
-          <strong className={styles.heroStatusValue}>{metrics.endpoints} backend дії</strong>
+          <strong className={styles.heroStatusValue}>
+            {metrics.endpoints} backend дії
+          </strong>
           <p className={styles.heroStatusMeta}>
-            Export через `/api/laws/export` і alias `/api/export/dataset`, admin parse
-            references для `law/:lawId` та `all`.
+            Export через `/api/laws/export` і alias `/api/export/dataset`, admin
+            parse references для `law/:lawId` та `all`.
           </p>
           <div className={styles.heroStatusRows}>
             <div className={styles.heroStatusRow}>
@@ -359,8 +388,12 @@ export function AdminDataToolsView() {
       <section className={styles.kpiRow}>
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Закони</span>
-          <strong className={styles.kpiValue}>{lawsLoading ? "…" : metrics.lawsLoaded}</strong>
-          <span className={styles.kpiMeta}>Доступні в селекторі для export і parsing</span>
+          <strong className={styles.kpiValue}>
+            {lawsLoading ? "…" : metrics.lawsLoaded}
+          </strong>
+          <span className={styles.kpiMeta}>
+            Доступні в селекторі для export і parsing
+          </span>
         </article>
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Формати</span>
@@ -370,12 +403,16 @@ export function AdminDataToolsView() {
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Parse references</span>
           <strong className={styles.kpiValue}>2</strong>
-          <span className={styles.kpiMeta}>По одному закону або по всій базі</span>
+          <span className={styles.kpiMeta}>
+            По одному закону або по всій базі
+          </span>
         </article>
         <article className={styles.kpiCard}>
           <span className={styles.kpiLabel}>Batch handoff</span>
           <strong className={styles.kpiValue}>Jobs</strong>
-          <span className={styles.kpiMeta}>Важкі чергові операції винесені окремо</span>
+          <span className={styles.kpiMeta}>
+            Важкі чергові операції винесені окремо
+          </span>
         </article>
       </section>
 
@@ -385,7 +422,9 @@ export function AdminDataToolsView() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.sectionEyebrow}>Law target</span>
-                <h3 className={styles.sectionTitle}>Оберіть закон для інструментів</h3>
+                <h3 className={styles.sectionTitle}>
+                  Оберіть закон для інструментів
+                </h3>
               </div>
             </div>
 
@@ -419,7 +458,9 @@ export function AdminDataToolsView() {
             </label>
 
             <label className={styles.field}>
-              <span className={styles.fieldLabel}>Або введіть lawId вручну</span>
+              <span className={styles.fieldLabel}>
+                Або введіть lawId вручну
+              </span>
               <input
                 className={styles.input}
                 value={manualLawId}
@@ -434,9 +475,12 @@ export function AdminDataToolsView() {
                   <Database size={15} />
                   <span>{selectedLaw.code}</span>
                 </div>
-                <strong className={styles.lawCardTitle}>{selectedLaw.title}</strong>
+                <strong className={styles.lawCardTitle}>
+                  {selectedLaw.title}
+                </strong>
                 <div className={styles.lawCardMeta}>
-                  {selectedLaw.totalArticles} статей · {selectedLaw.totalSections} розділів
+                  {selectedLaw.totalArticles} статей ·{" "}
+                  {selectedLaw.totalSections} розділів
                 </div>
                 <div className={styles.lawCardMeta}>
                   {selectedLaw.adoptedDate
@@ -475,7 +519,7 @@ export function AdminDataToolsView() {
                 className={styles.input}
                 value={articleFilter}
                 onChange={(event) => setArticleFilter(event.target.value)}
-                placeholder='Напр. 1 або 12-1'
+                placeholder="Напр. 1 або 12-1"
               />
             </label>
 
@@ -502,7 +546,9 @@ export function AdminDataToolsView() {
 
             <div className={styles.previewBox}>
               <span className={styles.previewLabel}>Preview endpoint</span>
-              <code className={styles.previewCode}>{exportPreview || "Оберіть закон"}</code>
+              <code className={styles.previewCode}>
+                {exportPreview || "Оберіть закон"}
+              </code>
             </div>
           </article>
         </section>
@@ -512,7 +558,9 @@ export function AdminDataToolsView() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.sectionEyebrow}>Dataset export</span>
-                <h3 className={styles.sectionTitle}>Вивантаження закону в аналітичний датасет</h3>
+                <h3 className={styles.sectionTitle}>
+                  Вивантаження закону в аналітичний датасет
+                </h3>
               </div>
             </div>
 
@@ -521,14 +569,21 @@ export function AdminDataToolsView() {
                 href={buildExportUrl("/api/laws/export", "xlsx")}
                 className={styles.exportCard}
                 onClick={(event) => {
-                  if (!handleExportClick("XLSX", buildExportUrl("/api/laws/export", "xlsx"))) {
+                  if (
+                    !handleExportClick(
+                      "XLSX",
+                      buildExportUrl("/api/laws/export", "xlsx"),
+                    )
+                  ) {
                     event.preventDefault();
                   }
                 }}
               >
                 <FileSpreadsheet size={18} />
                 <strong>XLSX dataset</strong>
-                <span>Стрімінговий Excel для аналітики й зовнішніх команд.</span>
+                <span>
+                  Стрімінговий Excel для аналітики й зовнішніх команд.
+                </span>
                 <span className={styles.exportMeta}>/api/laws/export</span>
               </a>
 
@@ -548,7 +603,9 @@ export function AdminDataToolsView() {
               >
                 <FileJson size={18} />
                 <strong>JSON flat</strong>
-                <span>Плаский список елементів із батьківським контекстом.</span>
+                <span>
+                  Плаский список елементів із батьківським контекстом.
+                </span>
                 <span className={styles.exportMeta}>mode=flat</span>
               </a>
 
@@ -607,7 +664,9 @@ export function AdminDataToolsView() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.sectionEyebrow}>Reference parser</span>
-                <h3 className={styles.sectionTitle}>Оновлення посилань між законами</h3>
+                <h3 className={styles.sectionTitle}>
+                  Оновлення посилань між законами
+                </h3>
               </div>
             </div>
 
@@ -617,8 +676,8 @@ export function AdminDataToolsView() {
                 <strong>Parse references для одного закону</strong>
               </div>
               <p className={styles.parseHint}>
-                Використовує `POST /api/admin/parse-references/law/:lawId` і повертає
-                `parsed / created / updated`.
+                Використовує `POST /api/admin/parse-references/law/:lawId` і
+                повертає `parsed / created / updated`.
               </p>
               <button
                 type="submit"
@@ -640,8 +699,9 @@ export function AdminDataToolsView() {
                 <strong>Parse references для всієї бази</strong>
               </div>
               <p className={styles.parseHint}>
-                Адмінська масова операція `POST /api/admin/parse-references/all`.
-                Запускайте тільки коли треба перепобудувати reference layer глобально.
+                Адмінська масова операція `POST
+                /api/admin/parse-references/all`. Запускайте тільки коли треба
+                перепобудувати reference layer глобально.
               </p>
               <button
                 type="button"
@@ -665,7 +725,9 @@ export function AdminDataToolsView() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.sectionEyebrow}>Last result</span>
-                <h3 className={styles.sectionTitle}>Останній технічний результат</h3>
+                <h3 className={styles.sectionTitle}>
+                  Останній технічний результат
+                </h3>
               </div>
             </div>
 
@@ -719,22 +781,28 @@ export function AdminDataToolsView() {
                 <div className={styles.resultTime}>
                   {formatDateFull(parseResult.createdAt)}
                 </div>
-                {parseResult.type === "all" && parseResult.payload.results.length > 0 && (
-                  <div className={styles.resultPreviewList}>
-                    {parseResult.payload.results.slice(0, 5).map((item) => (
-                      <div key={item.lawId} className={styles.resultPreviewItem}>
-                        <span>{item.lawId}</span>
-                        <strong>
-                          p:{item.parsed} · c:{item.created} · u:{item.updated}
-                        </strong>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {parseResult.type === "all" &&
+                  parseResult.payload.results.length > 0 && (
+                    <div className={styles.resultPreviewList}>
+                      {parseResult.payload.results.slice(0, 5).map((item) => (
+                        <div
+                          key={item.lawId}
+                          className={styles.resultPreviewItem}
+                        >
+                          <span>{item.lawId}</span>
+                          <strong>
+                            p:{item.parsed} · c:{item.created} · u:
+                            {item.updated}
+                          </strong>
+                        </div>
+                      ))}
+                    </div>
+                  )}
               </div>
             ) : (
               <div className={styles.emptyState}>
-                Після export або parse тут з&apos;явиться короткий підсумок останньої дії.
+                Після export або parse тут з&apos;явиться короткий підсумок
+                останньої дії.
               </div>
             )}
           </article>
@@ -743,7 +811,9 @@ export function AdminDataToolsView() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.sectionEyebrow}>Quick links</span>
-                <h3 className={styles.sectionTitle}>Batch handoff і суміжні центри</h3>
+                <h3 className={styles.sectionTitle}>
+                  Batch handoff і суміжні центри
+                </h3>
               </div>
             </div>
             <div className={styles.quickLinks}>
@@ -779,7 +849,9 @@ export function AdminDataToolsView() {
             <div className={styles.panelHeader}>
               <div>
                 <span className={styles.sectionEyebrow}>Local history</span>
-                <h3 className={styles.sectionTitle}>Останні дії в Data tools</h3>
+                <h3 className={styles.sectionTitle}>
+                  Останні дії в Data tools
+                </h3>
               </div>
             </div>
             {history.length ? (
@@ -807,7 +879,8 @@ export function AdminDataToolsView() {
               </div>
             ) : (
               <div className={styles.emptyState}>
-                Історія з&apos;явиться після першого export, copy URL або parse-run.
+                Історія з&apos;явиться після першого export, copy URL або
+                parse-run.
               </div>
             )}
           </article>

@@ -10,7 +10,10 @@ import {
 import { TempleIcon, GridIcon, ToolsIcon, ProfileIcon } from "./icons";
 import styles from "./PlatformStructureSection.module.scss";
 
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const ICON_MAP: Record<
+  string,
+  React.ComponentType<{ size?: number; className?: string }>
+> = {
   temple: TempleIcon,
   grid: GridIcon,
   tools: ToolsIcon,
