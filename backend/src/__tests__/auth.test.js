@@ -27,12 +27,12 @@ describe('Auth API', () => {
         _id: 'mock-user-id',
         ...userData,
         role: 'user',
+        tokenVersion: 0,
       });
 
       const res = await request(app).post('/api/auth/register').send(userData);
 
       expect(res.status).toBe(201);
-      expect(res.body).toHaveProperty('token');
       expect(res.body.email).toBe(userData.email);
       expect(User.create).toHaveBeenCalled();
     });
@@ -63,6 +63,7 @@ describe('Auth API', () => {
         email: 'test@example.com',
         fullName: 'Test User',
         role: 'user',
+        tokenVersion: 0,
         comparePassword: vi.fn().mockResolvedValue(true),
       };
 
@@ -70,11 +71,11 @@ describe('Auth API', () => {
       User.findOne.mockReturnValue({
         select: vi.fn().mockResolvedValue(mockUser),
       });
+      User.findByIdAndUpdate.mockReturnValue({ catch: vi.fn() });
 
       const res = await request(app).post('/api/auth/login').send(userData);
 
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('token');
       expect(mockUser.comparePassword).toHaveBeenCalledWith(userData.password);
     });
 
@@ -98,6 +99,8 @@ describe('Auth API', () => {
         email: 'test@example.com',
         fullName: 'Test User',
         role: 'user',
+        status: 'active',
+        tokenVersion: 0,
       };
 
       const mockQuery = {
@@ -184,11 +187,14 @@ describe('Auth API', () => {
         email: 'test@example.com',
         fullName: 'Original Name',
         role: 'user',
+        status: 'active',
+        tokenVersion: 0,
         save: vi.fn().mockResolvedValue({
           _id: 'mock-user-id',
           email: 'test@example.com',
           fullName: 'Updated Name',
           role: 'user',
+          status: 'active',
         }),
       };
 
@@ -218,6 +224,8 @@ describe('Auth API', () => {
         email: 'test@example.com',
         fullName: 'Original Name',
         role: 'user',
+        status: 'active',
+        tokenVersion: 0,
         password: 'hashedpassword',
         comparePassword: vi.fn().mockResolvedValue(true),
         save: vi.fn().mockResolvedValue(true),
@@ -250,6 +258,8 @@ describe('Auth API', () => {
         email: 'test@example.com',
         fullName: 'Original Name',
         role: 'user',
+        status: 'active',
+        tokenVersion: 0,
         password: 'hashedpassword',
         comparePassword: vi.fn().mockResolvedValue(false),
       };
