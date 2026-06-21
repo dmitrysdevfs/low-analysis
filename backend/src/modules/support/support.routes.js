@@ -97,11 +97,9 @@ router.post(
         .json({ message: "Текст повідомлення обов'язковий" });
     }
     if (text.length > 5000) {
-      return res
-        .status(400)
-        .json({
-          message: 'Повідомлення занадто довге (максимум 5000 символів)',
-        });
+      return res.status(400).json({
+        message: 'Повідомлення занадто довге (максимум 5000 символів)',
+      });
     }
     if (guestName && guestName.length > 100) {
       return res
