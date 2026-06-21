@@ -136,3 +136,25 @@ export const syncCheck = async (_req, res, next) => {
     next(err);
   }
 };
+
+export const registerWebhook = async (req, res, next) => {
+  try {
+    const { webhookUrl } = req.body ?? {};
+    if (!webhookUrl) {
+      return res.status(400).json({ message: 'webhookUrl is required' });
+    }
+    const result = await supportService.registerTelegramWebhook({ webhookUrl });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getWebhookInfo = async (_req, res, next) => {
+  try {
+    const result = await supportService.fetchTelegramWebhookInfo();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};

@@ -3,10 +3,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getSupervisorDashboard,
+  getSupervisorGroupDetail,
   getSupervisorGroups,
   createSupervisorGroup,
   updateSupervisorGroup,
-  type SupervisorGroup,
 } from "@/lib/api/supervisor";
 
 const KEYS = {
@@ -30,6 +30,15 @@ export function useSupervisorGroups() {
   });
 }
 
+export function useSupervisorGroupDetail(groupId: string | null) {
+  return useQuery({
+    queryKey: ["supervisor", "group", groupId],
+    queryFn: () => getSupervisorGroupDetail(groupId as string),
+    enabled: Boolean(groupId),
+    retry: false,
+  });
+}
+
 export function useCreateSupervisorGroup() {
   const qc = useQueryClient();
   return useMutation({
@@ -37,6 +46,7 @@ export function useCreateSupervisorGroup() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: KEYS.groups });
       qc.invalidateQueries({ queryKey: KEYS.dashboard });
+      qc.invalidateQueries({ queryKey: ["supervisor", "group"] });
     },
   });
 }
@@ -54,6 +64,7 @@ export function useUpdateSupervisorGroup() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: KEYS.groups });
       qc.invalidateQueries({ queryKey: KEYS.dashboard });
+      qc.invalidateQueries({ queryKey: ["supervisor", "group"] });
     },
   });
 }

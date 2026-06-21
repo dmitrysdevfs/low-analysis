@@ -13,23 +13,24 @@ import { NoteModal } from "@/components/notes/NoteModal";
 import type { NoteDraft } from "@/lib/notes/types";
 import { getRoleColor, hexToRgb } from "@/lib/tree";
 import { SessionMenu } from "./SessionMenu";
+import { WorkspaceIcon } from "./LayoutIcons";
 import { useSidebarData } from "./SidebarDataContext";
 import { SubjectMentionsModal } from "@/components/subject/SubjectMentionsModal";
 import styles from "./AppSidebar.module.scss";
 
-export function AppSidebar({ visible }: { visible: boolean }) {
+export function AppSidebar({ visible, onClose }: { visible: boolean; onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const sidebarAsHeaderRef = useRef<HTMLElement | null>(null);
-  const { isAuthenticated, isAdmin, isLegislator, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } = useAuth();
   const { subjects, onSubjectSelect, activeSubjectId } = useSidebarData();
   const { notes } = useNotes();
   const [mounted, setMounted] = useState(false);
 
   const navItems = useMemo(
-    () => buildNavItems({ isAuthenticated }),
-    [isAuthenticated],
+    () => buildNavItems({ isAuthenticated, isLegislator, isSupervisor }),
+    [isAuthenticated, isLegislator, isSupervisor],
   );
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -40,8 +41,8 @@ export function AppSidebar({ visible }: { visible: boolean }) {
   const recentNotes = useMemo(() => notes.slice(0, 5), [notes]);
 
   const sessionMenuItems = useMemo(
-    () => buildSessionMenuItems({ isAdmin, isLegislator }),
-    [isAdmin, isLegislator],
+    () => buildSessionMenuItems({ isAdmin, isLegislator, isSupervisor }),
+    [isAdmin, isLegislator, isSupervisor],
   );
 
   function handleLogout() {
@@ -183,6 +184,7 @@ export function AppSidebar({ visible }: { visible: boolean }) {
         {visible && (
           <motion.div
             ref={sidebarRef}
+            data-sidebar="true"
             className={`${styles.sidebar} ${isDragOver ? styles.sidebarDragOver : ""}`}
             initial={{ x: -220, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -195,6 +197,16 @@ export function AppSidebar({ visible }: { visible: boolean }) {
               <Link href={ROUTES.home} className={styles.logoLink}>
                 Law Analysis
               </Link>
+              {isAuthenticated && !isAdmin && (
+                <Link
+                  href={ROUTES.account}
+                  className={`${styles.workspaceBtn} ${pathname.startsWith("/account") ? styles.workspaceBtnActive : ""}`}
+                  title="Мій кабінет"
+                  onClick={onClose}
+                >
+                  <WorkspaceIcon />
+                </Link>
+              )}
             </div>
 
             <div className={styles.divider} />

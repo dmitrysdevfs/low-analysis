@@ -265,7 +265,7 @@ export function AdminTopbar({
 
   const visibleNotifItems = useMemo(() => {
     const requests = (pendingRequests ?? []).map((r) => {
-      const userObj = typeof r.user_id === "object" ? r.user_id : null;
+      const userObj = typeof r.userId === "object" ? r.userId : null;
       return {
         id: r._id,
         group: "requests" as const,

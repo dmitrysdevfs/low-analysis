@@ -13,7 +13,11 @@
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
-    radial-gradient(circle at top right, rgba(74, 128, 212, 0.14), transparent 40%),
+    radial-gradient(
+      circle at top right,
+      rgba(74, 128, 212, 0.14),
+      transparent 40%
+    ),
     linear-gradient(160deg, rgba(16, 26, 50, 0.98), rgba(10, 18, 36, 0.95));
 }
 
@@ -212,7 +216,9 @@
   color: #8aa5c8;
   font-size: 0.7rem;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 
   &:hover {
     border-color: rgba(200, 168, 67, 0.25);
@@ -257,7 +263,10 @@
   color: #c7d5ea;
   font-size: 0.74rem;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
 
   &:hover {
     border-color: rgba(200, 168, 67, 0.28);
@@ -366,7 +375,9 @@
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 
   &:hover {
     background: rgba(74, 128, 212, 0.2);
@@ -394,7 +405,9 @@
   cursor: pointer;
   text-align: left;
   width: 100%;
-  transition: color 0.13s, background 0.13s;
+  transition:
+    color 0.13s,
+    background 0.13s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.04);
@@ -599,7 +612,10 @@
   font-size: 0.7rem;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 0.13s, border-color 0.13s, background 0.13s;
+  transition:
+    color 0.13s,
+    border-color 0.13s,
+    background 0.13s;
 
   &:hover {
     color: #d8e4f6;
@@ -633,7 +649,9 @@
   background: transparent;
   color: #4a5e7a;
   cursor: pointer;
-  transition: background 0.13s, color 0.13s;
+  transition:
+    background 0.13s,
+    color 0.13s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.06);
@@ -848,7 +866,9 @@
   color: #6a88b0;
   font-size: 0.66rem;
   cursor: pointer;
-  transition: border-color 0.13s, color 0.13s;
+  transition:
+    border-color 0.13s,
+    color 0.13s;
 
   &:hover {
     border-color: rgba(74, 128, 212, 0.28);
@@ -958,7 +978,9 @@
   background: transparent;
   color: #4a5e7a;
   cursor: pointer;
-  transition: background 0.13s, color 0.13s;
+  transition:
+    background 0.13s,
+    color 0.13s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.06);
@@ -1143,7 +1165,9 @@
   color: #4a5e7a;
   font-size: 0.7rem;
   cursor: pointer;
-  transition: background 0.13s, color 0.13s;
+  transition:
+    background 0.13s,
+    color 0.13s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.06);
@@ -1227,7 +1251,9 @@
   color: #8aa5c8;
   font-size: 0.73rem;
   cursor: pointer;
-  transition: border-color 0.13s, color 0.13s;
+  transition:
+    border-color 0.13s,
+    color 0.13s;
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.16);
@@ -1246,7 +1272,9 @@
   background: transparent;
   color: #4a5e7a;
   cursor: pointer;
-  transition: background 0.13s, color 0.13s;
+  transition:
+    background 0.13s,
+    color 0.13s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.06);
@@ -1374,7 +1402,9 @@
   font-size: 0.66rem;
   cursor: pointer;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
-  transition: background 0.13s, color 0.13s;
+  transition:
+    background 0.13s,
+    color 0.13s;
 
   &:last-child {
     border-right: none;
@@ -1478,7 +1508,9 @@
   color: #4a5e7a;
   font-size: 0.65rem;
   cursor: pointer;
-  transition: color 0.13s, border-color 0.13s;
+  transition:
+    color 0.13s,
+    border-color 0.13s;
 
   &:hover {
     color: #d8e4f6;
@@ -1563,7 +1595,10 @@
   font-size: 0.72rem;
   cursor: pointer;
   text-align: left;
-  transition: background 0.13s, border-color 0.13s, color 0.13s;
+  transition:
+    background 0.13s,
+    border-color 0.13s,
+    color 0.13s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.06);

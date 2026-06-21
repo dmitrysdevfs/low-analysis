@@ -27,6 +27,7 @@ import activityRoutes from './routes/activity.js';
 import notesRoutes from './routes/notesRoutes.js';
 import meRoutes from './routes/meRoutes.js';
 import graphRoutes from './routes/graphRoutes.js';
+import graphForkRoutes from './routes/graphForkRoutes.js';
 import supportRoutes from './modules/support/support.routes.js';
 import billingRoutes from './routes/billingRoutes.js';
 import supervisorRoutes from './routes/supervisorRoutes.js';
@@ -76,7 +77,8 @@ const corsOptions = {
     }
 
     const isVercelPreview =
-      /^https:\/\/low-analysis-frontend.*\.vercel\.app$/.test(origin);
+      origin === 'https://low-analysis-frontend.vercel.app' ||
+      /^https:\/\/low-analysis-frontend-[a-z0-9-]+\.vercel\.app$/.test(origin);
     if (isVercelPreview) {
       callback(null, true);
       return;
@@ -95,18 +97,20 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 
-app.get('/api-docs.json', (req, res) => {
-  res.json(spec);
-});
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(spec, {
-    customSiteTitle: 'Low Analysis API',
-    customCss: swaggerCustomCss,
-    customJs: swaggerCustomJs,
-  }),
-);
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/api-docs.json', (req, res) => {
+    res.json(spec);
+  });
+  app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(spec, {
+      customSiteTitle: 'Low Analysis API',
+      customCss: swaggerCustomCss,
+      customJs: swaggerCustomJs,
+    }),
+  );
+}
 
 app.use('/api/laws', lawRoutes);
 app.use('/api/subjects', subjectRoutes);
@@ -130,6 +134,7 @@ app.use('/api/activity', activityRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/api/me', meRoutes);
 app.use('/api/graph', graphRoutes);
+app.use('/api/graph-forks', graphForkRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/supervisor', supervisorRoutes);

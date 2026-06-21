@@ -43,6 +43,8 @@ router.get('/status', ctrl.getStatus);
  *                 webhookStatus: { type: string, enum: [ok, degraded, down] }
  */
 router.post('/sync-check', ctrl.syncCheck);
+router.post('/webhook/register', ctrl.registerWebhook);
+router.get('/webhook/info', ctrl.getWebhookInfo);
 
 /**
  * @swagger

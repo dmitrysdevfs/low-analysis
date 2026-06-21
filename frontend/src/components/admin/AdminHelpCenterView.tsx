@@ -62,18 +62,44 @@ const QUICK_START = [
 ];
 
 const USEFUL_LINKS = [
-  { label: "API документація", sub: "Swagger UI", icon: FileJson, href: "/api-docs" },
-  { label: "Статус системи", sub: "Операційний статус", icon: TrendingUp, href: ROUTES.adminAnalytics },
-  { label: "Roadmap", sub: "Плани та оновлення", icon: Map, href: ROUTES.adminArchitecture },
+  {
+    label: "API документація",
+    sub: "Swagger UI",
+    icon: FileJson,
+    href: "/api-docs",
+  },
+  {
+    label: "Статус системи",
+    sub: "Операційний статус",
+    icon: TrendingUp,
+    href: ROUTES.adminAnalytics,
+  },
+  {
+    label: "Roadmap",
+    sub: "Плани та оновлення",
+    icon: Map,
+    href: ROUTES.adminArchitecture,
+  },
 ];
 
-const CATEGORY_ORDER = ["Всі", "Користувачі", "Аналітика", "Аудит", "Коди", "API", "Білінг"];
+const CATEGORY_ORDER = [
+  "Всі",
+  "Користувачі",
+  "Аналітика",
+  "Аудит",
+  "Коди",
+  "API",
+  "Білінг",
+];
 
 const adminArticles = ALL_ARTICLES.filter(
   (a) => a.audience === "admin" || a.audience === "both",
 );
 
-const lastUpdated = adminArticles.map((a) => a.updatedAt).sort().reverse()[0];
+const lastUpdated = adminArticles
+  .map((a) => a.updatedAt)
+  .sort()
+  .reverse()[0];
 
 function countByCategory(category: string) {
   return adminArticles.filter((a) => a.category === category).length;
@@ -97,7 +123,8 @@ export function AdminHelpCenterView({ items }: Props) {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return items.filter((item) => {
-      const matchCat = activeCategory === "Всі" || item.category === activeCategory;
+      const matchCat =
+        activeCategory === "Всі" || item.category === activeCategory;
       const matchQ =
         !q ||
         item.question.toLowerCase().includes(q) ||
@@ -116,7 +143,9 @@ export function AdminHelpCenterView({ items }: Props) {
         {/* header */}
         <div className={styles.header}>
           <h1 className={styles.title}>Часті питання</h1>
-          <p className={styles.subtitle}>База знань для адміністраторів платформи</p>
+          <p className={styles.subtitle}>
+            База знань для адміністраторів платформи
+          </p>
         </div>
 
         {/* search */}
@@ -166,7 +195,10 @@ export function AdminHelpCenterView({ items }: Props) {
                   <span className={styles.quickTitle}>{qs.title}</span>
                   <span className={styles.quickDesc}>{qs.desc}</span>
                   {count > 0 && (
-                    <span className={styles.quickCount} style={{ color: qs.color }}>
+                    <span
+                      className={styles.quickCount}
+                      style={{ color: qs.color }}
+                    >
                       {count} {articleWord(count)} →
                     </span>
                   )}
@@ -265,15 +297,21 @@ export function AdminHelpCenterView({ items }: Props) {
               <BookMarked size={13} className={styles.asideLinkIcon} />
               <span>
                 <span className={styles.asideLinkLabel}>Документація</span>
-                <span className={styles.asideLinkSub}>Повна документація платформи</span>
+                <span className={styles.asideLinkSub}>
+                  Повна документація платформи
+                </span>
               </span>
               <ArrowRight size={11} className={styles.asideArrow} />
             </Link>
             <Link href={ROUTES.adminSupport} className={styles.asideLink}>
               <MessageSquare size={13} className={styles.asideLinkIcon} />
               <span>
-                <span className={styles.asideLinkLabel}>Звернутись в Support</span>
-                <span className={styles.asideLinkSub}>Чат або Telegram-канал</span>
+                <span className={styles.asideLinkLabel}>
+                  Звернутись в Support
+                </span>
+                <span className={styles.asideLinkSub}>
+                  Чат або Telegram-канал
+                </span>
               </span>
               <ArrowRight size={11} className={styles.asideArrow} />
             </Link>

@@ -1,41 +1,414 @@
 .root {
-  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 0;
 }
-.section {
-  background: var(--th-surface, #12192e);
-  border: 1px solid var(--th-border, #1e2d4a);
-  border-radius: 8px;
-  padding: 24px;
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  align-items: start;
 }
-.sectionTitle {
+
+.leftCol,
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Glass card */
+.card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6a88b0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Connection chip */
+.connChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.connChip_ok {
+  background: rgba(82, 183, 136, 0.1);
+  border: 1px solid rgba(82, 183, 136, 0.25);
+  color: #52b788;
+}
+
+.connChip_error {
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  color: #f87171;
+}
+
+.connChip_checking {
+  background: rgba(74, 128, 212, 0.1);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+  color: #4a80d4;
+}
+
+.connChip_idle {
+  background: rgba(106, 136, 176, 0.1);
+  border: 1px solid rgba(106, 136, 176, 0.2);
+  color: #6a88b0;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Provider logo row */
+.providerLogo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 9px;
+}
+
+.providerName {
   font-size: 14px;
   font-weight: 700;
-  color: var(--th-text, #e8e6df);
-  margin: 0 0 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  color: #ffffff;
 }
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+
+.providerSub {
+  font-size: 11px;
+  color: #5a78a0;
+  margin-top: 1px;
 }
+
+/* Field */
+.fieldGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
+
 .fieldLabel {
-  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
   font-weight: 600;
+  color: #4a6080;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--th-muted, #8892a4);
 }
+
 .fieldValue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #d6e0f0;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+}
+
+.fieldValueText {
+  font-size: 13px;
+  color: #d6e0f0;
+}
+
+.apiKey {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #7a98c0;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  color: #5a78a0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: all 0.12s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #d6e0f0;
+  }
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(74, 128, 212, 0.08);
+  border: 1px solid rgba(74, 128, 212, 0.25);
+  border-radius: 7px;
+  color: #4a80d4;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) {
+    background: rgba(74, 128, 212, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: linear-gradient(135deg, #c8a843 0%, #e8c840 100%);
+  border: none;
+  border-radius: 7px;
+  color: #080f20;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+/* Test send */
+.testSendWrap {
+  display: flex;
+  gap: 8px;
+}
+
+.testInput {
+  flex: 1;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+
+  &:focus {
+    border-color: rgba(200, 168, 67, 0.4);
+  }
+
+  &::placeholder {
+    color: #3a5070;
+  }
+}
+
+.testOk {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #52b788;
+}
+
+.testErr {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #f87171;
+}
+
+/* DNS checks */
+.dnsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dnsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.dnsLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dnsIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.dnsIconOk {
+  color: #52b788;
+}
+
+.dnsIconWarn {
+  color: #e9774b;
+}
+
+.dnsName {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d6e0f0;
+  margin-bottom: 2px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+}
+
+.dnsValue {
+  font-size: 10px;
+  color: #4a6080;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dnsBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.dnsBadgeOk {
+  background: rgba(82, 183, 136, 0.1);
+  color: #52b788;
+}
+
+.dnsBadgeWarn {
+  background: rgba(233, 119, 75, 0.1);
+  color: #e9774b;
+}
+
+/* Domain */
+.domainRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(82, 183, 136, 0.04);
+  border: 1px solid rgba(82, 183, 136, 0.12);
+  border-radius: 9px;
+}
+
+.domainIcon {
+  flex-shrink: 0;
+}
+
+.domainName {
   font-size: 14px;
-  color: var(--th-text, #e8e6df);
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.domainStatus {
+  font-size: 11px;
+  color: #52b788;
+  margin-top: 1px;
+}
+
+/* Quota */
+.quotaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.quotaLabel {
+  font-size: 12px;
+  color: #6a88b0;
+}
+
+.quotaNum {
+  font-size: 13px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+}
+
+.quotaUsed {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.quotaMax {
+  color: #4a6080;
+}
+
+.quotaBar {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.quotaFill {
+  height: 100%;
+  background: #c8a843;
+  border-radius: 3px;
+  transition: width 0.4s ease;
 }

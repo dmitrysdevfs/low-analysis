@@ -1,0 +1,151 @@
+.section {
+  padding: 32px 48px 72px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 48px 56px;
+  background: linear-gradient(135deg, rgba(12, 28, 52, 0.98) 0%, rgba(6, 14, 28, 0.98) 100%);
+  border: 1px solid rgba(218, 174, 72, 0.25);
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(218, 174, 72, 0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(218, 174, 72, 0.3), transparent);
+  }
+}
+
+/* Illustration */
+.illustrationWrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbBg {
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(218, 174, 72, 0.12) 0%, transparent 70%);
+  border: 1px solid rgba(218, 174, 72, 0.12);
+}
+
+.scales {
+  filter: drop-shadow(0 0 16px rgba(218, 174, 72, 0.35));
+  position: relative;
+  z-index: 1;
+}
+
+/* Copy */
+.copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.headline {
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  color: #f7f2e8;
+  margin: 0 0 12px;
+  line-height: 1.15;
+}
+
+.sub {
+  font-size: 0.9rem;
+  color: #9fb2c7;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 460px;
+}
+
+/* CTA */
+.ctaWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #d8a735 0%, #f2c766 100%);
+  color: #020b12;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.02em;
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+}
+
+.ctaNote {
+  font-size: 0.72rem;
+  color: rgba(159, 178, 199, 0.7);
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 32px;
+    gap: 28px;
+  }
+
+  .sub {
+    max-width: 100%;
+  }
+
+  .ctaBtn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding: 24px 20px 56px;
+  }
+
+  .banner {
+    padding: 32px 24px;
+  }
+}

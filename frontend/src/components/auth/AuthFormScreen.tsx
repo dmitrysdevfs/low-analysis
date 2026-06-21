@@ -17,6 +17,7 @@ import {
   CheckIcon,
 } from "./AuthIcons";
 import { useAuth } from "./AuthProvider";
+import { GoogleLoginButton } from "./GoogleLoginButton";
 import styles from "./AuthFormScreen.module.scss";
 
 type AuthMode = "login" | "register";
@@ -562,6 +563,8 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
             {submitLabel}
           </button>
         </form>
+
+        <GoogleLoginButton isRegister={isRegister} />
 
         <p className={styles.switchLine}>
           {copy.switchLead}{" "}

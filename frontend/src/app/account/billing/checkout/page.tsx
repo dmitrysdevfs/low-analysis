@@ -1,10 +1,10 @@
-﻿import { Layout } from "@/components/layout/Layout";
-import { CheckoutDemo } from "@/components/account/CheckoutDemo";
+import { Suspense } from "react";
+import { CheckoutDashboard } from "@/features/account1/CheckoutDashboard";
 
 export default function AccountBillingCheckoutPage() {
   return (
-    <Layout fullHeight>
-      <CheckoutDemo />
-    </Layout>
+    <Suspense>
+      <CheckoutDashboard />
+    </Suspense>
   );
 }

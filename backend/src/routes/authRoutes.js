@@ -8,8 +8,10 @@ import {
   updateUserPassword,
   forgotPassword,
   resetPassword,
+  googleAuth,
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { guestRateLimit } from '../middleware/guestRateLimit.js';
 
 const router = express.Router();
 
@@ -89,7 +91,7 @@ function passwordResetRateLimit(req, res, next) {
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.post('/register', registerUser);
+router.post('/register', guestRateLimit, registerUser);
 
 /**
  * @swagger
@@ -125,7 +127,7 @@ router.post('/register', registerUser);
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.post('/login', loginUser);
+router.post('/login', guestRateLimit, loginUser);
 
 /**
  * @swagger
@@ -255,5 +257,6 @@ router.post('/logout', logoutUser);
 
 router.post('/forgot-password', passwordResetRateLimit, forgotPassword);
 router.post('/reset-password', passwordResetRateLimit, resetPassword);
+router.post('/google', guestRateLimit, googleAuth);
 
 export default router;

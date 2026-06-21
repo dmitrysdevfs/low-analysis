@@ -45,13 +45,22 @@ export const approveRequest = async (req, res, next) => {
 
 export const rejectRequest = async (req, res, next) => {
   try {
-    const { review_note } = req.body;
+    const { review_note, adminNote } = req.body;
     const request = await legislatorRequestService.rejectRequest(
       req.params.id,
       req.user._id,
-      review_note,
+      adminNote ?? review_note,
     );
     res.json(request);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const revokeRole = async (req, res, next) => {
+  try {
+    const user = await legislatorRequestService.revokeRole(req.user._id);
+    res.json(user);
   } catch (err) {
     next(err);
   }

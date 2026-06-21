@@ -3,15 +3,23 @@
 import { getJson, requestJson } from "./_client";
 import type { LegislatorAccessRequest } from "@/types/law-change.types";
 
-// User: submit request for legislator role
+// User: submit request for legislator/supervisor role
 export const submitAccessRequest = (data: {
   organization: string;
   reason: string;
+  requestedRole: "legislator" | "supervisor";
 }) =>
   requestJson<LegislatorAccessRequest>(
     "/law-change/legislator-requests",
     "POST",
     data,
+  );
+
+// User: revoke own role (returns to 'user')
+export const revokeMyRole = () =>
+  requestJson<{ _id: string; role: string }>(
+    "/law-change/legislator-requests/revoke",
+    "POST",
   );
 
 // User: get my request status

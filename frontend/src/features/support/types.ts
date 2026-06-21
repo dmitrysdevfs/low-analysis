@@ -68,7 +68,18 @@ export interface SupportMessage {
   channel: "web" | "telegram" | "system";
   deliveredToTelegram: boolean;
   telegramMessageId: number | null;
+  telegramSenderId: string | null;
+  telegramSenderUsername: string | null;
   createdAt: string;
+}
+
+export interface TelegramWebhookInfo {
+  url?: string;
+  has_custom_certificate?: boolean;
+  pending_update_count?: number;
+  last_error_date?: number;
+  last_error_message?: string;
+  max_connections?: number;
 }
 
 export interface SupportConversationPayload {

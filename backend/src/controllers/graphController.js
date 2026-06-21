@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getGraphForLaw, getGlobalGraph } from '../services/graphService.js';
+import { getGraphForLaw, getGlobalGraph, getGraphSubjects } from '../services/graphService.js';
 import LawReference from '../models/LawReference.js';
 
 export async function getLawGraph(req, res) {
@@ -33,6 +33,15 @@ export async function getGlobalGraphHandler(req, res) {
       edges,
       meta: { generatedAt: new Date() },
     });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function getGraphSubjectsHandler(req, res) {
+  try {
+    const subjects = await getGraphSubjects();
+    return res.status(200).json({ subjects });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

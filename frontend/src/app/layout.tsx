@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { ClarityScript } from "@/components/layout/ClarityScript";
 import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,6 +11,7 @@ import { FooterStats } from "@/layout/Footer/FooterStats";
 import { BackendWarmup } from "@/components/layout/BackendWarmup";
 import { ScrollRestore } from "@/components/layout/ScrollRestore";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { RouteAccessGate } from "@/components/auth/RouteAccessGate";
 import { BillingProvider } from "@/components/billing/BillingProvider";
 import { GuestLimitsProvider } from "@/components/guest/GuestLimitsProvider";
@@ -97,6 +98,7 @@ export default function RootLayout({
       <body className="min-h-full">
         <AppQueryProvider>
           <ErrorBoundary>
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "stub"}>
             <AuthProvider>
               <BillingProvider>
                 <GuestLimitsProvider>
@@ -113,7 +115,6 @@ export default function RootLayout({
                         </div>
                         <AiAssistantLazy />
                         <SupportChatWidget />
-                        <FooterStats />
                         <Footer />
                       </div>
                     </SidebarDataProvider>
@@ -121,16 +122,11 @@ export default function RootLayout({
                 </GuestLimitsProvider>
               </BillingProvider>
             </AuthProvider>
+            </GoogleOAuthProvider>
           </ErrorBoundary>
         </AppQueryProvider>
         <ToastContainer />
-        <Script
-          id="ms-clarity"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x42vvdj1l2");`,
-          }}
-        />
+        <ClarityScript />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!} />
       </body>
     </html>

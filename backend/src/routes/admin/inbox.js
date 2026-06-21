@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { protect, authorize } from '../../middleware/authMiddleware.js';
 import * as ctrl from '../../controllers/admin/inbox.controller.js';
 
+
 const router = Router();
 
 /**
@@ -170,5 +171,6 @@ router.post('/threads/:id/read', ctrl.markRead);
  *         description: Відповідь надіслано
  */
 router.post('/threads/:id/reply', ctrl.reply);
+router.post('/compose', ctrl.compose);
 
 export default router;

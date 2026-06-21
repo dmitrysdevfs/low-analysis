@@ -117,7 +117,21 @@ export async function registerUser(
       return { ok: false, error: data.message || "Помилка реєстрації" };
     }
 
-    return { ok: true, redirectTo: ROUTES.authLogin };
+    const session: AuthSession = {
+      id: data._id,
+      displayName: data.fullName,
+      email: data.email,
+      roles: [data.role],
+      accountType: data.role === "admin" ? "admin" : "client",
+      lastLoginAt: new Date().toISOString(),
+    };
+    storeSession(session, true);
+
+    return {
+      ok: true,
+      redirectTo: session.accountType === "admin" ? ROUTES.admin : ROUTES.rolesDashboard,
+      session,
+    };
   } catch {
     return { ok: false, error: "Помилка з'єднання з сервером" };
   }
@@ -217,6 +231,43 @@ export async function changeUserPassword(
     }
 
     return { ok: true };
+  } catch {
+    return { ok: false, error: "Помилка з'єднання з сервером" };
+  }
+}
+
+export async function loginWithGoogle(
+  accessToken: string,
+): Promise<AuthActionResult> {
+  try {
+    const res = await fetch(`${API_BASE}/google`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessToken }),
+    });
+    const data = await res.json();
+    if (!res.ok)
+      return { ok: false, error: data.message || "Помилка Google авторизації" };
+
+    const session: AuthSession = {
+      id: data._id,
+      displayName: data.fullName,
+      email: data.email,
+      roles: [data.role],
+      accountType: data.role === "admin" ? "admin" : "client",
+      lastLoginAt: new Date().toISOString(),
+    };
+    storeSession(session, true);
+
+    const redirectTo =
+      session.accountType === "admin"
+        ? ROUTES.admin
+        : data.isNewUser
+          ? ROUTES.rolesDashboard
+          : ROUTES.home;
+
+    return { ok: true, redirectTo, session };
   } catch {
     return { ok: false, error: "Помилка з'єднання з сервером" };
   }

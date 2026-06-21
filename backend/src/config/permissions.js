@@ -30,6 +30,7 @@ export const ROLE_PERMISSIONS = {
     'activity:read',
     'comments:read',
     'law_changes:read',
+    'law_changes:vote',
   ],
   admin: ['*'],
 };

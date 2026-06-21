@@ -1,0 +1,14 @@
+export { TempleIcon } from "./TempleIcon";
+export { GridIcon } from "./GridIcon";
+export { ToolsIcon } from "./ToolsIcon";
+export { ProfileIcon } from "./ProfileIcon";
+export { SearchIcon } from "./SearchIcon";
+export { LexAiIcon } from "./LexAiIcon";
+export { AnalyticsBarsIcon } from "./AnalyticsBarsIcon";
+export { DiffDocsIcon } from "./DiffDocsIcon";
+export { BellIcon } from "./BellIcon";
+export { ShieldCheckIcon } from "./ShieldCheckIcon";
+export { ScalesIcon } from "./ScalesIcon";
+export { LaurelIcon } from "./LaurelIcon";
+export { ExpertsIcon } from "./ExpertsIcon";
+export { ActsIcon } from "./ActsIcon";

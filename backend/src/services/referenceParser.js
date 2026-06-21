@@ -2,6 +2,10 @@ import Element from '../models/Element.js';
 import Law from '../models/Law.js';
 import LawReference from '../models/LawReference.js';
 
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export async function parseReferencesForLaw(lawId) {
   const elements = await Element.find({
     lawId,
@@ -72,7 +76,7 @@ export async function parseReferencesForLaw(lawId) {
 
       if (ref.toLawTitle) {
         const foundLaw = await Law.findOne({
-          title: { $regex: ref.toLawTitle, $options: 'i' },
+          title: { $regex: escapeRegex(ref.toLawTitle), $options: 'i' },
         }).lean();
         if (foundLaw) {
           toLawId = foundLaw._id;

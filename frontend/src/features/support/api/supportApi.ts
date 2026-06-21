@@ -10,6 +10,7 @@ import type {
   SupportSendPayload,
   SupportNote,
   SupportSyncResult,
+  TelegramWebhookInfo,
 } from "../types";
 
 async function supportFetch<T>(
@@ -138,4 +139,13 @@ export const adminSupportApi = {
     supportFetch<SupportSyncResult>("/api/admin/support/sync-check", {
       method: "POST",
     }),
+
+  registerWebhook: (webhookUrl: string) =>
+    supportFetch<{ ok: boolean; description: string; url: string }>(
+      "/api/admin/support/webhook/register",
+      { method: "POST", body: JSON.stringify({ webhookUrl }) },
+    ),
+
+  getWebhookInfo: () =>
+    supportFetch<TelegramWebhookInfo>("/api/admin/support/webhook/info"),
 };

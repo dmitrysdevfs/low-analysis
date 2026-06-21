@@ -21,9 +21,14 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     password: {
       type: String,
-      required: [true, 'Please add a password'],
+      required: false,
       minlength: [
         process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test'
@@ -70,6 +75,10 @@ const userSchema = new mongoose.Schema(
     lastLoginAt: { type: Date, default: null },
     lastLoginIp: { type: String, default: null },
     lastLoginDevice: { type: String, default: null },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
     resetPasswordToken: {
       type: String,
       select: false,
@@ -86,7 +95,7 @@ const userSchema = new mongoose.Schema(
 
 // Hash password before saving
 userSchema.pre('save', async function () {
-  if (!this.isModified('password')) {
+  if (!this.isModified('password') || !this.password) {
     return;
   }
 

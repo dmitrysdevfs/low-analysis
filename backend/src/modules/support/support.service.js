@@ -8,6 +8,9 @@ import {
   mirrorSupportMessageToTelegram,
   extractTelegramConversationId,
   isTelegramAgentAllowed,
+  stripConversationToken,
+  setTelegramWebhook,
+  getTelegramWebhookInfo,
 } from './support.telegram.service.js';
 
 function normalizeText(value) {
@@ -95,6 +98,8 @@ function serializeMessage(message) {
     channel: message.channel,
     deliveredToTelegram: message.deliveredToTelegram,
     telegramMessageId: message.telegramMessageId,
+    telegramSenderId: message.telegramSenderId ?? null,
+    telegramSenderUsername: message.telegramSenderUsername ?? null,
     createdAt: message.createdAt,
   };
 }
@@ -144,6 +149,8 @@ async function createStoredMessage({
   text,
   channel = 'web',
   mirrorToTelegram = false,
+  telegramSenderId = null,
+  telegramSenderUsername = null,
 }) {
   const message = await SupportMessage.create({
     conversationId: conversation._id,
@@ -153,6 +160,8 @@ async function createStoredMessage({
     senderEmail,
     text: normalizeText(text),
     channel,
+    telegramSenderId,
+    telegramSenderUsername,
   });
 
   if (mirrorToTelegram) {
@@ -604,50 +613,71 @@ export async function checkTelegramSync() {
 }
 
 export async function handleTelegramUpdate(update) {
+  console.log('[support:tg-webhook] update type:', Object.keys(update ?? {}).join(', '));
+
   const message = update?.message;
   if (!message || !message.text) {
+    console.log('[support:tg-webhook] ignored — no text message');
     return { ok: true, ignored: true, reason: 'unsupported-message' };
   }
 
-  if (message.from?.is_bot) {
+  const isGroupAnonymousBot = message.from?.username === 'GroupAnonymousBot';
+  if (message.from?.is_bot && !isGroupAnonymousBot) {
+    console.log('[support:tg-webhook] ignored — bot message');
     return { ok: true, ignored: true, reason: 'bot-message' };
   }
 
-  if (!isTelegramAgentAllowed(message.from)) {
+  const fromId = String(message.from?.id ?? '');
+  if (!isGroupAnonymousBot && !isTelegramAgentAllowed(message.from)) {
+    console.log(`[support:tg-webhook] ignored — agent not allowed (tg_id=${fromId})`);
     return { ok: true, ignored: true, reason: 'agent-not-allowed' };
   }
 
   const conversationId = extractTelegramConversationId(message);
+  console.log(`[support:tg-webhook] conversationId extracted: ${conversationId ?? 'null'}`);
+  console.log(`[support:tg-webhook] reply_to text snippet: "${(message.reply_to_message?.text ?? '').slice(0, 80)}"`);
+
   if (!conversationId) {
+    console.log('[support:tg-webhook] ignored — no [#conv:...] token found');
     return { ok: true, ignored: true, reason: 'conversation-not-found' };
   }
 
   const conversation = await SupportConversation.findById(conversationId);
   if (!conversation) {
+    console.log(`[support:tg-webhook] ignored — conversation ${conversationId} not in DB`);
     return { ok: true, ignored: true, reason: 'missing-conversation' };
   }
 
-  const senderName =
-    [message.from.first_name, message.from.last_name]
-      .filter(Boolean)
-      .join(' ') ||
-    message.from.username ||
-    `Telegram ${message.from.id}`;
+  const senderName = isGroupAnonymousBot
+    ? 'Підтримка'
+    : [message.from.first_name, message.from.last_name].filter(Boolean).join(' ') ||
+      message.from.username ||
+      `Telegram ${message.from.id}`;
+
+  const telegramSenderId = fromId;
+  const telegramSenderUsername = message.from.username ?? null;
+
+  // Strip [#conv:...] token if user typed it directly in the message text
+  const cleanText = stripConversationToken(message.text);
+
+  console.log(`[support:tg-webhook] saving reply from "${senderName}" (${telegramSenderId}) for conv ${conversationId}`);
 
   const storedMessage = await createStoredMessage({
     conversation,
     senderType: 'telegram_support',
     senderName,
     senderEmail: '',
-    text: message.text,
+    text: cleanText,
     channel: 'telegram',
     mirrorToTelegram: false,
+    telegramSenderId,
+    telegramSenderUsername,
   });
 
   await touchConversationAfterMessage(conversation, {
     status: 'waiting_user',
     lastMessageAt: storedMessage.createdAt,
-    lastMessageSnippet: clipSnippet(message.text),
+    lastMessageSnippet: clipSnippet(cleanText),
     lastSenderType: 'telegram_support',
     unreadForUser: Number(conversation.unreadForUser || 0) + 1,
     unreadForAdmin: 0,
@@ -655,10 +685,18 @@ export async function handleTelegramUpdate(update) {
 
   await appendAuditEntry({
     action: 'Support reply received from Telegram',
-    detail: `Для діалогу ${conversation._id} отримано Telegram-відповідь.`,
+    detail: `Для діалогу ${conversation._id} отримано Telegram-відповідь від ${senderName} (@${telegramSenderUsername ?? telegramSenderId}).`,
     actor: senderName,
     severity: 'info',
   });
 
   return { ok: true };
+}
+
+export async function registerTelegramWebhook({ webhookUrl }) {
+  return setTelegramWebhook(webhookUrl);
+}
+
+export async function fetchTelegramWebhookInfo() {
+  return getTelegramWebhookInfo();
 }

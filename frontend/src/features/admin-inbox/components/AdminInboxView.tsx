@@ -173,6 +173,11 @@ export function AdminInboxView() {
   const [replyBody, setReplyBody] = useState("");
   const connectHandledRef = useRef(false);
 
+  const [showCompose, setShowCompose] = useState(false);
+  const [composeTo, setComposeTo] = useState("");
+  const [composeSubject, setComposeSubject] = useState("");
+  const [composeBody, setComposeBody] = useState("");
+
   const [now] = useState(Date.now);
   const [activeFolder, setActiveFolder] = useState("inbox");
   const [filterTab, setFilterTab] = useState("all");
@@ -189,6 +194,7 @@ export function AdminInboxView() {
     syncMutation,
     markReadMutation,
     replyMutation,
+    composeMutation,
   } = useAdminInbox({ query, unreadOnly, selectedThreadId });
 
   const status = statusQuery.data;
@@ -227,7 +233,9 @@ export function AdminInboxView() {
         onSuccess: (result) =>
           notify.success(`Оновлено ${result.syncedThreads} тредів.`),
         onError: () =>
-          notify.warning("Підключення збережено, але синхронізація не вдалася."),
+          notify.warning(
+            "Підключення збережено, але синхронізація не вдалася.",
+          ),
       });
     } else if (gmailStatus === "error") {
       notify.error("Не вдалося завершити підключення Gmail.");
@@ -291,6 +299,25 @@ export function AdminInboxView() {
     }
   };
 
+  const handleCompose = async () => {
+    if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim())
+      return;
+    try {
+      await composeMutation.mutateAsync({
+        to: composeTo.trim(),
+        subject: composeSubject.trim(),
+        body: composeBody.trim(),
+      });
+      notify.success("Лист надіслано зі спільної Gmail-скриньки.");
+      setComposeTo("");
+      setComposeSubject("");
+      setComposeBody("");
+      setShowCompose(false);
+    } catch {
+      notify.error("Не вдалося надіслати лист.");
+    }
+  };
+
   const clientEmail = useMemo(() => {
     if (!selectedThread) return null;
     const mailbox = status?.mailboxEmail;
@@ -342,13 +369,16 @@ export function AdminInboxView() {
             Листи синхронізуються через API та відкриваються як треди.
           </p>
           <div className={styles.heroChips}>
-            {["Gmail API", "Shared mailbox", "Thread replies", "SLA tracking"].map(
-              (c) => (
-                <span key={c} className={styles.heroChip}>
-                  {c}
-                </span>
-              ),
-            )}
+            {[
+              "Gmail API",
+              "Shared mailbox",
+              "Thread replies",
+              "SLA tracking",
+            ].map((c) => (
+              <span key={c} className={styles.heroChip}>
+                {c}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -491,10 +521,7 @@ export function AdminInboxView() {
               <span className={`${styles.kpiNum} ${styles.kpiNumGreen}`}>
                 Active
               </span>
-              <span
-                className={styles.kpiDelta}
-                style={{ color: "#7a98c0" }}
-              >
+              <span className={styles.kpiDelta} style={{ color: "#7a98c0" }}>
                 {timeAgo(lastSyncAt, now)}
               </span>
             </div>
@@ -511,7 +538,8 @@ export function AdminInboxView() {
             <button
               type="button"
               className={styles.composeBtn}
-              onClick={handleConnect}
+              onClick={() => setShowCompose(true)}
+              disabled={!isConnected}
             >
               <Plus size={13} />
               Написати
@@ -521,7 +549,8 @@ export function AdminInboxView() {
           <nav className={styles.folderNav}>
             {FOLDERS.map((folder) => {
               const Icon = folder.icon;
-              const count = folderCounts[folder.id as keyof typeof folderCounts];
+              const count =
+                folderCounts[folder.id as keyof typeof folderCounts];
               const isActive = activeFolder === folder.id;
               return (
                 <button
@@ -601,7 +630,7 @@ export function AdminInboxView() {
               className={styles.toolbarBtn}
               title="Оновити"
               onClick={handleSync}
-              disabled={syncMutation.isPending}
+              disabled={!isConnected || syncMutation.isPending}
             >
               <RefreshCw size={13} />
             </button>
@@ -636,11 +665,13 @@ export function AdminInboxView() {
                 const userLabels = getUserLabels(thread.labels ?? []);
                 const isUnread = thread.unreadCount > 0;
                 return (
-                  <button
+                  <div
                     key={thread.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
                     className={`${styles.threadItem} ${isActive ? styles.threadItemActive : ""}`}
                     onClick={() => setSelectedThreadId(thread.id)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setSelectedThreadId(thread.id); }}
                   >
                     <div className={styles.threadAvatar}>
                       <span className={styles.avatarInitials}>{initials}</span>
@@ -698,7 +729,7 @@ export function AdminInboxView() {
                     >
                       <Star size={11} />
                     </button>
-                  </button>
+                  </div>
                 );
               })
             )}
@@ -812,10 +843,9 @@ export function AdminInboxView() {
                 {detail.messages.map((msg) => {
                   const initials = getInitials(msg.from);
                   const senderName =
-                    msg.from.split("<")[0].trim() ||
-                    msg.from.split("@")[0];
+                    msg.from.split("<")[0].trim() || msg.from.split("@")[0];
                   const senderEmailRaw = msg.from.includes("<")
-                    ? msg.from.match(/<(.+)>/)?.[1] ?? ""
+                    ? (msg.from.match(/<(.+)>/)?.[1] ?? "")
                     : msg.from;
                   return (
                     <div
@@ -840,9 +870,7 @@ export function AdminInboxView() {
                       <div className={styles.msgBody}>
                         <div className={styles.msgHeader}>
                           <div>
-                            <span className={styles.msgFrom}>
-                              {senderName}
-                            </span>
+                            <span className={styles.msgFrom}>{senderName}</span>
                             {senderEmailRaw && (
                               <span className={styles.msgFromEmail}>
                                 &lt;{senderEmailRaw}&gt;
@@ -965,9 +993,7 @@ export function AdminInboxView() {
                   {clientEmail?.split("@")[0]?.replace(/[._]/g, " ") ?? "—"}
                 </div>
                 <div className={styles.contactEmail}>{clientEmail ?? "—"}</div>
-                <div className={styles.contactOrg}>
-                  ТОВ «Правовий Партнер»
-                </div>
+                <div className={styles.contactOrg}>ТОВ «Правовий Партнер»</div>
                 <div className={styles.contactCity}>Україна, Київ</div>
               </div>
             </div>
@@ -1107,6 +1133,174 @@ export function AdminInboxView() {
           </div>
         </div>
       </div>
+
+      {/* ── Compose overlay ── */}
+      {showCompose && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "24px",
+            width: "480px",
+            background: "#131c2e",
+            border: "1px solid rgba(122,152,192,0.22)",
+            borderRadius: "12px",
+            boxShadow: "0 12px 40px rgba(0,0,0,0.6)",
+            zIndex: 1000,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div
+            style={{
+              padding: "11px 16px",
+              borderBottom: "1px solid rgba(122,152,192,0.15)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span
+              style={{ fontWeight: 600, fontSize: "13px", color: "#c8d8f0" }}
+            >
+              Новий лист
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowCompose(false)}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#7a98c0",
+                cursor: "pointer",
+                fontSize: "18px",
+                lineHeight: 1,
+              }}
+            >
+              ×
+            </button>
+          </div>
+
+          <div
+            style={{
+              padding: "8px 16px",
+              borderBottom: "1px solid rgba(122,152,192,0.1)",
+            }}
+          >
+            <input
+              type="email"
+              placeholder="Кому"
+              value={composeTo}
+              onChange={(e) => setComposeTo(e.target.value)}
+              style={{
+                width: "100%",
+                background: "none",
+                border: "none",
+                color: "#c8d8f0",
+                fontSize: "13px",
+                outline: "none",
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              padding: "8px 16px",
+              borderBottom: "1px solid rgba(122,152,192,0.1)",
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Тема"
+              value={composeSubject}
+              onChange={(e) => setComposeSubject(e.target.value)}
+              style={{
+                width: "100%",
+                background: "none",
+                border: "none",
+                color: "#c8d8f0",
+                fontSize: "13px",
+                outline: "none",
+              }}
+            />
+          </div>
+
+          <textarea
+            placeholder="Текст листа…"
+            value={composeBody}
+            onChange={(e) => setComposeBody(e.target.value)}
+            style={{
+              minHeight: "200px",
+              padding: "12px 16px",
+              background: "none",
+              border: "none",
+              color: "#c8d8f0",
+              fontSize: "13px",
+              resize: "vertical",
+              outline: "none",
+              fontFamily: "inherit",
+            }}
+          />
+
+          <div
+            style={{
+              padding: "10px 16px",
+              borderTop: "1px solid rgba(122,152,192,0.1)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <button
+              type="button"
+              onClick={handleCompose}
+              disabled={
+                !composeTo.trim() ||
+                !composeSubject.trim() ||
+                !composeBody.trim() ||
+                composeMutation.isPending
+              }
+              style={{
+                background: "#4a80d4",
+                border: "none",
+                borderRadius: "6px",
+                color: "#fff",
+                padding: "7px 18px",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: "pointer",
+                opacity:
+                  !composeTo.trim() ||
+                  !composeSubject.trim() ||
+                  !composeBody.trim() ||
+                  composeMutation.isPending
+                    ? 0.5
+                    : 1,
+              }}
+            >
+              {composeMutation.isPending ? "Надсилаю…" : "Надіслати"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowCompose(false);
+                setComposeTo("");
+                setComposeSubject("");
+                setComposeBody("");
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#7a98c0",
+                fontSize: "12px",
+                cursor: "pointer",
+              }}
+            >
+              Відхилити
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

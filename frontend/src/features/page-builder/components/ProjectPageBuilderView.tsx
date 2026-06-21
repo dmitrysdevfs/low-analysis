@@ -1,6 +1,25 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  Monitor,
+  Tablet,
+  Smartphone,
+  Save,
+  Eye,
+  Globe,
+  MoreHorizontal,
+  Plus,
+  Settings,
+  Trash2,
+  ChevronUp,
+  ChevronDown,
+  Copy,
+  History,
+  RotateCcw,
+  ChevronRight,
+} from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import type { PageBuilderBlock, PageBuilderSnapshot } from "@/types";
 import {
@@ -13,20 +32,33 @@ import {
 import { useProjectPageBuilder } from "../hooks/useProjectPageBuilder";
 import { ProjectPageRenderer } from "./ProjectPageRenderer";
 import { BlockSettingsPanel } from "./BlockSettingsPanel";
+import { BlockPalette } from "./BlockPalette";
+import { PageSettingsPanel, type PageSettings } from "./PageSettingsPanel";
 import styles from "../PageBuilder.module.scss";
 
 const PAGE_SLUG = "project-info";
 
-function getBlockHeading(block: PageBuilderBlock) {
-  switch (block.type) {
-    case "quote":
-      return block.data.author || block.type;
-    default:
-      return "title" in block.data && block.data.title
-        ? block.data.title
-        : block.type;
-  }
-}
+type Device = "desktop" | "tablet" | "mobile";
+type RightTab = "page" | "block";
+
+const DEVICE_WIDTHS: Record<Device, string> = {
+  desktop: "100%",
+  tablet: "768px",
+  mobile: "390px",
+};
+
+const BLOCK_TYPE_LABELS: Record<string, string> = {
+  hero: "Hero",
+  richText: "Текст",
+  statsGrid: "Статистика",
+  cards: "Картки",
+  steps: "Кроки",
+  faq: "FAQ",
+  cta: "CTA",
+  radioGroup: "Вибір",
+  quote: "Цитата",
+  image: "Зображення",
+};
 
 export function ProjectPageBuilderView() {
   const {
@@ -43,216 +75,219 @@ export function ProjectPageBuilderView() {
     restoring,
   } = useProjectPageBuilder(PAGE_SLUG);
 
-  const [draft, setDraft] = useState<PageBuilderSnapshot>(
-    createEmptySnapshot(),
-  );
+  const [draft, setDraft] = useState<PageBuilderSnapshot>(createEmptySnapshot());
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
-  const [mode, setMode] = useState<"compose" | "preview">("compose");
+  const [device, setDevice] = useState<Device>("desktop");
+  const [rightTab, setRightTab] = useState<RightTab>("page");
   const [notice, setNotice] = useState<string | null>(null);
+  const [showVersions, setShowVersions] = useState(false);
+  const canvasViewportRef = useRef<HTMLDivElement>(null);
+  const [pageSettings, setPageSettings] = useState<PageSettings>({
+    name: "Головна сторінка",
+    slug: PAGE_SLUG,
+    template: "basic",
+    status: "draft",
+    seoTitle: "",
+    seoDescription: "",
+    keywords: "",
+    showInMenu: true,
+    showInFooter: true,
+    indexable: true,
+  });
 
   useEffect(() => {
     if (!page) return;
     setDraft(cloneSnapshot(page.draft));
     setSelectedBlockId(page.draft.blocks[0]?.id ?? null);
     setIsDirty(false);
+    setPageSettings((s) => ({ ...s, status: page.status }));
   }, [page]);
 
   const selectedBlock = useMemo(
-    () => draft.blocks.find((block) => block.id === selectedBlockId) ?? null,
+    () => draft.blocks.find((b) => b.id === selectedBlockId) ?? null,
     [draft.blocks, selectedBlockId],
   );
 
-  const setSnapshot = (
-    updater: (current: PageBuilderSnapshot) => PageBuilderSnapshot,
-  ) => {
-    setDraft((current) => {
-      const next = updater(current);
+  const setSnapshot = (updater: (c: PageBuilderSnapshot) => PageBuilderSnapshot) => {
+    setDraft((c) => {
+      const next = updater(c);
       setIsDirty(true);
       return next;
     });
   };
 
   const handleAddBlock = (type: PageBuilderBlock["type"]) => {
-    const definition = BLOCK_DEFINITIONS.find((item) => item.type === type);
-    if (!definition) return;
-
-    const block = definition.create();
-    setSnapshot((current) => ({
-      ...current,
-      blocks: [...current.blocks, block],
-    }));
+    const def = BLOCK_DEFINITIONS.find((d) => d.type === type);
+    if (!def) return;
+    const block = def.create();
+    setSnapshot((c) => ({ ...c, blocks: [...c.blocks, block] }));
     setSelectedBlockId(block.id);
-    setMode("compose");
+    setRightTab("block");
+    setTimeout(() => {
+      canvasViewportRef.current?.scrollTo({ top: canvasViewportRef.current.scrollHeight, behavior: "smooth" });
+    }, 50);
   };
 
   const handleSelectBlock = (blockId: string) => {
     setSelectedBlockId(blockId);
-    setMode("compose");
+    setRightTab("block");
   };
 
   const handleUpdateBlock = (nextBlock: PageBuilderBlock) => {
-    setSnapshot((current) => ({
-      ...current,
-      blocks: current.blocks.map((block) =>
-        block.id === nextBlock.id ? nextBlock : block,
-      ),
+    setSnapshot((c) => ({
+      ...c,
+      blocks: c.blocks.map((b) => (b.id === nextBlock.id ? nextBlock : b)),
     }));
   };
 
   const handleDuplicateBlock = (blockId: string) => {
-    const block = draft.blocks.find((item) => item.id === blockId);
+    const block = draft.blocks.find((b) => b.id === blockId);
     if (!block) return;
-
     const clone = duplicateBlock(block);
-    setSnapshot((current) => {
-      const index = current.blocks.findIndex((item) => item.id === blockId);
-      const nextBlocks = [...current.blocks];
-      nextBlocks.splice(index + 1, 0, clone);
-      return {
-        ...current,
-        blocks: nextBlocks,
-      };
+    setSnapshot((c) => {
+      const idx = c.blocks.findIndex((b) => b.id === blockId);
+      const next = [...c.blocks];
+      next.splice(idx + 1, 0, clone);
+      return { ...c, blocks: next };
     });
     setSelectedBlockId(clone.id);
   };
 
   const handleRemoveBlock = (blockId: string) => {
-    setSnapshot((current) => {
-      const nextBlocks = current.blocks.filter((block) => block.id !== blockId);
-      return {
-        ...current,
-        blocks: nextBlocks,
-      };
-    });
-
+    setSnapshot((c) => ({
+      ...c,
+      blocks: c.blocks.filter((b) => b.id !== blockId),
+    }));
     if (selectedBlockId === blockId) {
-      const nextSelection =
-        draft.blocks.find((block) => block.id !== blockId)?.id ?? null;
-      setSelectedBlockId(nextSelection);
+      const next = draft.blocks.find((b) => b.id !== blockId)?.id ?? null;
+      setSelectedBlockId(next);
     }
   };
 
-  const handleMoveBlock = (blockId: string, direction: "up" | "down") => {
-    setSnapshot((current) => {
-      const index = current.blocks.findIndex((block) => block.id === blockId);
-      if (index === -1) return current;
-
-      const targetIndex = direction === "up" ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= current.blocks.length)
-        return current;
-
-      const nextBlocks = [...current.blocks];
-      const [block] = nextBlocks.splice(index, 1);
-      nextBlocks.splice(targetIndex, 0, block);
-      return { ...current, blocks: nextBlocks };
+  const handleMoveBlock = (blockId: string, dir: "up" | "down") => {
+    setSnapshot((c) => {
+      const idx = c.blocks.findIndex((b) => b.id === blockId);
+      const target = dir === "up" ? idx - 1 : idx + 1;
+      if (target < 0 || target >= c.blocks.length) return c;
+      const next = [...c.blocks];
+      const [item] = next.splice(idx, 1);
+      next.splice(target, 0, item);
+      return { ...c, blocks: next };
     });
   };
 
   const handleSaveDraft = async () => {
     try {
-      const response = await saveDraft(draft);
-      setDraft(cloneSnapshot(response.draft));
-      setSelectedBlockId(response.draft.blocks[0]?.id ?? null);
-      setNotice("Чернетку збережено.");
+      const res = await saveDraft(draft);
+      setDraft(cloneSnapshot(res.draft));
       setIsDirty(false);
+      showNotice("Чернетку збережено");
     } catch {
-      setNotice("Помилка збереження. Спробуйте знову.");
+      showNotice("Помилка збереження");
     }
   };
 
   const handlePublish = async () => {
     try {
-      let currentPage = page;
-      if (isDirty) {
-        currentPage = await saveDraft(draft);
-        setDraft(cloneSnapshot(currentPage.draft));
-        setIsDirty(false);
-      }
-      const response = await publish();
-      setDraft(cloneSnapshot(response.draft));
-      setNotice(
-        currentPage?.status === "published"
-          ? "Публікацію оновлено."
-          : "Сторінку опубліковано.",
-      );
+      if (isDirty) await saveDraft(draft);
+      const res = await publish();
+      setDraft(cloneSnapshot(res.draft));
+      setIsDirty(false);
+      showNotice("Сторінку опубліковано");
     } catch {
-      setNotice("Помилка публікації. Спробуйте знову.");
+      showNotice("Помилка публікації");
     }
   };
 
   const handleUnpublish = async () => {
     try {
       await unpublish();
-      setNotice("Сторінку знято з публікації.");
+      showNotice("Знято з публікації");
     } catch {
-      setNotice("Помилка зняття з публікації. Спробуйте знову.");
+      showNotice("Помилка зняття");
     }
   };
 
   const handleRestore = async (version: number) => {
     try {
-      const response = await restoreVersion(version);
-      setDraft(cloneSnapshot(response.draft));
-      setSelectedBlockId(response.draft.blocks[0]?.id ?? null);
+      const res = await restoreVersion(version);
+      setDraft(cloneSnapshot(res.draft));
+      setSelectedBlockId(res.draft.blocks[0]?.id ?? null);
       setIsDirty(false);
-      setNotice(`Версію #${version} відновлено у draft.`);
+      showNotice(`Версію #${version} відновлено`);
     } catch {
-      setNotice(`Помилка відновлення версії #${version}. Спробуйте знову.`);
+      showNotice(`Помилка відновлення версії #${version}`);
     }
   };
 
-  if (loading) {
-    return (
-      <section className={styles.builderState}>
-        Завантаження конструктора...
-      </section>
-    );
+  function showNotice(msg: string) {
+    setNotice(msg);
+    setTimeout(() => setNotice(null), 3000);
   }
 
+  const isPublished = page?.status === "published";
+
+  if (loading) {
+    return <div className={styles.builderState}>Завантаження конструктора...</div>;
+  }
   if (error) {
-    return <section className={styles.builderState}>Помилка: {error}</section>;
+    return <div className={styles.builderState}>Помилка: {error}</div>;
   }
 
   return (
-    <section className={styles.builderPage}>
+    <div className={styles.builder}>
+      {/* Topbar */}
       <header className={styles.builderTopbar}>
-        <div>
-          <span className={styles.builderEyebrow}>Admin page builder</span>
-          <h1 className={styles.builderTitle}>Інформація про проєкт</h1>
-          <p className={styles.builderDescription}>
-            Керуйте текстом, блоками та виглядом публічної сторінки без
-            редагування коду. Builder працює через draft, publish і version
-            history.
-          </p>
+        <div className={styles.topbarLeft}>
+          <nav className={styles.topbarBreadcrumb}>
+            <span>Адмін</span>
+            <ChevronRight size={12} className={styles.breadcrumbSep} />
+            <span>Публічний сайт</span>
+            <ChevronRight size={12} className={styles.breadcrumbSep} />
+            <span className={styles.breadcrumbCurrent}>Конструктор</span>
+          </nav>
+          <div className={styles.topbarTitleRow}>
+            <h1 className={styles.topbarTitle}>Конструктор сторінок</h1>
+            <Link
+              href={ROUTES.projectInfo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.topbarSiteLink}
+            >
+              <Globe size={12} />
+              Перейти на сайт
+            </Link>
+          </div>
         </div>
 
-        <div className={styles.builderTopbarActions}>
-          <span
-            className={`${styles.statusBadge} ${page?.status === "published" ? styles.statusPublished : styles.statusDraft}`}
-          >
-            {page?.status === "published" ? "Published" : "Draft only"}
-          </span>
-          <a
-            href={ROUTES.projectInfo}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.actionSecondary}
-          >
-            Відкрити публічну сторінку
-          </a>
+        <div className={styles.topbarRight}>
+          {isDirty && <span className={styles.dirtyBadge}>Є зміни</span>}
+          <div className={`${styles.statusPill} ${isPublished ? styles.statusPublished : styles.statusDraft}`}>
+            {isPublished ? "Опубліковано" : "Чернетка"}
+          </div>
           <button
             type="button"
-            className={styles.actionSecondary}
+            className={styles.btnTopbarSecondary}
             onClick={handleSaveDraft}
             disabled={saving}
           >
-            {saving ? "Збереження..." : "Зберегти draft"}
+            <Save size={13} />
+            {saving ? "Збереження..." : "Зберегти"}
           </button>
+          <Link
+            href={ROUTES.projectInfo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.btnTopbarSecondary}
+          >
+            <Eye size={13} />
+            Попередній перегляд
+          </Link>
           <button
             type="button"
-            className={styles.actionPrimary}
+            className={styles.btnTopbarPublish}
             onClick={handlePublish}
             disabled={publishing || saving}
           >
@@ -260,293 +295,271 @@ export function ProjectPageBuilderView() {
           </button>
           <button
             type="button"
-            className={styles.ghostButton}
+            className={styles.btnTopbarKebab}
             onClick={handleUnpublish}
             disabled={unpublishing}
+            title="Зняти з публікації"
           >
-            {unpublishing ? "Зняття..." : "Unpublish"}
+            <MoreHorizontal size={16} />
           </button>
         </div>
       </header>
 
       {notice && <div className={styles.noticeBar}>{notice}</div>}
 
-      <div className={styles.builderGrid}>
-        <aside className={styles.builderSidebar}>
-          <div className={styles.sidebarSection}>
-            <span className={styles.sidebarEyebrow}>Блоки</span>
-            <h2>Додати секцію</h2>
-            <p>
-              Беріть готові шаблони блоків і збирайте сторінку як mini-CMS у
-              стилі WordPress sections.
-            </p>
-          </div>
+      {/* 3-column body */}
+      <div className={styles.builderBody}>
+        {/* Left: block palette */}
+        <BlockPalette onAdd={handleAddBlock} />
 
-          <div className={styles.blockLibrary}>
-            {BLOCK_DEFINITIONS.map((block) => (
-              <button
-                key={block.type}
-                type="button"
-                className={styles.libraryButton}
-                onClick={() => handleAddBlock(block.type)}
-              >
-                <strong>{block.label}</strong>
-                <span>{block.description}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className={styles.sidebarSection}>
-            <span className={styles.sidebarEyebrow}>Режим</span>
-            <div className={styles.modeSwitcher}>
+        {/* Center: canvas */}
+        <div className={styles.canvasColumn}>
+          {/* Device switcher */}
+          <div className={styles.canvasToolbar}>
+            <div className={styles.deviceSwitcher}>
               <button
                 type="button"
-                className={`${styles.modeButton} ${mode === "compose" ? styles.modeButtonActive : ""}`}
-                onClick={() => setMode("compose")}
+                className={`${styles.deviceBtn} ${device === "desktop" ? styles.deviceBtnActive : ""}`}
+                onClick={() => setDevice("desktop")}
+                title="Desktop"
               >
-                Canvas
+                <Monitor size={15} />
               </button>
               <button
                 type="button"
-                className={`${styles.modeButton} ${mode === "preview" ? styles.modeButtonActive : ""}`}
-                onClick={() => setMode("preview")}
+                className={`${styles.deviceBtn} ${device === "tablet" ? styles.deviceBtnActive : ""}`}
+                onClick={() => setDevice("tablet")}
+                title="Tablet"
               >
-                Preview
+                <Tablet size={15} />
+              </button>
+              <button
+                type="button"
+                className={`${styles.deviceBtn} ${device === "mobile" ? styles.deviceBtnActive : ""}`}
+                onClick={() => setDevice("mobile")}
+                title="Mobile"
+              >
+                <Smartphone size={15} />
               </button>
             </div>
-          </div>
-        </aside>
-
-        <div className={styles.builderCanvasColumn}>
-          <div className={styles.pageMetaCard}>
-            <div className={styles.pageMetaHeader}>
-              <div>
-                <span className={styles.sidebarEyebrow}>Page meta</span>
-                <h2>Заголовок сторінки</h2>
-              </div>
-              <span className={styles.slugPill}>/{PAGE_SLUG}</span>
-            </div>
-
-            <div className={styles.fieldRow}>
-              <label className={styles.field}>
-                <span>Title</span>
-                <input
-                  type="text"
-                  value={draft.title}
-                  onChange={(event) =>
-                    setSnapshot((current) => ({
-                      ...current,
-                      title: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-
-              <label className={styles.field}>
-                <span>SEO title</span>
-                <input
-                  type="text"
-                  value={draft.seo.title}
-                  onChange={(event) =>
-                    setSnapshot((current) => ({
-                      ...current,
-                      seo: { ...current.seo, title: event.target.value },
-                    }))
-                  }
-                />
-              </label>
-            </div>
-
-            <label className={styles.field}>
-              <span>Description</span>
-              <textarea
-                rows={3}
-                value={draft.description}
-                onChange={(event) =>
-                  setSnapshot((current) => ({
-                    ...current,
-                    description: event.target.value,
-                  }))
-                }
-              />
-            </label>
-
-            <div className={styles.fieldRow}>
-              <label className={styles.field}>
-                <span>SEO description</span>
-                <textarea
-                  rows={3}
-                  value={draft.seo.description}
-                  onChange={(event) =>
-                    setSnapshot((current) => ({
-                      ...current,
-                      seo: {
-                        ...current.seo,
-                        description: event.target.value,
-                      },
-                    }))
-                  }
-                />
-              </label>
-
-              <label className={styles.field}>
-                <span>OG image URL</span>
-                <input
-                  type="text"
-                  value={draft.seo.ogImage}
-                  onChange={(event) =>
-                    setSnapshot((current) => ({
-                      ...current,
-                      seo: { ...current.seo, ogImage: event.target.value },
-                    }))
-                  }
-                />
-              </label>
-            </div>
+            <div className={styles.canvasSlug}>/{PAGE_SLUG}</div>
           </div>
 
-          {mode === "compose" ? (
-            <div className={styles.canvasStack}>
-              {draft.blocks.map((block, index) => (
-                <article
-                  key={block.id}
-                  className={`${styles.canvasBlockCard} ${selectedBlockId === block.id ? styles.canvasBlockCardActive : ""}`}
-                  draggable
-                  onDragStart={() => setDraggedBlockId(block.id)}
-                  onDragOver={(event) => event.preventDefault()}
-                  onDrop={() => {
-                    if (!draggedBlockId) return;
-                    setSnapshot((current) => ({
-                      ...current,
-                      blocks: moveBlock(
-                        current.blocks,
-                        draggedBlockId,
-                        block.id,
-                      ),
-                    }));
-                    setDraggedBlockId(null);
-                  }}
-                >
-                  <div className={styles.canvasBlockButton}>
-                    <div className={styles.canvasBlockMeta}>
-                      <span className={styles.canvasBlockType}>
-                        {block.type}
-                      </span>
-                      <button
-                        type="button"
-                        className={styles.canvasBlockSelect}
-                        onClick={() => handleSelectBlock(block.id)}
-                      >
-                        <strong>
-                          {index + 1}. {getBlockHeading(block)}
-                        </strong>
-                      </button>
-                      <small>
-                        {block.enabled ? "Видимий" : "Прихований"} • variant{" "}
-                        {block.variant}
-                      </small>
-                    </div>
-
-                    <div className={styles.canvasBlockActions}>
-                      <button
-                        type="button"
-                        className={styles.ghostButton}
-                        onClick={() => handleMoveBlock(block.id, "up")}
-                      >
-                        ↑
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.ghostButton}
-                        onClick={() => handleMoveBlock(block.id, "down")}
-                      >
-                        ↓
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.ghostButton}
-                        onClick={() => handleDuplicateBlock(block.id)}
-                      >
-                        Дубль
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className={styles.canvasPreview}>
-                    <ProjectPageRenderer
-                      embedded
-                      page={{
-                        title: draft.title,
-                        description: draft.description,
-                        blocks: [block],
-                      }}
-                    />
-                  </div>
-                </article>
-              ))}
-
-              {draft.blocks.length === 0 && (
-                <div className={styles.emptyCanvas}>
-                  Додайте перший блок із лівої бібліотеки, щоб зібрати сторінку.
+          {/* Canvas viewport */}
+          <div className={styles.canvasViewport} ref={canvasViewportRef}>
+            <div
+              className={styles.canvasFrame}
+              style={{ maxWidth: DEVICE_WIDTHS[device] }}
+            >
+              {draft.blocks.length === 0 ? (
+                <div className={styles.canvasEmpty}>
+                  <Plus size={28} />
+                  <span>Додайте перший блок із бібліотеки зліва</span>
                 </div>
+              ) : (
+                draft.blocks.map((block) => (
+                  <div
+                    key={block.id}
+                    className={`${styles.canvasItem} ${selectedBlockId === block.id ? styles.canvasItemSelected : ""}`}
+                    onClick={() => handleSelectBlock(block.id)}
+                    draggable
+                    onDragStart={() => setDraggedBlockId(block.id)}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => {
+                      if (!draggedBlockId) return;
+                      setSnapshot((c) => ({
+                        ...c,
+                        blocks: moveBlock(c.blocks, draggedBlockId, block.id),
+                      }));
+                      setDraggedBlockId(null);
+                    }}
+                  >
+                    {/* Overlay toolbar */}
+                    <div className={styles.blockOverlay}>
+                      <span className={styles.blockOverlayLabel}>
+                        {BLOCK_TYPE_LABELS[block.type] ?? block.type}
+                      </span>
+                      <div className={styles.blockOverlayActions}>
+                        <button
+                          type="button"
+                          className={styles.overlayBtn}
+                          title="Вгору"
+                          onClick={(e) => { e.stopPropagation(); handleMoveBlock(block.id, "up"); }}
+                        >
+                          <ChevronUp size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.overlayBtn}
+                          title="Вниз"
+                          onClick={(e) => { e.stopPropagation(); handleMoveBlock(block.id, "down"); }}
+                        >
+                          <ChevronDown size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.overlayBtn}
+                          title="Налаштування"
+                          onClick={(e) => { e.stopPropagation(); handleSelectBlock(block.id); }}
+                        >
+                          <Settings size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.overlayBtn}
+                          title="Дублювати"
+                          onClick={(e) => { e.stopPropagation(); handleDuplicateBlock(block.id); }}
+                        >
+                          <Copy size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.overlayBtn} ${styles.overlayBtnDanger}`}
+                          title="Видалити"
+                          onClick={(e) => { e.stopPropagation(); handleRemoveBlock(block.id); }}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* WYSIWYG render */}
+                    <div className={styles.blockRender}>
+                      <ProjectPageRenderer
+                        embedded
+                        page={{ ...draft, blocks: [block] }}
+                      />
+                    </div>
+                  </div>
+                ))
+              )}
+
+              {/* Add block CTA at bottom */}
+              {draft.blocks.length > 0 && (
+                <button
+                  type="button"
+                  className={styles.canvasAddBlockBtn}
+                  onClick={() => handleAddBlock("hero")}
+                >
+                  <Plus size={14} />
+                  Додати секцію
+                </button>
               )}
             </div>
-          ) : (
-            <div className={styles.previewFrame}>
-              <ProjectPageRenderer embedded page={draft} />
-            </div>
-          )}
+          </div>
+
+          {/* DOM breadcrumb */}
+          <div className={styles.canvasBreadcrumb}>
+            {selectedBlock ? (
+              <>
+                <span className={styles.crumbItem}>Секція ({BLOCK_TYPE_LABELS[selectedBlock.type]})</span>
+                <ChevronRight size={11} className={styles.crumbSep} />
+                <span className={styles.crumbItem}>Контейнер</span>
+                <ChevronRight size={11} className={styles.crumbSep} />
+                <span className={styles.crumbItem}>Блок</span>
+                <ChevronRight size={11} className={styles.crumbSep} />
+                <span className={`${styles.crumbItem} ${styles.crumbItemActive}`}>
+                  {selectedBlock.type}
+                </span>
+              </>
+            ) : (
+              <span className={styles.crumbItem} style={{ color: "#3a5070" }}>
+                Оберіть блок для редагування
+              </span>
+            )}
+          </div>
         </div>
 
-        <aside className={styles.builderInspector}>
-          {selectedBlock ? (
-            <BlockSettingsPanel
-              block={selectedBlock}
-              onChange={handleUpdateBlock}
-              onDuplicate={() => handleDuplicateBlock(selectedBlock.id)}
-              onRemove={() => handleRemoveBlock(selectedBlock.id)}
-            />
-          ) : (
-            <div className={styles.inspectorPlaceholder}>
-              Оберіть блок у canvas, щоб редагувати його поля та стилі.
-            </div>
-          )}
+        {/* Right: inspector */}
+        <aside className={styles.rightPanel}>
+          {/* Tabs */}
+          <div className={styles.panelTabs}>
+            <button
+              type="button"
+              className={`${styles.panelTab} ${rightTab === "page" ? styles.panelTabActive : ""}`}
+              onClick={() => setRightTab("page")}
+            >
+              Нал. сторінки
+            </button>
+            <button
+              type="button"
+              className={`${styles.panelTab} ${rightTab === "block" ? styles.panelTabActive : ""}`}
+              onClick={() => setRightTab("block")}
+            >
+              Нал. блоку
+            </button>
+          </div>
 
-          <div className={styles.versionPanel}>
-            <div className={styles.inspectorHeader}>
-              <div>
-                <span className={styles.inspectorEyebrow}>Version history</span>
-                <h3>Відновлення</h3>
+          {/* Panel content */}
+          <div className={styles.panelContent}>
+            {rightTab === "page" ? (
+              <PageSettingsPanel settings={pageSettings} onChange={setPageSettings} />
+            ) : selectedBlock ? (
+              <BlockSettingsPanel
+                block={selectedBlock}
+                onChange={handleUpdateBlock}
+                onDuplicate={() => handleDuplicateBlock(selectedBlock.id)}
+                onRemove={() => handleRemoveBlock(selectedBlock.id)}
+              />
+            ) : (
+              <div className={styles.panelPlaceholder}>
+                Оберіть блок у canvas, щоб редагувати його поля та стилі.
               </div>
-            </div>
+            )}
+          </div>
 
-            <div className={styles.versionList}>
-              {(page?.versions ?? []).map((version) => (
-                <div key={version.version} className={styles.versionItem}>
-                  <div>
-                    <strong>#{version.version}</strong>
-                    <p>
-                      {version.kind} •{" "}
-                      {new Date(version.savedAt).toLocaleString("uk-UA")}
-                    </p>
-                    <small>
-                      {version.title} • {version.blockCount} блоків
-                    </small>
+          {/* Version history */}
+          <div className={styles.versionSection}>
+            <button
+              type="button"
+              className={styles.versionToggle}
+              onClick={() => setShowVersions((v) => !v)}
+            >
+              <History size={13} />
+              <span>Версії ({page?.versions?.length ?? 0})</span>
+              <ChevronDown
+                size={12}
+                className={`${styles.versionToggleArrow} ${showVersions ? styles.versionToggleArrowOpen : ""}`}
+              />
+            </button>
+            {showVersions && (
+              <div className={styles.versionList}>
+                {(page?.versions ?? []).length === 0 && (
+                  <div className={styles.versionEmpty}>Версій поки немає</div>
+                )}
+                {(page?.versions ?? []).map((v) => (
+                  <div key={v.version} className={styles.versionItem}>
+                    <div className={styles.versionMeta}>
+                      <span className={styles.versionNum}>#{v.version}</span>
+                      <span className={styles.versionKind}>{v.kind}</span>
+                    </div>
+                    <div className={styles.versionInfo}>
+                      {v.title} · {v.blockCount} блоків
+                    </div>
+                    <div className={styles.versionDate}>
+                      {new Date(v.savedAt).toLocaleString("uk-UA", {
+                        day: "numeric",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                    <button
+                      type="button"
+                      className={styles.versionRestoreBtn}
+                      onClick={() => handleRestore(v.version)}
+                      disabled={restoring}
+                    >
+                      <RotateCcw size={11} />
+                      Restore
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className={styles.ghostButton}
-                    onClick={() => handleRestore(version.version)}
-                    disabled={restoring}
-                  >
-                    Restore
-                  </button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </aside>
       </div>
-    </section>
+    </div>
   );
 }

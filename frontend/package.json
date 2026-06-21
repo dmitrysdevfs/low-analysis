@@ -20,6 +20,7 @@
   "dependencies": {
     "@next/third-parties": "^16.2.7",
     "@radix-ui/react-dialog": "^1.1.15",
+    "@react-oauth/google": "^0.13.5",
     "@sentry/nextjs": "^10.56.0",
     "@tanstack/react-query": "^5.100.11",
     "@tanstack/react-virtual": "^3.13.25",

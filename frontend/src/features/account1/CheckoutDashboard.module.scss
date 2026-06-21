@@ -1,0 +1,609 @@
+/* ─── Page ───────────────────────────────────────────────────────────────── */
+
+.page {
+  display: grid;
+  gap: 20px;
+  padding: 32px 28px 56px;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: start;
+  padding: 32px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%),
+    rgba(9, 18, 38, 0.92);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+}
+
+.heroLeft {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c8a843;
+  font-family: var(--font-mono);
+}
+
+.heroTitle {
+  color: #ffffff;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.heroDesc {
+  color: #7a98c0;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 52ch;
+}
+
+.heroRight {
+  display: grid;
+  gap: 12px;
+  min-width: 260px;
+}
+
+.selectedPlanCard {
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(200, 168, 67, 0.22);
+  background: rgba(7, 14, 30, 0.8);
+  display: grid;
+  gap: 12px;
+}
+
+.selectedPlanEyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c8a843;
+  font-family: var(--font-mono);
+}
+
+.selectedPlanBody {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.selectedPlanIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid rgba(200, 168, 67, 0.4);
+  background: rgba(200, 168, 67, 0.08);
+  color: #c8a843;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.selectedPlanName {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.selectedPlanBadge {
+  color: #c8a843;
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #c7d5ea;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  width: fit-content;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    border-color: rgba(200, 168, 67, 0.28);
+    background: rgba(200, 168, 67, 0.06);
+    color: #fff1bf;
+  }
+}
+
+/* ─── Checkout grid ──────────────────────────────────────────────────────── */
+
+.checkoutGrid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ─── Form panel ─────────────────────────────────────────────────────────── */
+
+.formPanel {
+  display: grid;
+  gap: 0;
+  padding: 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%),
+    rgba(9, 18, 38, 0.9);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* ─── Steps ──────────────────────────────────────────────────────────────── */
+
+.step {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: grid;
+  gap: 14px;
+
+  &:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 20px;
+  }
+}
+
+.stepHeader {
+  display: grid;
+  gap: 4px;
+}
+
+.stepEyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c8a843;
+  font-family: var(--font-mono);
+}
+
+.stepTitle {
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ─── Field label ────────────────────────────────────────────────────────── */
+
+.fieldLabel {
+  display: grid;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #7a98c0;
+}
+
+/* ─── Select ─────────────────────────────────────────────────────────────── */
+
+.selectWrap {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  height: 46px;
+  padding: 0 36px 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef3fb;
+  font-size: 0.86rem;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+
+  &:focus {
+    border-color: rgba(200, 168, 67, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  option {
+    background: #0c1628;
+    color: #eef3fb;
+  }
+}
+
+.selectChevron {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4a6090;
+  pointer-events: none;
+  font-size: 0.8rem;
+}
+
+/* ─── Payment methods ────────────────────────────────────────────────────── */
+
+.methods {
+  display: grid;
+  gap: 8px;
+}
+
+.methodRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.methodRowActive {
+  border-color: rgba(200, 168, 67, 0.35);
+  background: rgba(200, 168, 67, 0.05);
+}
+
+.methodRadio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.methodRadioActive {
+  border-color: #c8a843;
+  background: radial-gradient(circle, #c8a843 40%, transparent 41%);
+  box-shadow: 0 0 0 3px rgba(200, 168, 67, 0.15);
+}
+
+.methodLogoWrap {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #eef3fb;
+  flex-shrink: 0;
+}
+
+.methodInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.methodLabel {
+  color: #eef3fb;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.methodHint {
+  color: #4a6090;
+  font-size: 0.74rem;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.methodBadge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #4a6090;
+}
+
+.methodBadgeActive {
+  background: rgba(200, 168, 67, 0.14);
+  border-color: rgba(200, 168, 67, 0.3);
+  color: #fff1bf;
+}
+
+/* ─── Card fields ────────────────────────────────────────────────────────── */
+
+.cardFields {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 4px;
+}
+
+.cardRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 42px 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  font-size: 0.86rem;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+
+  &::placeholder {
+    color: #2a4060;
+  }
+
+  &:focus {
+    border-color: rgba(200, 168, 67, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(200, 168, 67, 0.07);
+  }
+}
+
+/* input without suffix icon gets no right padding */
+label .input:only-child {
+  padding-right: 14px;
+}
+
+.visaBadge {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: #1a1f71;
+  color: #ffffff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+
+.inputSuffix {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4a6090;
+  pointer-events: none;
+}
+
+/* ─── Submit ─────────────────────────────────────────────────────────────── */
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  border-radius: 12px;
+  border: 0;
+  background: linear-gradient(135deg, #c8a843 0%, #e6c55a 100%);
+  color: #0a1020;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  transition:
+    filter 0.15s,
+    transform 0.15s,
+    opacity 0.15s;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.smallPrint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 16px 0 0;
+  color: #4a6090;
+  font-size: 0.76rem;
+  line-height: 1.55;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #4a6090;
+  }
+}
+
+/* ─── Summary aside ──────────────────────────────────────────────────────── */
+
+.summary {
+  display: grid;
+  gap: 20px;
+  padding: 26px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%),
+    rgba(9, 18, 38, 0.9);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  align-content: start;
+  position: sticky;
+  top: 24px;
+}
+
+.summaryTop {
+  display: grid;
+  gap: 6px;
+}
+
+.summaryEyebrow {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c8a843;
+  font-family: var(--font-mono);
+}
+
+.summaryPlanName {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.summaryPrice {
+  color: #c8a843;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.summaryPriceSymbol {
+  font-size: 1.4rem;
+  margin-top: 5px;
+}
+
+.summaryPeriod {
+  color: #7a98c0;
+  font-size: 0.84rem;
+}
+
+.summaryFeatures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 16px;
+}
+
+.summaryFeatureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #c7d5ea;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.summaryCheck {
+  color: #c8a843;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.summaryMethod {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.02);
+  display: grid;
+  gap: 5px;
+}
+
+.summaryMethodName {
+  color: #ffffff;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.summaryMethodHint {
+  color: #4a6090;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .checkoutGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 16px 40px;
+  }
+
+  .cardRow {
+    grid-template-columns: 1fr;
+  }
+}

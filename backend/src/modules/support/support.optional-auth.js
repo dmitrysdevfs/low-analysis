@@ -18,7 +18,18 @@ export async function optionalSupportAuth(req, _res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select('-password');
+    const user = await User.findById(decoded.id).select('-password');
+
+    if (!user || user.status !== 'active') {
+      req.user = null;
+    } else if (
+      typeof decoded.tokenVersion === 'number' &&
+      decoded.tokenVersion !== (user.tokenVersion ?? 0)
+    ) {
+      req.user = null;
+    } else {
+      req.user = user;
+    }
   } catch {
     req.user = null;
   }

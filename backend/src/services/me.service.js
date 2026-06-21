@@ -65,6 +65,11 @@ export const deleteSavedArticle = async (userId, id) => {
 
 export const bulkCreateSavedArticles = async (userId, items) => {
   if (!items?.length) return [];
+  if (items.length > 200) {
+    const err = new Error('Забагато елементів (максимум 200)');
+    err.status = 400;
+    throw err;
+  }
   const docs = items.map((item) => ({
     userId,
     lawId: item.lawId,
@@ -82,6 +87,10 @@ export const getFocusTopics = async (userId) => {
   return UserFocusTopic.find({ userId }).sort({ createdAt: -1 }).lean();
 };
 
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export const createFocusTopic = async (userId, label) => {
   const normalized = label.trim();
   if (normalized.length < 2) {
@@ -89,9 +98,14 @@ export const createFocusTopic = async (userId, label) => {
     err.status = 400;
     throw err;
   }
+  if (normalized.length > 200) {
+    const err = new Error('Label too long (max 200)');
+    err.status = 400;
+    throw err;
+  }
   const existing = await UserFocusTopic.findOne({
     userId,
-    label: { $regex: `^${normalized}$`, $options: 'i' },
+    label: { $regex: `^${escapeRegex(normalized)}$`, $options: 'i' },
   });
   if (existing) return existing;
   return UserFocusTopic.create({ userId, label: normalized });
@@ -108,6 +122,11 @@ export const deleteFocusTopic = async (userId, id) => {
 
 export const bulkCreateFocusTopics = async (userId, topics) => {
   if (!topics?.length) return [];
+  if (topics.length > 100) {
+    const err = new Error('Забагато тем (максимум 100)');
+    err.status = 400;
+    throw err;
+  }
   const docs = topics.map((t) => ({ userId, label: t.label ?? t }));
   return UserFocusTopic.insertMany(docs, { ordered: false });
 };

@@ -66,6 +66,12 @@ export function useAdminInbox({
     onSuccess: invalidateInbox,
   });
 
+  const composeMutation = useMutation({
+    mutationFn: (payload: { to: string; subject: string; body: string }) =>
+      adminInboxApi.compose(payload),
+    onSuccess: invalidateInbox,
+  });
+
   return useMemo(
     () => ({
       statusQuery,
@@ -76,6 +82,7 @@ export function useAdminInbox({
       syncMutation,
       markReadMutation,
       replyMutation,
+      composeMutation,
     }),
     [
       statusQuery,
@@ -86,6 +93,7 @@ export function useAdminInbox({
       syncMutation,
       markReadMutation,
       replyMutation,
+      composeMutation,
     ],
   );
 }

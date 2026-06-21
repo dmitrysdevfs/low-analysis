@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
 import { Layout } from "@/components/layout/Layout";
-import { ManagedPageView } from "@/features/page-builder/components/ManagedPageView";
-import { ROLES_SUPERVISOR_FALLBACK } from "@/features/page-builder/lib/roleFallbacks";
+import { RoleDetailView } from "@/features/roles-detail/components/RoleDetailView";
+import { ROLE_DETAIL_CONFIGS } from "@/features/roles-detail/lib/roleDetailConfigs";
 
 export const metadata: Metadata = {
   title: "Супервайзер · Law Analysis",
   description:
-    "Роль Супервайзера: моніторинг груп студентів та порівняння форків.",
+    "Роль супервайзера: групи, моніторинг активності студентів та перевірка fork/diff.",
 };
 
 export default function RolesSupervisorPage() {
   return (
     <Layout>
-      <ManagedPageView
-        slug="roles-supervisor"
-        fallback={ROLES_SUPERVISOR_FALLBACK}
-        eyebrow="Ролі платформи"
-      />
+      <RoleDetailView config={ROLE_DETAIL_CONFIGS.supervisor} />
     </Layout>
   );
 }
