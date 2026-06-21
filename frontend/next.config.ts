@@ -12,10 +12,18 @@ const securityHeaders = [
   // Controls how much referrer info is sent
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   // Restricts browser APIs that aren't used
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=()",
+  },
   // Forces HTTPS for 2 years (production only)
   ...(isProd
-    ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]
+    ? [
+        {
+          key: "Strict-Transport-Security",
+          value: "max-age=63072000; includeSubDomains; preload",
+        },
+      ]
     : []),
   // Partial CSP — blocks unknown external scripts/objects/base-tag hijacking
   // unsafe-inline + unsafe-eval required for Next.js hydration; full nonce-based CSP is a separate task
