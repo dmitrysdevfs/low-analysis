@@ -45,11 +45,11 @@ export const approveRequest = async (req, res, next) => {
 
 export const rejectRequest = async (req, res, next) => {
   try {
-    const { review_note, adminNote } = req.body;
+    const { adminNote } = req.body;
     const request = await legislatorRequestService.rejectRequest(
       req.params.id,
       req.user._id,
-      adminNote ?? review_note,
+      adminNote,
     );
     res.json(request);
   } catch (err) {

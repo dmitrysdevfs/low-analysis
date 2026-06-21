@@ -35,6 +35,9 @@ describe('Auth API', () => {
       expect(res.status).toBe(201);
       expect(res.body.email).toBe(userData.email);
       expect(User.create).toHaveBeenCalled();
+      expect(res.headers['set-cookie']).toEqual(
+        expect.arrayContaining([expect.stringContaining('token=')]),
+      );
     });
 
     it('should return 400 if user already exists', async () => {
@@ -77,6 +80,9 @@ describe('Auth API', () => {
 
       expect(res.status).toBe(200);
       expect(mockUser.comparePassword).toHaveBeenCalledWith(userData.password);
+      expect(res.headers['set-cookie']).toEqual(
+        expect.arrayContaining([expect.stringContaining('token=')]),
+      );
     });
 
     it('should return 401 for invalid credentials', async () => {

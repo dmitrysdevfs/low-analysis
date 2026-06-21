@@ -29,13 +29,18 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: false,
-      minlength: [
-        process.env.NODE_ENV === 'development' ||
-        process.env.NODE_ENV === 'test'
-          ? 3
-          : 8,
-        'Password must be at least 8 characters',
-      ],
+      validate: {
+        validator(v) {
+          if (!v) return true; // Google-auth users have no password
+          const min =
+            process.env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'test'
+              ? 3
+              : 8;
+          return v.length >= min;
+        },
+        message: 'Password must be at least 8 characters',
+      },
       select: false,
     },
     role: {

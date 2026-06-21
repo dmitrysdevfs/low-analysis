@@ -11,6 +11,8 @@ export const ROUTES = {
   adminAccess: "/admin/access",
   adminCodes: "/admin/codes",
   adminAudit: "/admin/audit",
+  adminNotifications: "/admin/notifications",
+  adminJobs: "/admin/jobs",
   adminInbox: "/admin/inbox",
   adminSupport: "/admin/support",
   adminAnalytics: "/admin/analytics",

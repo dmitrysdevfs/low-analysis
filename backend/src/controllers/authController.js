@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import { getClientIp } from '../utils/getClientIp.js';
 import { getActiveCode } from '../services/admin/superCode.service.js';
 import { appendAuditEntry } from '../services/admin/audit.service.js';
 import { sendTransactionalEmail } from '../modules/email/email.service.js';
@@ -57,12 +58,6 @@ function parseDevice(userAgent) {
         ? 'Safari'
         : null;
   return [browser, os].filter(Boolean).join(' / ') || null;
-}
-
-function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.ip || req.socket?.remoteAddress || null;
 }
 
 function detectRegistrationSource(referrer) {

@@ -36,7 +36,7 @@ const securityHeaders = [
       "img-src 'self' data: https:",
       "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' https://www.clarity.ms https://www.google-analytics.com https://region1.google-analytics.com https://*.ingest.de.sentry.io https://accounts.google.com wss: ws:",
-      "frame-src https://accounts.google.com",
+      "frame-src 'self' https://accounts.google.com",
       "object-src 'none'",
       "base-uri 'self'",
     ].join("; "),
@@ -52,6 +52,25 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: securityHeaders,
+      },
+      {
+        // Static 3D preview pages loaded in iframes — need unpkg.com CDN and iframe embedding
+        source: "/previews/(.*)",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https:",
+              "connect-src 'self' https://unpkg.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+            ].join("; "),
+          },
+        ],
       },
     ];
   },

@@ -13,6 +13,8 @@ describe("frontend route and config constants", () => {
     expect(ROUTES.admin).toBe("/admin");
     expect(ROUTES.adminAnalytics).toBe("/admin/analytics");
     expect(ROUTES.adminApiCenter).toBe("/admin/api-center");
+    expect(ROUTES.adminNotifications).toBe("/admin/notifications");
+    expect(ROUTES.adminJobs).toBe("/admin/jobs");
     expect(ROUTES.adminProjectPage).toBe("/admin/project-page");
     expect(ROUTES.auth).toBe("/auth");
     expect(ROUTES.authLogin).toBe("/auth/login");

@@ -92,6 +92,9 @@ const corsOptions = {
 const spec = swaggerJsdoc(swaggerOptions);
 const app = express();
 
+// Trust the first hop (Render/Vercel reverse proxy) so req.ip reflects the real client IP
+app.set('trust proxy', 1);
+
 app.use(compression());
 app.use(cors(corsOptions));
 app.use(cookieParser());

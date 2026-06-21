@@ -1,10 +1,5 @@
 import * as superCodeService from '../../services/admin/superCode.service.js';
-
-function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.ip || req.socket?.remoteAddress || null;
-}
+import { getClientIp } from '../../utils/getClientIp.js';
 
 export const getSuperCode = async (req, res, next) => {
   try {

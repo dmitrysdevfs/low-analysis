@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Bell,
   Blocks,
   ChevronLeft,
   ChevronRight,
@@ -17,6 +18,7 @@ import {
   LayoutDashboard,
   Mail,
   MessageSquare,
+  RefreshCw,
   ScrollText,
   ShieldCheck,
   Users,
@@ -60,6 +62,18 @@ const NAV_ITEMS = [
     label: "Аудит",
     icon: ScrollText,
     note: "Операційні події",
+  },
+  {
+    href: ROUTES.adminNotifications,
+    label: "Сповіщення",
+    icon: Bell,
+    note: "Сигнали, заявки, черга уваги",
+  },
+  {
+    href: ROUTES.adminJobs,
+    label: "Jobs",
+    icon: RefreshCw,
+    note: "Черги, прогрес, повторні запуски",
   },
   {
     href: ROUTES.adminSupport,

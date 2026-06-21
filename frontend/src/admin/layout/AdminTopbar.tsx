@@ -63,6 +63,17 @@ const PAGE_TITLES = [
     subtitle: "Події безпеки та операційні зміни",
   },
   {
+    href: ROUTES.adminNotifications,
+    title: "Сповіщення",
+    subtitle:
+      "Живий центр role-заявок, security-сигналів та операційної уваги",
+  },
+  {
+    href: ROUTES.adminJobs,
+    title: "Jobs & Operations",
+    subtitle: "Фонові задачі, прогрес виконання, помилки та повторні запуски",
+  },
+  {
     href: ROUTES.adminUsers,
     title: "Користувачі",
     subtitle: "Реєстр акаунтів, ролі та дії",
@@ -387,15 +398,24 @@ export function AdminTopbar({
                     <span className={styles.notifPanelCount}>{badgeCount}</span>
                   )}
                 </span>
-                {securityItems.length > 0 && (
-                  <button
-                    type="button"
-                    className={styles.notifMarkAllBtn}
-                    onClick={() => handleClearSecurity(visibleNotifItems)}
+                <div className={styles.notifPanelActions}>
+                  <Link
+                    href={ROUTES.adminNotifications}
+                    className={styles.notifGroupAction}
+                    onClick={() => setNotifOpen(false)}
                   >
-                    Позначити як переглянуте
-                  </button>
-                )}
+                    Відкрити центр →
+                  </Link>
+                  {securityItems.length > 0 && (
+                    <button
+                      type="button"
+                      className={styles.notifMarkAllBtn}
+                      onClick={() => handleClearSecurity(visibleNotifItems)}
+                    >
+                      Позначити як переглянуте
+                    </button>
+                  )}
+                </div>
               </div>
 
               {visibleNotifItems.length === 0 ? (

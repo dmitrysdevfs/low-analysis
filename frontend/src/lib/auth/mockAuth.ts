@@ -55,6 +55,7 @@ export type AdminAccessMatrixRow = {
   account: boolean;
   adminPanel: boolean;
   legislatorCabinet: boolean;
+  supervisorDashboard: boolean;
 };
 
 export type AdminAccountSummary = {
@@ -857,6 +858,7 @@ export function getAdminDashboardSnapshot() {
         account: false,
         adminPanel: false,
         legislatorCabinet: false,
+        supervisorDashboard: false,
       },
       {
         role: "Клієнт",
@@ -867,6 +869,7 @@ export function getAdminDashboardSnapshot() {
         account: true,
         adminPanel: false,
         legislatorCabinet: false,
+        supervisorDashboard: false,
       },
       {
         role: "Законотворець",
@@ -877,6 +880,7 @@ export function getAdminDashboardSnapshot() {
         account: true,
         adminPanel: false,
         legislatorCabinet: true,
+        supervisorDashboard: false,
       },
       {
         role: "Адмін",
@@ -887,6 +891,7 @@ export function getAdminDashboardSnapshot() {
         account: true,
         adminPanel: true,
         legislatorCabinet: true,
+        supervisorDashboard: true,
       },
     ],
   } satisfies AdminDashboardSnapshot;
