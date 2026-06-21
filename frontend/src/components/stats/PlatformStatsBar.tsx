@@ -17,7 +17,7 @@ function StatCounter({
   label,
   active,
 }: {
-  Icon: React.ElementType;
+  Icon: React.ComponentType<{ size?: number; className?: string }>;
   value: number;
   label: string;
   active: boolean;

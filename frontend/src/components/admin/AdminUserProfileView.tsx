@@ -197,7 +197,7 @@ function SidePanel({
   defaultOpen = true,
   children,
 }: {
-  icon: React.ElementType;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   iconBg: string;
   iconColor: string;
   title: string;

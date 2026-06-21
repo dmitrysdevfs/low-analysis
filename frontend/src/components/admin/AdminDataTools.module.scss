@@ -1,0 +1,600 @@
+$glass-bg:
+  linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  ),
+  rgba(9, 18, 38, 0.84);
+$glass-border: 1px solid rgba(255, 255, 255, 0.1);
+$glass-shadow:
+  0 18px 34px rgba(0, 0, 0, 0.24),
+  inset 0 1px 0 rgba(255, 255, 255, 0.08);
+$glass-blur: blur(18px);
+$radius: 20px;
+
+.page {
+  display: grid;
+  gap: 12px;
+}
+
+.hero,
+.heroStatus,
+.kpiCard,
+.panel,
+.exportCard,
+.parseCard {
+  border-radius: $radius;
+  border: $glass-border;
+  background: $glass-bg;
+  box-shadow: $glass-shadow;
+  backdrop-filter: $glass-blur;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.8fr);
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+.heroCopy,
+.heroStatus,
+.panel,
+.lawCard,
+.resultBlock {
+  display: grid;
+  gap: 10px;
+}
+
+.eyebrow,
+.sectionEyebrow,
+.kpiLabel,
+.previewLabel,
+.exportMeta {
+  display: inline-flex;
+  width: fit-content;
+  color: var(--th-accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title,
+.sectionTitle,
+.kpiValue,
+.heroStatusValue,
+.lawCardTitle {
+  margin: 0;
+  color: #fff;
+}
+
+.title {
+  font-size: clamp(1.22rem, 1.9vw, 1.58rem);
+  line-height: 1.14;
+}
+
+.description,
+.heroStatusMeta,
+.kpiMeta,
+.fieldLabel,
+.parseHint,
+.lawCardMeta,
+.historyItem p,
+.emptyState {
+  margin: 0;
+  color: #c7d5ea;
+  line-height: 1.55;
+}
+
+.description {
+  max-width: 760px;
+  font-size: 0.86rem;
+}
+
+.heroActions,
+.inlineActions,
+.dateGrid,
+.quickLinks,
+.heroStatusRows,
+.historyList,
+.resultPreviewList {
+  display: grid;
+  gap: 10px;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.primaryLink,
+.secondaryLink,
+.primaryBtn,
+.secondaryBtn,
+.dangerBtn,
+.quickLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 0.16s ease,
+    background 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.primaryLink,
+.primaryBtn {
+  color: #062a35;
+  background: linear-gradient(135deg, #67f0da 0%, #4fb8ff 100%);
+  border: 1px solid transparent;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.secondaryLink,
+.secondaryBtn,
+.quickLink {
+  color: #d8f7ff;
+  background: rgba(103, 240, 218, 0.08);
+  border: 1px solid rgba(103, 240, 218, 0.2);
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(103, 240, 218, 0.34);
+    background: rgba(103, 240, 218, 0.12);
+  }
+}
+
+.dangerBtn {
+  color: #ffe5d7;
+  background: rgba(240, 128, 128, 0.12);
+  border: 1px solid rgba(240, 128, 128, 0.24);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: rgba(240, 128, 128, 0.16);
+  }
+}
+
+.primaryBtn,
+.secondaryBtn,
+.dangerBtn {
+  cursor: pointer;
+}
+
+.primaryBtn:disabled,
+.secondaryBtn:disabled,
+.dangerBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.spinningIcon {
+  animation: spin 1s linear infinite;
+}
+
+.heroStatus {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(82, 183, 136, 0.06);
+  border: 1px solid rgba(82, 183, 136, 0.18);
+  align-content: start;
+}
+
+.heroStatusHeader,
+.heroStatusRow,
+.historyTop,
+.resultSummary,
+.resultPreviewItem,
+.lawCardTop,
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.heroStatusHeader {
+  justify-content: flex-start;
+  color: #dffff5;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+.heroStatusValue {
+  font-size: clamp(1.55rem, 2.2vw, 2rem);
+  line-height: 1;
+}
+
+.heroStatusRow {
+  color: #b9cae5;
+  font-size: 0.78rem;
+}
+
+.heroStatusRow strong {
+  color: #fff;
+}
+
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kpiCard {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+}
+
+.kpiValue {
+  font-size: clamp(1.3rem, 1.8vw, 1.72rem);
+  line-height: 1;
+}
+
+.kpiMeta,
+.panelHeaderMeta,
+.previewCode,
+.historyItem p {
+  font-size: 0.74rem;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(360px, 1.1fr) minmax(300px, 0.95fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.leftRail,
+.centerRail,
+.rightRail {
+  display: grid;
+  gap: 12px;
+}
+
+.panel {
+  padding: 14px 16px 16px;
+}
+
+.sectionTitle {
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.panelHeaderMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(199, 213, 234, 0.72);
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 0.76rem;
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(158, 181, 217, 0.44);
+}
+
+.input,
+.select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(158, 181, 217, 0.12);
+  background: rgba(10, 22, 44, 0.68);
+  color: #edf3ff;
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.16s ease;
+
+  &::placeholder {
+    color: rgba(158, 181, 217, 0.4);
+  }
+
+  &:focus {
+    border-color: rgba(103, 240, 218, 0.34);
+  }
+}
+
+.inputWrap .input {
+  padding-left: 36px;
+}
+
+.select option {
+  background: #0e1a30;
+}
+
+.dateGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.previewBox {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(158, 181, 217, 0.12);
+  background: rgba(158, 181, 217, 0.05);
+}
+
+.previewCode {
+  margin: 0;
+  color: #dce7f7;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.lawCard {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(103, 240, 218, 0.16);
+  background: rgba(103, 240, 218, 0.06);
+}
+
+.lawCardTop {
+  justify-content: flex-start;
+  color: #d8f7ff;
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+}
+
+.lawCardTitle {
+  font-size: 0.96rem;
+}
+
+.exportGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.exportCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease;
+
+  strong {
+    color: #fff;
+    font-size: 0.92rem;
+  }
+
+  span {
+    color: #c7d5ea;
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(103, 240, 218, 0.24);
+  }
+}
+
+.inlineActions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.parseCard {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.parseCardDanger {
+  border-color: rgba(240, 128, 128, 0.18);
+}
+
+.parseTitleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #edf6ff;
+}
+
+.parseHint {
+  font-size: 0.78rem;
+}
+
+.resultBlock {
+  gap: 12px;
+}
+
+.resultSummary {
+  justify-content: flex-start;
+  color: #dcffe8;
+}
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resultMetric {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(158, 181, 217, 0.1);
+  background: rgba(158, 181, 217, 0.05);
+
+  span {
+    color: #b9cae5;
+    font-size: 0.72rem;
+  }
+
+  strong {
+    color: #fff;
+    font-size: 1rem;
+  }
+}
+
+.resultTime {
+  color: rgba(199, 213, 234, 0.72);
+  font-size: 0.74rem;
+}
+
+.resultPreviewItem {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(158, 181, 217, 0.1);
+  background: rgba(158, 181, 217, 0.05);
+  font-size: 0.74rem;
+  color: #dce7f7;
+}
+
+.quickLinks {
+  grid-template-columns: 1fr;
+}
+
+.historyList {
+  grid-template-columns: 1fr;
+}
+
+.historyItem {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(158, 181, 217, 0.1);
+  background: rgba(158, 181, 217, 0.05);
+
+  strong {
+    color: #fff;
+    font-size: 0.82rem;
+  }
+}
+
+.historyTop span {
+  color: rgba(199, 213, 234, 0.68);
+  font-size: 0.72rem;
+}
+
+.historyBadge {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 22px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.historyBadgeDone {
+  color: #dcffe8;
+  background: rgba(82, 183, 136, 0.14);
+}
+
+.historyBadgeDownload {
+  color: #d8f7ff;
+  background: rgba(103, 240, 218, 0.12);
+}
+
+.historyBadgeError {
+  color: #ffd7d7;
+  background: rgba(240, 128, 128, 0.12);
+}
+
+.emptyState {
+  padding: 18px 16px;
+  border-radius: 16px;
+  border: 1px dashed rgba(158, 181, 217, 0.16);
+  text-align: center;
+  background: rgba(158, 181, 217, 0.04);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1260px) {
+  .workspace {
+    grid-template-columns: minmax(280px, 0.95fr) minmax(0, 1.05fr);
+  }
+
+  .rightRail {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .exportGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .workspace,
+  .rightRail {
+    grid-template-columns: 1fr;
+  }
+
+  .kpiRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inlineActions,
+  .dateGrid,
+  .resultGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero,
+  .panel,
+  .kpiCard,
+  .exportCard,
+  .parseCard {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .kpiRow {
+    grid-template-columns: 1fr;
+  }
+
+  .heroActions,
+  .panelHeader,
+  .historyTop {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

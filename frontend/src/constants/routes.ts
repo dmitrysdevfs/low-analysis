@@ -13,6 +13,7 @@ export const ROUTES = {
   adminAudit: "/admin/audit",
   adminNotifications: "/admin/notifications",
   adminJobs: "/admin/jobs",
+  adminDataTools: "/admin/data-tools",
   adminInbox: "/admin/inbox",
   adminSupport: "/admin/support",
   adminAnalytics: "/admin/analytics",

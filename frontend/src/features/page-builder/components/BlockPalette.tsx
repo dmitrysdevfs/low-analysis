@@ -21,7 +21,7 @@ import styles from "../PageBuilder.module.scss";
 type BlockItem = {
   type: PageBuilderBlockType;
   label: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
 };
 
 const CATEGORIES: { label: string; blocks: BlockItem[] }[] = [

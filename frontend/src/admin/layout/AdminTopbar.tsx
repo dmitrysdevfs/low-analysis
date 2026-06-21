@@ -73,6 +73,11 @@ const PAGE_TITLES = [
     subtitle: "Фонові задачі, прогрес виконання, помилки та повторні запуски",
   },
   {
+    href: ROUTES.adminDataTools,
+    title: "Data tools",
+    subtitle: "Експорт датасетів, parse references та технічні операції над законами",
+  },
+  {
     href: ROUTES.adminUsers,
     title: "Користувачі",
     subtitle: "Реєстр акаунтів, ролі та дії",

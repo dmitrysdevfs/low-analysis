@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  Database,
   ExternalLink,
   FileCode2,
   HelpCircle,
@@ -74,6 +75,12 @@ const NAV_ITEMS = [
     label: "Jobs",
     icon: RefreshCw,
     note: "Черги, прогрес, повторні запуски",
+  },
+  {
+    href: ROUTES.adminDataTools,
+    label: "Data tools",
+    icon: Database,
+    note: "Експорт, парсинг, batch handoff",
   },
   {
     href: ROUTES.adminSupport,

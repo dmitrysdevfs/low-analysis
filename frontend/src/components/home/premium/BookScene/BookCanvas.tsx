@@ -115,7 +115,7 @@ function Book() {
       {/* Book body */}
       <mesh
         castShadow
-        materials={[mPages, mSpine, mPages, mPages, mCover, mCover]}
+        material={[mPages, mSpine, mPages, mPages, mCover, mCover]}
       >
         <boxGeometry args={[BW, BH, BD]} />
       </mesh>

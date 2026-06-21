@@ -22,7 +22,7 @@
   top: 0;
   height: 100vh;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .sidebarTop {
@@ -31,6 +31,15 @@
   align-items: center;
   gap: 28px;
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .logoBlock {
