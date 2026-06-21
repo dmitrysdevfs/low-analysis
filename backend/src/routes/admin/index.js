@@ -10,6 +10,7 @@ import activityRoutes from './activity.js';
 import notificationsRoutes from './notifications.js';
 import emailAdminRoutes from '../../modules/email/email.admin.routes.js';
 import billingRoutes from './billing.js';
+import parseReferencesRoutes from './parseReferences.js';
 
 const router = Router();
 router.use('/dashboard', dashboardRoutes);
@@ -23,4 +24,5 @@ router.use('/activity', activityRoutes);
 router.use('/notifications', notificationsRoutes);
 router.use('/email', emailAdminRoutes);
 router.use('/billing', billingRoutes);
+router.use('/parse-references', parseReferencesRoutes);
 export default router;

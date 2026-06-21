@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
 import AccountPage from "@/app/account/page";
 import AccountBillingPage from "@/app/account/billing/page";
-import AccountBillingCheckoutPage from "@/app/account/billing/checkout/page";
 import AccountSavedPage from "@/app/account/saved/page";
 import AdminPage from "@/app/admin/page";
 import AdminUsersPage from "@/app/admin/users/page";
@@ -13,34 +12,22 @@ import AdminAuditPage from "@/app/admin/audit/page";
 import AdminAnalyticsPage from "@/app/admin/analytics/page";
 import AdminLayout from "@/app/admin/layout";
 
-vi.mock("@/components/layout/Layout", () => ({
-  Layout: ({
-    children,
-    fullHeight,
-  }: {
-    children: ReactNode;
-    fullHeight?: boolean;
-  }) => (
-    <div data-testid="layout" data-full-height={String(Boolean(fullHeight))}>
-      {children}
-    </div>
+vi.mock("@/features/account1/AccountDashboard", () => ({
+  AccountDashboard: () => (
+    <div data-testid="account-dashboard">account-dashboard</div>
   ),
 }));
 
-vi.mock("@/components/account/ClientWorkspaceHome", () => ({
-  ClientWorkspaceHome: () => <div>workspace-home</div>,
+vi.mock("@/features/account1/BillingDashboard", () => ({
+  BillingDashboard: () => (
+    <div data-testid="billing-dashboard">billing-dashboard</div>
+  ),
 }));
 
-vi.mock("@/components/account/ClientBillingOverview", () => ({
-  ClientBillingOverview: () => <div>billing-overview</div>,
-}));
-
-vi.mock("@/components/account/CheckoutDemo", () => ({
-  CheckoutDemo: () => <div>checkout-demo</div>,
-}));
-
-vi.mock("@/components/account/ClientWorkspaceSaved", () => ({
-  ClientWorkspaceSaved: () => <div>workspace-saved</div>,
+vi.mock("@/features/account1/SavedDashboard", () => ({
+  SavedDashboard: () => (
+    <div data-testid="saved-dashboard">saved-dashboard</div>
+  ),
 }));
 
 vi.mock("@/components/admin/AdminDashboardView", () => ({
@@ -82,44 +69,19 @@ vi.mock("@/components/admin/AdminShell", () => ({
 }));
 
 describe("account and admin route wrappers", () => {
-  it("renders account workspace inside full-height layout", () => {
+  it("renders account dashboard", () => {
     render(<AccountPage />);
-
-    expect(screen.getByTestId("layout")).toHaveAttribute(
-      "data-full-height",
-      "true",
-    );
-    expect(screen.getByText("workspace-home")).toBeInTheDocument();
+    expect(screen.getByTestId("account-dashboard")).toBeInTheDocument();
   });
 
-  it("renders account billing inside full-height layout", () => {
+  it("renders billing dashboard", () => {
     render(<AccountBillingPage />);
-
-    expect(screen.getByText("billing-overview")).toBeInTheDocument();
-    expect(screen.getByTestId("layout")).toHaveAttribute(
-      "data-full-height",
-      "true",
-    );
+    expect(screen.getByTestId("billing-dashboard")).toBeInTheDocument();
   });
 
-  it("renders checkout demo inside full-height layout", () => {
-    render(<AccountBillingCheckoutPage />);
-
-    expect(screen.getByText("checkout-demo")).toBeInTheDocument();
-    expect(screen.getByTestId("layout")).toHaveAttribute(
-      "data-full-height",
-      "true",
-    );
-  });
-
-  it("renders saved workspace inside full-height layout", () => {
+  it("renders saved dashboard", () => {
     render(<AccountSavedPage />);
-
-    expect(screen.getByText("workspace-saved")).toBeInTheDocument();
-    expect(screen.getByTestId("layout")).toHaveAttribute(
-      "data-full-height",
-      "true",
-    );
+    expect(screen.getByTestId("saved-dashboard")).toBeInTheDocument();
   });
 
   it("renders each admin page with its dedicated view", () => {

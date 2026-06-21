@@ -2,6 +2,7 @@ import * as lawService from './lawService.js';
 import * as fetchService from './fetchService.js';
 import { parseLawHtml } from './parserService.js';
 import { performStatisticalAnalysis } from './statisticalAnalysisService.js';
+import { parseReferencesForLaw } from './referenceParser.js';
 
 export async function parseAndSaveLawByUrl(url) {
   if (!url) {
@@ -63,6 +64,15 @@ export async function parseAndSaveLawByUrl(url) {
   } catch (statsError) {
     console.warn(
       `[WARN] Failed to calculate statistics for law ${law._id}: ${statsError.message}`,
+    );
+  }
+
+  // 7. Build cross-law references from already-stored element texts — non-fatal.
+  try {
+    await parseReferencesForLaw(law._id);
+  } catch (refError) {
+    console.warn(
+      `[WARN] Failed to parse references for law ${law._id}: ${refError.message}`,
     );
   }
 

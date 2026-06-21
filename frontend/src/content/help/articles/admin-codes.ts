@@ -4,7 +4,7 @@ const article: HelpArticle = {
   slug: "admin-codes",
   title: "Коди доступу та ротація",
   summary: "Що таке супер-код, як створювати та ротувати коди запрошень.",
-  category: "Доступ",
+  category: "Коди",
   audience: "admin",
   updatedAt: "2026-05-23",
   relatedSlugs: ["admin-users"],

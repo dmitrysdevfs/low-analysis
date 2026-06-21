@@ -8,7 +8,7 @@ import type {
   PaginatedLawsResponse,
   TreeNode,
 } from "@/types";
-import { getJson, toSearchParams } from "./_client";
+import { getJson, requestJson, toSearchParams } from "./_client";
 export { getJson } from "./_client";
 
 export interface LawsSearchOptions {
@@ -101,6 +101,18 @@ export async function getLawStats(
   options?: RequestInit,
 ): Promise<LawStats> {
   return getJson<LawStats>(`/laws/${id}/stats`, options);
+}
+
+export async function getStatsBulk(
+  ids: string[],
+  options?: RequestInit,
+): Promise<Record<string, LawStats>> {
+  return requestJson<Record<string, LawStats>>(
+    "/laws/stats-bulk",
+    "POST",
+    { ids },
+    options,
+  );
 }
 
 export async function getArticle(

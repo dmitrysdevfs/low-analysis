@@ -1,5 +1,6 @@
 import SupportConversation from './support.conversation.model.js';
 import SupportMessage from './support.message.model.js';
+import SupportNote from './SupportNote.model.js';
 import { appendAuditEntry } from '../../services/admin/audit.service.js';
 import { SUPPORT_ENABLED } from './support.constants.js';
 import {
@@ -7,6 +8,9 @@ import {
   mirrorSupportMessageToTelegram,
   extractTelegramConversationId,
   isTelegramAgentAllowed,
+  stripConversationToken,
+  setTelegramWebhook,
+  getTelegramWebhookInfo,
 } from './support.telegram.service.js';
 
 function normalizeText(value) {
@@ -49,6 +53,9 @@ function serializeConversation(conversation) {
     guestName: conversation.guestName || '',
     guestEmail: conversation.guestEmail || '',
     status: conversation.status,
+    priority: conversation.priority || 'normal',
+    spamFlag: conversation.spamFlag || false,
+    escalatedAt: conversation.escalatedAt || null,
     subject: conversation.subject,
     startedFromPathname: conversation.startedFromPathname,
     startedFromPageTitle: conversation.startedFromPageTitle,
@@ -62,9 +69,22 @@ function serializeConversation(conversation) {
     assignedAdminId: conversation.assignedAdminId
       ? String(conversation.assignedAdminId)
       : null,
+    assignedAt: conversation.assignedAt || null,
     telegramChatId: conversation.telegramChatId,
+    userId: conversation.userId ? String(conversation.userId) : null,
     createdAt: conversation.createdAt,
     updatedAt: conversation.updatedAt,
+  };
+}
+
+function serializeNote(note) {
+  return {
+    id: note._id.toString(),
+    conversationId: String(note.conversationId),
+    authorName: note.authorName || '',
+    authorEmail: note.authorEmail || '',
+    text: note.text,
+    createdAt: note.createdAt,
   };
 }
 
@@ -78,6 +98,8 @@ function serializeMessage(message) {
     channel: message.channel,
     deliveredToTelegram: message.deliveredToTelegram,
     telegramMessageId: message.telegramMessageId,
+    telegramSenderId: message.telegramSenderId ?? null,
+    telegramSenderUsername: message.telegramSenderUsername ?? null,
     createdAt: message.createdAt,
   };
 }
@@ -127,6 +149,8 @@ async function createStoredMessage({
   text,
   channel = 'web',
   mirrorToTelegram = false,
+  telegramSenderId = null,
+  telegramSenderUsername = null,
 }) {
   const message = await SupportMessage.create({
     conversationId: conversation._id,
@@ -136,6 +160,8 @@ async function createStoredMessage({
     senderEmail,
     text: normalizeText(text),
     channel,
+    telegramSenderId,
+    telegramSenderUsername,
   });
 
   if (mirrorToTelegram) {
@@ -188,12 +214,27 @@ export async function getSupportConfig() {
 
 export async function getAdminSupportStatus() {
   const telegram = getTelegramSupportConfig();
-  const [totalConversations, openConversations, unreadConversations] =
-    await Promise.all([
-      SupportConversation.countDocuments(),
-      SupportConversation.countDocuments({ status: { $ne: 'closed' } }),
-      SupportConversation.countDocuments({ unreadForAdmin: { $gt: 0 } }),
-    ]);
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const startOfYesterday = new Date(startOfToday);
+  startOfYesterday.setDate(startOfToday.getDate() - 1);
+
+  const [
+    totalConversations,
+    openConversations,
+    unreadConversations,
+    todayCount,
+    yesterdayCount,
+  ] = await Promise.all([
+    SupportConversation.countDocuments(),
+    SupportConversation.countDocuments({ status: { $ne: 'closed' } }),
+    SupportConversation.countDocuments({ unreadForAdmin: { $gt: 0 } }),
+    SupportConversation.countDocuments({ createdAt: { $gte: startOfToday } }),
+    SupportConversation.countDocuments({
+      createdAt: { $gte: startOfYesterday, $lt: startOfToday },
+    }),
+  ]);
 
   return {
     enabled: SUPPORT_ENABLED,
@@ -202,6 +243,10 @@ export async function getAdminSupportStatus() {
     totalConversations,
     openConversations,
     unreadConversations,
+    todayConversations: todayCount,
+    yesterdayConversations: yesterdayCount,
+    lastSyncAt: telegram.configured ? new Date().toISOString() : null,
+    webhookStatus: telegram.configured ? 'ok' : 'down',
   };
 }
 
@@ -453,51 +498,201 @@ export async function updateConversationStatus({
   return { conversation: serializeConversation(conversation) };
 }
 
+export async function assignConversation({
+  conversationId,
+  adminId,
+  adminUser,
+}) {
+  const conversation = await getConversationByIdOrThrow(conversationId);
+  conversation.assignedAdminId = adminId || null;
+  conversation.assignedAt = adminId ? new Date() : null;
+  await conversation.save();
+  await appendAuditEntry({
+    action: 'Support conversation assigned',
+    detail: `Діалог ${conversation._id} призначено адміністратору ${adminUser?.email || adminId}.`,
+    actor: adminUser?.email || 'admin',
+    severity: 'info',
+  });
+  return { conversation: serializeConversation(conversation) };
+}
+
+export async function addInternalNote({ conversationId, adminUser, text }) {
+  const noteText = normalizeText(text);
+  if (!noteText) {
+    throw Object.assign(new Error('Note text is required'), { status: 400 });
+  }
+  await getConversationByIdOrThrow(conversationId);
+  const note = await SupportNote.create({
+    conversationId,
+    authorId: adminUser._id,
+    authorName:
+      adminUser.fullName || adminUser.displayName || adminUser.email || '',
+    authorEmail: adminUser.email || '',
+    text: noteText,
+  });
+  return { note: serializeNote(note) };
+}
+
+export async function listInternalNotes(conversationId) {
+  await getConversationByIdOrThrow(conversationId);
+  const notes = await SupportNote.find({ conversationId })
+    .sort({ createdAt: -1 })
+    .lean();
+  return notes.map(serializeNote);
+}
+
+export async function markAsSpam({ conversationId, adminUser }) {
+  const conversation = await getConversationByIdOrThrow(conversationId);
+  conversation.spamFlag = true;
+  conversation.status = 'closed';
+  await conversation.save();
+  await appendAuditEntry({
+    action: 'Support conversation marked as spam',
+    detail: `Діалог ${conversation._id} позначено як спам і закрито.`,
+    actor: adminUser?.email || 'admin',
+    severity: 'warning',
+  });
+  return { conversation: serializeConversation(conversation) };
+}
+
+export async function escalateConversation({ conversationId, adminUser }) {
+  const conversation = await getConversationByIdOrThrow(conversationId);
+  conversation.priority = 'urgent';
+  conversation.escalatedAt = new Date();
+  await conversation.save();
+  await appendAuditEntry({
+    action: 'Support conversation escalated',
+    detail: `Діалог ${conversation._id} ескаловано до пріоритету Urgent.`,
+    actor: adminUser?.email || 'admin',
+    severity: 'security',
+  });
+  return { conversation: serializeConversation(conversation) };
+}
+
+export async function checkTelegramSync() {
+  const config = getTelegramSupportConfig();
+  if (!config.configured) {
+    return {
+      ok: false,
+      webhookStatus: 'down',
+      error: 'Telegram bot не налаштовано',
+      lastCheckedAt: new Date().toISOString(),
+    };
+  }
+  try {
+    const start = Date.now();
+    const resp = await fetch(
+      `https://api.telegram.org/bot${config.botToken}/getMe`,
+    );
+    const data = await resp.json();
+    const latencyMs = Date.now() - start;
+    if (data.ok) {
+      return {
+        ok: true,
+        webhookStatus: 'ok',
+        botUsername: data.result.username,
+        latencyMs,
+        lastCheckedAt: new Date().toISOString(),
+      };
+    }
+    return {
+      ok: false,
+      webhookStatus: 'degraded',
+      error: data.description,
+      latencyMs,
+      lastCheckedAt: new Date().toISOString(),
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      webhookStatus: 'degraded',
+      error: err.message,
+      lastCheckedAt: new Date().toISOString(),
+    };
+  }
+}
+
 export async function handleTelegramUpdate(update) {
+  console.log(
+    '[support:tg-webhook] update type:',
+    Object.keys(update ?? {}).join(', '),
+  );
+
   const message = update?.message;
   if (!message || !message.text) {
+    console.log('[support:tg-webhook] ignored — no text message');
     return { ok: true, ignored: true, reason: 'unsupported-message' };
   }
 
-  if (message.from?.is_bot) {
+  const isGroupAnonymousBot = message.from?.username === 'GroupAnonymousBot';
+  if (message.from?.is_bot && !isGroupAnonymousBot) {
+    console.log('[support:tg-webhook] ignored — bot message');
     return { ok: true, ignored: true, reason: 'bot-message' };
   }
 
-  if (!isTelegramAgentAllowed(message.from)) {
+  const fromId = String(message.from?.id ?? '');
+  if (!isGroupAnonymousBot && !isTelegramAgentAllowed(message.from)) {
+    console.log(
+      `[support:tg-webhook] ignored — agent not allowed (tg_id=${fromId})`,
+    );
     return { ok: true, ignored: true, reason: 'agent-not-allowed' };
   }
 
   const conversationId = extractTelegramConversationId(message);
+  console.log(
+    `[support:tg-webhook] conversationId extracted: ${conversationId ?? 'null'}`,
+  );
+  console.log(
+    `[support:tg-webhook] reply_to text snippet: "${(message.reply_to_message?.text ?? '').slice(0, 80)}"`,
+  );
+
   if (!conversationId) {
+    console.log('[support:tg-webhook] ignored — no [#conv:...] token found');
     return { ok: true, ignored: true, reason: 'conversation-not-found' };
   }
 
   const conversation = await SupportConversation.findById(conversationId);
   if (!conversation) {
+    console.log(
+      `[support:tg-webhook] ignored — conversation ${conversationId} not in DB`,
+    );
     return { ok: true, ignored: true, reason: 'missing-conversation' };
   }
 
-  const senderName =
-    [message.from.first_name, message.from.last_name]
-      .filter(Boolean)
-      .join(' ') ||
-    message.from.username ||
-    `Telegram ${message.from.id}`;
+  const senderName = isGroupAnonymousBot
+    ? 'Підтримка'
+    : [message.from.first_name, message.from.last_name]
+        .filter(Boolean)
+        .join(' ') ||
+      message.from.username ||
+      `Telegram ${message.from.id}`;
+
+  const telegramSenderId = fromId;
+  const telegramSenderUsername = message.from.username ?? null;
+
+  // Strip [#conv:...] token if user typed it directly in the message text
+  const cleanText = stripConversationToken(message.text);
+
+  console.log(
+    `[support:tg-webhook] saving reply from "${senderName}" (${telegramSenderId}) for conv ${conversationId}`,
+  );
 
   const storedMessage = await createStoredMessage({
     conversation,
     senderType: 'telegram_support',
     senderName,
     senderEmail: '',
-    text: message.text,
+    text: cleanText,
     channel: 'telegram',
     mirrorToTelegram: false,
+    telegramSenderId,
+    telegramSenderUsername,
   });
 
   await touchConversationAfterMessage(conversation, {
     status: 'waiting_user',
     lastMessageAt: storedMessage.createdAt,
-    lastMessageSnippet: clipSnippet(message.text),
+    lastMessageSnippet: clipSnippet(cleanText),
     lastSenderType: 'telegram_support',
     unreadForUser: Number(conversation.unreadForUser || 0) + 1,
     unreadForAdmin: 0,
@@ -505,10 +700,18 @@ export async function handleTelegramUpdate(update) {
 
   await appendAuditEntry({
     action: 'Support reply received from Telegram',
-    detail: `Для діалогу ${conversation._id} отримано Telegram-відповідь.`,
+    detail: `Для діалогу ${conversation._id} отримано Telegram-відповідь від ${senderName} (@${telegramSenderUsername ?? telegramSenderId}).`,
     actor: senderName,
     severity: 'info',
   });
 
   return { ok: true };
+}
+
+export async function registerTelegramWebhook({ webhookUrl }) {
+  return setTelegramWebhook(webhookUrl);
+}
+
+export async function fetchTelegramWebhookInfo() {
+  return getTelegramWebhookInfo();
 }

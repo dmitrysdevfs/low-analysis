@@ -44,7 +44,12 @@ export function AdminAnalyticsView() {
     error: subjectsError,
   } = useAdminSubjects();
 
-  const { statsMap: lawStatsMap, loading: statsLoading } = useAdminStats(laws);
+  const {
+    statsMap: lawStatsMap,
+    loading: statsLoading,
+    fetchError: statsFetchError,
+    retry: retryStats,
+  } = useAdminStats(laws);
 
   const metrics = useMemo(() => {
     const totalSections = laws.reduce((sum, law) => sum + law.totalSections, 0);
@@ -308,17 +313,69 @@ export function AdminAnalyticsView() {
           </div>
 
           {statsLoading ? (
-            <div className={styles.emptyState}>Завантаження статистики…</div>
+            <div className={styles.emptyState}>
+              Завантаження статистики…
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "0.78rem",
+                  marginTop: "0.4rem",
+                  color: "#7787b8",
+                }}
+              >
+                Один запит до бази — зачекайте секунду.
+              </span>
+            </div>
+          ) : statsFetchError ? (
+            <div className={styles.emptyState}>
+              <span style={{ color: "#ff9f9f" }}>
+                Помилка завантаження статистики:
+              </span>{" "}
+              {statsFetchError}
+              <button
+                type="button"
+                onClick={retryStats}
+                style={{
+                  display: "block",
+                  marginTop: "0.8rem",
+                  padding: "0.4rem 1rem",
+                  border: "1px solid rgba(200,168,67,0.4)",
+                  borderRadius: "0.6rem",
+                  background: "transparent",
+                  color: "#f4c84e",
+                  fontSize: "0.82rem",
+                  cursor: "pointer",
+                }}
+              >
+                Спробувати знову
+              </button>
+            </div>
           ) : lawStatsMap.size === 0 ? (
             <div className={styles.emptyState}>
-              Статистика порожня — дані risk-рівнів відсутні. Спробуйте спершу
-              виконати парсинг законів через{" "}
+              Статистика порожня — закони ще не мають елементів з risk-рівнями.
+              Виконайте парсинг через{" "}
               <code
                 style={{ fontFamily: "var(--font-mono)", color: "#c8a843" }}
               >
                 /admin/codes
-              </code>{" "}
-              або перевірте що в базі є закони з обчисленою статистикою.
+              </code>
+              {", "}або{" "}
+              <button
+                type="button"
+                onClick={retryStats}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#c8a843",
+                  cursor: "pointer",
+                  padding: 0,
+                  textDecoration: "underline",
+                  fontSize: "inherit",
+                }}
+              >
+                завантажити знову
+              </button>
+              .
             </div>
           ) : (
             <div className={styles.statsTable}>

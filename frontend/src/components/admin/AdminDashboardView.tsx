@@ -2,6 +2,15 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import {
+  Scale,
+  Users,
+  User,
+  CreditCard,
+  FileText,
+  ShieldAlert,
+  BarChart3,
+} from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { formatDateMedium, formatDateShort, groupCounts } from "@/lib/utils";
 import { formatAccessRoleLabel, formatSeverityLabel } from "./adminLabels";
@@ -113,11 +122,9 @@ export function AdminDashboardView() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>Дашборд</span>
-          <h2 className={styles.title}>Один екран для всієї платформи.</h2>
+          <h2 className={styles.title}>Стан платформи</h2>
           <p className={styles.description}>
-            Це головний пульт керування: загальні метрики сайту, розподіл
-            білінгу, навантаження гостей, повнота контенту та швидкі переходи до
-            окремих адмін-модулів.
+            Закони, суб'єкти, акаунти та контроль подій — в одному екрані.
           </p>
         </div>
 
@@ -145,6 +152,7 @@ export function AdminDashboardView() {
           note="Структуровані правові документи."
           loading={lawsLoading}
           color="#4a80d4"
+          icon={<Scale size={15} />}
         />
         <MetricCard
           label="Суб'єкти"
@@ -152,18 +160,21 @@ export function AdminDashboardView() {
           note="Визначені регуляторні суб'єкти."
           loading={subjectsLoading}
           color="#93b7ff"
+          icon={<Users size={15} />}
         />
         <MetricCard
           label="Акаунти"
           value={snapshot.totalAccounts}
           note="Ідентичності в адмін-просторі."
           color="#c8a843"
+          icon={<User size={15} />}
         />
         <MetricCard
           label="Платні плани"
           value={paidAccounts}
           note="Тарифи «Користувач», «Плюс» і «Про»."
           color="#f2d06c"
+          icon={<CreditCard size={15} />}
         />
         <MetricCard
           label="Статті"
@@ -171,12 +182,14 @@ export function AdminDashboardView() {
           note="Загальна кількість статей у корпусі."
           loading={lawsLoading}
           color="#4a9e6b"
+          icon={<FileText size={15} />}
         />
         <MetricCard
           label="Події аудиту"
           value={snapshot.auditLog.length}
           note="Останні адмінські події."
           color="#e9774b"
+          icon={<ShieldAlert size={15} />}
         />
       </section>
 
@@ -186,21 +199,43 @@ export function AdminDashboardView() {
             href: ROUTES.adminUsers,
             label: "Користувачі",
             note: "Пошук реєстру, ролі, тип джерела та примусовий вихід.",
+            icon: <Users size={18} />,
+            color: "#4a80d4",
           },
           {
             href: ROUTES.adminBilling,
             label: "Білінг",
-            note: "Перевірити розподіл планів, використання квот і перепризначення місць.",
+            note: "Розподіл планів, квоти, перепризначення місць.",
+            icon: <CreditCard size={18} />,
+            color: "#c8a843",
           },
           {
             href: ROUTES.adminAudit,
             label: "Аудит",
-            note: "Переглянути попередження і безпекові події без виходу з адмінки.",
+            note: "Попередження і безпекові події без виходу з адмінки.",
+            icon: <ShieldAlert size={18} />,
+            color: "#e9774b",
+          },
+          {
+            href: ROUTES.adminAnalytics,
+            label: "Аналітика",
+            note: "Ключові показники та динаміка використання платформи.",
+            icon: <BarChart3 size={18} />,
+            color: "#4a9e6b",
           },
         ].map((item) => (
           <Link key={item.href} href={item.href} className={styles.quickCard}>
-            <span className={styles.quickLabel}>{item.label}</span>
-            <div className={styles.quickNote}>{item.note}</div>
+            <span
+              className={styles.quickIcon}
+              style={{ background: `${item.color}1f`, color: item.color }}
+            >
+              {item.icon}
+            </span>
+            <div className={styles.quickBody}>
+              <span className={styles.quickLabel}>{item.label}</span>
+              <div className={styles.quickNote}>{item.note}</div>
+            </div>
+            <span className={styles.quickArrow}>→</span>
           </Link>
         ))}
       </section>

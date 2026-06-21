@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Law Book — Прапор України</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #040d18;
+        overflow: hidden;
+      }
+      #vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        background: radial-gradient(
+          ellipse 70% 70% at 50% 50%,
+          transparent 40%,
+          rgba(4, 13, 24, 0.65) 100%
+        );
+      }
+      #hint {
+        position: fixed;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(200, 168, 67, 0.35);
+        font-family: "Courier New", monospace;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        pointer-events: none;
+        text-transform: uppercase;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="vignette"></div>
+    <div id="hint">drag to rotate &nbsp;·&nbsp; scroll to zoom</div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+      import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+      import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+
+      /* ── Flag builder ───────────────────────────────────────── */
+      function buildFlag() {
+        const group = new THREE.Group();
+
+        const FW = 1.25,
+          FH = 1.7; // flag taller to fill book cover
+        const FD = 0.03; // flag depth
+        const BT = 0.028; // border thickness
+
+        // ── Outer gold border frame ──
+        const borderMat = new THREE.MeshStandardMaterial({
+          color: 0xc8a843,
+          roughness: 0.03,
+          metalness: 1.0,
+          emissive: new THREE.Color(0xc8a843),
+          emissiveIntensity: 0.55,
+        });
+        const frameParts = [
+          [FW + 2 * BT, BT, FD + 0.008, 0, FH / 2 + BT / 2],
+          [FW + 2 * BT, BT, FD + 0.008, 0, -FH / 2 - BT / 2],
+          [BT, FH, FD + 0.008, -FW / 2 - BT / 2, 0],
+          [BT, FH, FD + 0.008, FW / 2 + BT / 2, 0],
+        ];
+        frameParts.forEach(([w, h, d, x, y]) => {
+          const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), borderMat);
+          m.position.set(x, y, 0);
+          group.add(m);
+        });
+
+        // Corner gold studs
+        const studMat = borderMat.clone();
+        studMat.emissiveIntensity = 0.9;
+        [-1, 1].forEach((sx) =>
+          [-1, 1].forEach((sy) => {
+            const stud = new THREE.Mesh(
+              new THREE.SphereGeometry(0.028, 16, 12),
+              studMat,
+            );
+            stud.position.set(
+              sx * (FW / 2 + BT * 0.5),
+              sy * (FH / 2 + BT * 0.5),
+              FD * 0.5 + 0.01,
+            );
+            group.add(stud);
+          }),
+        );
+
+        // ── Blue sky top half ──
+        const blueMat = new THREE.MeshStandardMaterial({
+          color: 0x1a5fc8,
+          roughness: 0.1,
+          metalness: 0.5,
+          emissive: new THREE.Color(0x0e3a90),
+          emissiveIntensity: 0.55,
+        });
+        const blueHalf = new THREE.Mesh(
+          new THREE.BoxGeometry(FW, FH / 2, FD),
+          blueMat,
+        );
+        blueHalf.position.set(0, FH / 4, 0);
+        group.add(blueHalf);
+
+        // ── Gold wheat bottom half ──
+        const goldMat = new THREE.MeshStandardMaterial({
+          color: 0xf2d050,
+          roughness: 0.06,
+          metalness: 0.8,
+          emissive: new THREE.Color(0xd4a020),
+          emissiveIntensity: 0.55,
+        });
+        const goldHalf = new THREE.Mesh(
+          new THREE.BoxGeometry(FW, FH / 2, FD),
+          goldMat,
+        );
+        goldHalf.position.set(0, -FH / 4, 0);
+        group.add(goldHalf);
+
+        // ── Gold divider stripe between halves ──
+        const divMat = new THREE.MeshStandardMaterial({
+          color: 0xffe090,
+          roughness: 0.02,
+          metalness: 1.0,
+          emissive: new THREE.Color(0xffe090),
+          emissiveIntensity: 1.2,
+          transparent: true,
+          opacity: 0.8,
+        });
+        const divider = new THREE.Mesh(
+          new THREE.BoxGeometry(FW, 0.008, FD + 0.004),
+          divMat,
+        );
+        divider.position.set(0, 0, 0);
+        group.add(divider);
+
+        // ── Subtle inner bevel glow (translucent gold plane just under flag) ──
+        const glowMat = new THREE.MeshStandardMaterial({
+          color: 0xd4a020,
+          emissive: new THREE.Color(0xd4a020),
+          emissiveIntensity: 1.8,
+          transparent: true,
+          opacity: 0.18,
+          roughness: 0,
+          metalness: 0,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        });
+        const glow = new THREE.Mesh(
+          new THREE.PlaneGeometry(FW + 2 * BT + 0.04, FH + 2 * BT + 0.04),
+          glowMat,
+        );
+        glow.position.set(0, 0, -0.01);
+        group.add(glow);
+
+        return { group, blueMat, goldMat, borderMat, divMat };
+      }
+
+      /* ── Renderer ───────────────────────────────────────────── */
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.2;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      document.body.appendChild(renderer.domElement);
+
+      /* ── Scene ──────────────────────────────────────────────── */
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x040d18);
+      scene.fog = new THREE.FogExp2(0x040d18, 0.048);
+
+      /* ── Camera ─────────────────────────────────────────────── */
+      const camera = new THREE.PerspectiveCamera(
+        38,
+        innerWidth / innerHeight,
+        0.1,
+        100,
+      );
+      camera.position.set(-1.8, 3.2, -7.0);
+      camera.lookAt(0, 1.3, 0);
+
+      /* ── Bloom ──────────────────────────────────────────────── */
+      const composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      const bloom = new UnrealBloomPass(
+        new THREE.Vector2(innerWidth, innerHeight),
+        0.8,
+        0.55,
+        0.8,
+      );
+      composer.addPass(bloom);
+
+      /* ── Controls ───────────────────────────────────────────── */
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.04;
+      controls.target.set(0, 1.3, 0);
+      controls.minDistance = 3;
+      controls.maxDistance = 14;
+      controls.maxPolarAngle = Math.PI * 0.6;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.28;
+      controls.update();
+
+      /* ── Lights ─────────────────────────────────────────────── */
+      scene.add(new THREE.AmbientLight(0x08152a, 1.8));
+
+      const goldGlow = new THREE.PointLight(0xd4a020, 7, 9, 2);
+      goldGlow.position.set(0, 0.2, 0);
+      scene.add(goldGlow);
+
+      const keyLight = new THREE.PointLight(0x1a4488, 3.5, 16, 1.5);
+      keyLight.position.set(3, 6, -7);
+      scene.add(keyLight);
+
+      const rimLight = new THREE.PointLight(0xd4a020, 2.5, 12, 2);
+      rimLight.position.set(-4, 5, 5);
+      scene.add(rimLight);
+
+      const spot = new THREE.SpotLight(0xfff6e0, 4, 20, 0.25, 0.7, 1.5);
+      spot.position.set(1, 10, -6);
+      spot.target.position.set(0, 1.5, 0);
+      spot.castShadow = true;
+      spot.shadow.mapSize.setScalar(2048);
+      spot.shadow.bias = -0.001;
+      scene.add(spot, spot.target);
+
+      // Blue sky light — upper half only
+      const skyLight = new THREE.PointLight(0x2266dd, 5.5, 7, 2);
+      skyLight.position.set(0, 2.5, -2.0);
+      scene.add(skyLight);
+
+      // Gold wheat light — lower half only
+      const wheatLight = new THREE.PointLight(0xd4a020, 5.0, 8, 1.5);
+      wheatLight.position.set(0, 0.9, -1.8);
+      scene.add(wheatLight);
+
+      scene.add(new THREE.PointLight(0x0d2d5a, 2, 14, 2));
+
+      /* ── Book ───────────────────────────────────────────────── */
+      const bookGroup = new THREE.Group();
+      const BW = 1.65,
+        BH = 2.25,
+        BD = 0.4;
+
+      const mCover = new THREE.MeshStandardMaterial({
+        color: 0x060f1c,
+        roughness: 0.18,
+        metalness: 0.45,
+      });
+      const mPages = new THREE.MeshStandardMaterial({
+        color: 0xcfc2a8,
+        roughness: 0.95,
+        metalness: 0.0,
+      });
+      const mSpine = new THREE.MeshStandardMaterial({
+        color: 0x040b15,
+        roughness: 0.3,
+        metalness: 0.6,
+      });
+
+      const book = new THREE.Mesh(new THREE.BoxGeometry(BW, BH, BD), [
+        mPages,
+        mSpine,
+        mPages,
+        mPages,
+        mCover,
+        mCover,
+      ]);
+      book.castShadow = true;
+      bookGroup.add(book);
+
+      // Gold frame on camera-facing cover
+      const fMat = new THREE.MeshStandardMaterial({
+        color: 0xc8a843,
+        roughness: 0.04,
+        metalness: 1.0,
+        emissive: new THREE.Color(0xc8a843),
+        emissiveIntensity: 0.25,
+      });
+      const mg = 0.12,
+        ft = 0.024,
+        fd = 0.007;
+      const addBar = (w, h, x, y) => {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, fd), fMat);
+        m.position.set(x, y, BD / 2 + fd / 2);
+        bookGroup.add(m);
+      };
+      addBar(BW - 2 * mg, ft, 0, BH / 2 - mg - ft / 2);
+      addBar(BW - 2 * mg, ft, 0, -BH / 2 + mg + ft / 2);
+      addBar(ft, BH - 2 * mg, -(BW / 2 - mg - ft / 2), 0);
+      addBar(ft, BH - 2 * mg, BW / 2 - mg - ft / 2, 0);
+
+      [-1, 1].forEach((sx) =>
+        [-1, 1].forEach((sy) => {
+          const dot = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.02, 0.02, fd, 12),
+            fMat,
+          );
+          dot.rotation.x = Math.PI / 2;
+          dot.position.set(
+            sx * (BW / 2 - mg - 0.008),
+            sy * (BH / 2 - mg - 0.008),
+            BD / 2 + fd / 2,
+          );
+          bookGroup.add(dot);
+        }),
+      );
+
+      // Spine lines
+      const spLineMat = new THREE.MeshStandardMaterial({
+        color: 0xc8a843,
+        roughness: 0.05,
+        metalness: 1,
+      });
+      [0.6, -0.6].forEach((y) => {
+        const line = new THREE.Mesh(
+          new THREE.BoxGeometry(BD - 0.05, 0.014, 0.004),
+          spLineMat,
+        );
+        line.rotation.y = Math.PI / 2;
+        line.position.set(-BW / 2 + 0.002, y, 0);
+        bookGroup.add(line);
+      });
+
+      // ── Ukrainian flag on camera-facing cover ──
+      const {
+        group: flagGroup,
+        blueMat,
+        goldMat,
+        borderMat,
+        divMat,
+      } = buildFlag();
+      flagGroup.position.set(0, 0.1, BD / 2 + 0.04);
+      bookGroup.add(flagGroup);
+
+      // Book rotated so this face (local +Z) maps to world -Z → toward camera at -Z
+      bookGroup.rotation.y = Math.PI;
+      bookGroup.position.set(0, 1.45, 0);
+      scene.add(bookGroup);
+
+      /* ── Pedestal ───────────────────────────────────────────── */
+      const pedGroup = new THREE.Group();
+
+      pedGroup.add(
+        new THREE.Mesh(
+          new THREE.CylinderGeometry(1.65, 1.4, 0.09, 96),
+          new THREE.MeshStandardMaterial({
+            color: 0x08080a,
+            roughness: 0.15,
+            metalness: 0.95,
+          }),
+        ),
+      );
+
+      const plinth = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.7, 0.9, 0.3, 48),
+        new THREE.MeshStandardMaterial({
+          color: 0x0c0b00,
+          roughness: 0.22,
+          metalness: 0.85,
+        }),
+      );
+      plinth.position.y = 0.195;
+      pedGroup.add(plinth);
+
+      const oRingMat = new THREE.MeshStandardMaterial({
+        color: 0xd4a020,
+        roughness: 0.03,
+        metalness: 1,
+        emissive: new THREE.Color(0xd4a020),
+        emissiveIntensity: 0.85,
+      });
+      const oRing = new THREE.Mesh(
+        new THREE.TorusGeometry(1.57, 0.03, 14, 96),
+        oRingMat,
+      );
+      oRing.rotation.x = Math.PI / 2;
+      oRing.position.y = 0.047;
+      pedGroup.add(oRing);
+
+      const mRingMat = new THREE.MeshStandardMaterial({
+        color: 0xc8a843,
+        roughness: 0.08,
+        metalness: 1,
+        emissive: new THREE.Color(0xc8a843),
+        emissiveIntensity: 0.4,
+      });
+      const mRing = new THREE.Mesh(
+        new THREE.TorusGeometry(1.25, 0.014, 10, 96),
+        mRingMat,
+      );
+      mRing.rotation.x = Math.PI / 2;
+      mRing.position.y = 0.049;
+      pedGroup.add(mRing);
+
+      const iRing = new THREE.Mesh(
+        new THREE.TorusGeometry(0.88, 0.012, 10, 72),
+        mRingMat.clone(),
+      );
+      iRing.rotation.x = Math.PI / 2;
+      iRing.position.y = 0.325;
+      pedGroup.add(iRing);
+
+      const glowMat = new THREE.MeshStandardMaterial({
+        color: 0xd4a020,
+        emissive: new THREE.Color(0xd4a020),
+        emissiveIntensity: 3.2,
+        transparent: true,
+        opacity: 0.6,
+        roughness: 0,
+        metalness: 0,
+        depthWrite: false,
+      });
+      const glowDisk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.68, 0.68, 0.006, 72),
+        glowMat,
+      );
+      glowDisk.position.y = 0.345;
+      pedGroup.add(glowDisk);
+
+      const haloMat = new THREE.MeshStandardMaterial({
+        color: 0xd4a020,
+        emissive: new THREE.Color(0xd4a020),
+        emissiveIntensity: 0.6,
+        transparent: true,
+        opacity: 0.08,
+        roughness: 0,
+        metalness: 0,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      });
+      const halo = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.55, 1.55, 0.003, 96),
+        haloMat,
+      );
+      halo.position.y = 0.047;
+      pedGroup.add(halo);
+
+      scene.add(pedGroup);
+
+      const shadowPlane = new THREE.Mesh(
+        new THREE.CircleGeometry(5, 64),
+        new THREE.ShadowMaterial({ opacity: 0.55 }),
+      );
+      shadowPlane.rotation.set(-Math.PI / 2, 0, 0);
+      shadowPlane.position.set(0, -0.06, 0);
+      shadowPlane.receiveShadow = true;
+      scene.add(shadowPlane);
+
+      /* ── Particles ──────────────────────────────────────────── */
+      // Gold dust
+      const DUST_N = 500;
+      const dustPos = new Float32Array(DUST_N * 3),
+        dustVel = new Float32Array(DUST_N);
+      for (let i = 0; i < DUST_N; i++) {
+        const a = Math.random() * Math.PI * 2,
+          r = 0.3 + Math.random() * 3.0;
+        dustPos[i * 3] = Math.cos(a) * r;
+        dustPos[i * 3 + 1] = -0.5 + Math.random() * 6.0;
+        dustPos[i * 3 + 2] = Math.sin(a) * r;
+        dustVel[i] = 0.0015 + Math.random() * 0.003;
+      }
+      const dustGeo = new THREE.BufferGeometry();
+      dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
+      const dustMesh = new THREE.Points(
+        dustGeo,
+        new THREE.PointsMaterial({
+          color: 0xf0cf5a,
+          size: 0.028,
+          transparent: true,
+          opacity: 0.5,
+          sizeAttenuation: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        }),
+      );
+      scene.add(dustMesh);
+
+      // Blue sky particles
+      const BLUE_N = 220;
+      const bluePos = new Float32Array(BLUE_N * 3),
+        blueVel = new Float32Array(BLUE_N);
+      for (let i = 0; i < BLUE_N; i++) {
+        const a = Math.random() * Math.PI * 2,
+          r = 0.4 + Math.random() * 2.5;
+        bluePos[i * 3] = Math.cos(a) * r;
+        bluePos[i * 3 + 1] = 1.5 + Math.random() * 4.0;
+        bluePos[i * 3 + 2] = Math.sin(a) * r;
+        blueVel[i] = 0.0018 + Math.random() * 0.0025;
+      }
+      const blueGeo = new THREE.BufferGeometry();
+      blueGeo.setAttribute("position", new THREE.BufferAttribute(bluePos, 3));
+      const blueMesh = new THREE.Points(
+        blueGeo,
+        new THREE.PointsMaterial({
+          color: 0x4488ff,
+          size: 0.025,
+          transparent: true,
+          opacity: 0.4,
+          sizeAttenuation: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        }),
+      );
+      scene.add(blueMesh);
+
+      // Gold sparks orbit
+      const SPARK_N = 60;
+      const sparkPos = new Float32Array(SPARK_N * 3);
+      for (let i = 0; i < SPARK_N; i++) {
+        const a = (i / SPARK_N) * Math.PI * 2,
+          r = 1.3 + Math.random() * 0.5;
+        sparkPos[i * 3] = Math.cos(a) * r;
+        sparkPos[i * 3 + 1] = 0.05 + Math.random() * 0.3;
+        sparkPos[i * 3 + 2] = Math.sin(a) * r;
+      }
+      const sparkGeo = new THREE.BufferGeometry();
+      sparkGeo.setAttribute("position", new THREE.BufferAttribute(sparkPos, 3));
+      const sparkMesh = new THREE.Points(
+        sparkGeo,
+        new THREE.PointsMaterial({
+          color: 0xffe070,
+          size: 0.08,
+          transparent: true,
+          opacity: 0.9,
+          sizeAttenuation: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        }),
+      );
+      scene.add(sparkMesh);
+
+      // Embers
+      const EMBER_N = 28;
+      const emberPos = new Float32Array(EMBER_N * 3),
+        emberVel = new Float32Array(EMBER_N);
+      for (let i = 0; i < EMBER_N; i++) {
+        const a = Math.random() * Math.PI * 2,
+          r = 0.4 + Math.random() * 1.0;
+        emberPos[i * 3] = Math.cos(a) * r;
+        emberPos[i * 3 + 1] = Math.random() * 3.5;
+        emberPos[i * 3 + 2] = Math.sin(a) * r;
+        emberVel[i] = 0.006 + Math.random() * 0.006;
+      }
+      const emberGeo = new THREE.BufferGeometry();
+      emberGeo.setAttribute("position", new THREE.BufferAttribute(emberPos, 3));
+      const emberMesh = new THREE.Points(
+        emberGeo,
+        new THREE.PointsMaterial({
+          color: 0xff9020,
+          size: 0.14,
+          transparent: true,
+          opacity: 0.7,
+          sizeAttenuation: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        }),
+      );
+      scene.add(emberMesh);
+
+      /* ── Resize ─────────────────────────────────────────────── */
+      addEventListener("resize", () => {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+        composer.setSize(innerWidth, innerHeight);
+      });
+
+      /* ── Animate ─────────────────────────────────────────────── */
+      let t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.011;
+        controls.update();
+
+        bookGroup.position.y = 1.45 + Math.sin(t * 0.65) * 0.11;
+        bookGroup.rotation.y = Math.PI + Math.sin(t * 0.24) * 0.11;
+
+        goldGlow.intensity = 6.5 + Math.sin(t * 1.55) * 1.5;
+        glowMat.emissiveIntensity = 3.0 + Math.sin(t * 1.55) * 0.8;
+        haloMat.opacity = 0.06 + Math.abs(Math.sin(t * 0.8)) * 0.05;
+
+        // Sky pulse on blue half
+        blueMat.emissiveIntensity = 0.5 + Math.sin(t * 1.1) * 0.18;
+        skyLight.intensity = 5.0 + Math.sin(t * 1.3) * 1.5;
+
+        // Wheat shimmer on gold half
+        goldMat.emissiveIntensity = 0.5 + Math.sin(t * 2.0) * 0.22;
+        wheatLight.intensity = 4.5 + Math.sin(t * 1.9) * 1.5;
+
+        // Border + divider glow
+        borderMat.emissiveIntensity = 0.5 + Math.sin(t * 1.6) * 0.2;
+        divMat.emissiveIntensity = 1.1 + Math.sin(t * 3.0) * 0.4;
+
+        // Dust rise
+        const da = dustGeo.attributes.position.array;
+        for (let i = 0; i < DUST_N; i++) {
+          da[i * 3 + 1] += dustVel[i];
+          if (da[i * 3 + 1] > 5.5) da[i * 3 + 1] = -0.5;
+        }
+        dustGeo.attributes.position.needsUpdate = true;
+        dustMesh.rotation.y += 0.0006;
+
+        // Blue particles drift up
+        const ba = blueGeo.attributes.position.array;
+        for (let i = 0; i < BLUE_N; i++) {
+          ba[i * 3 + 1] += blueVel[i];
+          if (ba[i * 3 + 1] > 6.0) ba[i * 3 + 1] = 1.5;
+        }
+        blueGeo.attributes.position.needsUpdate = true;
+        blueMesh.rotation.y -= 0.0004;
+
+        // Sparks orbit pedestal
+        const sa = sparkGeo.attributes.position.array;
+        for (let i = 0; i < SPARK_N; i++) {
+          const ang = (i / SPARK_N) * Math.PI * 2 + t * 0.2,
+            r = 1.35 + Math.sin(t * 2.5 + i * 0.7) * 0.22;
+          sa[i * 3] = Math.cos(ang) * r;
+          sa[i * 3 + 2] = Math.sin(ang) * r;
+          sa[i * 3 + 1] = 0.08 + Math.abs(Math.sin(t * 3.5 + i * 0.9)) * 0.35;
+        }
+        sparkGeo.attributes.position.needsUpdate = true;
+
+        // Embers rise
+        const ea = emberGeo.attributes.position.array;
+        for (let i = 0; i < EMBER_N; i++) {
+          ea[i * 3 + 1] += emberVel[i];
+          if (ea[i * 3 + 1] > 4.0) {
+            const a = Math.random() * Math.PI * 2,
+              r = 0.4 + Math.random() * 0.8;
+            ea[i * 3] = Math.cos(a) * r;
+            ea[i * 3 + 1] = 0;
+            ea[i * 3 + 2] = Math.sin(a) * r;
+          }
+        }
+        emberGeo.attributes.position.needsUpdate = true;
+
+        composer.render();
+      }
+      animate();
+    </script>
+  </body>
+</html>

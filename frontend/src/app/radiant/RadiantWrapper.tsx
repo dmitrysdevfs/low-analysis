@@ -2,11 +2,11 @@
 
 import dynamic from "next/dynamic";
 
-const RadiantPage = dynamic(
-  () => import("@/features/radiant").then((m) => m.RadiantPage),
+const Radiant1Page = dynamic(
+  () => import("@/features/radiant1").then((m) => m.Radiant1Page),
   { ssr: false },
 );
 
 export function RadiantWrapper() {
-  return <RadiantPage />;
+  return <Radiant1Page />;
 }

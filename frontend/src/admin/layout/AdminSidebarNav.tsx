@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Bell,
   Blocks,
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  Database,
   ExternalLink,
   FileCode2,
   HelpCircle,
@@ -18,6 +19,7 @@ import {
   LayoutDashboard,
   Mail,
   MessageSquare,
+  RefreshCw,
   ScrollText,
   ShieldCheck,
   Users,
@@ -61,6 +63,24 @@ const NAV_ITEMS = [
     label: "Аудит",
     icon: ScrollText,
     note: "Операційні події",
+  },
+  {
+    href: ROUTES.adminNotifications,
+    label: "Сповіщення",
+    icon: Bell,
+    note: "Сигнали, заявки, черга уваги",
+  },
+  {
+    href: ROUTES.adminJobs,
+    label: "Jobs",
+    icon: RefreshCw,
+    note: "Черги, прогрес, повторні запуски",
+  },
+  {
+    href: ROUTES.adminDataTools,
+    label: "Data tools",
+    icon: Database,
+    note: "Експорт, парсинг, batch handoff",
   },
   {
     href: ROUTES.adminSupport,
@@ -113,12 +133,17 @@ const NAV_ITEMS = [
 ] as const;
 
 interface AdminSidebarNavProps {
+  collapsed: boolean;
+  onToggleCollapse: () => void;
   userDisplayName?: string;
 }
 
-export function AdminSidebarNav({ userDisplayName }: AdminSidebarNavProps) {
+export function AdminSidebarNav({
+  collapsed,
+  onToggleCollapse,
+  userDisplayName,
+}: AdminSidebarNavProps) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <aside
@@ -134,7 +159,11 @@ export function AdminSidebarNav({ userDisplayName }: AdminSidebarNavProps) {
         <button
           type="button"
           className={styles.collapseBtn}
-          onClick={() => setCollapsed((value) => !value)}
+          onClick={onToggleCollapse}
+          aria-label={
+            collapsed ? "Розгорнути бічну панель" : "Згорнути бічну панель"
+          }
+          aria-pressed={collapsed}
           title={collapsed ? "Розгорнути" : "Згорнути"}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}

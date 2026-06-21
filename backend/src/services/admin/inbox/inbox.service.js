@@ -14,6 +14,7 @@ import {
   getThread,
   listThreads,
   removeUnreadFromThread,
+  sendNewEmail,
   sendThreadReply,
   summarizeThread,
   toStoredMessage,
@@ -28,8 +29,7 @@ function buildStatusPayload(connection) {
     connected: Boolean(
       connection &&
       connection.status === 'connected' &&
-      connection.mailboxEmail &&
-      connection.refreshToken,
+      connection.mailboxEmail,
     ),
     mailboxEmail: connection?.mailboxEmail ?? null,
     connectedAt: connection?.connectedAt ?? null,
@@ -91,7 +91,7 @@ async function persistThreadSnapshot(connection, gmailThread) {
       InboxMessage.findOneAndUpdate(
         { gmailMessageId: message.gmailMessageId },
         { $set: message },
-        { upsert: true, new: true },
+        { upsert: true, returnDocument: 'after' },
       ),
     ),
   );
@@ -105,7 +105,7 @@ async function persistThreadSnapshot(connection, gmailThread) {
         ...threadSummary,
       },
     },
-    { upsert: true, new: true },
+    { upsert: true, returnDocument: 'after' },
   );
 }
 
@@ -187,7 +187,7 @@ export async function completeConnect(code, state) {
         lastError: null,
       },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
   );
 
   await appendAuditEntry({
@@ -221,7 +221,7 @@ export async function disconnectInbox(actorEmail) {
         lastError: null,
       },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
   );
 
   await appendAuditEntry({
@@ -432,5 +432,31 @@ export async function replyToThread(threadId, body, actorEmail) {
   });
 
   await syncInbox(actorEmail);
+  return { ok: true };
+}
+
+export async function composeEmail({ to, subject, body }, actorEmail) {
+  if (!to?.trim() || !subject?.trim() || !body?.trim()) {
+    throw Object.assign(new Error("To, subject та body є обов'язковими"), {
+      status: 400,
+    });
+  }
+
+  const connection = await getAuthorizedConnection();
+
+  await sendNewEmail(connection.accessToken, {
+    from: connection.mailboxEmail,
+    to: to.trim(),
+    subject: subject.trim(),
+    text: body.trim(),
+  });
+
+  await appendAuditEntry({
+    action: 'Лист надіслано з inbox',
+    detail: `Новий лист "${subject.trim()}" надіслано до ${to.trim()} зі спільної Gmail-скриньки.`,
+    actor: actorEmail,
+    severity: 'info',
+  });
+
   return { ok: true };
 }

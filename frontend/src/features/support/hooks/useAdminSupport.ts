@@ -52,6 +52,12 @@ export function useAdminSupport({
     queryClient.invalidateQueries({ queryKey: ["support-chat", "current"] });
   };
 
+  const notesQuery = useQuery({
+    queryKey: ["admin-support", "notes", selectedConversationId],
+    queryFn: () => adminSupportApi.listNotes(selectedConversationId as string),
+    enabled: Boolean(selectedConversationId),
+  });
+
   const sendMutation = useMutation({
     mutationFn: ({ id, text }: { id: string; text: string }) =>
       adminSupportApi.sendMessage(id, text),
@@ -74,12 +80,48 @@ export function useAdminSupport({
     onSuccess: invalidateSupport,
   });
 
+  const assignMutation = useMutation({
+    mutationFn: ({ id, adminId }: { id: string; adminId: string | null }) =>
+      adminSupportApi.assignConversation(id, adminId),
+    onSuccess: invalidateSupport,
+  });
+
+  const spamMutation = useMutation({
+    mutationFn: (id: string) => adminSupportApi.markAsSpam(id),
+    onSuccess: invalidateSupport,
+  });
+
+  const escalateMutation = useMutation({
+    mutationFn: (id: string) => adminSupportApi.escalateConversation(id),
+    onSuccess: invalidateSupport,
+  });
+
+  const addNoteMutation = useMutation({
+    mutationFn: ({ id, text }: { id: string; text: string }) =>
+      adminSupportApi.addNote(id, text),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["admin-support", "notes", selectedConversationId],
+      });
+    },
+  });
+
+  const syncCheckMutation = useMutation({
+    mutationFn: () => adminSupportApi.syncCheck(),
+  });
+
   return {
     statusQuery,
     conversationsQuery,
     conversationQuery,
+    notesQuery,
     sendMutation,
     markReadMutation,
     updateStatusMutation,
+    assignMutation,
+    spamMutation,
+    escalateMutation,
+    addNoteMutation,
+    syncCheckMutation,
   };
 }

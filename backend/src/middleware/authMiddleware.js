@@ -32,6 +32,19 @@ export const protect = async (req, res, next) => {
         .json({ message: 'Not authorized, user not found' });
     }
 
+    if (req.user.status !== 'active') {
+      return res.status(403).json({ message: 'Акаунт деактивований' });
+    }
+
+    if (
+      typeof decoded.tokenVersion === 'number' &&
+      decoded.tokenVersion !== (req.user.tokenVersion ?? 0)
+    ) {
+      return res
+        .status(401)
+        .json({ message: 'Сесія завершена, увійдіть знову' });
+    }
+
     return next();
   } catch {
     return res.status(401).json({ message: 'Not authorized, token failed' });

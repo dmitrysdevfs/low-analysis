@@ -165,3 +165,33 @@ export function extractTelegramConversationId(message) {
   const match = candidate.match(CONVERSATION_TOKEN);
   return match?.[1] ?? null;
 }
+
+export function stripConversationToken(text) {
+  return String(text ?? '')
+    .replace(CONVERSATION_TOKEN, '')
+    .trim();
+}
+
+export async function setTelegramWebhook(webhookUrl) {
+  const result = await telegramRequest('setWebhook', {
+    url: webhookUrl,
+    allowed_updates: ['message'],
+  });
+  return {
+    ok: true,
+    description: result?.description ?? 'Webhook set',
+    url: webhookUrl,
+  };
+}
+
+export async function getTelegramWebhookInfo() {
+  const config = getTelegramSupportConfig();
+  if (!config.configured) {
+    return { ok: false, error: 'Telegram not configured' };
+  }
+  const res = await fetch(
+    `${TELEGRAM_API_BASE}/bot${config.botToken}/getWebhookInfo`,
+  );
+  const data = await res.json().catch(() => ({}));
+  return data?.result ?? {};
+}

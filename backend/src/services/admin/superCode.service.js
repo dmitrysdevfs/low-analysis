@@ -20,7 +20,7 @@ export const getCodeHistory = async () => {
   return doc?.value ?? [];
 };
 
-export const rotateCode = async (actor) => {
+export const rotateCode = async (actor, ipAddress = null) => {
   const nextCode = generateCode();
   const rotatedAt = new Date().toISOString();
 
@@ -51,6 +51,7 @@ export const rotateCode = async (actor) => {
     detail: `Створено новий код для підключення адміністратора: ${nextCode}.`,
     actor,
     severity: 'security',
+    ipAddress,
   });
 
   return { code: nextCode, rotatedAt };

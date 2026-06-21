@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { SearchResults } from "@/components/search/SearchResults";
@@ -40,8 +40,16 @@ function SearchResultsContent() {
     recordWorkspaceSearch(user.id, q);
   }, [user?.id, q, searched]);
 
+  // Keep a stable ref to the latest `search` so URL-param effect never needs
+  // `search` itself as a dependency — prevents duplicate requests when the
+  // useCallback reference inside useSearch changes on re-renders.
+  const searchRef = useRef(search);
   useEffect(() => {
-    search({
+    searchRef.current = search;
+  });
+
+  useEffect(() => {
+    searchRef.current({
       q,
       docType,
       dateFrom,
@@ -62,7 +70,6 @@ function SearchResultsContent() {
     wordField,
     numberType,
     sort,
-    search,
   ]);
 
   return (

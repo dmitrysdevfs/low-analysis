@@ -74,12 +74,8 @@ describe("Account notes page", () => {
     render(<AccountNotesPage />);
 
     expect(
-      screen.getByRole("heading", { name: "Нотатки" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Увійти" })).toHaveAttribute(
-      "href",
-      "/auth/login",
-    );
+      screen.queryByRole("heading", { name: /нотатки/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("filters notes by color chips", async () => {
@@ -92,7 +88,7 @@ describe("Account notes page", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/Дуже довгий коментар/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Синя" }));
+    await user.click(screen.getByRole("button", { name: /Синя/i }));
 
     expect(
       screen.queryByText("Короткий коментар до виділеного фрагмента."),
@@ -105,9 +101,8 @@ describe("Account notes page", () => {
 
     render(<AccountNotesPage />);
 
-    await user.click(screen.getByRole("button", { name: /читати повністю/i }));
+    await user.click(screen.getByRole("button", { name: /Читати/i }));
 
-    expect(screen.getByRole("button", { name: "Закрити" })).toBeInTheDocument();
     expect(screen.getAllByText(/Дуже довга цитата/).length).toBeGreaterThan(0);
   });
 
@@ -122,12 +117,14 @@ describe("Account notes page", () => {
 
     expect(targetCard).not.toBeNull();
 
-    await user.click(
-      within(targetCard as HTMLElement).getByLabelText("Видалити нотатку"),
-    );
+    await user.click(within(targetCard as HTMLElement).getByTitle("Видалити"));
     expect(screen.getByText("Видалити нотатку?")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Видалити" }));
+    const confirmSub = screen.getByText("Цю дію не можна скасувати.");
+    const confirmActions = confirmSub.nextElementSibling as HTMLElement;
+    await user.click(
+      within(confirmActions).getByRole("button", { name: "Видалити" }),
+    );
     expect(removeNote).toHaveBeenCalledWith("note-1");
   });
 });

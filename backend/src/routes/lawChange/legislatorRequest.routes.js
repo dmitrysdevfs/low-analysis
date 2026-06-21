@@ -46,6 +46,17 @@ router.get('/my', protect, legislatorRequestController.getMyRequest);
 
 /**
  * @swagger
+ * /api/law-change/legislator-requests/revoke:
+ *   post:
+ *     summary: Revoke own role (returns to user)
+ *     tags: [LawChange]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post('/revoke', protect, legislatorRequestController.revokeRole);
+
+/**
+ * @swagger
  * /api/law-change/legislator-requests/{id}/approve:
  *   post:
  *     summary: Approve legislator request and set user role to legislator (admin)

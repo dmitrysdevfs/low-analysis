@@ -1,4 +1,5 @@
 import * as superCodeService from '../../services/admin/superCode.service.js';
+import { getClientIp } from '../../utils/getClientIp.js';
 
 export const getSuperCode = async (req, res, next) => {
   try {
@@ -15,7 +16,7 @@ export const getSuperCode = async (req, res, next) => {
 export const rotateSuperCode = async (req, res, next) => {
   try {
     const actor = req.user?.email ?? 'admin';
-    const result = await superCodeService.rotateCode(actor);
+    const result = await superCodeService.rotateCode(actor, getClientIp(req));
     res.json(result);
   } catch (err) {
     next(err);

@@ -85,6 +85,72 @@ API for parsing, structuring and analysing Ukrainian legislation.
       description: 'Коментарі до законопроєктів та поправок',
     },
     { name: 'Votes', description: 'Голосування за поправки' },
+    {
+      name: 'LawChange',
+      description:
+        'Законотворчий процес: пропозиції, голоси, затверджені зміни',
+    },
+    {
+      name: 'Support',
+      description: 'Клієнтська підтримка: web-чат та Telegram-доставка',
+    },
+    {
+      name: 'Admin',
+      description: 'Адмін-панель: дашборд, ключові метрики платформи',
+    },
+    {
+      name: 'AdminUsers',
+      description: 'Адмін: управління користувачами, ролі, статуси, білінг',
+    },
+    {
+      name: 'AdminAudit',
+      description: 'Адмін: операційний журнал подій та аудит-лог',
+    },
+    {
+      name: 'AdminSupport',
+      description:
+        'Адмін: управління зверненнями підтримки, ескалація, нотатки',
+    },
+    {
+      name: 'AdminInbox',
+      description: 'Адмін: Gmail Inbox — треди, відповіді, синхронізація',
+    },
+    {
+      name: 'AdminBilling',
+      description: 'Адмін: призначення тарифних планів користувачам',
+    },
+    { name: 'AdminSuperCode', description: 'Адмін: супер-код входу, ротація' },
+    {
+      name: 'AdminNotifications',
+      description: 'Адмін: сповіщення, dismiss-стан',
+    },
+    {
+      name: 'AdminActivity',
+      description: 'Адмін: активність конкретного користувача',
+    },
+    {
+      name: 'Me',
+      description: 'Поточний авторизований користувач: профіль, налаштування',
+    },
+    { name: 'Notes', description: 'Нотатки до законів та статей' },
+    { name: 'Graph', description: "Граф зв'язків між законами та елементами" },
+    {
+      name: 'Forks',
+      description: 'Fork-версії законів для законотворчої роботи',
+    },
+    { name: 'Billing', description: 'Білінг: плани, квоти, статус підписки' },
+    {
+      name: 'Supervisor',
+      description: 'Supervisor API для внутрішнього моніторингу',
+    },
+    {
+      name: 'LegislatorRequests',
+      description: 'Запити на доступ до законотворчих функцій',
+    },
+    {
+      name: 'Activity',
+      description: 'Стрічка активності: дії користувачів та системи',
+    },
   ],
   components: {
     schemas,
@@ -158,10 +224,14 @@ export const swaggerOptions = {
   definition: swaggerDefinition,
   apis: [
     './src/routes/*.js',
+    './src/routes/admin/*.js',
+    './src/routes/lawChange/*.js',
     './src/modules/pages/*.js',
     './src/modules/roadmap/*.js',
     './src/modules/assistant/*.js',
     './src/modules/queue/*.js',
+    './src/modules/support/*.js',
+    './src/modules/email/*.js',
   ],
 };
 

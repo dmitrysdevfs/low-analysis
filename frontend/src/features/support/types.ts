@@ -11,13 +11,19 @@ export interface SupportConfig {
   telegramConfigured: boolean;
 }
 
+export type SupportPriority = "normal" | "high" | "urgent";
+
 export interface SupportConversation {
   id: string;
   participantType: "user" | "guest";
   participantLabel: string;
   guestName: string;
   guestEmail: string;
+  userId: string | null;
   status: SupportConversationStatus;
+  priority: SupportPriority;
+  spamFlag: boolean;
+  escalatedAt: string | null;
   subject: string;
   startedFromPathname: string;
   startedFromPageTitle: string;
@@ -29,9 +35,28 @@ export interface SupportConversation {
   unreadForAdmin: number;
   unreadForUser: number;
   assignedAdminId: string | null;
+  assignedAt: string | null;
   telegramChatId: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SupportNote {
+  id: string;
+  conversationId: string;
+  authorName: string;
+  authorEmail: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface SupportSyncResult {
+  ok: boolean;
+  webhookStatus: "ok" | "degraded" | "down";
+  botUsername?: string;
+  latencyMs?: number;
+  error?: string;
+  lastCheckedAt: string;
 }
 
 export interface SupportMessage {
@@ -43,7 +68,18 @@ export interface SupportMessage {
   channel: "web" | "telegram" | "system";
   deliveredToTelegram: boolean;
   telegramMessageId: number | null;
+  telegramSenderId: string | null;
+  telegramSenderUsername: string | null;
   createdAt: string;
+}
+
+export interface TelegramWebhookInfo {
+  url?: string;
+  has_custom_certificate?: boolean;
+  pending_update_count?: number;
+  last_error_date?: number;
+  last_error_message?: string;
+  max_connections?: number;
 }
 
 export interface SupportConversationPayload {
@@ -68,4 +104,8 @@ export interface AdminSupportStatus {
   totalConversations: number;
   openConversations: number;
   unreadConversations: number;
+  todayConversations: number;
+  yesterdayConversations: number;
+  lastSyncAt: string | null;
+  webhookStatus: "ok" | "degraded" | "down";
 }

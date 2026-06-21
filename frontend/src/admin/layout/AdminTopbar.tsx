@@ -63,6 +63,22 @@ const PAGE_TITLES = [
     subtitle: "Події безпеки та операційні зміни",
   },
   {
+    href: ROUTES.adminNotifications,
+    title: "Сповіщення",
+    subtitle: "Живий центр role-заявок, security-сигналів та операційної уваги",
+  },
+  {
+    href: ROUTES.adminJobs,
+    title: "Jobs & Operations",
+    subtitle: "Фонові задачі, прогрес виконання, помилки та повторні запуски",
+  },
+  {
+    href: ROUTES.adminDataTools,
+    title: "Data tools",
+    subtitle:
+      "Експорт датасетів, parse references та технічні операції над законами",
+  },
+  {
     href: ROUTES.adminUsers,
     title: "Користувачі",
     subtitle: "Реєстр акаунтів, ролі та дії",
@@ -71,6 +87,11 @@ const PAGE_TITLES = [
     href: ROUTES.admin,
     title: "Дашборд",
     subtitle: "Ключові метрики та стан платформи",
+  },
+  {
+    href: ROUTES.adminHelp,
+    title: "Довідка",
+    subtitle: "База знань для адміністраторів платформи",
   },
 ] as const;
 
@@ -260,7 +281,7 @@ export function AdminTopbar({
 
   const visibleNotifItems = useMemo(() => {
     const requests = (pendingRequests ?? []).map((r) => {
-      const userObj = typeof r.user_id === "object" ? r.user_id : null;
+      const userObj = typeof r.userId === "object" ? r.userId : null;
       return {
         id: r._id,
         group: "requests" as const,
@@ -382,15 +403,24 @@ export function AdminTopbar({
                     <span className={styles.notifPanelCount}>{badgeCount}</span>
                   )}
                 </span>
-                {securityItems.length > 0 && (
-                  <button
-                    type="button"
-                    className={styles.notifMarkAllBtn}
-                    onClick={() => handleClearSecurity(visibleNotifItems)}
+                <div className={styles.notifPanelActions}>
+                  <Link
+                    href={ROUTES.adminNotifications}
+                    className={styles.notifGroupAction}
+                    onClick={() => setNotifOpen(false)}
                   >
-                    Позначити як переглянуте
-                  </button>
-                )}
+                    Відкрити центр →
+                  </Link>
+                  {securityItems.length > 0 && (
+                    <button
+                      type="button"
+                      className={styles.notifMarkAllBtn}
+                      onClick={() => handleClearSecurity(visibleNotifItems)}
+                    >
+                      Позначити як переглянуте
+                    </button>
+                  )}
+                </div>
               </div>
 
               {visibleNotifItems.length === 0 ? (

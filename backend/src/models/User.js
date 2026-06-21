@@ -21,16 +21,26 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     password: {
       type: String,
-      required: [true, 'Please add a password'],
-      minlength: [
-        process.env.NODE_ENV === 'development' ||
-        process.env.NODE_ENV === 'test'
-          ? 3
-          : 8,
-        'Password must be at least 8 characters',
-      ],
+      required: false,
+      validate: {
+        validator(v) {
+          if (!v) return true; // Google-auth users have no password
+          const min =
+            process.env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'test'
+              ? 3
+              : 8;
+          return v.length >= min;
+        },
+        message: 'Password must be at least 8 characters',
+      },
       select: false,
     },
     role: {
@@ -67,6 +77,13 @@ const userSchema = new mongoose.Schema(
       compactMode: { type: Boolean, default: false },
       weeklyDigest: { type: Boolean, default: true },
     },
+    lastLoginAt: { type: Date, default: null },
+    lastLoginIp: { type: String, default: null },
+    lastLoginDevice: { type: String, default: null },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
     resetPasswordToken: {
       type: String,
       select: false,
@@ -83,7 +100,7 @@ const userSchema = new mongoose.Schema(
 
 // Hash password before saving
 userSchema.pre('save', async function () {
-  if (!this.isModified('password')) {
+  if (!this.isModified('password') || !this.password) {
     return;
   }
 

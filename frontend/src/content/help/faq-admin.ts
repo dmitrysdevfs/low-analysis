@@ -82,4 +82,48 @@ export const FAQ_ADMIN: FaqItem[] = [
     summary:
       "Клікніть «Деактивувати» поруч із кодом — він більше не прийматиметься при реєстрації.",
   },
+  // API
+  {
+    question: "Як працює API Center?",
+    slug: "admin-api",
+    category: "API",
+    summary:
+      "Перегляд доступних ендпоінтів, схем та прикладів запитів у Swagger UI.",
+  },
+  {
+    question: "Де знайти Swagger документацію?",
+    slug: "admin-api",
+    category: "API",
+    summary:
+      "Admin → API Center → кнопка «Swagger UI» у нижній смузі. Відкривається в окремій вкладці з авторизацією.",
+  },
+  {
+    question: "Як протестувати ендпоінт з авторизацією?",
+    slug: "admin-api",
+    category: "API",
+    summary:
+      "У Swagger UI натисніть «Authorize» → вставте Bearer token зі сторінки входу → виконайте запит.",
+  },
+  {
+    question: "Як завантажити OpenAPI JSON специфікацію?",
+    slug: "admin-api",
+    category: "API",
+    summary:
+      "Admin → API Center → кнопка «OpenAPI JSON» у нижній смузі. Файл підходить для Postman, Insomnia, SDK-генераторів.",
+  },
+  // Білінг
+  {
+    question: "Як призначити тарифний план користувачу?",
+    slug: "admin-billing",
+    category: "Білінг",
+    summary:
+      "Admin → Білінг → знайдіть користувача → оберіть план зі списку → збережіть. Зміна застосовується одразу.",
+  },
+  {
+    question: "Де переглянути квоти та використання?",
+    slug: "admin-billing",
+    category: "Білінг",
+    summary:
+      "У рядку користувача в таблиці Білінгу відображається поточне використання у форматі «X / Y» для кожного ліміту.",
+  },
 ];

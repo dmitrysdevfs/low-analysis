@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { usePathname } from "next/navigation";
 import { useLaws } from "@/hooks/useLaws";
 import { useCountUp } from "@/hooks/useCountUp";
 import styles from "./Footer.module.scss";
@@ -26,10 +27,15 @@ function StatCounter({
   );
 }
 
+const HIDDEN_ON = ["/"];
+
 export function FooterStats() {
+  const pathname = usePathname();
   const { laws, loading, error } = useLaws();
   const statsRef = useRef<HTMLDivElement>(null);
   const inView = useInView(statsRef, { once: true, amount: 0.4 });
+
+  if (HIDDEN_ON.includes(pathname)) return null;
 
   const stats = [
     { value: laws.length, label: "законів у базі" },

@@ -35,18 +35,19 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   const [headerScrolledAway, setHeaderScrolledAway] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const { isAuthenticated, isAdmin, isLegislator, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } =
+    useAuth();
   const isAuthPage = pathname.startsWith(ROUTES.auth);
   const isAdminPage = false;
   const isHome = pathname === "/";
   const visibleNavItems = useMemo(
-    () => buildNavItems({ isAuthenticated }),
-    [isAuthenticated],
+    () => buildNavItems({ isAuthenticated, isLegislator, isSupervisor }),
+    [isAuthenticated, isLegislator, isSupervisor],
   );
 
   const sessionMenuItems = useMemo(
-    () => buildSessionMenuItems({ isAdmin, isLegislator }),
-    [isAdmin, isLegislator],
+    () => buildSessionMenuItems({ isAdmin, isLegislator, isSupervisor }),
+    [isAdmin, isLegislator, isSupervisor],
   );
 
   const mobileNavItems = visibleNavItems;
@@ -79,10 +80,14 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
     return () => io.disconnect();
   }, [isHome]);
 
-  // Close sidebar on scroll — capture:true catches scrolls inside overflow containers too
+  // Close sidebar on scroll — capture:true catches scrolls inside overflow containers too,
+  // but we skip events that originate inside the sidebar itself
   useEffect(() => {
     if (!sidebarOpen) return;
-    function onScroll() {
+    function onScroll(e: Event) {
+      if (e.target instanceof Element && e.target.closest("[data-sidebar]")) {
+        return;
+      }
       setSidebarOpen(false);
     }
     document.addEventListener("scroll", onScroll, {
@@ -281,7 +286,7 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
         />
       )}
 
-      <AppSidebar visible={sidebarOpen} />
+      <AppSidebar visible={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </>
   );
 }

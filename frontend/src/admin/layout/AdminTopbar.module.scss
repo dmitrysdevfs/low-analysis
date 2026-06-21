@@ -308,6 +308,12 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+.notifPanelActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .notifPanelTitle {
   display: flex;
   align-items: center;

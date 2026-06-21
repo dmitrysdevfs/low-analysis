@@ -8,6 +8,7 @@ import {
   approveAccessRequest,
   rejectAccessRequest,
   setUserRole,
+  revokeMyRole,
 } from "@/lib/api/legislatorAccess";
 import type { LegislatorAccessRequest } from "@/types/law-change.types";
 
@@ -28,11 +29,25 @@ export function useAllAccessRequests(status?: string) {
 export function useSubmitAccessRequest() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { organization: string; reason: string }) =>
-      submitAccessRequest(data),
+    mutationFn: (data: {
+      organization: string;
+      reason: string;
+      requestedRole: "legislator" | "supervisor";
+    }) => submitAccessRequest(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["legislatorAccess", "my"] });
       queryClient.invalidateQueries({ queryKey: ["legislatorAccess", "all"] });
+    },
+  });
+}
+
+export function useRevokeRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => revokeMyRole(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["legislatorAccess", "my"] });
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
     },
   });
 }

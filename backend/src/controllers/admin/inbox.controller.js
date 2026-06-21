@@ -128,3 +128,16 @@ export const reply = async (req, res, next) => {
     next(err);
   }
 };
+
+export const compose = async (req, res, next) => {
+  try {
+    const { to, subject, body } = req.body ?? {};
+    const result = await inboxService.composeEmail(
+      { to, subject, body },
+      req.user.email,
+    );
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
