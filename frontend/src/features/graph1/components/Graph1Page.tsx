@@ -171,7 +171,13 @@ export function Graph1Page({
       restoreFromFork(target);
       setAutoLoadDone(true);
     }
-  }, [initialForkId, forks.forks, forks.isLoading, restoreFromFork, autoLoadDone]);
+  }, [
+    initialForkId,
+    forks.forks,
+    forks.isLoading,
+    restoreFromFork,
+    autoLoadDone,
+  ]);
 
   const allLaws = useMemo(
     () =>
@@ -267,9 +273,7 @@ export function Graph1Page({
   }
 
   if (error) {
-    return (
-      <div className={styles.error}>Помилка завантаження: {error}</div>
-    );
+    return <div className={styles.error}>Помилка завантаження: {error}</div>;
   }
 
   return (
@@ -425,14 +429,12 @@ export function Graph1Page({
             <EdgeInfoPanel
               edge={selectedEdge}
               sourceNode={
-                graphData?.nodes.find(
-                  (n) => n.id === selectedEdge.source,
-                ) ?? null
+                graphData?.nodes.find((n) => n.id === selectedEdge.source) ??
+                null
               }
               targetNode={
-                graphData?.nodes.find(
-                  (n) => n.id === selectedEdge.target,
-                ) ?? null
+                graphData?.nodes.find((n) => n.id === selectedEdge.target) ??
+                null
               }
               onClose={() => setSelectedEdge(null)}
               onToggleHighlight={toggleEdgeHighlight}

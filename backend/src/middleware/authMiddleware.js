@@ -27,7 +27,9 @@ export const protect = async (req, res, next) => {
     req.user = await User.findById(decoded.id).select('-password');
 
     if (!req.user) {
-      return res.status(401).json({ message: 'Not authorized, user not found' });
+      return res
+        .status(401)
+        .json({ message: 'Not authorized, user not found' });
     }
 
     if (req.user.status !== 'active') {
@@ -38,7 +40,9 @@ export const protect = async (req, res, next) => {
       typeof decoded.tokenVersion === 'number' &&
       decoded.tokenVersion !== (req.user.tokenVersion ?? 0)
     ) {
-      return res.status(401).json({ message: 'Сесія завершена, увійдіть знову' });
+      return res
+        .status(401)
+        .json({ message: 'Сесія завершена, увійдіть знову' });
     }
 
     return next();

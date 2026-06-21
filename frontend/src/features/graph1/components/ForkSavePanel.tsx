@@ -126,9 +126,7 @@ export function ForkSavePanel({
       <div className={styles.listSection}>
         <p className={styles.sectionLabel}>
           ЗБЕРЕЖЕНІ ФОРКИ{" "}
-          <span className={styles.count}>
-            ({forks.length} / 20)
-          </span>
+          <span className={styles.count}>({forks.length} / 20)</span>
         </p>
 
         {isLoading ? (

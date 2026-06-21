@@ -57,7 +57,8 @@ const PREFERENCE_COPY: Array<{
 ];
 
 export function ClientWorkspaceHome() {
-  const { user, isLegislator, isSupervisor, updateProfile, changePassword } = useAuth();
+  const { user, isLegislator, isSupervisor, updateProfile, changePassword } =
+    useAuth();
   const { subscription } = useBilling();
   const { notes } = useNotes();
   const userId = user?.id;

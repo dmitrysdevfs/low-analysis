@@ -18,12 +18,19 @@ import { useSidebarData } from "./SidebarDataContext";
 import { SubjectMentionsModal } from "@/components/subject/SubjectMentionsModal";
 import styles from "./AppSidebar.module.scss";
 
-export function AppSidebar({ visible, onClose }: { visible: boolean; onClose?: () => void }) {
+export function AppSidebar({
+  visible,
+  onClose,
+}: {
+  visible: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const sidebarAsHeaderRef = useRef<HTMLElement | null>(null);
-  const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } =
+    useAuth();
   const { subjects, onSubjectSelect, activeSubjectId } = useSidebarData();
   const { notes } = useNotes();
   const [mounted, setMounted] = useState(false);

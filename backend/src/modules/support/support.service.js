@@ -613,7 +613,10 @@ export async function checkTelegramSync() {
 }
 
 export async function handleTelegramUpdate(update) {
-  console.log('[support:tg-webhook] update type:', Object.keys(update ?? {}).join(', '));
+  console.log(
+    '[support:tg-webhook] update type:',
+    Object.keys(update ?? {}).join(', '),
+  );
 
   const message = update?.message;
   if (!message || !message.text) {
@@ -629,13 +632,19 @@ export async function handleTelegramUpdate(update) {
 
   const fromId = String(message.from?.id ?? '');
   if (!isGroupAnonymousBot && !isTelegramAgentAllowed(message.from)) {
-    console.log(`[support:tg-webhook] ignored — agent not allowed (tg_id=${fromId})`);
+    console.log(
+      `[support:tg-webhook] ignored — agent not allowed (tg_id=${fromId})`,
+    );
     return { ok: true, ignored: true, reason: 'agent-not-allowed' };
   }
 
   const conversationId = extractTelegramConversationId(message);
-  console.log(`[support:tg-webhook] conversationId extracted: ${conversationId ?? 'null'}`);
-  console.log(`[support:tg-webhook] reply_to text snippet: "${(message.reply_to_message?.text ?? '').slice(0, 80)}"`);
+  console.log(
+    `[support:tg-webhook] conversationId extracted: ${conversationId ?? 'null'}`,
+  );
+  console.log(
+    `[support:tg-webhook] reply_to text snippet: "${(message.reply_to_message?.text ?? '').slice(0, 80)}"`,
+  );
 
   if (!conversationId) {
     console.log('[support:tg-webhook] ignored — no [#conv:...] token found');
@@ -644,13 +653,17 @@ export async function handleTelegramUpdate(update) {
 
   const conversation = await SupportConversation.findById(conversationId);
   if (!conversation) {
-    console.log(`[support:tg-webhook] ignored — conversation ${conversationId} not in DB`);
+    console.log(
+      `[support:tg-webhook] ignored — conversation ${conversationId} not in DB`,
+    );
     return { ok: true, ignored: true, reason: 'missing-conversation' };
   }
 
   const senderName = isGroupAnonymousBot
     ? 'Підтримка'
-    : [message.from.first_name, message.from.last_name].filter(Boolean).join(' ') ||
+    : [message.from.first_name, message.from.last_name]
+        .filter(Boolean)
+        .join(' ') ||
       message.from.username ||
       `Telegram ${message.from.id}`;
 
@@ -660,7 +673,9 @@ export async function handleTelegramUpdate(update) {
   // Strip [#conv:...] token if user typed it directly in the message text
   const cleanText = stripConversationToken(message.text);
 
-  console.log(`[support:tg-webhook] saving reply from "${senderName}" (${telegramSenderId}) for conv ${conversationId}`);
+  console.log(
+    `[support:tg-webhook] saving reply from "${senderName}" (${telegramSenderId}) for conv ${conversationId}`,
+  );
 
   const storedMessage = await createStoredMessage({
     conversation,

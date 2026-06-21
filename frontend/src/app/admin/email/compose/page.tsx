@@ -58,7 +58,9 @@ export default function AdminEmailComposePage() {
   const [selectedBilling, setSelectedBilling] = useState<string[]>([]);
   const [customEmails, setCustomEmails] = useState("");
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
-  const [sent, setSent] = useState<{ sent: number; total: number } | null>(null);
+  const [sent, setSent] = useState<{ sent: number; total: number } | null>(
+    null,
+  );
   const [testEmail, setTestEmail] = useState("");
   const [showTestInput, setShowTestInput] = useState(false);
 
@@ -96,7 +98,13 @@ export default function AdminEmailComposePage() {
 
   const previewMutation = useMutation({
     mutationFn: () =>
-      adminApi.previewEmail({ subject, previewText, templateSlug, theme, props }),
+      adminApi.previewEmail({
+        subject,
+        previewText,
+        templateSlug,
+        theme,
+        props,
+      }),
     onSuccess: (data) => setPreviewHtml(data.html),
   });
 
@@ -123,7 +131,14 @@ export default function AdminEmailComposePage() {
     { label: "Заголовок", ok: !!props.headline },
     { label: "Текст листа", ok: !!props.body },
     { label: "Шаблон обраний", ok: !!templateSlug },
-    { label: "Аудиторія", ok: audience.type === "all" || selectedRoles.length > 0 || selectedBilling.length > 0 || customEmails.trim().length > 0 },
+    {
+      label: "Аудиторія",
+      ok:
+        audience.type === "all" ||
+        selectedRoles.length > 0 ||
+        selectedBilling.length > 0 ||
+        customEmails.trim().length > 0,
+    },
   ];
   const readyToSend = checklist.every((c) => c.ok);
 
@@ -138,19 +153,23 @@ export default function AdminEmailComposePage() {
     <div className={styles.root}>
       {sent && (
         <div className={styles.successBanner}>
-          <span>Відправлено {sent.sent} з {sent.total} отримувачів</span>
-          <button type="button" onClick={() => setSent(null)} className={styles.dismissBtn}>×</button>
+          <span>
+            Відправлено {sent.sent} з {sent.total} отримувачів
+          </span>
+          <button
+            type="button"
+            onClick={() => setSent(null)}
+            className={styles.dismissBtn}
+          >
+            ×
+          </button>
         </div>
       )}
 
       {/* Action bar */}
       <div className={styles.actionBar}>
         <div className={styles.actionBarLeft}>
-          <button
-            type="button"
-            className={styles.btnSave}
-            onClick={() => {}}
-          >
+          <button type="button" className={styles.btnSave} onClick={() => {}}>
             <Save size={13} />
             Зберегти чернетку
           </button>
@@ -170,7 +189,11 @@ export default function AdminEmailComposePage() {
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
               />
-              <button type="button" className={styles.btnTestSend} onClick={() => setShowTestInput(false)}>
+              <button
+                type="button"
+                className={styles.btnTestSend}
+                onClick={() => setShowTestInput(false)}
+              >
                 Надіслати
               </button>
             </div>
@@ -201,28 +224,46 @@ export default function AdminEmailComposePage() {
       {/* KPI row */}
       <div className={styles.kpiRow}>
         <div className={styles.kpiCard}>
-          <Users size={15} className={styles.kpiIcon} style={{ color: "#4a80d4" }} />
+          <Users
+            size={15}
+            className={styles.kpiIcon}
+            style={{ color: "#4a80d4" }}
+          />
           <div>
-            <div className={styles.kpiNum}>{audienceQuery.data?.count ?? "—"}</div>
+            <div className={styles.kpiNum}>
+              {audienceQuery.data?.count ?? "—"}
+            </div>
             <div className={styles.kpiLabel}>Отримувачів</div>
           </div>
         </div>
         <div className={styles.kpiCard}>
-          <MailCheck size={15} className={styles.kpiIcon} style={{ color: "#52b788" }} />
+          <MailCheck
+            size={15}
+            className={styles.kpiIcon}
+            style={{ color: "#52b788" }}
+          />
           <div>
             <div className={styles.kpiNum}>—</div>
             <div className={styles.kpiLabel}>Доставлено</div>
           </div>
         </div>
         <div className={styles.kpiCard}>
-          <TrendingUp size={15} className={styles.kpiIcon} style={{ color: "#c8a843" }} />
+          <TrendingUp
+            size={15}
+            className={styles.kpiIcon}
+            style={{ color: "#c8a843" }}
+          />
           <div>
             <div className={styles.kpiNum}>—</div>
             <div className={styles.kpiLabel}>Відкрито</div>
           </div>
         </div>
         <div className={styles.kpiCard}>
-          <MousePointerClick size={15} className={styles.kpiIcon} style={{ color: "#a78bfa" }} />
+          <MousePointerClick
+            size={15}
+            className={styles.kpiIcon}
+            style={{ color: "#a78bfa" }}
+          />
           <div>
             <div className={styles.kpiNum}>—</div>
             <div className={styles.kpiLabel}>Кліки</div>
@@ -264,7 +305,9 @@ export default function AdminEmailComposePage() {
                   onChange={(e) => setTemplateSlug(e.target.value)}
                 >
                   {TEMPLATE_OPTIONS.map((t) => (
-                    <option key={t.value} value={t.value}>{t.label}</option>
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
                   ))}
                 </select>
                 <ChevronDown size={13} className={styles.selectIcon} />
@@ -293,10 +336,14 @@ export default function AdminEmailComposePage() {
               <select
                 className={styles.select}
                 value={audience.type}
-                onChange={(e) => setAudience({ type: e.target.value as EmailAudience["type"] })}
+                onChange={(e) =>
+                  setAudience({ type: e.target.value as EmailAudience["type"] })
+                }
               >
                 {AUDIENCE_TYPES.map((a) => (
-                  <option key={a.value} value={a.value}>{a.label}</option>
+                  <option key={a.value} value={a.value}>
+                    {a.label}
+                  </option>
                 ))}
               </select>
               <ChevronDown size={13} className={styles.selectIcon} />
@@ -309,9 +356,10 @@ export default function AdminEmailComposePage() {
                       type="checkbox"
                       checked={selectedRoles.includes(r)}
                       onChange={(e) =>
-                        setSelectedRoles(e.target.checked
-                          ? [...selectedRoles, r]
-                          : selectedRoles.filter((x) => x !== r)
+                        setSelectedRoles(
+                          e.target.checked
+                            ? [...selectedRoles, r]
+                            : selectedRoles.filter((x) => x !== r),
                         )
                       }
                     />
@@ -328,9 +376,10 @@ export default function AdminEmailComposePage() {
                       type="checkbox"
                       checked={selectedBilling.includes(p)}
                       onChange={(e) =>
-                        setSelectedBilling(e.target.checked
-                          ? [...selectedBilling, p]
-                          : selectedBilling.filter((x) => x !== p)
+                        setSelectedBilling(
+                          e.target.checked
+                            ? [...selectedBilling, p]
+                            : selectedBilling.filter((x) => x !== p),
                         )
                       }
                     />
@@ -363,12 +412,42 @@ export default function AdminEmailComposePage() {
 
             {/* Rich text toolbar (UI only) */}
             <div className={styles.toolbar}>
-              <button type="button" className={styles.toolbarBtn} title="Жирний"><Bold size={13} /></button>
-              <button type="button" className={styles.toolbarBtn} title="Курсив"><Italic size={13} /></button>
-              <button type="button" className={styles.toolbarBtn} title="Підкреслення"><Underline size={13} /></button>
+              <button
+                type="button"
+                className={styles.toolbarBtn}
+                title="Жирний"
+              >
+                <Bold size={13} />
+              </button>
+              <button
+                type="button"
+                className={styles.toolbarBtn}
+                title="Курсив"
+              >
+                <Italic size={13} />
+              </button>
+              <button
+                type="button"
+                className={styles.toolbarBtn}
+                title="Підкреслення"
+              >
+                <Underline size={13} />
+              </button>
               <span className={styles.toolbarDivider} />
-              <button type="button" className={styles.toolbarBtn} title="Посилання"><Link2 size={13} /></button>
-              <button type="button" className={styles.toolbarBtn} title="Вирівнювання"><AlignLeft size={13} /></button>
+              <button
+                type="button"
+                className={styles.toolbarBtn}
+                title="Посилання"
+              >
+                <Link2 size={13} />
+              </button>
+              <button
+                type="button"
+                className={styles.toolbarBtn}
+                title="Вирівнювання"
+              >
+                <AlignLeft size={13} />
+              </button>
             </div>
 
             <div className={styles.section}>
@@ -376,7 +455,9 @@ export default function AdminEmailComposePage() {
               <input
                 className={styles.input}
                 value={props.headline}
-                onChange={(e) => setProps((p) => ({ ...p, headline: e.target.value }))}
+                onChange={(e) =>
+                  setProps((p) => ({ ...p, headline: e.target.value }))
+                }
                 placeholder="Основний заголовок листа..."
               />
             </div>
@@ -386,7 +467,9 @@ export default function AdminEmailComposePage() {
                 className={styles.textarea}
                 rows={8}
                 value={props.body}
-                onChange={(e) => setProps((p) => ({ ...p, body: e.target.value }))}
+                onChange={(e) =>
+                  setProps((p) => ({ ...p, body: e.target.value }))
+                }
                 placeholder="Основний текст повідомлення..."
               />
             </div>
@@ -394,20 +477,28 @@ export default function AdminEmailComposePage() {
             {templateSlug === "maintenance" && (
               <>
                 <div className={styles.section}>
-                  <label className={styles.label}>Початок (необов&apos;язково)</label>
+                  <label className={styles.label}>
+                    Початок (необов&apos;язково)
+                  </label>
                   <input
                     className={styles.input}
                     value={(props as Record<string, string>).startTime || ""}
-                    onChange={(e) => setProps((p) => ({ ...p, startTime: e.target.value }))}
+                    onChange={(e) =>
+                      setProps((p) => ({ ...p, startTime: e.target.value }))
+                    }
                     placeholder="наприклад: 10 червня, 22:00"
                   />
                 </div>
                 <div className={styles.section}>
-                  <label className={styles.label}>Завершення (необов&apos;язково)</label>
+                  <label className={styles.label}>
+                    Завершення (необов&apos;язково)
+                  </label>
                   <input
                     className={styles.input}
                     value={(props as Record<string, string>).endTime || ""}
-                    onChange={(e) => setProps((p) => ({ ...p, endTime: e.target.value }))}
+                    onChange={(e) =>
+                      setProps((p) => ({ ...p, endTime: e.target.value }))
+                    }
                     placeholder="наприклад: 11 червня, 02:00"
                   />
                 </div>
@@ -415,29 +506,42 @@ export default function AdminEmailComposePage() {
             )}
             {templateSlug === "product-update" && (
               <div className={styles.section}>
-                <label className={styles.label}>Нові можливості (необов&apos;язково)</label>
+                <label className={styles.label}>
+                  Нові можливості (необов&apos;язково)
+                </label>
                 <textarea
                   className={styles.textarea}
                   rows={4}
                   value={(props as Record<string, string>).features || ""}
-                  onChange={(e) => setProps((p) => ({ ...p, features: e.target.value.split("\n") }))}
+                  onChange={(e) =>
+                    setProps((p) => ({
+                      ...p,
+                      features: e.target.value.split("\n"),
+                    }))
+                  }
                   placeholder="Один рядок — одна функція"
                 />
               </div>
             )}
 
             <div className={styles.section}>
-              <label className={styles.label}>Кнопка CTA (необов&apos;язково)</label>
+              <label className={styles.label}>
+                Кнопка CTA (необов&apos;язково)
+              </label>
               <input
                 className={styles.input}
                 value={props.ctaText}
-                onChange={(e) => setProps((p) => ({ ...p, ctaText: e.target.value }))}
+                onChange={(e) =>
+                  setProps((p) => ({ ...p, ctaText: e.target.value }))
+                }
                 placeholder="Текст кнопки"
               />
               <input
                 className={`${styles.input} ${styles.inputMt}`}
                 value={props.ctaUrl}
-                onChange={(e) => setProps((p) => ({ ...p, ctaUrl: e.target.value }))}
+                onChange={(e) =>
+                  setProps((p) => ({ ...p, ctaUrl: e.target.value }))
+                }
                 placeholder="URL кнопки"
               />
             </div>
@@ -445,9 +549,15 @@ export default function AdminEmailComposePage() {
             {/* Block buttons */}
             <div className={styles.blockBtns}>
               <span className={styles.blockBtnsLabel}>Додати блок:</span>
-              <button type="button" className={styles.blockBtn}><Image size={12} /> Зображення</button>
-              <button type="button" className={styles.blockBtn}><Minus size={12} /> Роздільник</button>
-              <button type="button" className={styles.blockBtn}><Share2 size={12} /> Соц. мережі</button>
+              <button type="button" className={styles.blockBtn}>
+                <Image size={12} /> Зображення
+              </button>
+              <button type="button" className={styles.blockBtn}>
+                <Minus size={12} /> Роздільник
+              </button>
+              <button type="button" className={styles.blockBtn}>
+                <Share2 size={12} /> Соц. мережі
+              </button>
             </div>
 
             {sendMutation.isError && (
@@ -481,11 +591,16 @@ export default function AdminEmailComposePage() {
             <div className={styles.checklist}>
               {checklist.map((item) => (
                 <div key={item.label} className={styles.checklistItem}>
-                  {item.ok
-                    ? <CheckCircle2 size={14} className={styles.checkOk} />
-                    : <Circle size={14} className={styles.checkNo} />
-                  }
-                  <span className={item.ok ? styles.checkLabelOk : styles.checkLabelNo}>
+                  {item.ok ? (
+                    <CheckCircle2 size={14} className={styles.checkOk} />
+                  ) : (
+                    <Circle size={14} className={styles.checkNo} />
+                  )}
+                  <span
+                    className={
+                      item.ok ? styles.checkLabelOk : styles.checkLabelNo
+                    }
+                  >
                     {item.label}
                   </span>
                 </div>

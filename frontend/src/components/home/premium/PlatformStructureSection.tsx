@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import { platformStructure, type PlatformStructureItem } from "@/constants/premiumLandingContent";
+import {
+  platformStructure,
+  type PlatformStructureItem,
+} from "@/constants/premiumLandingContent";
 import { TempleIcon, GridIcon, ToolsIcon, ProfileIcon } from "./icons";
 import styles from "./PlatformStructureSection.module.scss";
 
@@ -47,7 +50,8 @@ export function PlatformStructureSection() {
           <div className={`mono ${styles.sectionNum}`}>01 —</div>
           <h2 className={`display ${styles.h2}`}>Структура платформи</h2>
           <p className={styles.subtitle}>
-            Модульна архітектура, що поєднує дані, аналітику та інструменти для ефективної правової роботи.
+            Модульна архітектура, що поєднує дані, аналітику та інструменти для
+            ефективної правової роботи.
           </p>
         </motion.div>
 
@@ -127,7 +131,9 @@ export function PlatformStructureSection() {
               >
                 <WideIcon size={32} className={styles.smallIcon} />
                 <div className={styles.wideContent}>
-                  <h3 className={`display ${styles.cardTitle}`}>{wide.title}</h3>
+                  <h3 className={`display ${styles.cardTitle}`}>
+                    {wide.title}
+                  </h3>
                   <p className={styles.cardDesc}>{wide.desc}</p>
                 </div>
                 <Link href={wide.href} className={styles.cardArrow}>

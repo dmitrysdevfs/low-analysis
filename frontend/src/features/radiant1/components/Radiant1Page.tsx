@@ -29,7 +29,10 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { fetchGraphPath } from "@/lib/api/graph1";
-import { buildRadiant1Graph, getRadiant1Clusters } from "../lib/buildRadiant1Graph";
+import {
+  buildRadiant1Graph,
+  getRadiant1Clusters,
+} from "../lib/buildRadiant1Graph";
 import { useRadiant1Data } from "../hooks/useRadiant1Data";
 import { Radiant1Canvas } from "./Radiant1Canvas";
 import styles from "./Radiant1Page.module.scss";
@@ -75,7 +78,9 @@ export function Radiant1Page() {
   const [, startFilterTransition] = useTransition();
   const [selectedYearFrom, setSelectedYearFrom] = useState<number | null>(null);
   const [isEmptyStateOpen, setIsEmptyStateOpen] = useState(false);
-  const [articleRiskFilter, setArticleRiskFilter] = useState<"green" | "yellow" | "red" | null>(null);
+  const [articleRiskFilter, setArticleRiskFilter] = useState<
+    "green" | "yellow" | "red" | null
+  >(null);
 
   const handleResetReady = useCallback((fn: () => void) => {
     setResetView(() => fn);
@@ -97,7 +102,9 @@ export function Radiant1Page() {
   const timelineYears = useMemo(() => {
     const years = laws
       .map((law) => {
-        const year = law.adoptedDate ? new Date(law.adoptedDate).getFullYear() : NaN;
+        const year = law.adoptedDate
+          ? new Date(law.adoptedDate).getFullYear()
+          : NaN;
         return Number.isFinite(year) ? year : null;
       })
       .filter((year): year is number => year != null);
@@ -209,8 +216,12 @@ export function Radiant1Page() {
       typeof edgePreview.target === "string"
         ? edgePreview.target
         : (edgePreview.target as { id: string }).id;
-    const sourceNode = graph.nodes.find((n) => n.id === sourceId && n.kind === "law");
-    const targetNode = graph.nodes.find((n) => n.id === targetId && n.kind === "law");
+    const sourceNode = graph.nodes.find(
+      (n) => n.id === sourceId && n.kind === "law",
+    );
+    const targetNode = graph.nodes.find(
+      (n) => n.id === targetId && n.kind === "law",
+    );
     const hasRealNote =
       edgePreview.note != null &&
       edgePreview.note !== "Зв'язок між законами" &&
@@ -223,9 +234,19 @@ export function Radiant1Page() {
     const pathSet = new Set(pathLawIds);
     return graph.links
       .filter((link) => {
-        const sourceId = typeof link.source === "string" ? link.source : (link.source as { id: string }).id;
-        const targetId = typeof link.target === "string" ? link.target : (link.target as { id: string }).id;
-        return link.kind === "law-ref" && pathSet.has(sourceId) && pathSet.has(targetId);
+        const sourceId =
+          typeof link.source === "string"
+            ? link.source
+            : (link.source as { id: string }).id;
+        const targetId =
+          typeof link.target === "string"
+            ? link.target
+            : (link.target as { id: string }).id;
+        return (
+          link.kind === "law-ref" &&
+          pathSet.has(sourceId) &&
+          pathSet.has(targetId)
+        );
       })
       .slice(0, 6);
   }, [pathLawIds, graph]);
@@ -239,7 +260,12 @@ export function Radiant1Page() {
         id: element._id ?? element.code,
         label: element.title?.trim() || `Ст. ${element.number ?? "—"}`,
         meta: element.number != null ? `Стаття № ${element.number}` : "",
-        riskLevel: element.risk_level as "green" | "yellow" | "red" | null | undefined,
+        riskLevel: element.risk_level as
+          | "green"
+          | "yellow"
+          | "red"
+          | null
+          | undefined,
       }));
 
     const referencedArticles = (selectedLawGraphQuery.data?.edges ?? [])
@@ -253,14 +279,21 @@ export function Radiant1Page() {
       .slice(0, 40);
 
     return fallbackArticles.length > 0 ? fallbackArticles : referencedArticles;
-  }, [selectedLawGraphQuery.data?.edges, selectedLawId, selectedLawTreeQuery.data?.elements]);
+  }, [
+    selectedLawGraphQuery.data?.edges,
+    selectedLawId,
+    selectedLawTreeQuery.data?.elements,
+  ]);
 
   const selectedLawSubjects = useMemo(() => {
     const counts = new Map<string, number>();
 
     (selectedLawTreeQuery.data?.elements ?? []).forEach((element) => {
       element.subjects?.forEach((subject) => {
-        counts.set(subject.subject_id, (counts.get(subject.subject_id) ?? 0) + 1);
+        counts.set(
+          subject.subject_id,
+          (counts.get(subject.subject_id) ?? 0) + 1,
+        );
       });
     });
 
@@ -282,11 +315,15 @@ export function Radiant1Page() {
     [selectedLawArticles, articleRiskFilter],
   );
 
-  const articleRiskCounts = useMemo(() => ({
-    green:  selectedLawArticles.filter((a) => a.riskLevel === "green").length,
-    yellow: selectedLawArticles.filter((a) => a.riskLevel === "yellow").length,
-    red:    selectedLawArticles.filter((a) => a.riskLevel === "red").length,
-  }), [selectedLawArticles]);
+  const articleRiskCounts = useMemo(
+    () => ({
+      green: selectedLawArticles.filter((a) => a.riskLevel === "green").length,
+      yellow: selectedLawArticles.filter((a) => a.riskLevel === "yellow")
+        .length,
+      red: selectedLawArticles.filter((a) => a.riskLevel === "red").length,
+    }),
+    [selectedLawArticles],
+  );
 
   const visibleLegend = graph?.summary.clusterStats ?? [];
   const visibleLawCount = graph?.summary.visibleLawCount ?? 0;
@@ -294,7 +331,8 @@ export function Radiant1Page() {
   const totalNodes = graph?.summary.totalNodes ?? 0;
   const totalLinks = graph?.summary.totalLinks ?? 0;
   const lawNodeCount = graph?.nodes.filter((n) => n.kind === "law").length ?? 0;
-  const satelliteNodeCount = graph?.nodes.filter((n) => n.kind !== "law").length ?? 0;
+  const satelliteNodeCount =
+    graph?.nodes.filter((n) => n.kind !== "law").length ?? 0;
 
   const selectedTimelineIndex =
     selectedYear != null
@@ -352,7 +390,9 @@ export function Radiant1Page() {
       } catch (error) {
         setPathLawIds([]);
         setPathHops(null);
-        setPathError(error instanceof Error ? error.message : "Шлях не знайдено");
+        setPathError(
+          error instanceof Error ? error.message : "Шлях не знайдено",
+        );
       }
     });
   };
@@ -364,7 +404,10 @@ export function Radiant1Page() {
           <Sparkles size={22} />
           <div>
             <h1>Готуємо новий Radiant</h1>
-            <p>Збираємо граф законів, структуру норм і візуальний шар нового інтерфейсу.</p>
+            <p>
+              Збираємо граф законів, структуру норм і візуальний шар нового
+              інтерфейсу.
+            </p>
           </div>
         </div>
       </section>
@@ -378,7 +421,11 @@ export function Radiant1Page() {
           <AlertTriangle size={22} />
           <div>
             <h1>Не вдалося зібрати Radiant1</h1>
-            <p>{String(globalGraphQuery.error ?? lawsQuery.error ?? "Невідома помилка")}</p>
+            <p>
+              {String(
+                globalGraphQuery.error ?? lawsQuery.error ?? "Невідома помилка",
+              )}
+            </p>
           </div>
         </div>
       </section>
@@ -396,7 +443,9 @@ export function Radiant1Page() {
         <div className={styles.topbar}>
           <div className={styles.brand}>
             <div className={styles.brandLogo}>РАДІАНТ</div>
-            <p className={styles.brandSub}>3D-ВІЗУАЛІЗАЦІЯ ЗАКОНОДАВЧОЇ БАЗИ УКРАЇНИ</p>
+            <p className={styles.brandSub}>
+              3D-ВІЗУАЛІЗАЦІЯ ЗАКОНОДАВЧОЇ БАЗИ УКРАЇНИ
+            </p>
           </div>
 
           <label className={styles.searchBar}>
@@ -450,7 +499,9 @@ export function Radiant1Page() {
               <div className={styles.panelHeading}>ПОШУК</div>
 
               <label className={styles.field}>
-                <span className={styles.fieldLabel}>Більше, ніж текстовий фільтр</span>
+                <span className={styles.fieldLabel}>
+                  Більше, ніж текстовий фільтр
+                </span>
                 <input
                   className={styles.control}
                   value={searchQuery}
@@ -468,13 +519,17 @@ export function Radiant1Page() {
                     value={selectedYearFrom ?? ""}
                     onChange={(e) =>
                       startFilterTransition(() =>
-                        setSelectedYearFrom(e.target.value ? Number(e.target.value) : null),
+                        setSelectedYearFrom(
+                          e.target.value ? Number(e.target.value) : null,
+                        ),
                       )
                     }
                   >
                     <option value="">Від року</option>
                     {timelineYears.map((yr) => (
-                      <option key={yr} value={yr}>{yr}</option>
+                      <option key={yr} value={yr}>
+                        {yr}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -485,13 +540,17 @@ export function Radiant1Page() {
                     value={selectedYear ?? ""}
                     onChange={(e) =>
                       startFilterTransition(() =>
-                        setSelectedYear(e.target.value ? Number(e.target.value) : null),
+                        setSelectedYear(
+                          e.target.value ? Number(e.target.value) : null,
+                        ),
                       )
                     }
                   >
                     <option value="">До року</option>
                     {timelineYears.map((yr) => (
-                      <option key={yr} value={yr}>{yr}</option>
+                      <option key={yr} value={yr}>
+                        {yr}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -528,10 +587,14 @@ export function Radiant1Page() {
                     className={styles.control}
                     value={selectedSubjectId}
                     onChange={(event) =>
-                      startFilterTransition(() => setSelectedSubjectId(event.target.value))
+                      startFilterTransition(() =>
+                        setSelectedSubjectId(event.target.value),
+                      )
                     }
                   >
-                    <option value="all">MVP-{subjectOptions.length} суб&apos;єктів</option>
+                    <option value="all">
+                      MVP-{subjectOptions.length} суб&apos;єктів
+                    </option>
                     {subjectOptions.map((subject) => (
                       <option key={subject.id} value={subject.id}>
                         {subject.label}
@@ -554,7 +617,8 @@ export function Radiant1Page() {
                       type="button"
                       className={styles.filterChip}
                       data-active={
-                        activeClusterIds.length === 0 || activeClusterIds.includes(cluster.id)
+                        activeClusterIds.length === 0 ||
+                        activeClusterIds.includes(cluster.id)
                           ? "true"
                           : undefined
                       }
@@ -617,7 +681,9 @@ export function Radiant1Page() {
                   disabled={!fromLawId || !toLawId || pathPending}
                 >
                   <GitBranchPlus size={14} />
-                  {pathPending ? "Шукаємо маршрут..." : "Прокласти semantic path"}
+                  {pathPending
+                    ? "Шукаємо маршрут..."
+                    : "Прокласти semantic path"}
                 </button>
 
                 {pathHops != null ? (
@@ -625,7 +691,9 @@ export function Radiant1Page() {
                     <Zap size={11} /> Маршрут знайдено: {pathHops} переходів
                   </div>
                 ) : null}
-                {pathError ? <div className={styles.errorHint}>{pathError}</div> : null}
+                {pathError ? (
+                  <div className={styles.errorHint}>{pathError}</div>
+                ) : null}
 
                 {pathEdges.length > 0 && (
                   <div className={styles.relatedNormsBlock}>
@@ -638,13 +706,20 @@ export function Radiant1Page() {
                         <span className={styles.relatedNormText}>
                           {edge.fromArticle
                             ? `Ст. ${edge.fromArticle} із ${
-                                typeof edge.source === "string" ? edge.source : (edge.source as { lawCode: string }).lawCode
+                                typeof edge.source === "string"
+                                  ? edge.source
+                                  : (edge.source as { lawCode: string }).lawCode
                               } посилається на Ст. ${edge.toArticle ?? "?"} із ${
-                                typeof edge.target === "string" ? edge.target : (edge.target as { lawCode: string }).lawCode
+                                typeof edge.target === "string"
+                                  ? edge.target
+                                  : (edge.target as { lawCode: string }).lawCode
                               }`
-                            : edge.note ?? "Семантичний зв'язок"}
+                            : (edge.note ?? "Семантичний зв'язок")}
                         </span>
-                        <ChevronRight size={11} className={styles.relatedNormArrow} />
+                        <ChevronRight
+                          size={11}
+                          className={styles.relatedNormArrow}
+                        />
                       </div>
                     ))}
                   </div>
@@ -688,13 +763,18 @@ export function Radiant1Page() {
                   <span className={styles.emptyStateBadge}>
                     {isEmptyStateOpen ? "Показано" : "Приховано"}
                   </span>
-                  {isEmptyStateOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                  {isEmptyStateOpen ? (
+                    <ChevronDown size={13} />
+                  ) : (
+                    <ChevronRight size={13} />
+                  )}
                 </button>
                 {isEmptyStateOpen && (
                   <p className={styles.emptyStateBody}>
-                    Цей екран уже працює від real graph API, але щільність мережі підсилена
-                    article-сателітами, щоб новий Radiant виглядав як окремий premium mode,
-                    а не як плаский список законів.
+                    Цей екран уже працює від real graph API, але щільність
+                    мережі підсилена article-сателітами, щоб новий Radiant
+                    виглядав як окремий premium mode, а не як плаский список
+                    законів.
                   </p>
                 )}
               </div>
@@ -729,10 +809,14 @@ export function Radiant1Page() {
                     {visibleLinkCount} з {totalLinks}+ шляхів
                   </div>
                   <div className={styles.overlayPill}>4D ВІСЬ ЧАСУ</div>
-                  <div className={`${styles.overlayPill} ${styles.overlayPillDev}`}>
+                  <div
+                    className={`${styles.overlayPill} ${styles.overlayPillDev}`}
+                  >
                     TECH NOTE (DOMINANT)
                   </div>
-                  <div className={`${styles.overlayPill} ${styles.overlayPillDev}`}>
+                  <div
+                    className={`${styles.overlayPill} ${styles.overlayPillDev}`}
+                  >
                     DEVELOPER OVERLAY
                   </div>
                 </div>
@@ -746,13 +830,15 @@ export function Radiant1Page() {
                     <div className={styles.canvasPathRow}>
                       <span className={styles.canvasPathNode}>
                         {fromLawId
-                          ? graph.lawOptions.find((o) => o.id === fromLawId)?.code ?? fromLawId
+                          ? (graph.lawOptions.find((o) => o.id === fromLawId)
+                              ?.code ?? fromLawId)
                           : "Норма 1"}
                       </span>
                       <ChevronRight size={14} />
                       <span className={styles.canvasPathNode}>
                         {toLawId
-                          ? graph.lawOptions.find((o) => o.id === toLawId)?.code ?? toLawId
+                          ? (graph.lawOptions.find((o) => o.id === toLawId)
+                              ?.code ?? toLawId)
                           : "Норма 2"}
                       </span>
                     </div>
@@ -762,9 +848,11 @@ export function Radiant1Page() {
                         <span>
                           {edge.fromArticle
                             ? `Ст. ${edge.fromArticle} із ${
-                                typeof edge.source === "string" ? edge.source : (edge.source as { lawCode: string }).lawCode
+                                typeof edge.source === "string"
+                                  ? edge.source
+                                  : (edge.source as { lawCode: string }).lawCode
                               } змінює → Ст. ${edge.toArticle ?? "?"}`
-                            : edge.note ?? "Семантичний зв'язок"}
+                            : (edge.note ?? "Семантичний зв'язок")}
                         </span>
                       </div>
                     ))}
@@ -784,24 +872,29 @@ export function Radiant1Page() {
                       <span className={styles.edgePreviewLabel}>
                         {edgeTypeLabel(edgePreview.refType)}
                       </span>
-                      {edgePreviewMeta?.sourceNode && edgePreviewMeta?.targetNode && (
-                        <div className={styles.edgePreviewRoute}>
-                          <span className={styles.edgePreviewCode}>
-                            {edgePreviewMeta.sourceNode.lawCode}
-                          </span>
-                          <ChevronRight size={11} />
-                          <span className={styles.edgePreviewCode}>
-                            {edgePreviewMeta.targetNode.lawCode}
-                          </span>
-                        </div>
-                      )}
+                      {edgePreviewMeta?.sourceNode &&
+                        edgePreviewMeta?.targetNode && (
+                          <div className={styles.edgePreviewRoute}>
+                            <span className={styles.edgePreviewCode}>
+                              {edgePreviewMeta.sourceNode.lawCode}
+                            </span>
+                            <ChevronRight size={11} />
+                            <span className={styles.edgePreviewCode}>
+                              {edgePreviewMeta.targetNode.lawCode}
+                            </span>
+                          </div>
+                        )}
                       {edgePreviewMeta?.hasRealNote && (
-                        <span className={styles.edgePreviewNote}>{edgePreview.note}</span>
+                        <span className={styles.edgePreviewNote}>
+                          {edgePreview.note}
+                        </span>
                       )}
                       {edgePreview.fromArticle && (
                         <span className={styles.edgePreviewArticle}>
                           Ст.&nbsp;{edgePreview.fromArticle}
-                          {edgePreview.toArticle ? ` → Ст. ${edgePreview.toArticle}` : ""}
+                          {edgePreview.toArticle
+                            ? ` → Ст. ${edgePreview.toArticle}`
+                            : ""}
                         </span>
                       )}
                     </motion.div>
@@ -841,7 +934,9 @@ export function Radiant1Page() {
                       type="button"
                       className={styles.timelineMark}
                       data-active={year === selectedYear ? "true" : undefined}
-                      onClick={() => startFilterTransition(() => setSelectedYear(year))}
+                      onClick={() =>
+                        startFilterTransition(() => setSelectedYear(year))
+                      }
                     >
                       {year}
                     </button>
@@ -913,26 +1008,34 @@ export function Radiant1Page() {
                   )}
                 </span>
                 <span>
-                  <strong>Рік:</strong> {formatDateLabel(selectedNode?.adoptedYear)}
+                  <strong>Рік:</strong>{" "}
+                  {formatDateLabel(selectedNode?.adoptedYear)}
                 </span>
                 <span>
-                  <strong>Кількість статей:</strong> {selectedNode?.totalArticles ?? 0}
+                  <strong>Кількість статей:</strong>{" "}
+                  {selectedNode?.totalArticles ?? 0}
                 </span>
                 <span>
                   <strong>Код закону:</strong>{" "}
-                  <span style={{ color: "#7ec8ff", fontFamily: "var(--font-mono)" }}>
+                  <span
+                    style={{ color: "#7ec8ff", fontFamily: "var(--font-mono)" }}
+                  >
                     {selectedNode?.lawCode ?? "—"}
                   </span>
                 </span>
                 <span>
-                  <strong>Суб&apos;єктів:</strong> {selectedNode?.subjectCount ?? 0}
+                  <strong>Суб&apos;єктів:</strong>{" "}
+                  {selectedNode?.subjectCount ?? 0}
                 </span>
               </div>
 
               {selectedLawSubjects.length > 0 ? (
                 <div className={styles.subjectRow}>
                   {selectedLawSubjects.map((subject, i) => (
-                    <span key={`${subject.id || subject.label}-${i}`} className={styles.subjectChip}>
+                    <span
+                      key={`${subject.id || subject.label}-${i}`}
+                      className={styles.subjectChip}
+                    >
                       {subject.label}
                       <strong>{subject.count}</strong>
                     </span>
@@ -943,7 +1046,9 @@ export function Radiant1Page() {
               <div className={styles.articleList}>
                 <div className={styles.listHeading}>
                   Статті / Норми
-                  <span className={styles.articleCount}>{selectedLawArticles.length}</span>
+                  <span className={styles.articleCount}>
+                    {selectedLawArticles.length}
+                  </span>
                 </div>
 
                 {selectedLawArticles.length > 0 && (
@@ -951,7 +1056,9 @@ export function Radiant1Page() {
                     <button
                       type="button"
                       className={styles.riskFilterChip}
-                      data-active={articleRiskFilter === null ? "true" : undefined}
+                      data-active={
+                        articleRiskFilter === null ? "true" : undefined
+                      }
                       onClick={() => setArticleRiskFilter(null)}
                     >
                       Всі
@@ -961,14 +1068,20 @@ export function Radiant1Page() {
                         type="button"
                         className={styles.riskFilterChip}
                         data-risk="green"
-                        data-active={articleRiskFilter === "green" ? "true" : undefined}
+                        data-active={
+                          articleRiskFilter === "green" ? "true" : undefined
+                        }
                         onClick={() =>
-                          setArticleRiskFilter((f) => (f === "green" ? null : "green"))
+                          setArticleRiskFilter((f) =>
+                            f === "green" ? null : "green",
+                          )
                         }
                       >
                         <span className={styles.riskDot} data-risk="green" />
                         Норма
-                        <span className={styles.riskFilterCount}>{articleRiskCounts.green}</span>
+                        <span className={styles.riskFilterCount}>
+                          {articleRiskCounts.green}
+                        </span>
                       </button>
                     )}
                     {articleRiskCounts.yellow > 0 && (
@@ -976,14 +1089,20 @@ export function Radiant1Page() {
                         type="button"
                         className={styles.riskFilterChip}
                         data-risk="yellow"
-                        data-active={articleRiskFilter === "yellow" ? "true" : undefined}
+                        data-active={
+                          articleRiskFilter === "yellow" ? "true" : undefined
+                        }
                         onClick={() =>
-                          setArticleRiskFilter((f) => (f === "yellow" ? null : "yellow"))
+                          setArticleRiskFilter((f) =>
+                            f === "yellow" ? null : "yellow",
+                          )
                         }
                       >
                         <span className={styles.riskDot} data-risk="yellow" />
                         Увага
-                        <span className={styles.riskFilterCount}>{articleRiskCounts.yellow}</span>
+                        <span className={styles.riskFilterCount}>
+                          {articleRiskCounts.yellow}
+                        </span>
                       </button>
                     )}
                     {articleRiskCounts.red > 0 && (
@@ -991,14 +1110,20 @@ export function Radiant1Page() {
                         type="button"
                         className={styles.riskFilterChip}
                         data-risk="red"
-                        data-active={articleRiskFilter === "red" ? "true" : undefined}
+                        data-active={
+                          articleRiskFilter === "red" ? "true" : undefined
+                        }
                         onClick={() =>
-                          setArticleRiskFilter((f) => (f === "red" ? null : "red"))
+                          setArticleRiskFilter((f) =>
+                            f === "red" ? null : "red",
+                          )
                         }
                       >
                         <span className={styles.riskDot} data-risk="red" />
                         Ризик
-                        <span className={styles.riskFilterCount}>{articleRiskCounts.red}</span>
+                        <span className={styles.riskFilterCount}>
+                          {articleRiskCounts.red}
+                        </span>
                       </button>
                     )}
                   </div>
@@ -1013,12 +1138,15 @@ export function Radiant1Page() {
                           {article.meta ? <span>{article.meta}</span> : null}
                         </div>
                         {article.riskLevel ? (
-                          <span className={styles.riskBadge} data-risk={article.riskLevel}>
+                          <span
+                            className={styles.riskBadge}
+                            data-risk={article.riskLevel}
+                          >
                             {article.riskLevel === "green"
                               ? "Норма"
                               : article.riskLevel === "yellow"
-                              ? "Увага"
-                              : "Ризик"}
+                                ? "Увага"
+                                : "Ризик"}
                           </span>
                         ) : null}
                       </div>
@@ -1030,7 +1158,8 @@ export function Radiant1Page() {
                   </p>
                 ) : (
                   <p className={styles.articleHint}>
-                    Для цього вузла ще немає даних або дерево закону завантажується.
+                    Для цього вузла ще немає даних або дерево закону
+                    завантажується.
                   </p>
                 )}
               </div>
@@ -1051,7 +1180,9 @@ export function Radiant1Page() {
             </div>
 
             <div className={styles.detailCard}>
-              <div className={styles.detailEyebrow}>СЕМАНТИЧНИЙ ЗВ&apos;ЯЗОК</div>
+              <div className={styles.detailEyebrow}>
+                СЕМАНТИЧНИЙ ЗВ&apos;ЯЗОК
+              </div>
 
               {edgePreview && edgePreviewMeta ? (
                 <div className={styles.edgeDetail}>
@@ -1065,7 +1196,10 @@ export function Radiant1Page() {
                         {edgePreviewMeta.sourceNode?.lawTitle ?? "—"}
                       </span>
                     </div>
-                    <ChevronRight size={14} className={styles.edgeDetailArrow} />
+                    <ChevronRight
+                      size={14}
+                      className={styles.edgeDetailArrow}
+                    />
                     <div className={styles.edgeDetailLaw}>
                       <span className={styles.edgeDetailDir}>До</span>
                       <strong className={styles.edgeDetailCode}>
@@ -1089,7 +1223,9 @@ export function Radiant1Page() {
                       <span className={styles.edgeDetailKey}>Стаття</span>
                       <span className={styles.edgeDetailVal}>
                         Ст.&nbsp;{edgePreview.fromArticle}
-                        {edgePreview.toArticle ? ` → Ст. ${edgePreview.toArticle}` : ""}
+                        {edgePreview.toArticle
+                          ? ` → Ст. ${edgePreview.toArticle}`
+                          : ""}
                       </span>
                     </div>
                   )}
@@ -1102,7 +1238,8 @@ export function Radiant1Page() {
                 </div>
               ) : (
                 <p className={styles.articleHint}>
-                  Наведіть або клікніть на зв&apos;язок у графі, щоб побачити контекст.
+                  Наведіть або клікніть на зв&apos;язок у графі, щоб побачити
+                  контекст.
                 </p>
               )}
             </div>
@@ -1123,7 +1260,8 @@ export function Radiant1Page() {
             <div>
               <span>Хронологія</span>
               <strong>
-                {timelineYears[0] ?? "—"} — {timelineYears[timelineYears.length - 1] ?? "—"}
+                {timelineYears[0] ?? "—"} —{" "}
+                {timelineYears[timelineYears.length - 1] ?? "—"}
               </strong>
             </div>
           </div>

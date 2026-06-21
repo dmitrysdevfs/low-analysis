@@ -2,7 +2,13 @@ import styles from "./AppHeader.module.scss";
 
 export function WorkspaceIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 20 20"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M10 2C7.79 2 6 3.79 6 6C6 8.21 7.79 10 10 10C12.21 10 14 8.21 14 6C14 3.79 12.21 2 10 2Z"
         stroke="currentColor"

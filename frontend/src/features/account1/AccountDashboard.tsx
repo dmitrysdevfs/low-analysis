@@ -86,7 +86,11 @@ const NAV_ITEMS = [
   { href: ROUTES.search, label: "Пошук документів", Icon: Search },
   { href: ROUTES.accountSaved, label: "Збережені документи", Icon: Bookmark },
   { href: ROUTES.accountNotes, label: "Сповіщення", Icon: Bell },
-  { href: ROUTES.accountBilling, label: "Підписка та billing", Icon: CreditCard },
+  {
+    href: ROUTES.accountBilling,
+    label: "Підписка та billing",
+    Icon: CreditCard,
+  },
   { href: ROUTES.account, label: "Налаштування", Icon: Settings },
   { href: ROUTES.support, label: "Підтримка", Icon: HelpCircle },
 ];
@@ -142,7 +146,9 @@ interface GeoInfo {
 
 async function fetchGeoInfo(): Promise<GeoInfo | null> {
   try {
-    const res = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(4000) });
+    const res = await fetch("https://ipapi.co/json/", {
+      signal: AbortSignal.timeout(4000),
+    });
     if (!res.ok) return null;
     const data = await res.json();
     return {
@@ -233,25 +239,33 @@ export function AccountDashboard() {
 
       if (needsMigration && legacy) {
         try {
-          if (legacy.preferences) await preferencesApi.update(legacy.preferences);
+          if (legacy.preferences)
+            await preferencesApi.update(legacy.preferences);
           if (legacy.savedArticles?.length)
             await savedApi.migrate(
-              legacy.savedArticles.map(({ lawId, title, code, note, tags }) => ({
-                lawId,
-                title,
-                code,
-                note: note ?? "",
-                tags: tags ?? [],
-              })),
+              legacy.savedArticles.map(
+                ({ lawId, title, code, note, tags }) => ({
+                  lawId,
+                  title,
+                  code,
+                  note: note ?? "",
+                  tags: tags ?? [],
+                }),
+              ),
             );
           if (legacy.focusTopics?.length)
-            await topicsApi.migrate(legacy.focusTopics.map(({ label }) => ({ label })));
+            await topicsApi.migrate(
+              legacy.focusTopics.map(({ label }) => ({ label })),
+            );
           clearLegacyWorkspace(userId);
         } catch {
           // retry next session
         }
         markWorkspaceMigrationDone(userId);
-        const [s, t] = await Promise.allSettled([savedApi.getAll(), topicsApi.getAll()]);
+        const [s, t] = await Promise.allSettled([
+          savedApi.getAll(),
+          topicsApi.getAll(),
+        ]);
         if (s.status === "fulfilled") setSavedArticles(s.value);
         if (t.status === "fulfilled") setFocusTopics(t.value);
       }
@@ -359,7 +373,9 @@ export function AccountDashboard() {
   }
 
   async function handleTogglePref(key: WorkspacePreferenceKey) {
-    const patch = { [key]: !preferences[key] } as Partial<ClientWorkspacePreferences>;
+    const patch = {
+      [key]: !preferences[key],
+    } as Partial<ClientWorkspacePreferences>;
     setPreferences((p) => ({ ...p, ...patch }));
     try {
       const updated = await preferencesApi.update(patch);
@@ -376,7 +392,11 @@ export function AccountDashboard() {
       notify.warning("Введіть конкретнішу тему.");
       return;
     }
-    if (focusTopics.some((t) => t.label.toLowerCase() === newTopic.trim().toLowerCase())) {
+    if (
+      focusTopics.some(
+        (t) => t.label.toLowerCase() === newTopic.trim().toLowerCase(),
+      )
+    ) {
       notify.info("Ця тема вже відстежується.");
       return;
     }
@@ -417,7 +437,11 @@ export function AccountDashboard() {
 
         <nav className={styles.sidebarNav}>
           {NAV_ITEMS.map(({ href, label, Icon }) => (
-            <Link key={label} href={href} className={`${styles.navItem} ${label === "Особистий кабінет" ? styles.navItemActive : ""}`}>
+            <Link
+              key={label}
+              href={href}
+              className={`${styles.navItem} ${label === "Особистий кабінет" ? styles.navItemActive : ""}`}
+            >
               <Icon size={18} />
               <span>{label}</span>
             </Link>
@@ -435,10 +459,12 @@ export function AccountDashboard() {
         <div className={styles.contentInner}>
           {/* Page title */}
           <div className={styles.pageTitle}>
-            <h1 className={styles.pageTitleText}>Особистий юридичний центр роботи</h1>
+            <h1 className={styles.pageTitleText}>
+              Особистий юридичний центр роботи
+            </h1>
             <p className={styles.pageTitleSub}>
-              Керуйте профілем, доступом, підпискою та налаштуваннями.
-              Швидкий доступ до документів, аналітики та важливих інструментів.
+              Керуйте профілем, доступом, підпискою та налаштуваннями. Швидкий
+              доступ до документів, аналітики та важливих інструментів.
             </p>
           </div>
 
@@ -461,7 +487,10 @@ export function AccountDashboard() {
 
                 <div className={styles.profileMeta}>
                   <div className={styles.profileMetaRow}>
-                    <CalendarClock size={13} className={styles.profileMetaIcon} />
+                    <CalendarClock
+                      size={13}
+                      className={styles.profileMetaIcon}
+                    />
                     <span>Останній вхід:&nbsp;</span>
                     <strong>{formatLastLogin(user.lastLoginAt)}</strong>
                   </div>
@@ -469,17 +498,27 @@ export function AccountDashboard() {
                     {geoLoading ? (
                       <>
                         <Globe size={13} className={styles.profileMetaIcon} />
-                        <span className={styles.profileMetaLoading}>Визначення локації…</span>
+                        <span className={styles.profileMetaLoading}>
+                          Визначення локації…
+                        </span>
                       </>
                     ) : geoInfo ? (
                       <>
                         <MapPin size={13} className={styles.profileMetaIcon} />
                         <span>
-                          {geoInfo.flag && <span className={styles.profileMetaFlag}>{geoInfo.flag}</span>}
-                          {[geoInfo.city, geoInfo.country].filter(Boolean).join(", ")}
+                          {geoInfo.flag && (
+                            <span className={styles.profileMetaFlag}>
+                              {geoInfo.flag}
+                            </span>
+                          )}
+                          {[geoInfo.city, geoInfo.country]
+                            .filter(Boolean)
+                            .join(", ")}
                         </span>
                         {localTime && (
-                          <span className={styles.profileMetaIp}>· {localTime}</span>
+                          <span className={styles.profileMetaIp}>
+                            · {localTime}
+                          </span>
                         )}
                       </>
                     ) : (
@@ -498,7 +537,10 @@ export function AccountDashboard() {
                 <User size={14} />
                 Редагувати профіль
               </Link>
-              <Link href={ROUTES.accountBilling} className={styles.profileBtnGhost}>
+              <Link
+                href={ROUTES.accountBilling}
+                className={styles.profileBtnGhost}
+              >
                 <CreditCard size={14} />
                 Керування підпискою
               </Link>
@@ -516,7 +558,9 @@ export function AccountDashboard() {
               <div className={styles.statBody}>
                 <div className={styles.statValue}>{savedArticles.length}</div>
                 <div className={styles.statLabel}>Збережені документи</div>
-                <div className={styles.statSub}>Ваші збережені документи, статті та матеріали</div>
+                <div className={styles.statSub}>
+                  Ваші збережені документи, статті та матеріали
+                </div>
               </div>
             </div>
 
@@ -525,7 +569,9 @@ export function AccountDashboard() {
               <div className={styles.statBody}>
                 <div className={styles.statValue}>{notes.length}</div>
                 <div className={styles.statLabel}>Активні сповіщення</div>
-                <div className={styles.statSub}>Підключення, важливі та актуальні для вас</div>
+                <div className={styles.statSub}>
+                  Підключення, важливі та актуальні для вас
+                </div>
               </div>
             </div>
 
@@ -534,7 +580,9 @@ export function AccountDashboard() {
               <div className={styles.statBody}>
                 <div className={styles.statValueGold}>{planLabel}</div>
                 <div className={styles.statLabel}>Поточний план</div>
-                <div className={styles.statSub}>Повний доступ до всіх інструментів платформи</div>
+                <div className={styles.statSub}>
+                  Повний доступ до всіх інструментів платформи
+                </div>
               </div>
             </div>
 
@@ -543,14 +591,15 @@ export function AccountDashboard() {
               <div className={styles.statBody}>
                 <div className={styles.statValueSm}>{renewalDate || "—"}</div>
                 <div className={styles.statLabel}>Наступна подія</div>
-                <div className={styles.statSub}>Перегляд: Оновлені актуальні теми</div>
+                <div className={styles.statSub}>
+                  Перегляд: Оновлені актуальні теми
+                </div>
               </div>
             </div>
           </div>
 
           {/* Cards grid */}
           <div className={styles.cardsGrid}>
-
             {/* Preview card */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
@@ -566,7 +615,8 @@ export function AccountDashboard() {
               {uiCache.lastViewedLawId && (
                 <div className={styles.cardHint}>
                   Останній перегляд: {uiCache.lastViewedLawTitle ?? "закон"}
-                  {uiCache.lastViewedArticleNum && ` · ст. ${uiCache.lastViewedArticleNum}`}
+                  {uiCache.lastViewedArticleNum &&
+                    ` · ст. ${uiCache.lastViewedArticleNum}`}
                 </div>
               )}
               <Link href={ROUTES.laws} className={styles.cardBtn}>
@@ -584,7 +634,9 @@ export function AccountDashboard() {
               </div>
               <div className={styles.cardRow}>
                 <span className={styles.cardRowLabel}>Ваш поточний доступ</span>
-                <span className={styles.cardRowValue}>{subscription?.accessLabel ?? "Основні інструменти платформи"}</span>
+                <span className={styles.cardRowValue}>
+                  {subscription?.accessLabel ?? "Основні інструменти платформи"}
+                </span>
               </div>
               <div className={styles.cardRow}>
                 <span className={styles.cardRowLabel}>Ключ активації</span>
@@ -593,11 +645,17 @@ export function AccountDashboard() {
                 </span>
               </div>
               <div className={styles.cardActions}>
-                <Link href={ROUTES.accountBilling} className={styles.cardBtnOutline}>
+                <Link
+                  href={ROUTES.accountBilling}
+                  className={styles.cardBtnOutline}
+                >
                   <CreditCard size={13} />
                   Перейти до billing
                 </Link>
-                <Link href={ROUTES.accountCheckout} className={styles.cardBtnOutline}>
+                <Link
+                  href={ROUTES.accountCheckout}
+                  className={styles.cardBtnOutline}
+                >
                   <ChevronRight size={13} />
                   Перейти до checkout
                 </Link>
@@ -617,7 +675,8 @@ export function AccountDashboard() {
                 <span className={styles.cardRowValue}>Email</span>
               </div>
               <p className={styles.cardText}>
-                Важливі для вас оновлення, підписки та нагадування надходять на email.
+                Важливі для вас оновлення, підписки та нагадування надходять на
+                email.
               </p>
               <div className={styles.cardActions}>
                 <button
@@ -685,7 +744,9 @@ export function AccountDashboard() {
                   />
                 </div>
                 <div className={styles.cardFieldRow}>
-                  <span className={styles.cardFieldLabel}>Підтвердження нового пароля</span>
+                  <span className={styles.cardFieldLabel}>
+                    Підтвердження нового пароля
+                  </span>
                   <input
                     className={styles.cardInput}
                     type="password"
@@ -779,7 +840,9 @@ export function AccountDashboard() {
                 </Link>
                 <Link href={ROUTES.accountNotes} className={styles.quickBtn}>
                   <Bell size={20} className={styles.quickIcon} />
-                  <span className={styles.quickLabel}>Керувати сповіщеннями</span>
+                  <span className={styles.quickLabel}>
+                    Керувати сповіщеннями
+                  </span>
                   <span className={styles.quickSub}>Налаштування email</span>
                 </Link>
                 <Link href={ROUTES.accountBilling} className={styles.quickBtn}>
@@ -789,7 +852,9 @@ export function AccountDashboard() {
                 </Link>
                 <Link href={ROUTES.accountSaved} className={styles.quickBtn}>
                   <FileText size={20} className={styles.quickIcon} />
-                  <span className={styles.quickLabel}>Переглянути документи</span>
+                  <span className={styles.quickLabel}>
+                    Переглянути документи
+                  </span>
                   <span className={styles.quickSub}>Ваші збережені файли</span>
                 </Link>
               </div>
@@ -804,8 +869,15 @@ export function AccountDashboard() {
                 <h3 className={styles.cardTitle}>Останні дії та сповіщення</h3>
               </div>
               <div className={styles.activityTabs}>
-                <button type="button" className={`${styles.activityTab} ${styles.activityTabActive}`}>Усі</button>
-                <button type="button" className={styles.activityTab}>Сповіщення</button>
+                <button
+                  type="button"
+                  className={`${styles.activityTab} ${styles.activityTabActive}`}
+                >
+                  Усі
+                </button>
+                <button type="button" className={styles.activityTab}>
+                  Сповіщення
+                </button>
               </div>
               <div className={styles.activityList}>
                 {activityFeed.length > 0 ? (
@@ -813,18 +885,31 @@ export function AccountDashboard() {
                     const Icon = item.icon;
                     return (
                       <div key={i} className={styles.activityItem}>
-                        <div className={`${styles.activityIconWrap} ${styles[`activityIconWrap_${item.badgeVariant}`]}`}>
+                        <div
+                          className={`${styles.activityIconWrap} ${styles[`activityIconWrap_${item.badgeVariant}`]}`}
+                        >
                           <Icon size={14} />
                         </div>
                         <div className={styles.activityBody}>
                           <div className={styles.activityTop}>
-                            <span className={styles.activityTitle}>{item.title}</span>
-                            {item.time && <span className={styles.activityTime}>{item.time}</span>}
+                            <span className={styles.activityTitle}>
+                              {item.title}
+                            </span>
+                            {item.time && (
+                              <span className={styles.activityTime}>
+                                {item.time}
+                              </span>
+                            )}
                           </div>
-                          <div className={styles.activityDetail}>{item.detail}</div>
+                          <div className={styles.activityDetail}>
+                            {item.detail}
+                          </div>
                         </div>
                         {item.href && (
-                          <Link href={item.href} className={`${styles.activityBadge} ${styles[`activityBadge_${item.badgeVariant}`]}`}>
+                          <Link
+                            href={item.href}
+                            className={`${styles.activityBadge} ${styles[`activityBadge_${item.badgeVariant}`]}`}
+                          >
                             {item.badge}
                           </Link>
                         )}
@@ -832,11 +917,12 @@ export function AccountDashboard() {
                     );
                   })
                 ) : (
-                  <p className={styles.activityEmpty}>Активність з'явиться після перших дій у системі.</p>
+                  <p className={styles.activityEmpty}>
+                    Активність з'явиться після перших дій у системі.
+                  </p>
                 )}
               </div>
             </div>
-
           </div>
         </div>
       </main>

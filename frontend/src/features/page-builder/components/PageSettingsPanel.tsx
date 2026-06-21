@@ -142,15 +142,26 @@ export function PageSettingsPanel({ settings, onChange }: Props) {
 
         <div className={styles.settingsToggleRow}>
           <span className={styles.settingsToggleLabel}>Показати в меню</span>
-          <Toggle checked={settings.showInMenu} onChange={(v) => set("showInMenu", v)} />
+          <Toggle
+            checked={settings.showInMenu}
+            onChange={(v) => set("showInMenu", v)}
+          />
         </div>
         <div className={styles.settingsToggleRow}>
           <span className={styles.settingsToggleLabel}>Показати в футері</span>
-          <Toggle checked={settings.showInFooter} onChange={(v) => set("showInFooter", v)} />
+          <Toggle
+            checked={settings.showInFooter}
+            onChange={(v) => set("showInFooter", v)}
+          />
         </div>
         <div className={styles.settingsToggleRow}>
-          <span className={styles.settingsToggleLabel}>Індексувати сторінку</span>
-          <Toggle checked={settings.indexable} onChange={(v) => set("indexable", v)} />
+          <span className={styles.settingsToggleLabel}>
+            Індексувати сторінку
+          </span>
+          <Toggle
+            checked={settings.indexable}
+            onChange={(v) => set("indexable", v)}
+          />
         </div>
       </div>
     </div>

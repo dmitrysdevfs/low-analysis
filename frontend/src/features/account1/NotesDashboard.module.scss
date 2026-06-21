@@ -87,7 +87,9 @@
   text-decoration: none;
   font-size: 0.83rem;
   font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -131,14 +133,18 @@
   margin-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 20px;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     background: rgba(200, 80, 80, 0.08);
     color: #e88888;
   }
 
-  svg { flex-shrink: 0; }
+  svg {
+    flex-shrink: 0;
+  }
 }
 
 /* ─── Content ─────────────────────────────────────────────────────────────── */
@@ -204,13 +210,15 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 20px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.78rem;
   font-weight: 600;
   color: #7a98c0;
 
-  svg { opacity: 0.6; }
+  svg {
+    opacity: 0.6;
+  }
 }
 
 .statChipGold {
@@ -218,7 +226,10 @@
   border-color: rgba(200, 168, 67, 0.2);
   color: #c8a843;
 
-  svg { opacity: 1; color: #c8a843; }
+  svg {
+    opacity: 1;
+    color: #c8a843;
+  }
 }
 
 /* ─── Create form ─────────────────────────────────────────────────────────── */
@@ -229,11 +240,18 @@
   gap: 12px;
   padding: 20px 24px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%),
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
     rgba(9, 18, 38, 0.9);
   backdrop-filter: blur(18px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.07);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .createIcon {
@@ -252,8 +270,8 @@
 
 .createTextarea {
   flex: 1;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 10px 14px;
   color: #c7d5ea;
@@ -264,8 +282,12 @@
   outline: none;
   transition: border-color 0.15s;
 
-  &::placeholder { color: #3a5070; }
-  &:focus { border-color: rgba(200, 168, 67, 0.35); }
+  &::placeholder {
+    color: #3a5070;
+  }
+  &:focus {
+    border-color: rgba(200, 168, 67, 0.35);
+  }
 }
 
 .createBtn {
@@ -283,7 +305,9 @@
   flex-shrink: 0;
   transition: background 0.15s;
 
-  &:hover { background: rgba(200, 168, 67, 0.2); }
+  &:hover {
+    background: rgba(200, 168, 67, 0.2);
+  }
 }
 
 /* ─── Filter bar ──────────────────────────────────────────────────────────── */
@@ -300,8 +324,8 @@
   gap: 6px;
   padding: 6px 16px;
   border-radius: 20px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #7a98c0;
   font-size: 0.78rem;
   font-weight: 600;
@@ -309,7 +333,7 @@
   transition: all 0.15s;
 
   &:hover {
-    background: rgba(255,255,255,0.07);
+    background: rgba(255, 255, 255, 0.07);
     color: #c7d5ea;
   }
 }
@@ -339,14 +363,19 @@
   font-size: 0.85rem;
   text-align: center;
 
-  p { max-width: 36ch; line-height: 1.6; }
+  p {
+    max-width: 36ch;
+    line-height: 1.6;
+  }
 }
 
 .emptyIcon {
   color: #1e2f4a;
   font-size: 2.5rem;
 
-  svg { opacity: 0.3; }
+  svg {
+    opacity: 0.3;
+  }
 }
 
 /* ─── Note grid ───────────────────────────────────────────────────────────── */
@@ -364,22 +393,29 @@
 .noteCard {
   position: relative;
   border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%),
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
     rgba(9, 18, 38, 0.92);
   backdrop-filter: blur(16px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   transition: box-shadow 0.2s;
 
   &:hover {
-    box-shadow: 0 12px 36px rgba(0,0,0,0.3), 0 0 0 1px rgba(var(--note-color), 0.1);
+    box-shadow:
+      0 12px 36px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(var(--note-color), 0.1);
   }
 }
 
 .noteColorBar {
   height: 3px;
-  background: var(--note-color, #C8A843);
+  background: var(--note-color, #c8a843);
   opacity: 0.7;
 }
 
@@ -402,7 +438,9 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 
-  svg { color: #c8a843; }
+  svg {
+    color: #c8a843;
+  }
 }
 
 .noteActionBtns {
@@ -418,14 +456,14 @@
   width: 26px;
   height: 26px;
   border-radius: 7px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
   color: #4a6090;
   cursor: pointer;
   transition: all 0.15s;
 
   &:hover {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
     color: #c7d5ea;
   }
 }
@@ -458,7 +496,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--note-color, #C8A843);
+  color: var(--note-color, #c8a843);
   opacity: 0.75;
 }
 
@@ -473,8 +511,8 @@
 .noteQuote {
   margin: 0;
   padding: 8px 12px;
-  border-left: 2px solid var(--note-color, #C8A843);
-  background: rgba(255,255,255,0.03);
+  border-left: 2px solid var(--note-color, #c8a843);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 0 8px 8px 0;
   font-size: 0.8rem;
   color: #8aa0c0;
@@ -508,7 +546,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 14px 12px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   margin-top: 6px;
 }
 
@@ -526,7 +564,7 @@
 .expandBtn {
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--note-color, #C8A843);
+  color: var(--note-color, #c8a843);
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -534,7 +572,9 @@
   opacity: 0.75;
   transition: opacity 0.15s;
 
-  &:hover { opacity: 1; }
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .openLink {
@@ -543,7 +583,9 @@
   color: #4a6090;
   transition: color 0.15s;
 
-  &:hover { color: #8db8f0; }
+  &:hover {
+    color: #8db8f0;
+  }
 }
 
 /* ─── Modals ──────────────────────────────────────────────────────────────── */
@@ -570,14 +612,14 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
   color: #7a98c0;
   cursor: pointer;
   transition: all 0.15s;
 
   &:hover {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
   }
 }
@@ -586,10 +628,15 @@
 .confirmModal {
   position: relative;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%),
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    ),
     rgba(9, 18, 38, 0.98);
-  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
   padding: 36px 32px 28px;
   width: 100%;
   max-width: 340px;
@@ -631,15 +678,18 @@
 .cancelBtn {
   padding: 10px 22px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   color: #7a98c0;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
 
-  &:hover { background: rgba(255,255,255,0.08); color: #c7d5ea; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #c7d5ea;
+  }
 }
 
 .deleteBtn {
@@ -653,17 +703,25 @@
   cursor: pointer;
   transition: all 0.15s;
 
-  &:hover { background: rgba(200, 80, 80, 0.2); color: #f09090; }
+  &:hover {
+    background: rgba(200, 80, 80, 0.2);
+    color: #f09090;
+  }
 }
 
 /* Expand modal */
 .expandModal {
   position: relative;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%),
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
     rgba(9, 18, 38, 0.98);
-  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
   padding: 0;
   width: 100%;
   max-width: 520px;
@@ -672,7 +730,7 @@
 
 .expandColorBar {
   height: 4px;
-  background: var(--note-color, #C8A843);
+  background: var(--note-color, #c8a843);
 }
 
 .expandModal .noteType {
@@ -687,8 +745,8 @@
 .expandQuote {
   margin: 10px 24px 0;
   padding: 10px 14px;
-  border-left: 3px solid var(--note-color, #C8A843);
-  background: rgba(255,255,255,0.03);
+  border-left: 3px solid var(--note-color, #c8a843);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 0 10px 10px 0;
   font-size: 0.85rem;
   color: #8aa0c0;
@@ -713,7 +771,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px 20px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   margin-top: 20px;
 }
 
@@ -727,7 +785,9 @@
   text-decoration: none;
   transition: color 0.15s;
 
-  &:hover { color: #8db8f0; }
+  &:hover {
+    color: #8db8f0;
+  }
 }
 
 /* ─── Responsive ──────────────────────────────────────────────────────────── */

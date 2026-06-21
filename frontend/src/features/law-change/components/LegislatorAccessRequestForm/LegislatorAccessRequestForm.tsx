@@ -71,11 +71,16 @@ export function LegislatorAccessRequestForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!organization.trim() || !reason.trim()) return;
-    await submit.mutateAsync({ organization, reason, requestedRole: selectedRole });
+    await submit.mutateAsync({
+      organization,
+      reason,
+      requestedRole: selectedRole,
+    });
   };
 
   const handleRevoke = async () => {
-    if (!window.confirm("Ви впевнені? Ваша поточна роль буде відкликана.")) return;
+    if (!window.confirm("Ви впевнені? Ваша поточна роль буде відкликана."))
+      return;
     await revoke.mutateAsync();
   };
 
@@ -91,10 +96,13 @@ export function LegislatorAccessRequestForm() {
       <div className={styles.roleCard}>
         <div className={styles.roleActive}>
           <span className={styles.checkIcon}>✓</span>
-          <span>Ви маєте роль <strong>{currentRole}</strong></span>
+          <span>
+            Ви маєте роль <strong>{currentRole}</strong>
+          </span>
         </div>
         <p className={styles.revokeHint}>
-          Щоб отримати роль <strong>{otherRole}</strong>, спочатку відмовтесь від поточної ролі.
+          Щоб отримати роль <strong>{otherRole}</strong>, спочатку відмовтесь
+          від поточної ролі.
         </p>
         <button
           type="button"
@@ -102,7 +110,9 @@ export function LegislatorAccessRequestForm() {
           onClick={handleRevoke}
           disabled={revoke.isPending}
         >
-          {revoke.isPending ? "Відкликання..." : `Відмовитись від ролі ${currentRole}`}
+          {revoke.isPending
+            ? "Відкликання..."
+            : `Відмовитись від ролі ${currentRole}`}
         </button>
       </div>
     );
@@ -115,9 +125,12 @@ export function LegislatorAccessRequestForm() {
         <span className={styles.statusIcon}>⏳</span>
         <div>
           <p className={styles.statusText}>
-            Запит на роль <strong>{ROLE_LABELS[request.requestedRole]}</strong> очікує розгляду.
+            Запит на роль <strong>{ROLE_LABELS[request.requestedRole]}</strong>{" "}
+            очікує розгляду.
           </p>
-          <p className={styles.statusHint}>Очікуйте відповіді адміністратора.</p>
+          <p className={styles.statusHint}>
+            Очікуйте відповіді адміністратора.
+          </p>
         </div>
       </div>
     );
@@ -151,7 +164,9 @@ export function LegislatorAccessRequestForm() {
           <div className={styles.cooldown}>
             <span className={styles.cooldownIcon}>⏱</span>
             <span>Повторний запит через:</span>
-            <span className={styles.cooldownTimer}>{formatDuration(cooldownMs)}</span>
+            <span className={styles.cooldownTimer}>
+              {formatDuration(cooldownMs)}
+            </span>
           </div>
         ) : (
           <RequestForm
@@ -222,7 +237,9 @@ function RequestForm({
             onClick={() => setSelectedRole(role)}
           >
             <span className={styles.roleOptionLabel}>{ROLE_LABELS[role]}</span>
-            <span className={styles.roleOptionDesc}>{ROLE_DESCRIPTIONS[role]}</span>
+            <span className={styles.roleOptionDesc}>
+              {ROLE_DESCRIPTIONS[role]}
+            </span>
           </button>
         ))}
       </div>

@@ -394,14 +394,19 @@ export const resetPassword = async (req, res) => {
 
 export const googleAuth = async (req, res) => {
   const { accessToken } = req.body;
-  if (!accessToken) return res.status(400).json({ message: 'Access token required' });
+  if (!accessToken)
+    return res.status(400).json({ message: 'Access token required' });
 
   try {
-    const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const googleRes = await fetch(
+      'https://www.googleapis.com/oauth2/v3/userinfo',
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
 
-    if (!googleRes.ok) return res.status(401).json({ message: 'Невалідний Google токен' });
+    if (!googleRes.ok)
+      return res.status(401).json({ message: 'Невалідний Google токен' });
 
     const { sub: googleId, email, name } = await googleRes.json();
 
@@ -413,7 +418,7 @@ export const googleAuth = async (req, res) => {
         user.googleId = googleId;
         await user.save();
         appendAuditEntry({
-          action: 'Google акаунт прив\'язано до існуючого профілю',
+          action: "Google акаунт прив'язано до існуючого профілю",
           detail: `Google ID зв'язаний з існуючим акаунтом. Email: ${email}.`,
           actor: email,
           severity: 'info',

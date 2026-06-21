@@ -671,7 +671,10 @@ export function AdminInboxView() {
                     tabIndex={0}
                     className={`${styles.threadItem} ${isActive ? styles.threadItemActive : ""}`}
                     onClick={() => setSelectedThreadId(thread.id)}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setSelectedThreadId(thread.id); }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ")
+                        setSelectedThreadId(thread.id);
+                    }}
                   >
                     <div className={styles.threadAvatar}>
                       <span className={styles.avatarInitials}>{initials}</span>

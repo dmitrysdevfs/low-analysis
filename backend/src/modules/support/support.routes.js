@@ -87,22 +87,34 @@ router.get('/conversations/current', ctrl.getCurrentConversation);
  *       200:
  *         description: Повідомлення надіслано
  */
-router.post('/conversations/message', (req, res, next) => {
-  const { text, guestName, guestEmail } = req.body ?? {};
-  if (!text || typeof text !== 'string' || text.trim().length === 0) {
-    return res.status(400).json({ message: 'Текст повідомлення обов\'язковий' });
-  }
-  if (text.length > 5000) {
-    return res.status(400).json({ message: 'Повідомлення занадто довге (максимум 5000 символів)' });
-  }
-  if (guestName && guestName.length > 100) {
-    return res.status(400).json({ message: 'Ім\'я занадто довге (максимум 100 символів)' });
-  }
-  if (guestEmail && guestEmail.length > 200) {
-    return res.status(400).json({ message: 'Email занадто довгий' });
-  }
-  next();
-}, ctrl.postMessage);
+router.post(
+  '/conversations/message',
+  (req, res, next) => {
+    const { text, guestName, guestEmail } = req.body ?? {};
+    if (!text || typeof text !== 'string' || text.trim().length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Текст повідомлення обов'язковий" });
+    }
+    if (text.length > 5000) {
+      return res
+        .status(400)
+        .json({
+          message: 'Повідомлення занадто довге (максимум 5000 символів)',
+        });
+    }
+    if (guestName && guestName.length > 100) {
+      return res
+        .status(400)
+        .json({ message: "Ім'я занадто довге (максимум 100 символів)" });
+    }
+    if (guestEmail && guestEmail.length > 200) {
+      return res.status(400).json({ message: 'Email занадто довгий' });
+    }
+    next();
+  },
+  ctrl.postMessage,
+);
 
 /**
  * @swagger

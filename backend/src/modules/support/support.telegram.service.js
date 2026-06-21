@@ -167,7 +167,9 @@ export function extractTelegramConversationId(message) {
 }
 
 export function stripConversationToken(text) {
-  return String(text ?? '').replace(CONVERSATION_TOKEN, '').trim();
+  return String(text ?? '')
+    .replace(CONVERSATION_TOKEN, '')
+    .trim();
 }
 
 export async function setTelegramWebhook(webhookUrl) {
@@ -175,7 +177,11 @@ export async function setTelegramWebhook(webhookUrl) {
     url: webhookUrl,
     allowed_updates: ['message'],
   });
-  return { ok: true, description: result?.description ?? 'Webhook set', url: webhookUrl };
+  return {
+    ok: true,
+    description: result?.description ?? 'Webhook set',
+    url: webhookUrl,
+  };
 }
 
 export async function getTelegramWebhookInfo() {

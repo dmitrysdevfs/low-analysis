@@ -3,7 +3,10 @@ import User from '../../models/User.js';
 
 const COOLDOWN_HOURS = 24;
 
-export const submitRequest = async (userId, { organization, reason, requestedRole = 'legislator' }) => {
+export const submitRequest = async (
+  userId,
+  { organization, reason, requestedRole = 'legislator' },
+) => {
   const existing = await LegislatorAccessRequest.findOne({
     userId,
     status: 'pending',
@@ -19,7 +22,8 @@ export const submitRequest = async (userId, { organization, reason, requestedRol
   }).sort({ updatedAt: -1 });
 
   if (lastRejected?.updatedAt) {
-    const msSinceRejection = Date.now() - new Date(lastRejected.updatedAt).getTime();
+    const msSinceRejection =
+      Date.now() - new Date(lastRejected.updatedAt).getTime();
     const cooldownMs = COOLDOWN_HOURS * 3_600_000;
     if (msSinceRejection < cooldownMs) {
       throw Object.assign(

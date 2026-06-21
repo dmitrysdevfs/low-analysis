@@ -128,7 +128,9 @@
   font-weight: 600;
   padding: 6px 10px;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 
   &:hover {
     background: rgba(74, 128, 212, 0.24);
@@ -147,7 +149,9 @@
   font-size: 0.78rem;
   padding: 6px 10px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 
   &:hover {
     border-color: rgba(199, 213, 234, 0.38);

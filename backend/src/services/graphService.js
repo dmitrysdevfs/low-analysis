@@ -113,7 +113,7 @@ export async function getGraphSubjects() {
 
   return agg.map((s) => ({
     _id: s._id.toString(),
-    name: s.name ?? 'Невідомий суб\'єкт',
+    name: s.name ?? "Невідомий суб'єкт",
     count: s.count,
     lawIds: s.lawIds.map((id) => id.toString()),
   }));

@@ -4,10 +4,7 @@ import { useMemo } from "react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { getLaws, getLawTree } from "@/lib/api";
 import { getLawSubjects } from "@/lib/api/laws";
-import {
-  fetchGlobalGraph,
-  fetchLawGraph,
-} from "@/lib/api/graph1";
+import { fetchGlobalGraph, fetchLawGraph } from "@/lib/api/graph1";
 import { useSubjectsMap } from "@/hooks/useSubjectsMap";
 
 export function useRadiant1Data(selectedLawId: string | null) {
@@ -61,7 +58,8 @@ export function useRadiant1Data(selectedLawId: string | null) {
     return map;
   }, [globalGraphQuery.data, subjectQueries]);
 
-  const subjectsLoadingAny = subjectsLoading || subjectQueries.some((query) => query.isLoading);
+  const subjectsLoadingAny =
+    subjectsLoading || subjectQueries.some((query) => query.isLoading);
 
   return {
     globalGraphQuery,

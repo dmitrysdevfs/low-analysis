@@ -198,8 +198,7 @@ export function Graph1ControlPanel({
 
         <div className={styles.sliderRow}>
           <div className={styles.sliderLabel}>
-            Мін. достовірність:{" "}
-            {Math.round(filters.minConfidence * 100)}%
+            Мін. достовірність: {Math.round(filters.minConfidence * 100)}%
           </div>
           <input
             type="range"
@@ -305,7 +304,8 @@ export function Graph1ControlPanel({
         </div>
         <div className={styles.lawCheckList}>
           {allLaws.map((l) => {
-            const isVisible = visibleLawIds.size === 0 || visibleLawIds.has(l.id);
+            const isVisible =
+              visibleLawIds.size === 0 || visibleLawIds.has(l.id);
             return (
               <label key={l.id} className={styles.checkboxRow} title={l.label}>
                 <input
@@ -330,9 +330,13 @@ export function Graph1ControlPanel({
           <Users size={12} />
           <span>Зв&apos;язки по суб&apos;єктах</span>
           {selectedSubjectIds.length > 0 && (
-            <span className={styles.subjectBadge}>{selectedSubjectIds.length}</span>
+            <span className={styles.subjectBadge}>
+              {selectedSubjectIds.length}
+            </span>
           )}
-          <span className={styles.subjectChevron}>{subjectOpen ? "▲" : "▼"}</span>
+          <span className={styles.subjectChevron}>
+            {subjectOpen ? "▲" : "▼"}
+          </span>
         </button>
 
         {subjectOpen && (
@@ -370,11 +374,13 @@ export function Graph1ControlPanel({
                     <span className={styles.subjectCount}>{s.count}</span>
                   </label>
                 ))}
-                {!subjectSearch && subjectData.length > SUBJECT_VISIBLE_LIMIT && (
-                  <div className={styles.subjectMore}>
-                    +{subjectData.length - SUBJECT_VISIBLE_LIMIT} більше — шукайте вище
-                  </div>
-                )}
+                {!subjectSearch &&
+                  subjectData.length > SUBJECT_VISIBLE_LIMIT && (
+                    <div className={styles.subjectMore}>
+                      +{subjectData.length - SUBJECT_VISIBLE_LIMIT} більше —
+                      шукайте вище
+                    </div>
+                  )}
               </div>
             )}
           </div>

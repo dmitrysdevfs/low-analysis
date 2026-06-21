@@ -21,14 +21,22 @@ import styles from "./page.module.scss";
 const DNS_CHECKS = [
   { name: "SPF", status: "ok", value: "v=spf1 include:spf.brevo.com ~all" },
   { name: "DKIM", status: "ok", value: "brevo._domainkey → verified" },
-  { name: "DMARC", status: "warn", value: "p=none (рекомендується p=quarantine)" },
+  {
+    name: "DMARC",
+    status: "warn",
+    value: "p=none (рекомендується p=quarantine)",
+  },
 ];
 
 export default function AdminEmailSettingsPage() {
   const [showKey, setShowKey] = useState(false);
   const [testEmail, setTestEmail] = useState("");
-  const [testStatus, setTestStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
-  const [connStatus, setConnStatus] = useState<"idle" | "checking" | "ok" | "error">("ok");
+  const [testStatus, setTestStatus] = useState<
+    "idle" | "sending" | "ok" | "error"
+  >("idle");
+  const [connStatus, setConnStatus] = useState<
+    "idle" | "checking" | "ok" | "error"
+  >("ok");
   const [copied, setCopied] = useState(false);
 
   function handleTestConnection() {
@@ -57,17 +65,26 @@ export default function AdminEmailSettingsPage() {
       <div className={styles.layout}>
         {/* Left: Provider + Sender */}
         <div className={styles.leftCol}>
-
           {/* Provider card */}
           <div className={styles.card}>
             <div className={styles.cardHeader}>
               <div className={styles.cardTitle}>Провайдер розсилок</div>
-              <div className={`${styles.connChip} ${styles[`connChip_${connStatus}`]}`}>
-                {connStatus === "checking" && <RefreshCw size={11} className={styles.spinning} />}
+              <div
+                className={`${styles.connChip} ${styles[`connChip_${connStatus}`]}`}
+              >
+                {connStatus === "checking" && (
+                  <RefreshCw size={11} className={styles.spinning} />
+                )}
                 {connStatus === "ok" && <CheckCircle2 size={11} />}
                 {connStatus === "error" && <XCircle size={11} />}
                 {connStatus === "idle" && <AlertTriangle size={11} />}
-                {connStatus === "checking" ? "Перевірка..." : connStatus === "ok" ? "Підключено" : connStatus === "error" ? "Помилка" : "Не перевірено"}
+                {connStatus === "checking"
+                  ? "Перевірка..."
+                  : connStatus === "ok"
+                    ? "Підключено"
+                    : connStatus === "error"
+                      ? "Помилка"
+                      : "Не перевірено"}
               </div>
             </div>
 
@@ -75,7 +92,9 @@ export default function AdminEmailSettingsPage() {
               <BarChart2 size={22} style={{ color: "#4a80d4" }} />
               <div>
                 <div className={styles.providerName}>Brevo</div>
-                <div className={styles.providerSub}>Sendinblue — Transactional email</div>
+                <div className={styles.providerSub}>
+                  Sendinblue — Transactional email
+                </div>
               </div>
             </div>
 
@@ -88,7 +107,11 @@ export default function AdminEmailSettingsPage() {
                   <span className={styles.apiKey}>
                     {showKey ? apiKeyRevealed : apiKey}
                   </span>
-                  <button className={styles.iconBtn} onClick={() => setShowKey((v) => !v)} title="Показати">
+                  <button
+                    className={styles.iconBtn}
+                    onClick={() => setShowKey((v) => !v)}
+                    title="Показати"
+                  >
                     {showKey ? <EyeOff size={12} /> : <Eye size={12} />}
                   </button>
                 </div>
@@ -103,7 +126,9 @@ export default function AdminEmailSettingsPage() {
                 disabled={connStatus === "checking"}
               >
                 <FlaskConical size={12} />
-                {connStatus === "checking" ? "Перевіряю..." : "Перевірити з'єднання"}
+                {connStatus === "checking"
+                  ? "Перевіряю..."
+                  : "Перевірити з'єднання"}
               </button>
             </div>
           </div>
@@ -123,7 +148,11 @@ export default function AdminEmailSettingsPage() {
                     onClick={handleCopySender}
                     title="Скопіювати"
                   >
-                    {copied ? <CheckCircle2 size={12} style={{ color: "#52b788" }} /> : <Copy size={12} />}
+                    {copied ? (
+                      <CheckCircle2 size={12} style={{ color: "#52b788" }} />
+                    ) : (
+                      <Copy size={12} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -163,7 +192,8 @@ export default function AdminEmailSettingsPage() {
             </div>
             {testStatus === "ok" && (
               <div className={styles.testOk}>
-                <CheckCircle2 size={13} /> Тестовий лист надіслано на {testEmail}
+                <CheckCircle2 size={13} /> Тестовий лист надіслано на{" "}
+                {testEmail}
               </div>
             )}
             {testStatus === "error" && (
@@ -176,7 +206,6 @@ export default function AdminEmailSettingsPage() {
 
         {/* Right: DNS + Quota */}
         <div className={styles.rightCol}>
-
           {/* DNS checks */}
           <div className={styles.card}>
             <div className={styles.cardTitle}>
@@ -186,18 +215,23 @@ export default function AdminEmailSettingsPage() {
               {DNS_CHECKS.map((d) => (
                 <div key={d.name} className={styles.dnsRow}>
                   <div className={styles.dnsLeft}>
-                    <div className={`${styles.dnsIcon} ${d.status === "ok" ? styles.dnsIconOk : styles.dnsIconWarn}`}>
-                      {d.status === "ok"
-                        ? <CheckCircle2 size={14} />
-                        : <AlertTriangle size={14} />
-                      }
+                    <div
+                      className={`${styles.dnsIcon} ${d.status === "ok" ? styles.dnsIconOk : styles.dnsIconWarn}`}
+                    >
+                      {d.status === "ok" ? (
+                        <CheckCircle2 size={14} />
+                      ) : (
+                        <AlertTriangle size={14} />
+                      )}
                     </div>
                     <div>
                       <div className={styles.dnsName}>{d.name}</div>
                       <div className={styles.dnsValue}>{d.value}</div>
                     </div>
                   </div>
-                  <div className={`${styles.dnsBadge} ${d.status === "ok" ? styles.dnsBadgeOk : styles.dnsBadgeWarn}`}>
+                  <div
+                    className={`${styles.dnsBadge} ${d.status === "ok" ? styles.dnsBadgeOk : styles.dnsBadgeWarn}`}
+                  >
                     {d.status === "ok" ? "OK" : "Попередження"}
                   </div>
                 </div>
@@ -232,7 +266,10 @@ export default function AdminEmailSettingsPage() {
               </div>
             </div>
             <div className={styles.quotaBar}>
-              <div className={styles.quotaFill} style={{ width: `${(248 / 300) * 100}%` }} />
+              <div
+                className={styles.quotaFill}
+                style={{ width: `${(248 / 300) * 100}%` }}
+              />
             </div>
             <div className={styles.quotaRow} style={{ marginTop: 12 }}>
               <div className={styles.quotaLabel}>Цього місяця</div>
@@ -242,7 +279,13 @@ export default function AdminEmailSettingsPage() {
               </div>
             </div>
             <div className={styles.quotaBar}>
-              <div className={styles.quotaFill} style={{ width: `${(1248 / 9000) * 100}%`, background: "#52b788" }} />
+              <div
+                className={styles.quotaFill}
+                style={{
+                  width: `${(1248 / 9000) * 100}%`,
+                  background: "#52b788",
+                }}
+              />
             </div>
           </div>
         </div>

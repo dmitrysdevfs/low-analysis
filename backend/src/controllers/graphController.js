@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
-import { getGraphForLaw, getGlobalGraph, getGraphSubjects } from '../services/graphService.js';
+import {
+  getGraphForLaw,
+  getGlobalGraph,
+  getGraphSubjects,
+} from '../services/graphService.js';
 import LawReference from '../models/LawReference.js';
 
 export async function getLawGraph(req, res) {

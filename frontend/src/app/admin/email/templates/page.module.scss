@@ -74,7 +74,9 @@
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 14px;
   overflow: hidden;
-  transition: border-color 0.18s, transform 0.15s;
+  transition:
+    border-color 0.18s,
+    transform 0.15s;
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.13);

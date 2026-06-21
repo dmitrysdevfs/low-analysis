@@ -1,12 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Radiant1GraphData, Radiant1GraphLink, Radiant1GraphNode } from "../types";
+import type {
+  Radiant1GraphData,
+  Radiant1GraphLink,
+  Radiant1GraphNode,
+} from "../types";
 
 interface ForceGraphHandle {
   width(value: number): ForceGraphHandle;
   height(value: number): ForceGraphHandle;
-  graphData(data: { nodes: Radiant1GraphNode[]; links: Radiant1GraphLink[] }): ForceGraphHandle;
+  graphData(data: {
+    nodes: Radiant1GraphNode[];
+    links: Radiant1GraphLink[];
+  }): ForceGraphHandle;
   backgroundColor(value: string): ForceGraphHandle;
   nodeRelSize(value: number): ForceGraphHandle;
   cooldownTicks(value: number): ForceGraphHandle;
@@ -15,14 +22,28 @@ interface ForceGraphHandle {
   linkCurvature(value: (link: Radiant1GraphLink) => number): ForceGraphHandle;
   linkWidth(value: (link: Radiant1GraphLink) => number): ForceGraphHandle;
   linkColor(value: (link: Radiant1GraphLink) => string): ForceGraphHandle;
-  linkLineDash(value: (link: Radiant1GraphLink) => number[] | undefined): ForceGraphHandle;
-  linkDirectionalArrowLength(value: (link: Radiant1GraphLink) => number): ForceGraphHandle;
+  linkLineDash(
+    value: (link: Radiant1GraphLink) => number[] | undefined,
+  ): ForceGraphHandle;
+  linkDirectionalArrowLength(
+    value: (link: Radiant1GraphLink) => number,
+  ): ForceGraphHandle;
   linkDirectionalArrowRelPos(value: number): ForceGraphHandle;
-  linkDirectionalParticles(value: (link: Radiant1GraphLink) => number): ForceGraphHandle;
-  linkDirectionalParticleWidth(value: (link: Radiant1GraphLink) => number): ForceGraphHandle;
-  linkDirectionalParticleColor(value: (link: Radiant1GraphLink) => string): ForceGraphHandle;
-  linkDirectionalParticleSpeed(value: (link: Radiant1GraphLink) => number): ForceGraphHandle;
-  nodeCanvasObjectMode(value: "replace" | ((node: Radiant1GraphNode) => "replace")): ForceGraphHandle;
+  linkDirectionalParticles(
+    value: (link: Radiant1GraphLink) => number,
+  ): ForceGraphHandle;
+  linkDirectionalParticleWidth(
+    value: (link: Radiant1GraphLink) => number,
+  ): ForceGraphHandle;
+  linkDirectionalParticleColor(
+    value: (link: Radiant1GraphLink) => string,
+  ): ForceGraphHandle;
+  linkDirectionalParticleSpeed(
+    value: (link: Radiant1GraphLink) => number,
+  ): ForceGraphHandle;
+  nodeCanvasObjectMode(
+    value: "replace" | ((node: Radiant1GraphNode) => "replace"),
+  ): ForceGraphHandle;
   nodeCanvasObject(
     value: (
       node: Radiant1GraphNode,
@@ -45,7 +66,10 @@ interface ForceGraphHandle {
     value: (link: Radiant1GraphLink, event: MouseEvent) => void,
   ): ForceGraphHandle;
   onLinkHover(
-    value: (link: Radiant1GraphLink | null, previousLink: Radiant1GraphLink | null) => void,
+    value: (
+      link: Radiant1GraphLink | null,
+      previousLink: Radiant1GraphLink | null,
+    ) => void,
   ): ForceGraphHandle;
   onBackgroundClick(value: (event: MouseEvent) => void): ForceGraphHandle;
   centerAt(x?: number, y?: number, durationMs?: number): ForceGraphHandle;
@@ -119,7 +143,9 @@ export function Radiant1Canvas({
   );
 
   const selectedNodeIdRef = useRef<string | null>(selectedNodeId);
-  const edgeAccentIdRef = useRef<string | null>(selectedEdgeId ?? hoveredEdgeId);
+  const edgeAccentIdRef = useRef<string | null>(
+    selectedEdgeId ?? hoveredEdgeId,
+  );
   const onNodeSelectRef = useRef(onNodeSelect);
   const onEdgeSelectRef = useRef(onEdgeSelect);
   const onEdgeHoverRef = useRef(onEdgeHover);
@@ -288,7 +314,8 @@ export function Radiant1Canvas({
         .enableNodeDrag(false)
         .nodeCanvasObjectMode("replace")
         .linkCurvature((link) => {
-          if (resolveNodeId(link.source) === resolveNodeId(link.target)) return 0.55;
+          if (resolveNodeId(link.source) === resolveNodeId(link.target))
+            return 0.55;
           if (link.kind === "article-ref") return 0.22;
           if (link.kind === "law-ref") return 0.12;
           return 0;
@@ -297,7 +324,8 @@ export function Radiant1Canvas({
           const edgeAccentId = edgeAccentIdRef.current;
           if (link.id === edgeAccentId) return 3;
           if (link.isPath) return 2.4;
-          if (link.kind === "law-ref") return 1 + Math.min(link.weight, 3) * 0.5;
+          if (link.kind === "law-ref")
+            return 1 + Math.min(link.weight, 3) * 0.5;
           if (link.kind === "article-ref") return 1.1;
           return 0.55;
         })

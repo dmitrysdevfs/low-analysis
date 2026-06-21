@@ -49,11 +49,7 @@ function Law1NodeInner({ data, selected }: NodeProps<Graph1Node>) {
       data-path={isPath ? "true" : undefined}
       data-highlighted={isHighlighted ? "true" : undefined}
     >
-      <Handle
-        type="target"
-        position={Position.Top}
-        className={styles.handle}
-      />
+      <Handle type="target" position={Position.Top} className={styles.handle} />
 
       <div className={styles.topBar} style={{ background: typeColor }} />
 
@@ -69,9 +65,7 @@ function Law1NodeInner({ data, selected }: NodeProps<Graph1Node>) {
 
         <div className={styles.meta}>
           <span className={styles.code}>{code}</span>
-          {adoptedYear && (
-            <span className={styles.year}>{adoptedYear}</span>
-          )}
+          {adoptedYear && <span className={styles.year}>{adoptedYear}</span>}
         </div>
 
         <div className={styles.footer}>
@@ -81,9 +75,7 @@ function Law1NodeInner({ data, selected }: NodeProps<Graph1Node>) {
           >
             {lawType}
           </span>
-          <span className={styles.articles}>
-            {totalArticles} ст.
-          </span>
+          <span className={styles.articles}>{totalArticles} ст.</span>
         </div>
       </div>
 

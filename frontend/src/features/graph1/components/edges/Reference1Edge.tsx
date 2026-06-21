@@ -8,7 +8,11 @@ import {
   type EdgeProps,
 } from "@xyflow/react";
 
-import type { Graph1Edge, Graph1EdgeData, LawReferenceType } from "../../types/graph1.types";
+import type {
+  Graph1Edge,
+  Graph1EdgeData,
+  LawReferenceType,
+} from "../../types/graph1.types";
 
 const EDGE_TYPE_COLORS: Record<LawReferenceType, string> = {
   direct: "#4a80d4",

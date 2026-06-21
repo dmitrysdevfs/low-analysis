@@ -33,7 +33,11 @@ export default function LegislatorCabinetPage() {
     );
   }
 
-  return <LegislatorWorkspace isSupervisor={isSupervisor && !isLegislator && !isAdmin} />;
+  return (
+    <LegislatorWorkspace
+      isSupervisor={isSupervisor && !isLegislator && !isAdmin}
+    />
+  );
 }
 
 function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
@@ -41,7 +45,9 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
   const { data: proposals = [] } = useMyProposals();
 
   const { data: forks = [], isLoading: forksLoading } = useMyForks();
-  const { data: graphForks = [], isLoading: graphForksLoading } = useQuery<GraphFork[]>({
+  const { data: graphForks = [], isLoading: graphForksLoading } = useQuery<
+    GraphFork[]
+  >({
     queryKey: ["graph1-forks", "my"],
     queryFn: fetchMyForks,
     staleTime: 60_000,
@@ -74,9 +80,16 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
       return;
     }
     try {
-      await createForkMutation.mutateAsync({ lawId: forkLawId, title: forkTitle, description: forkDesc });
+      await createForkMutation.mutateAsync({
+        lawId: forkLawId,
+        title: forkTitle,
+        description: forkDesc,
+      });
       notify.success("Форк створено");
-      setForkTitle(""); setForkLawId(""); setForkDesc(""); setShowForkForm(false);
+      setForkTitle("");
+      setForkLawId("");
+      setForkDesc("");
+      setShowForkForm(false);
     } catch {
       notify.error("Не вдалося створити форк");
     }
@@ -84,14 +97,28 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
 
   const handleAddChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addChangeForkId || !changeCode.trim()) { notify.warning("Вкажіть код елемента"); return; }
+    if (!addChangeForkId || !changeCode.trim()) {
+      notify.warning("Вкажіть код елемента");
+      return;
+    }
     try {
       await addChangeMutation.mutateAsync({
         forkId: addChangeForkId,
-        change: { elementId: changeCode, elementCode: changeCode, operation: changeOp, originalText: changeOriginal, proposedText: changeProposed, rationale: changeRationale },
+        change: {
+          elementId: changeCode,
+          elementCode: changeCode,
+          operation: changeOp,
+          originalText: changeOriginal,
+          proposedText: changeProposed,
+          rationale: changeRationale,
+        },
       });
       notify.success("Зміну додано");
-      setChangeCode(""); setChangeOriginal(""); setChangeProposed(""); setChangeRationale(""); setAddChangeForkId(null);
+      setChangeCode("");
+      setChangeOriginal("");
+      setChangeProposed("");
+      setChangeRationale("");
+      setAddChangeForkId(null);
     } catch {
       notify.error("Не вдалося додати зміну");
     }
@@ -105,10 +132,15 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
         <div className={styles.cabinetHeader}>
           <div className={styles.cabinetTitle}>
             <span className={styles.cabinetIcon}>⚖</span>
-            <h1>{isSupervisor ? "Кабінет супервізора" : "Кабінет законотворця"}</h1>
+            <h1>
+              {isSupervisor ? "Кабінет супервізора" : "Кабінет законотворця"}
+            </h1>
           </div>
           {!isSupervisor && (
-            <button className={styles.newProposalBtn} onClick={() => setShowForkForm(true)}>
+            <button
+              className={styles.newProposalBtn}
+              onClick={() => setShowForkForm(true)}
+            >
               + Нова пропозиція
             </button>
           )}
@@ -116,9 +148,33 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
 
         {/* Stats row */}
         <div className={styles.statsRow}>
-          <StatCard icon="📄" label="Пропозиції" count={proposalCount} sub={proposalCount === 0 ? "Немає створених" : `${proposalCount} активних`} />
-          <StatCard icon="✏️" label="Поправки" count={0} sub="Немає створених" />
-          <StatCard icon="⚡" label="Форки" count={forkCount} sub={draftForks.length > 0 ? `${draftForks.length} активна чернетка` : "Немає чернеток"} highlighted={forkCount > 0} />
+          <StatCard
+            icon="📄"
+            label="Пропозиції"
+            count={proposalCount}
+            sub={
+              proposalCount === 0
+                ? "Немає створених"
+                : `${proposalCount} активних`
+            }
+          />
+          <StatCard
+            icon="✏️"
+            label="Поправки"
+            count={0}
+            sub="Немає створених"
+          />
+          <StatCard
+            icon="⚡"
+            label="Форки"
+            count={forkCount}
+            sub={
+              draftForks.length > 0
+                ? `${draftForks.length} активна чернетка`
+                : "Немає чернеток"
+            }
+            highlighted={forkCount > 0}
+          />
         </div>
 
         {/* Мої пропозиції */}
@@ -129,10 +185,14 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
               <span>Мої пропозиції</span>
             </div>
             {!isSupervisor && proposalCount === 0 && (
-              <span className={styles.sectionEmpty}>У вас ще немає створених пропозицій.</span>
+              <span className={styles.sectionEmpty}>
+                У вас ще немає створених пропозицій.
+              </span>
             )}
             {!isSupervisor && (
-              <button className={styles.sectionAddBtn}>Створити пропозицію +</button>
+              <button className={styles.sectionAddBtn}>
+                Створити пропозицію +
+              </button>
             )}
           </div>
           {proposalCount > 0 && <MyProposalsList />}
@@ -146,8 +206,12 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
                 <span>✏️</span>
                 <span>Мої поправки</span>
               </div>
-              <span className={styles.sectionEmpty}>Ви ще не створили жодної поправки.</span>
-              <button className={styles.sectionAddBtn}>Створити поправку +</button>
+              <span className={styles.sectionEmpty}>
+                Ви ще не створили жодної поправки.
+              </span>
+              <button className={styles.sectionAddBtn}>
+                Створити поправку +
+              </button>
             </div>
           </section>
         )}
@@ -160,7 +224,10 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
               <span>Мої форки законопроектів</span>
             </div>
             {!isSupervisor && (
-              <button className={styles.forkNewBtn} onClick={() => setShowForkForm(true)}>
+              <button
+                className={styles.forkNewBtn}
+                onClick={() => setShowForkForm(true)}
+              >
                 Новий форк +
               </button>
             )}
@@ -168,24 +235,49 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
 
           {showForkForm && (
             <form onSubmit={handleCreateFork} className={styles.forkCreateForm}>
-              <select value={forkLawId} onChange={(e) => setForkLawId(e.target.value)} required>
+              <select
+                value={forkLawId}
+                onChange={(e) => setForkLawId(e.target.value)}
+                required
+              >
                 <option value="">Оберіть закон</option>
                 {laws?.map((law) => (
-                  <option key={law._id} value={law._id}>{law.code} — {law.title?.slice(0, 60)}</option>
+                  <option key={law._id} value={law._id}>
+                    {law.code} — {law.title?.slice(0, 60)}
+                  </option>
                 ))}
               </select>
-              <input type="text" value={forkTitle} onChange={(e) => setForkTitle(e.target.value)} placeholder="Назва форку" required />
-              <textarea value={forkDesc} onChange={(e) => setForkDesc(e.target.value)} placeholder="Опис (необов'язково)" rows={2} />
+              <input
+                type="text"
+                value={forkTitle}
+                onChange={(e) => setForkTitle(e.target.value)}
+                placeholder="Назва форку"
+                required
+              />
+              <textarea
+                value={forkDesc}
+                onChange={(e) => setForkDesc(e.target.value)}
+                placeholder="Опис (необов'язково)"
+                rows={2}
+              />
               <div className={styles.formActions}>
-                <button type="button" onClick={() => setShowForkForm(false)}>Скасувати</button>
-                <button type="submit" disabled={createForkMutation.isPending}>Створити</button>
+                <button type="button" onClick={() => setShowForkForm(false)}>
+                  Скасувати
+                </button>
+                <button type="submit" disabled={createForkMutation.isPending}>
+                  Створити
+                </button>
               </div>
             </form>
           )}
 
-          {forksLoading && <p className={styles.loadingText}>Завантаження...</p>}
+          {forksLoading && (
+            <p className={styles.loadingText}>Завантаження...</p>
+          )}
           {!forksLoading && forks.length === 0 && (
-            <p className={styles.emptyText}>Форків ще немає. Натисніть «Новий форк» щоб почати.</p>
+            <p className={styles.emptyText}>
+              Форків ще немає. Натисніть «Новий форк» щоб почати.
+            </p>
           )}
 
           {forks.map((fork) => {
@@ -196,29 +288,46 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
                 <div className={styles.forkCard}>
                   <div className={styles.forkMeta}>
                     <div>
-                      <div className={styles.forkNumber}>{law?.code ?? "—"}</div>
+                      <div className={styles.forkNumber}>
+                        {law?.code ?? "—"}
+                      </div>
                       <div className={styles.forkMetaLabel}>Реєстр. №</div>
                     </div>
                     <div>
-                      <div className={styles.forkNumber}>{forks.indexOf(fork) + 1}</div>
-                      <div className={styles.forkMetaLabel}>№ законопроекту</div>
+                      <div className={styles.forkNumber}>
+                        {forks.indexOf(fork) + 1}
+                      </div>
+                      <div className={styles.forkMetaLabel}>
+                        № законопроекту
+                      </div>
                     </div>
                   </div>
                   <div className={styles.forkInfo}>
                     <div className={styles.forkTitleText}>{fork.title}</div>
-                    <div className={styles.forkStatusBadge} data-status={fork.status}>{fork.status}</div>
+                    <div
+                      className={styles.forkStatusBadge}
+                      data-status={fork.status}
+                    >
+                      {fork.status}
+                    </div>
                   </div>
                   <div className={styles.forkActions}>
-                    <button className={styles.forkActionBtn} onClick={() => setDiffForkId(fork._id)}>
+                    <button
+                      className={styles.forkActionBtn}
+                      onClick={() => setDiffForkId(fork._id)}
+                    >
                       👁 Переглянути зміни
                     </button>
                     {fork.status === "draft" && (
                       <button
                         className={`${styles.forkActionBtn} ${styles.forkSubmitBtn}`}
-                        onClick={() => submitForkMutation.mutate(fork._id, {
-                          onSuccess: () => notify.success("Форк подано на розгляд"),
-                          onError: () => notify.error("Помилка"),
-                        })}
+                        onClick={() =>
+                          submitForkMutation.mutate(fork._id, {
+                            onSuccess: () =>
+                              notify.success("Форк подано на розгляд"),
+                            onError: () => notify.error("Помилка"),
+                          })
+                        }
                       >
                         ✈ Подати на розгляд
                       </button>
@@ -232,15 +341,25 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
                       <span className={styles.editorTitle}>Редактор змін</span>
                     </div>
                     {!isEditing ? (
-                      <button className={styles.addChangeBtn} onClick={() => setAddChangeForkId(fork._id)}>
+                      <button
+                        className={styles.addChangeBtn}
+                        onClick={() => setAddChangeForkId(fork._id)}
+                      >
                         + Зміна
                       </button>
                     ) : (
-                      <form onSubmit={handleAddChange} className={styles.changeForm}>
+                      <form
+                        onSubmit={handleAddChange}
+                        className={styles.changeForm}
+                      >
                         <div className={styles.changeFormRow}>
                           <select
                             value={changeOp}
-                            onChange={(e) => setChangeOp(e.target.value as "edit" | "add" | "delete")}
+                            onChange={(e) =>
+                              setChangeOp(
+                                e.target.value as "edit" | "add" | "delete",
+                              )
+                            }
                             className={styles.changeSelect}
                           >
                             <option value="edit">Редагувати</option>
@@ -255,15 +374,23 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
                             className={styles.changeInput}
                             required
                           />
-                          <button type="button" className={styles.saveDraftBtn}>Зберегти чернетку</button>
-                          <button type="button" className={styles.moreBtn}>···</button>
+                          <button type="button" className={styles.saveDraftBtn}>
+                            Зберегти чернетку
+                          </button>
+                          <button type="button" className={styles.moreBtn}>
+                            ···
+                          </button>
                         </div>
                         {changeOp !== "add" && (
                           <div className={styles.changeFieldRow}>
-                            <label className={styles.changeLabel}>Оригінальний текст</label>
+                            <label className={styles.changeLabel}>
+                              Оригінальний текст
+                            </label>
                             <textarea
                               value={changeOriginal}
-                              onChange={(e) => setChangeOriginal(e.target.value)}
+                              onChange={(e) =>
+                                setChangeOriginal(e.target.value)
+                              }
                               rows={3}
                               className={styles.changeTextarea}
                             />
@@ -271,17 +398,23 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
                         )}
                         {changeOp !== "delete" && (
                           <div className={styles.changeFieldRow}>
-                            <label className={styles.changeLabel}>Пропонований текст</label>
+                            <label className={styles.changeLabel}>
+                              Пропонований текст
+                            </label>
                             <textarea
                               value={changeProposed}
-                              onChange={(e) => setChangeProposed(e.target.value)}
+                              onChange={(e) =>
+                                setChangeProposed(e.target.value)
+                              }
                               rows={3}
                               className={styles.changeTextarea}
                             />
                           </div>
                         )}
                         <div className={styles.changeFieldRow}>
-                          <label className={styles.changeLabel}>Обґрунтування</label>
+                          <label className={styles.changeLabel}>
+                            Обґрунтування
+                          </label>
                           <textarea
                             value={changeRationale}
                             onChange={(e) => setChangeRationale(e.target.value)}
@@ -290,10 +423,18 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
                           />
                         </div>
                         <div className={styles.changeFormActions}>
-                          <button type="button" className={styles.cancelBtn} onClick={() => setAddChangeForkId(null)}>
+                          <button
+                            type="button"
+                            className={styles.cancelBtn}
+                            onClick={() => setAddChangeForkId(null)}
+                          >
                             Скасувати
                           </button>
-                          <button type="submit" className={styles.saveChangeBtn} disabled={addChangeMutation.isPending}>
+                          <button
+                            type="submit"
+                            className={styles.saveChangeBtn}
+                            disabled={addChangeMutation.isPending}
+                          >
                             Зберегти зміну
                           </button>
                         </div>
@@ -322,10 +463,13 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
             </a>
           </div>
 
-          {graphForksLoading && <p className={styles.loadingText}>Завантаження...</p>}
+          {graphForksLoading && (
+            <p className={styles.loadingText}>Завантаження...</p>
+          )}
           {!graphForksLoading && graphForks.length === 0 && (
             <p className={styles.emptyText}>
-              Немає збережених форків графу. Перейдіть до графу та збережіть стан.
+              Немає збережених форків графу. Перейдіть до графу та збережіть
+              стан.
             </p>
           )}
           {graphForks.map((gf) => (
@@ -343,7 +487,9 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
                 <div className={styles.forkActions}>
                   <button
                     className={styles.forkActionBtn}
-                    onClick={() => window.open(`/graph?fork=${gf._id}`, "_blank")}
+                    onClick={() =>
+                      window.open(`/graph?fork=${gf._id}`, "_blank")
+                    }
                   >
                     🕸 Відкрити граф
                   </button>
@@ -365,11 +511,22 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
           <div className={styles.processSteps}>
             {[
               { label: "Чернетка", sub: "Ви редагуєте зміни", active: true },
-              { label: "Перевірка", sub: "Юридична і технічна перевірка", active: false },
+              {
+                label: "Перевірка",
+                sub: "Юридична і технічна перевірка",
+                active: false,
+              },
               { label: "Подання", sub: "Подання на розгляд", active: false },
-              { label: "Розгляд", sub: "Розгляд у відповідному комітеті", active: false },
+              {
+                label: "Розгляд",
+                sub: "Розгляд у відповідному комітеті",
+                active: false,
+              },
             ].map((step) => (
-              <div key={step.label} className={`${styles.processStep} ${step.active ? styles.processStepActive : ""}`}>
+              <div
+                key={step.label}
+                className={`${styles.processStep} ${step.active ? styles.processStepActive : ""}`}
+              >
                 <div className={styles.processStepDot} />
                 <div>
                   <div className={styles.processStepLabel}>{step.label}</div>
@@ -390,22 +547,32 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
             <div className={styles.tip}>
               <span className={styles.tipIcon}>📎</span>
               <div>
-                <div className={styles.tipTitle}>Точно посилайтеся на норму</div>
-                <div className={styles.tipText}>Вказуйте статтю, частину, пункт для чіткої ідентифікації змін.</div>
+                <div className={styles.tipTitle}>
+                  Точно посилайтеся на норму
+                </div>
+                <div className={styles.tipText}>
+                  Вказуйте статтю, частину, пункт для чіткої ідентифікації змін.
+                </div>
               </div>
             </div>
             <div className={styles.tip}>
               <span className={styles.tipIcon}>❓</span>
               <div>
-                <div className={styles.tipTitle}>Надавайте правове обґрунтування</div>
-                <div className={styles.tipText}>Поясніть мету змін та очікуваний правовий ефект.</div>
+                <div className={styles.tipTitle}>
+                  Надавайте правове обґрунтування
+                </div>
+                <div className={styles.tipText}>
+                  Поясніть мету змін та очікуваний правовий ефект.
+                </div>
               </div>
             </div>
             <div className={styles.tip}>
               <span className={styles.tipIcon}>📋</span>
               <div>
                 <div className={styles.tipTitle}>Зіставляйте тексти</div>
-                <div className={styles.tipText}>Порівняйте оригінальний та пропонований текст для ясності.</div>
+                <div className={styles.tipText}>
+                  Порівняйте оригінальний та пропонований текст для ясності.
+                </div>
               </div>
             </div>
           </div>
@@ -433,7 +600,12 @@ function LegislatorWorkspace({ isSupervisor }: { isSupervisor: boolean }) {
         </div>
       </aside>
 
-      {diffForkId && <ForkDiffModal forkId={diffForkId} onClose={() => setDiffForkId(null)} />}
+      {diffForkId && (
+        <ForkDiffModal
+          forkId={diffForkId}
+          onClose={() => setDiffForkId(null)}
+        />
+      )}
     </div>
   );
 }
@@ -452,7 +624,9 @@ function StatCard({
   highlighted?: boolean;
 }) {
   return (
-    <div className={`${styles.statCard} ${highlighted ? styles.statCardHighlighted : ""}`}>
+    <div
+      className={`${styles.statCard} ${highlighted ? styles.statCardHighlighted : ""}`}
+    >
       <div className={styles.statIcon}>{icon}</div>
       <div className={styles.statBody}>
         <div className={styles.statLabel}>{label}</div>

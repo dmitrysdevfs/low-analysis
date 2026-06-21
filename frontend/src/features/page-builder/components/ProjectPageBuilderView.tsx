@@ -75,7 +75,9 @@ export function ProjectPageBuilderView() {
     restoring,
   } = useProjectPageBuilder(PAGE_SLUG);
 
-  const [draft, setDraft] = useState<PageBuilderSnapshot>(createEmptySnapshot());
+  const [draft, setDraft] = useState<PageBuilderSnapshot>(
+    createEmptySnapshot(),
+  );
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -110,7 +112,9 @@ export function ProjectPageBuilderView() {
     [draft.blocks, selectedBlockId],
   );
 
-  const setSnapshot = (updater: (c: PageBuilderSnapshot) => PageBuilderSnapshot) => {
+  const setSnapshot = (
+    updater: (c: PageBuilderSnapshot) => PageBuilderSnapshot,
+  ) => {
     setDraft((c) => {
       const next = updater(c);
       setIsDirty(true);
@@ -126,7 +130,10 @@ export function ProjectPageBuilderView() {
     setSelectedBlockId(block.id);
     setRightTab("block");
     setTimeout(() => {
-      canvasViewportRef.current?.scrollTo({ top: canvasViewportRef.current.scrollHeight, behavior: "smooth" });
+      canvasViewportRef.current?.scrollTo({
+        top: canvasViewportRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }, 50);
   };
 
@@ -230,7 +237,9 @@ export function ProjectPageBuilderView() {
   const isPublished = page?.status === "published";
 
   if (loading) {
-    return <div className={styles.builderState}>Завантаження конструктора...</div>;
+    return (
+      <div className={styles.builderState}>Завантаження конструктора...</div>
+    );
   }
   if (error) {
     return <div className={styles.builderState}>Помилка: {error}</div>;
@@ -264,7 +273,9 @@ export function ProjectPageBuilderView() {
 
         <div className={styles.topbarRight}>
           {isDirty && <span className={styles.dirtyBadge}>Є зміни</span>}
-          <div className={`${styles.statusPill} ${isPublished ? styles.statusPublished : styles.statusDraft}`}>
+          <div
+            className={`${styles.statusPill} ${isPublished ? styles.statusPublished : styles.statusDraft}`}
+          >
             {isPublished ? "Опубліковано" : "Чернетка"}
           </div>
           <button
@@ -384,7 +395,10 @@ export function ProjectPageBuilderView() {
                           type="button"
                           className={styles.overlayBtn}
                           title="Вгору"
-                          onClick={(e) => { e.stopPropagation(); handleMoveBlock(block.id, "up"); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMoveBlock(block.id, "up");
+                          }}
                         >
                           <ChevronUp size={13} />
                         </button>
@@ -392,7 +406,10 @@ export function ProjectPageBuilderView() {
                           type="button"
                           className={styles.overlayBtn}
                           title="Вниз"
-                          onClick={(e) => { e.stopPropagation(); handleMoveBlock(block.id, "down"); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMoveBlock(block.id, "down");
+                          }}
                         >
                           <ChevronDown size={13} />
                         </button>
@@ -400,7 +417,10 @@ export function ProjectPageBuilderView() {
                           type="button"
                           className={styles.overlayBtn}
                           title="Налаштування"
-                          onClick={(e) => { e.stopPropagation(); handleSelectBlock(block.id); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectBlock(block.id);
+                          }}
                         >
                           <Settings size={13} />
                         </button>
@@ -408,7 +428,10 @@ export function ProjectPageBuilderView() {
                           type="button"
                           className={styles.overlayBtn}
                           title="Дублювати"
-                          onClick={(e) => { e.stopPropagation(); handleDuplicateBlock(block.id); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDuplicateBlock(block.id);
+                          }}
                         >
                           <Copy size={13} />
                         </button>
@@ -416,7 +439,10 @@ export function ProjectPageBuilderView() {
                           type="button"
                           className={`${styles.overlayBtn} ${styles.overlayBtnDanger}`}
                           title="Видалити"
-                          onClick={(e) => { e.stopPropagation(); handleRemoveBlock(block.id); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveBlock(block.id);
+                          }}
                         >
                           <Trash2 size={13} />
                         </button>
@@ -452,13 +478,17 @@ export function ProjectPageBuilderView() {
           <div className={styles.canvasBreadcrumb}>
             {selectedBlock ? (
               <>
-                <span className={styles.crumbItem}>Секція ({BLOCK_TYPE_LABELS[selectedBlock.type]})</span>
+                <span className={styles.crumbItem}>
+                  Секція ({BLOCK_TYPE_LABELS[selectedBlock.type]})
+                </span>
                 <ChevronRight size={11} className={styles.crumbSep} />
                 <span className={styles.crumbItem}>Контейнер</span>
                 <ChevronRight size={11} className={styles.crumbSep} />
                 <span className={styles.crumbItem}>Блок</span>
                 <ChevronRight size={11} className={styles.crumbSep} />
-                <span className={`${styles.crumbItem} ${styles.crumbItemActive}`}>
+                <span
+                  className={`${styles.crumbItem} ${styles.crumbItemActive}`}
+                >
                   {selectedBlock.type}
                 </span>
               </>
@@ -493,7 +523,10 @@ export function ProjectPageBuilderView() {
           {/* Panel content */}
           <div className={styles.panelContent}>
             {rightTab === "page" ? (
-              <PageSettingsPanel settings={pageSettings} onChange={setPageSettings} />
+              <PageSettingsPanel
+                settings={pageSettings}
+                onChange={setPageSettings}
+              />
             ) : selectedBlock ? (
               <BlockSettingsPanel
                 block={selectedBlock}

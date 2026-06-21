@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { protect, authorize } from '../../middleware/authMiddleware.js';
 import * as ctrl from '../../controllers/admin/inbox.controller.js';
 
-
 const router = Router();
 
 /**

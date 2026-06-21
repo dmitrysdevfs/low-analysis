@@ -84,9 +84,7 @@ export function Graph1InfoPanel({
       <div className={styles.section}>
         <div className={styles.metaGrid}>
           <span className={styles.metaKey}>Рік:</span>
-          <span className={styles.metaVal}>
-            {data.adoptedYear ?? "—"}
-          </span>
+          <span className={styles.metaVal}>{data.adoptedYear ?? "—"}</span>
           <span className={styles.metaKey}>Статей:</span>
           <span className={styles.metaVal}>{data.totalArticles}</span>
         </div>

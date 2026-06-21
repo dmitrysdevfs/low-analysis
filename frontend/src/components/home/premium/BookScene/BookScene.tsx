@@ -25,7 +25,9 @@ export function BookScene({ className }: { className?: string }) {
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    setReducedMotion(
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    );
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -34,7 +36,7 @@ export function BookScene({ className }: { className?: string }) {
           observer.disconnect();
         }
       },
-      { threshold: 0.05 }
+      { threshold: 0.05 },
     );
     if (wrapRef.current) observer.observe(wrapRef.current);
     return () => observer.disconnect();

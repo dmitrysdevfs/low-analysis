@@ -155,7 +155,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       changePassword,
       logout,
     }),
-    [changePassword, isHydrated, login, loginWithGoogle, logout, register, updateProfile, user],
+    [
+      changePassword,
+      isHydrated,
+      login,
+      loginWithGoogle,
+      logout,
+      register,
+      updateProfile,
+      user,
+    ],
   );
 
   return (

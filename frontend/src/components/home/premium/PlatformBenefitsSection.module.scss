@@ -12,7 +12,11 @@
   width: 700px;
   height: 700px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(26, 62, 138, 0.14) 0%, transparent 65%);
+  background: radial-gradient(
+    circle,
+    rgba(26, 62, 138, 0.14) 0%,
+    transparent 65%
+  );
   pointer-events: none;
 }
 
@@ -90,7 +94,12 @@
     left: 15%;
     right: 15%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(218, 174, 72, 0.2), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(218, 174, 72, 0.2),
+      transparent
+    );
   }
 
   &:hover {
@@ -113,7 +122,11 @@
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(218, 174, 72, 0.07) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(218, 174, 72, 0.07) 0%,
+    transparent 70%
+  );
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;

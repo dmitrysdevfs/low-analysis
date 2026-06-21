@@ -46,7 +46,11 @@ function formatRelativeDate(value: string | null) {
     return `Сьогодні · ${date.toLocaleTimeString("uk-UA", { hour: "2-digit", minute: "2-digit" })}`;
   if (diffDays === 1) return "Вчора";
   if (diffDays < 7) return `${diffDays} дн. тому`;
-  return date.toLocaleDateString("uk-UA", { day: "2-digit", month: "short", year: "numeric" });
+  return date.toLocaleDateString("uk-UA", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function formatFullDate(value: string | null) {
@@ -69,9 +73,13 @@ function statusTone(input: {
 }) {
   const total =
     input.changeCount ??
-    input.draftCount + input.reviewCount + input.approvedCount + input.rejectedCount;
+    input.draftCount +
+      input.reviewCount +
+      input.approvedCount +
+      input.rejectedCount;
   if (total === 0) return { label: "Під наглядом", tone: "neutral" as const };
-  if (input.reviewCount > 0) return { label: "Чекає розгляду", tone: "warning" as const };
+  if (input.reviewCount > 0)
+    return { label: "Чекає розгляду", tone: "warning" as const };
   if (input.draftCount > 0 && input.approvedCount === 0)
     return { label: "Є чернетки", tone: "draft" as const };
   if (input.approvedCount > 0 && input.rejectedCount === 0)
@@ -82,12 +90,21 @@ function statusTone(input: {
 }
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard, active: true },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+    active: true,
+  },
   { icon: <Users size={20} />, label: "Групи", href: "#groups" },
   { icon: <Scale size={20} />, label: "Законопроекти", href: ROUTES.laws },
   { icon: <RefreshCcw size={20} />, label: "Зміни", href: "#changes" },
   { icon: <MessagesSquare size={20} />, label: "Коментарі", href: "#comments" },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.rolesSupervisor },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.rolesSupervisor,
+  },
   { icon: <BarChart3 size={20} />, label: "Аналітика", href: "#analytics" },
   { icon: <Settings size={20} />, label: "Налаштування", href: ROUTES.account },
 ];
@@ -144,8 +161,9 @@ function AccessGate() {
         <span className="eyebrow">Supervisor Access</span>
         <h1 className={styles.gateTitle}>Доступ лише для ролі Supervisor</h1>
         <p className={styles.gateText}>
-          Цей workspace призначений для викладачів, менторів та керівників робочих груп.
-          Тут зібрано моніторинг студентських груп, активність по законах та контроль змін.
+          Цей workspace призначений для викладачів, менторів та керівників
+          робочих груп. Тут зібрано моніторинг студентських груп, активність по
+          законах та контроль змін.
         </p>
         <div className={styles.gateActions}>
           <Link href={ROUTES.rolesSupervisor} className="btn btn-primary">
@@ -169,7 +187,10 @@ function DashboardSkeleton() {
           <div className={`${styles.hero} ${styles.skeletonBlock}`} />
           <div className={styles.kpiGrid}>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className={`${styles.kpiCard} ${styles.skeletonBlock}`} />
+              <div
+                key={i}
+                className={`${styles.kpiCard} ${styles.skeletonBlock}`}
+              />
             ))}
           </div>
           <div className={styles.twoCol}>
@@ -255,13 +276,18 @@ function SupervisorDashboardView() {
     e.preventDefault();
     if (!groupName.trim()) return;
     try {
-      await createGroup.mutateAsync({ name: groupName.trim(), course: groupCourse.trim() });
+      await createGroup.mutateAsync({
+        name: groupName.trim(),
+        course: groupCourse.trim(),
+      });
       notify.success("Групу створено");
       setGroupName("");
       setGroupCourse("");
       setShowCreateForm(false);
     } catch (err) {
-      notify.error(err instanceof Error ? err.message : "Не вдалося створити групу");
+      notify.error(
+        err instanceof Error ? err.message : "Не вдалося створити групу",
+      );
     }
   };
 
@@ -294,8 +320,8 @@ function SupervisorDashboardView() {
             Контролюйте групи, законопроєкти та якість змін в одному workspace.
           </h1>
           <p className={styles.description}>
-            Ця панель допомагає вам керувати групами та стежити за змінами,
-            де важливу роль відіграє якість. Настройте правила та отримуйте
+            Ця панель допомагає вам керувати групами та стежити за змінами, де
+            важливу роль відіграє якість. Настройте правила та отримуйте
             сигнали, що потребують вашої уваги.
           </p>
           <div className={styles.heroActions}>
@@ -365,7 +391,9 @@ function SupervisorDashboardView() {
           <div className={styles.sectionHeader}>
             <div>
               <span className={styles.sectionEyebrow}>Нова група</span>
-              <h2 className={styles.sectionTitle}>Створення supervisor-групи</h2>
+              <h2 className={styles.sectionTitle}>
+                Створення supervisor-групи
+              </h2>
             </div>
           </div>
           <form className={styles.formGrid} onSubmit={handleCreateGroup}>
@@ -391,10 +419,18 @@ function SupervisorDashboardView() {
               />
             </label>
             <div className={styles.formActions}>
-              <button type="button" className="btn btn-outline" onClick={() => setShowCreateForm(false)}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setShowCreateForm(false)}
+              >
                 Скасувати
               </button>
-              <button type="submit" className="btn btn-primary" disabled={createGroup.isPending}>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={createGroup.isPending}
+              >
                 {createGroup.isPending ? "Збереження..." : "Зберегти групу"}
               </button>
             </div>
@@ -437,7 +473,9 @@ function SupervisorDashboardView() {
           <article key={card.label} className={`${styles.kpiCard} panel`}>
             <div className={styles.kpiCardTop}>
               <strong className={styles.kpiValue}>{card.value}</strong>
-              <span className={`${styles.kpiIcon} ${styles[`kpiIcon_${card.tone}`]}`}>
+              <span
+                className={`${styles.kpiIcon} ${styles[`kpiIcon_${card.tone}`]}`}
+              >
                 {card.icon}
               </span>
             </div>
@@ -465,7 +503,8 @@ function SupervisorDashboardView() {
               <GraduationCap size={36} className={styles.emptyIcon} />
               <p className={styles.emptyTitle}>Поки що немає активних груп</p>
               <span className={styles.emptyDesc}>
-                Створіть першу групу, щоб почати моніторинг студентів та законопроектів.
+                Створіть першу групу, щоб почати моніторинг студентів та
+                законопроектів.
               </span>
               <button
                 type="button"
@@ -488,22 +527,39 @@ function SupervisorDashboardView() {
                         </span>
                         <h3 className={styles.groupTitle}>{group.groupName}</h3>
                       </div>
-                      <span className={`${styles.statusBadge} ${styles[`statusBadge_${tone.tone}`]}`}>
+                      <span
+                        className={`${styles.statusBadge} ${styles[`statusBadge_${tone.tone}`]}`}
+                      >
                         {tone.label}
                       </span>
                     </div>
                     <div className={styles.groupStats}>
-                      <div><span>Студентів</span><strong>{group.memberCount}</strong></div>
-                      <div><span>Активні закони</span><strong>{group.activeLawsCount}</strong></div>
-                      <div><span>Усі закони</span><strong>{group.trackedLawsCount}</strong></div>
-                      <div><span>Зміни</span><strong>{group.changeCount}</strong></div>
+                      <div>
+                        <span>Студентів</span>
+                        <strong>{group.memberCount}</strong>
+                      </div>
+                      <div>
+                        <span>Активні закони</span>
+                        <strong>{group.activeLawsCount}</strong>
+                      </div>
+                      <div>
+                        <span>Усі закони</span>
+                        <strong>{group.trackedLawsCount}</strong>
+                      </div>
+                      <div>
+                        <span>Зміни</span>
+                        <strong>{group.changeCount}</strong>
+                      </div>
                     </div>
                     <div className={styles.groupFooter}>
                       <span className={styles.groupLastActivity}>
                         <Clock3 size={13} />
                         {formatRelativeDate(group.lastActivityAt)}
                       </span>
-                      <Link href={ROUTES.supervisorGroup(group.groupId)} className={styles.inlineLink}>
+                      <Link
+                        href={ROUTES.supervisorGroup(group.groupId)}
+                        className={styles.inlineLink}
+                      >
                         Відкрити групу <ChevronRight size={14} />
                       </Link>
                     </div>
@@ -545,7 +601,9 @@ function SupervisorDashboardView() {
               },
             ].map((item) => (
               <div key={item.title} className={styles.priorityItem}>
-                <span className={`${styles.priorityDot} ${styles[`priorityDot_${item.color}`]}`} />
+                <span
+                  className={`${styles.priorityDot} ${styles[`priorityDot_${item.color}`]}`}
+                />
                 <div className={styles.priorityBody}>
                   <strong>{item.title}</strong>
                   <p>{item.desc}</p>
@@ -561,8 +619,12 @@ function SupervisorDashboardView() {
       <section className={`${styles.sectionPanel} panel`}>
         <div className={styles.sectionHeader}>
           <div>
-            <span className={styles.sectionEyebrow}>МОНІТОРИНГ ЗАКОНОПРОЕКТІВ</span>
-            <h2 className={styles.sectionTitle}>Закони × групи × кількість змін</h2>
+            <span className={styles.sectionEyebrow}>
+              МОНІТОРИНГ ЗАКОНОПРОЕКТІВ
+            </span>
+            <h2 className={styles.sectionTitle}>
+              Закони × групи × кількість змін
+            </h2>
           </div>
           <div className={styles.filters}>
             <label className={styles.searchField}>
@@ -581,7 +643,9 @@ function SupervisorDashboardView() {
             >
               <option value="all">Усі групи</option>
               {highlightedGroups.map((g) => (
-                <option key={g.groupId} value={g.groupId}>{g.groupName}</option>
+                <option key={g.groupId} value={g.groupId}>
+                  {g.groupName}
+                </option>
               ))}
             </select>
           </div>
@@ -617,10 +681,13 @@ function SupervisorDashboardView() {
                       <td>
                         <div className={styles.lawCell}>
                           <Link
-                            href={row.law ? ROUTES.law(row.law._id) : ROUTES.laws}
+                            href={
+                              row.law ? ROUTES.law(row.law._id) : ROUTES.laws
+                            }
                             className={styles.tableLawLink}
                           >
-                            {row.law?.code || "Без коду"} <ArrowUpRight size={13} />
+                            {row.law?.code || "Без коду"}{" "}
+                            <ArrowUpRight size={13} />
                           </Link>
                           <span className={styles.tableLawTitle}>
                             {row.law?.title || "Закон не знайдено"}
@@ -636,11 +703,16 @@ function SupervisorDashboardView() {
                       <td>
                         <div className={styles.changeCell}>
                           <strong>{row.changeCount}</strong>
-                          <span>{row.forkCount} форків · {row.proposalCount} пропозицій</span>
+                          <span>
+                            {row.forkCount} форків · {row.proposalCount}{" "}
+                            пропозицій
+                          </span>
                         </div>
                       </td>
                       <td>
-                        <span className={`${styles.statusBadge} ${styles[`statusBadge_${tone.tone}`]}`}>
+                        <span
+                          className={`${styles.statusBadge} ${styles[`statusBadge_${tone.tone}`]}`}
+                        >
                           {tone.label}
                         </span>
                       </td>
@@ -661,7 +733,9 @@ function SupervisorDashboardView() {
         <section className={`${styles.sectionPanel} panel`}>
           <div className={styles.sectionHeader}>
             <div>
-              <span className={styles.sectionEyebrow}>АКТИВНІСТЬ СТУДЕНТІВ</span>
+              <span className={styles.sectionEyebrow}>
+                АКТИВНІСТЬ СТУДЕНТІВ
+              </span>
               <h2 className={styles.sectionTitle}>Хто реально рухає роботу</h2>
             </div>
           </div>
@@ -672,7 +746,8 @@ function SupervisorDashboardView() {
               <p className={styles.emptyTitle}>Поки що немає активності</p>
               <span className={styles.emptyDesc}>
                 Поки що немає активності учасників для цього фільтра. Як тільки
-                з'являться серія дій: пропозиції, коментарі чи затвердження, вони будуть показані тут.
+                з'являться серія дій: пропозиції, коментарі чи затвердження,
+                вони будуть показані тут.
               </span>
             </div>
           ) : (
@@ -692,7 +767,9 @@ function SupervisorDashboardView() {
                     </div>
                     <div className={styles.studentGroups}>
                       {student.groups.map((g) => (
-                        <span key={g.id} className={styles.studentGroupTag}>{g.name}</span>
+                        <span key={g.id} className={styles.studentGroupTag}>
+                          {g.name}
+                        </span>
                       ))}
                     </div>
                     <div className={styles.studentStats}>
@@ -721,7 +798,8 @@ function SupervisorDashboardView() {
               <RefreshCcw size={28} className={styles.emptyIcon} />
               <p className={styles.emptyTitle}>Стрічка подій порожня</p>
               <span className={styles.emptyDesc}>
-                Коли учасники створять, оновлять або затвердять зміни, ви побачите це тут.
+                Коли учасники створять, оновлять або затвердять зміни, ви
+                побачите це тут.
               </span>
             </div>
           ) : (
@@ -733,22 +811,33 @@ function SupervisorDashboardView() {
                 >
                   <span
                     className={`${styles.feedIcon} ${
-                      item.type === "fork" ? styles.feedIconFork : styles.feedIconProposal
+                      item.type === "fork"
+                        ? styles.feedIconFork
+                        : styles.feedIconProposal
                     }`}
                   >
-                    {item.type === "fork" ? <FolderKanban size={14} /> : <FileText size={14} />}
+                    {item.type === "fork" ? (
+                      <FolderKanban size={14} />
+                    ) : (
+                      <FileText size={14} />
+                    )}
                   </span>
                   <div className={styles.feedBody}>
                     <div className={styles.feedTop}>
                       <strong>{item.title}</strong>
-                      <span className={styles.feedDate}>{formatRelativeDate(item.updatedAt)}</span>
+                      <span className={styles.feedDate}>
+                        {formatRelativeDate(item.updatedAt)}
+                      </span>
                     </div>
                     <p className={styles.feedMeta}>
                       {item.author} · {item.lawCode} · {item.groupLabel}
                     </p>
                     <div className={styles.feedBottom}>
                       <span className={styles.feedStatus}>{item.status}</span>
-                      <Link href={ROUTES.law(item.lawId)} className={styles.inlineLink}>
+                      <Link
+                        href={ROUTES.law(item.lawId)}
+                        className={styles.inlineLink}
+                      >
                         Відкрити закон <ChevronRight size={14} />
                       </Link>
                     </div>
@@ -759,19 +848,22 @@ function SupervisorDashboardView() {
           )}
         </section>
 
-        <section className={`${styles.sectionPanel} ${styles.supervisorPanel} panel`}>
+        <section
+          className={`${styles.sectionPanel} ${styles.supervisorPanel} panel`}
+        >
           <div className={styles.sectionHeader}>
             <div>
               <span className={styles.sectionEyebrow}>SUPERVISOR РЕЖИМ</span>
               <h2 className={styles.supervisorPanelTitle}>
-                Панель уже готова для початкового контролю і росте разом із роллю.
+                Панель уже готова для початкового контролю і росте разом із
+                роллю.
               </h2>
             </div>
           </div>
           <p className={styles.supervisorDesc}>
-            Згодом вона допоможе групам отримувати сигнали в групах, зміни, активність
-            студентів і статуси якості. Настройте правила та групи поетапно та адаптуйте
-            цей workspace під реальність по змінах.
+            Згодом вона допоможе групам отримувати сигнали в групах, зміни,
+            активність студентів і статуси якості. Настройте правила та групи
+            поетапно та адаптуйте цей workspace під реальність по змінах.
           </p>
           <div className={styles.supervisorLinks}>
             <Link href={ROUTES.account} className={styles.supervisorLink}>
@@ -779,14 +871,19 @@ function SupervisorDashboardView() {
               <span>Основні налаштування активності</span>
               <ChevronRight size={14} />
             </Link>
-            <Link href={ROUTES.rolesSupervisor} className={styles.supervisorLink}>
+            <Link
+              href={ROUTES.rolesSupervisor}
+              className={styles.supervisorLink}
+            >
               <Shield size={14} />
               <span>Правила змін та сигнали для змін</span>
               <ChevronRight size={14} />
             </Link>
           </div>
           <div className={styles.supervisorFooter}>
-            <span>{formatFullDate(data.recentActivity[0]?.updatedAt ?? null)}</span>
+            <span>
+              {formatFullDate(data.recentActivity[0]?.updatedAt ?? null)}
+            </span>
             <span>Остання активність</span>
           </div>
         </section>

@@ -60,7 +60,17 @@ function SearchResultsContent() {
       numberType,
       sort,
     });
-  }, [q, docType, dateFrom, dateTo, number, status, wordField, numberType, sort]);
+  }, [
+    q,
+    docType,
+    dateFrom,
+    dateTo,
+    number,
+    status,
+    wordField,
+    numberType,
+    sort,
+  ]);
 
   return (
     <div className="section-pad max-w-[960px] w-full mx-auto">

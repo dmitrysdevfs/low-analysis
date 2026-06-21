@@ -129,7 +129,8 @@ export async function registerUser(
 
     return {
       ok: true,
-      redirectTo: session.accountType === "admin" ? ROUTES.admin : ROUTES.rolesDashboard,
+      redirectTo:
+        session.accountType === "admin" ? ROUTES.admin : ROUTES.rolesDashboard,
       session,
     };
   } catch {

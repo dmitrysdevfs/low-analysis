@@ -26,7 +26,11 @@
   border: 1px solid rgba(74, 128, 212, 0.24);
   background:
     linear-gradient(180deg, rgba(16, 28, 54, 0.98), rgba(9, 16, 31, 0.96)),
-    radial-gradient(circle at top right, rgba(247, 191, 84, 0.08), transparent 28%);
+    radial-gradient(
+      circle at top right,
+      rgba(247, 191, 84, 0.08),
+      transparent 28%
+    );
   box-shadow: 0 26px 80px rgba(0, 0, 0, 0.34);
 
   h1 {
@@ -56,7 +60,11 @@
   border: 1px solid rgba(74, 128, 212, 0.18);
   background:
     linear-gradient(180deg, rgba(17, 31, 61, 0.98), rgba(9, 17, 34, 0.96)),
-    radial-gradient(circle at top left, rgba(74, 128, 212, 0.12), transparent 34%);
+    radial-gradient(
+      circle at top left,
+      rgba(74, 128, 212, 0.12),
+      transparent 34%
+    );
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
 }
 
@@ -175,7 +183,11 @@
   border: 1px solid rgba(74, 128, 212, 0.16);
   background:
     linear-gradient(180deg, rgba(13, 24, 46, 0.98), rgba(7, 15, 29, 0.96)),
-    radial-gradient(circle at top right, rgba(74, 128, 212, 0.08), transparent 32%);
+    radial-gradient(
+      circle at top right,
+      rgba(74, 128, 212, 0.08),
+      transparent 32%
+    );
   box-shadow: 0 24px 72px rgba(0, 0, 0, 0.34);
 }
 
@@ -288,7 +300,11 @@
   padding: 0 14px;
   border-radius: 12px;
   border: 1px solid rgba(74, 128, 212, 0.18);
-  background: linear-gradient(135deg, rgba(31, 146, 242, 0.18), rgba(33, 211, 210, 0.18));
+  background: linear-gradient(
+    135deg,
+    rgba(31, 146, 242, 0.18),
+    rgba(33, 211, 210, 0.18)
+  );
   color: #e7f4ff;
   font-weight: 600;
   transition:
@@ -421,8 +437,16 @@
   position: relative;
   min-height: 640px;
   background:
-    radial-gradient(circle at top center, rgba(74, 128, 212, 0.08), transparent 30%),
-    radial-gradient(circle at bottom center, rgba(247, 191, 84, 0.04), transparent 24%),
+    radial-gradient(
+      circle at top center,
+      rgba(74, 128, 212, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom center,
+      rgba(247, 191, 84, 0.04),
+      transparent 24%
+    ),
     #07111f;
 }
 
@@ -552,7 +576,10 @@
   gap: 6px;
   flex-wrap: wrap;
 
-  svg { color: #6a85b0; flex-shrink: 0; }
+  svg {
+    color: #6a85b0;
+    flex-shrink: 0;
+  }
 }
 
 .edgePreviewCode {
@@ -1001,7 +1028,10 @@
   color: #88a0c2;
   font-size: 0.72rem;
   font-family: var(--font-mono);
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
 
   &:hover {
     border-color: rgba(74, 128, 212, 0.4);
@@ -1039,9 +1069,15 @@
   border-radius: 50%;
   flex-shrink: 0;
 
-  &[data-risk="green"] { background: #68d884; }
-  &[data-risk="yellow"] { background: #f7bf54; }
-  &[data-risk="red"] { background: #f26767; }
+  &[data-risk="green"] {
+    background: #68d884;
+  }
+  &[data-risk="yellow"] {
+    background: #f7bf54;
+  }
+  &[data-risk="red"] {
+    background: #f26767;
+  }
 }
 
 .riskFilterCount {
@@ -1084,7 +1120,9 @@
   border-radius: 12px;
   border: 1px solid rgba(74, 128, 212, 0.1);
   background: rgba(8, 15, 30, 0.78);
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 
   &:hover {
     border-color: rgba(74, 128, 212, 0.24);

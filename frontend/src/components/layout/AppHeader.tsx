@@ -35,7 +35,8 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   const [headerScrolledAway, setHeaderScrolledAway] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } =
+    useAuth();
   const isAuthPage = pathname.startsWith(ROUTES.auth);
   const isAdminPage = false;
   const isHome = pathname === "/";
@@ -84,10 +85,7 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   useEffect(() => {
     if (!sidebarOpen) return;
     function onScroll(e: Event) {
-      if (
-        e.target instanceof Element &&
-        e.target.closest("[data-sidebar]")
-      ) {
+      if (e.target instanceof Element && e.target.closest("[data-sidebar]")) {
         return;
       }
       setSidebarOpen(false);

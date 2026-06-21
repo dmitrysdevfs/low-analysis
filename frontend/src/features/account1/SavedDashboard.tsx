@@ -61,7 +61,11 @@ const NAV_ITEMS = [
   { href: ROUTES.search, label: "Пошук документів", Icon: Search },
   { href: ROUTES.accountSaved, label: "Збережені документи", Icon: Bookmark },
   { href: ROUTES.accountNotes, label: "Нотатки", Icon: Bell },
-  { href: ROUTES.accountBilling, label: "Підписка та billing", Icon: CreditCard },
+  {
+    href: ROUTES.accountBilling,
+    label: "Підписка та billing",
+    Icon: CreditCard,
+  },
   { href: ROUTES.account, label: "Налаштування", Icon: Settings },
   { href: ROUTES.support, label: "Підтримка", Icon: HelpCircle },
 ];
@@ -83,9 +87,15 @@ export function SavedDashboard() {
           const legacy = readLegacyWorkspace(userId);
           if (legacy?.savedArticles?.length) {
             await savedApi.migrate(
-              legacy.savedArticles.map(({ lawId, title, code, note, tags }) => ({
-                lawId, title, code, note: note ?? "", tags: tags ?? [],
-              })),
+              legacy.savedArticles.map(
+                ({ lawId, title, code, note, tags }) => ({
+                  lawId,
+                  title,
+                  code,
+                  note: note ?? "",
+                  tags: tags ?? [],
+                }),
+              ),
             );
             clearLegacyWorkspace(userId);
           }
@@ -102,7 +112,10 @@ export function SavedDashboard() {
   }, [userId]);
 
   const suggestions = useMemo(
-    () => laws.filter((l) => !savedArticles.some((s) => s.lawId === l._id)).slice(0, 5),
+    () =>
+      laws
+        .filter((l) => !savedArticles.some((s) => s.lawId === l._id))
+        .slice(0, 5),
     [laws, savedArticles],
   );
 
@@ -177,14 +190,14 @@ export function SavedDashboard() {
       {/* Main */}
       <main className={styles.content}>
         <div className={styles.contentInner}>
-
           {/* Header */}
           <div className={styles.pageHeader}>
             <div>
               <span className={styles.eyebrow}>Збережені матеріали</span>
               <h1 className={styles.pageTitle}>Ваша правова полиця</h1>
               <p className={styles.pageSub}>
-                Швидкий доступ до законів, які ви зберегли для подальшого вивчення.
+                Швидкий доступ до законів, які ви зберегли для подальшого
+                вивчення.
               </p>
             </div>
             <div className={styles.headerMeta}>
@@ -201,7 +214,6 @@ export function SavedDashboard() {
 
           {/* Main grid */}
           <div className={styles.grid}>
-
             {/* Saved list panel */}
             <section className={styles.mainPanel}>
               <div className={styles.panelHead}>
@@ -234,7 +246,9 @@ export function SavedDashboard() {
                     <Bookmark size={36} />
                   </div>
                   <p>
-                    {query ? "Нічого не знайдено за запитом." : "Ще немає збережених законів."}
+                    {query
+                      ? "Нічого не знайдено за запитом."
+                      : "Ще немає збережених законів."}
                   </p>
                   {!query && (
                     <Link href={ROUTES.search} className={styles.emptyAction}>
@@ -292,7 +306,9 @@ export function SavedDashboard() {
               </div>
 
               {lawsLoading ? (
-                <div className={styles.empty}><p>Завантаження…</p></div>
+                <div className={styles.empty}>
+                  <p>Завантаження…</p>
+                </div>
               ) : suggestions.length === 0 ? (
                 <div className={styles.empty}>
                   <p>Ви вже зберегли всі запропоновані закони.</p>
@@ -303,7 +319,9 @@ export function SavedDashboard() {
                     <li key={law._id} className={styles.suggestionCard}>
                       <div className={styles.suggestionInfo}>
                         <div className={styles.codeBadge}>{law.code}</div>
-                        <div className={styles.suggestionTitle}>{law.title}</div>
+                        <div className={styles.suggestionTitle}>
+                          {law.title}
+                        </div>
                         <div className={styles.suggestionMeta}>
                           <FileText size={12} />
                           {law.totalArticles} ст. · {law.totalSections} розд.

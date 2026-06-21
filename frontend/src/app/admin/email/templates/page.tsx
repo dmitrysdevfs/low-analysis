@@ -19,7 +19,8 @@ const TEMPLATES = [
     slug: "broadcast",
     name: "Широкомовлення",
     category: "Загальне",
-    description: "Загальні оголошення для всіх або частини аудиторії. Ідеально для анонсів та новин.",
+    description:
+      "Загальні оголошення для всіх або частини аудиторії. Ідеально для анонсів та новин.",
     fields: ["Заголовок", "Текст", "Кнопка CTA"],
     icon: Mail,
     iconColor: "#4a80d4",
@@ -30,8 +31,15 @@ const TEMPLATES = [
     slug: "maintenance",
     name: "Технічне обслуговування",
     category: "Системне",
-    description: "Сповіщення про заплановані роботи або збої. Включає час початку та завершення.",
-    fields: ["Заголовок", "Текст", "Час початку", "Час завершення", "Кнопка CTA"],
+    description:
+      "Сповіщення про заплановані роботи або збої. Включає час початку та завершення.",
+    fields: [
+      "Заголовок",
+      "Текст",
+      "Час початку",
+      "Час завершення",
+      "Кнопка CTA",
+    ],
     icon: Wrench,
     iconColor: "#e9774b",
     iconBg: "rgba(233,119,75,0.12)",
@@ -41,7 +49,8 @@ const TEMPLATES = [
     slug: "product-update",
     name: "Оновлення продукту",
     category: "Маркетинг",
-    description: "Релізні нотатки та анонс нових функцій. Підтримує список нових можливостей.",
+    description:
+      "Релізні нотатки та анонс нових функцій. Підтримує список нових можливостей.",
     fields: ["Заголовок", "Текст", "Список функцій", "Кнопка CTA"],
     icon: Sparkles,
     iconColor: "#c8a843",
@@ -57,9 +66,10 @@ export default function AdminEmailTemplatesPage() {
   const [activeCategory, setActiveCategory] = useState("Всі");
   const [duplicated, setDuplicated] = useState<string | null>(null);
 
-  const filtered = activeCategory === "Всі"
-    ? TEMPLATES
-    : TEMPLATES.filter((t) => t.category === activeCategory);
+  const filtered =
+    activeCategory === "Всі"
+      ? TEMPLATES
+      : TEMPLATES.filter((t) => t.category === activeCategory);
 
   function handleUse(slug: string) {
     router.push(`${ROUTES.adminEmailCompose}?template=${slug}`);
@@ -99,18 +109,43 @@ export default function AdminEmailTemplatesPage() {
           return (
             <div key={t.slug} className={styles.card}>
               {/* Preview area */}
-              <div className={styles.cardPreview} style={{ background: t.iconBg }}>
+              <div
+                className={styles.cardPreview}
+                style={{ background: t.iconBg }}
+              >
                 <div className={styles.cardPreviewInner}>
-                  <div className={styles.cardPreviewIcon} style={{ color: t.iconColor }}>
+                  <div
+                    className={styles.cardPreviewIcon}
+                    style={{ color: t.iconColor }}
+                  >
                     <Icon size={28} />
                   </div>
                   <div className={styles.cardPreviewLines}>
-                    <div className={styles.previewLine} style={{ width: "70%", background: t.iconColor, opacity: 0.4 }} />
-                    <div className={styles.previewLine} style={{ width: "90%", opacity: 0.15 }} />
-                    <div className={styles.previewLine} style={{ width: "80%", opacity: 0.1 }} />
-                    <div className={styles.previewLine} style={{ width: "60%", opacity: 0.1 }} />
+                    <div
+                      className={styles.previewLine}
+                      style={{
+                        width: "70%",
+                        background: t.iconColor,
+                        opacity: 0.4,
+                      }}
+                    />
+                    <div
+                      className={styles.previewLine}
+                      style={{ width: "90%", opacity: 0.15 }}
+                    />
+                    <div
+                      className={styles.previewLine}
+                      style={{ width: "80%", opacity: 0.1 }}
+                    />
+                    <div
+                      className={styles.previewLine}
+                      style={{ width: "60%", opacity: 0.1 }}
+                    />
                   </div>
-                  <div className={styles.cardPreviewBtn} style={{ borderColor: t.iconColor, color: t.iconColor }}>
+                  <div
+                    className={styles.cardPreviewBtn}
+                    style={{ borderColor: t.iconColor, color: t.iconColor }}
+                  >
                     Дія →
                   </div>
                 </div>
@@ -120,13 +155,17 @@ export default function AdminEmailTemplatesPage() {
               <div className={styles.cardBody}>
                 <div className={styles.cardMeta}>
                   <span className={styles.cardCategory}>{t.category}</span>
-                  <span className={styles.cardUsage}>{t.usageCount} використань</span>
+                  <span className={styles.cardUsage}>
+                    {t.usageCount} використань
+                  </span>
                 </div>
                 <div className={styles.cardName}>{t.name}</div>
                 <div className={styles.cardDesc}>{t.description}</div>
                 <div className={styles.cardFields}>
                   {t.fields.map((f) => (
-                    <span key={f} className={styles.field}>{f}</span>
+                    <span key={f} className={styles.field}>
+                      {f}
+                    </span>
                   ))}
                 </div>
 

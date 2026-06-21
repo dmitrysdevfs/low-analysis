@@ -11,7 +11,11 @@
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(218, 174, 72, 0.07) 0%, transparent 65%);
+  background: radial-gradient(
+    circle,
+    rgba(218, 174, 72, 0.07) 0%,
+    transparent 65%
+  );
   pointer-events: none;
 }
 
@@ -86,7 +90,12 @@
     left: 15%;
     right: 15%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(218, 174, 72, 0.25), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(218, 174, 72, 0.25),
+      transparent
+    );
   }
 
   &:hover .arrowIcon {

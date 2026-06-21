@@ -123,7 +123,8 @@ function buildClusterCenters(clusterIds: string[]) {
   const positions = new Map<string, { x: number; y: number; angle: number }>();
   const radius = 410;
   clusterIds.forEach((clusterId, index) => {
-    const angle = -Math.PI / 2 + (index / Math.max(clusterIds.length, 1)) * Math.PI * 2;
+    const angle =
+      -Math.PI / 2 + (index / Math.max(clusterIds.length, 1)) * Math.PI * 2;
     positions.set(clusterId, {
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius * 0.78,
@@ -173,7 +174,10 @@ function makeDefinitionBuckets(definitionsCount: number) {
 }
 
 function findArticleBucketId(
-  articleBucketsByLaw: Map<string, Array<{ id: string; start: number; end: number }>>,
+  articleBucketsByLaw: Map<
+    string,
+    Array<{ id: string; start: number; end: number }>
+  >,
   lawId: string,
   article: string | null | undefined,
 ) {
@@ -212,9 +216,7 @@ export function buildRadiant1Graph({
       law,
       cluster,
       subjectIds:
-        lawSubjectIdsByLaw.get(apiNode.id) ??
-        apiNode.subjectIds ??
-        [],
+        lawSubjectIdsByLaw.get(apiNode.id) ?? apiNode.subjectIds ?? [],
       adoptedYear: parseYear(law?.adoptedDate),
       definitionsCount: law?.global_context?.definitions?.length ?? 0,
       totalSections: law?.totalSections ?? 0,
@@ -290,7 +292,10 @@ export function buildRadiant1Graph({
       const isPrimary = law.apiNode.id === primaryLaw?.apiNode.id;
       const laneIndex = index % 6;
       const ring = 68 + Math.floor(index / 6) * 58;
-      const arcSpread = group.length === 1 ? 0 : (laneIndex / (group.length - 1 || 1) - 0.5) * 1.6;
+      const arcSpread =
+        group.length === 1
+          ? 0
+          : (laneIndex / (group.length - 1 || 1) - 0.5) * 1.6;
       const angle = center.angle + arcSpread;
       const x = isPrimary ? 0 : center.x + Math.cos(angle) * ring;
       const y = isPrimary ? 0 : center.y + Math.sin(angle) * ring;
@@ -308,7 +313,11 @@ export function buildRadiant1Graph({
         clusterLabel: law.cluster.label,
         color: law.cluster.color,
         glow: law.cluster.glow,
-        size: clamp(12 + Math.log2(Math.max(law.totalArticles, 1)) * 2.6, 14, 24),
+        size: clamp(
+          12 + Math.log2(Math.max(law.totalArticles, 1)) * 2.6,
+          14,
+          24,
+        ),
         x,
         y,
         fx: x,
@@ -368,7 +377,8 @@ export function buildRadiant1Graph({
 
       definitionBuckets.forEach((bucket, bucketIndex) => {
         const theta =
-          Math.PI / 6 + (bucketIndex / Math.max(definitionBuckets.length, 1)) * Math.PI * 2;
+          Math.PI / 6 +
+          (bucketIndex / Math.max(definitionBuckets.length, 1)) * Math.PI * 2;
         const definitionNode: Radiant1GraphNode = {
           ...lawNode,
           id: `${law.apiNode.id}:definition:${bucketIndex}`,
@@ -395,7 +405,8 @@ export function buildRadiant1Graph({
         });
       });
 
-      const articleNodes: Array<{ id: string; start: number; end: number }> = [];
+      const articleNodes: Array<{ id: string; start: number; end: number }> =
+        [];
       articleBuckets.forEach((bucket, bucketIndex) => {
         const theta =
           Math.PI / 10 + (bucketIndex / articleBuckets.length) * Math.PI * 2;
@@ -436,8 +447,12 @@ export function buildRadiant1Graph({
   }
 
   visibleEdges.forEach((edge) => {
-    const sourceLaw = filteredLaws.find((law) => law.apiNode.id === edge.source);
-    const targetLaw = filteredLaws.find((law) => law.apiNode.id === edge.target);
+    const sourceLaw = filteredLaws.find(
+      (law) => law.apiNode.id === edge.source,
+    );
+    const targetLaw = filteredLaws.find(
+      (law) => law.apiNode.id === edge.target,
+    );
     if (!sourceLaw || !targetLaw) return;
     const color =
       sourceLaw.cluster.id === targetLaw.cluster.id

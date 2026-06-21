@@ -205,7 +205,10 @@
   font-size: 0.78rem;
   padding: 6px 10px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background 0.2s;
 
   &:hover {
     border-color: rgba(199, 213, 234, 0.38);

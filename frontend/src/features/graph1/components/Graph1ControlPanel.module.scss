@@ -144,7 +144,9 @@
   font-size: 0.76rem;
   padding: 4px 9px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 
   &:hover {
     border-color: rgba(199, 213, 234, 0.45);
@@ -169,7 +171,10 @@
   font-weight: 600;
   padding: 5px 0;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 
   &[data-active="true"] {
     background: rgba(200, 168, 67, 0.15);
@@ -276,7 +281,9 @@
   font-weight: 600;
   padding: 5px 8px;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 
   &:hover {
     background: rgba(74, 128, 212, 0.25);
@@ -297,7 +304,9 @@
   font-size: 0.76rem;
   padding: 5px 8px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 
   &:hover {
     border-color: rgba(199, 213, 234, 0.35);
@@ -533,7 +542,10 @@
   font-size: 0.76rem;
   padding: 5px 10px;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 
   &:hover {
     background: rgba(255, 255, 255, 0.06);

@@ -8,7 +8,8 @@ import styles from "./RoadmapSection.module.scss";
 const fadeLeft: Variants = {
   hidden: { opacity: 0, x: -24 },
   visible: (i: number) => ({
-    opacity: 1, x: 0,
+    opacity: 1,
+    x: 0,
     transition: { delay: i * 0.06, duration: 0.42, ease: [0.25, 0.1, 0.25, 1] },
   }),
 };
@@ -16,7 +17,8 @@ const fadeLeft: Variants = {
 const fadeRight: Variants = {
   hidden: { opacity: 0, x: 24 },
   visible: (i: number) => ({
-    opacity: 1, x: 0,
+    opacity: 1,
+    x: 0,
     transition: { delay: i * 0.06, duration: 0.42, ease: [0.25, 0.1, 0.25, 1] },
   }),
 };
@@ -77,8 +79,20 @@ export function PremiumRoadmapSection() {
             >
               <div className={styles.orbRing1} />
               <div className={styles.orbRing2} />
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                <path d="M4 11h14M11 4l7 7-7 7" stroke="#D8A735" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 22 22"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 11h14M11 4l7 7-7 7"
+                  stroke="#D8A735"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </motion.div>
           </div>

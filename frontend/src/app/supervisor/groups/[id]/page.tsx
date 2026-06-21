@@ -132,7 +132,9 @@ function AccessGate() {
       <section className={styles.page}>
         <div className={`${styles.gate} panel`}>
           <span className="eyebrow">Supervisor Access</span>
-          <h1 className={styles.gateTitle}>Ця сторінка доступна лише supervisor-ролі</h1>
+          <h1 className={styles.gateTitle}>
+            Ця сторінка доступна лише supervisor-ролі
+          </h1>
           <p className={styles.gateText}>
             Тут зібрано контроль груп, відстеження законів, активність учасників
             та стрічку змін. Для входу потрібна роль supervisor або admin.
@@ -311,10 +313,13 @@ function SupervisorGroupView() {
 
         <div className={`${styles.errorState} panel`}>
           <span className="eyebrow">Supervisor Group</span>
-          <h1 className={styles.errorTitle}>Не вдалося відкрити сторінку групи</h1>
+          <h1 className={styles.errorTitle}>
+            Не вдалося відкрити сторінку групи
+          </h1>
           <p className={styles.errorText}>
             Група або не існує, або зараз недоступна для вашої ролі. Якщо її
-            було архівовано, вона вже не потрапляє до активного supervisor-space.
+            було архівовано, вона вже не потрапляє до активного
+            supervisor-space.
           </p>
           <div className={styles.gateActions}>
             <Link href={ROUTES.supervisorDashboard} className="btn btn-primary">
@@ -358,13 +363,15 @@ function SupervisorGroupView() {
           <p className={styles.description}>
             {data.group.course
               ? `Курс або програма: ${data.group.course}.`
-              : "Група ще без заповненого курсу або програми."} Тут видно, як
-            команда рухає законопроєкти, де накопичуються чернетки, хто тримає
-            темп і кому потрібен методичний фідбек.
+              : "Група ще без заповненого курсу або програми."}{" "}
+            Тут видно, як команда рухає законопроєкти, де накопичуються
+            чернетки, хто тримає темп і кому потрібен методичний фідбек.
           </p>
 
           <div className={styles.heroMeta}>
-            <span className={`${styles.statusBadge} ${styles[`statusBadge_${tone.tone}`]}`}>
+            <span
+              className={`${styles.statusBadge} ${styles[`statusBadge_${tone.tone}`]}`}
+            >
               {tone.label}
             </span>
             <span className={styles.metaPill}>
@@ -458,7 +465,9 @@ function SupervisorGroupView() {
           },
         ].map((card) => (
           <article key={card.label} className={`${styles.metricCard} panel`}>
-            <span className={`${styles.metricIcon} ${styles[`metricIcon_${card.tone}`]}`}>
+            <span
+              className={`${styles.metricIcon} ${styles[`metricIcon_${card.tone}`]}`}
+            >
               {card.icon}
             </span>
             <span className={styles.metricLabel}>{card.label}</span>
@@ -473,8 +482,12 @@ function SupervisorGroupView() {
           <section className={`${styles.sectionPanel} panel`}>
             <div className={styles.sectionHeader}>
               <div>
-                <span className={styles.sectionEyebrow}>Моніторинг законів</span>
-                <h2 className={styles.sectionTitle}>Законопроєкти цієї групи</h2>
+                <span className={styles.sectionEyebrow}>
+                  Моніторинг законів
+                </span>
+                <h2 className={styles.sectionTitle}>
+                  Законопроєкти цієї групи
+                </h2>
               </div>
               <label className={styles.searchField}>
                 <Search size={14} />
@@ -515,7 +528,11 @@ function SupervisorGroupView() {
                           <td>
                             <div className={styles.lawCell}>
                               <Link
-                                href={row.law ? ROUTES.law(row.law._id) : ROUTES.laws}
+                                href={
+                                  row.law
+                                    ? ROUTES.law(row.law._id)
+                                    : ROUTES.laws
+                                }
                                 className={styles.tableLawLink}
                               >
                                 {row.law?.code || "Без коду"}
@@ -530,11 +547,14 @@ function SupervisorGroupView() {
                             <div className={styles.changeCell}>
                               <strong>{row.changeCount}</strong>
                               <span>
-                                {row.forkCount} форків · {row.proposalCount} пропозицій
+                                {row.forkCount} форків · {row.proposalCount}{" "}
+                                пропозицій
                               </span>
                             </div>
                           </td>
-                          <td className={styles.tableDate}>{row.activeAuthors}</td>
+                          <td className={styles.tableDate}>
+                            {row.activeAuthors}
+                          </td>
                           <td>
                             <span
                               className={`${styles.statusBadge} ${styles[`statusBadge_${rowTone.tone}`]}`}
@@ -557,7 +577,9 @@ function SupervisorGroupView() {
           <section className={`${styles.sectionPanel} panel`}>
             <div className={styles.sectionHeader}>
               <div>
-                <span className={styles.sectionEyebrow}>Активність учасників</span>
+                <span className={styles.sectionEyebrow}>
+                  Активність учасників
+                </span>
                 <h2 className={styles.sectionTitle}>
                   Хто рухає групу, а хто ще не включився
                 </h2>
@@ -571,8 +593,8 @@ function SupervisorGroupView() {
               <div className={styles.emptyState}>
                 <GraduationCap size={18} />
                 <p>
-                  У групі ще немає учасників. Додайте людей через backend flow або
-                  admin-side зв'язування.
+                  У групі ще немає учасників. Додайте людей через backend flow
+                  або admin-side зв'язування.
                 </p>
               </div>
             ) : (
@@ -582,12 +604,16 @@ function SupervisorGroupView() {
                     <div className={styles.memberMain}>
                       <div className={styles.memberHeader}>
                         <div>
-                          <h3 className={styles.memberName}>{member.fullName}</h3>
+                          <h3 className={styles.memberName}>
+                            {member.fullName}
+                          </h3>
                           <p className={styles.memberEmail}>{member.email}</p>
                         </div>
                         <span
                           className={`${styles.memberStatus} ${
-                            activity ? styles.memberStatusActive : styles.memberStatusSilent
+                            activity
+                              ? styles.memberStatusActive
+                              : styles.memberStatusSilent
                           }`}
                         >
                           {activity ? "Є активність" : "Очікує перший внесок"}
@@ -599,11 +625,14 @@ function SupervisorGroupView() {
                           <span>{activity.changeCount} змін</span>
                           <span>{activity.forkCount} форків</span>
                           <span>{activity.proposalCount} пропозицій</span>
-                          <span>{formatRelativeDate(activity.lastActivityAt)}</span>
+                          <span>
+                            {formatRelativeDate(activity.lastActivityAt)}
+                          </span>
                         </div>
                       ) : (
                         <p className={styles.memberHint}>
-                          Ще немає форків або proposals у межах законів цієї групи.
+                          Ще немає форків або proposals у межах законів цієї
+                          групи.
                         </p>
                       )}
                     </div>
@@ -666,7 +695,10 @@ function SupervisorGroupView() {
                         <span className={styles.feedStatus}>
                           {mapStatusLabel(item.status)}
                         </span>
-                        <Link href={ROUTES.law(item.lawId)} className={styles.inlineLink}>
+                        <Link
+                          href={ROUTES.law(item.lawId)}
+                          className={styles.inlineLink}
+                        >
                           Відкрити закон
                           <ChevronRight size={14} />
                         </Link>
@@ -714,7 +746,9 @@ function SupervisorGroupView() {
               <div className={styles.detailMetaList}>
                 <div className={styles.detailMetaItem}>
                   <span>Статус групи</span>
-                  <strong>{data.group.status === "active" ? "Активна" : "Архів"}</strong>
+                  <strong>
+                    {data.group.status === "active" ? "Активна" : "Архів"}
+                  </strong>
                 </div>
                 <div className={styles.detailMetaItem}>
                   <span>Створено</span>
@@ -757,7 +791,8 @@ function SupervisorGroupView() {
               <div className={styles.lawList}>
                 {data.group.trackedLawIds.map((law) => {
                   const lawRow =
-                    data.monitoring.find((row) => row.law?._id === law._id) ?? null;
+                    data.monitoring.find((row) => row.law?._id === law._id) ??
+                    null;
                   return (
                     <article key={law._id} className={styles.lawCard}>
                       <div>
@@ -766,9 +801,14 @@ function SupervisorGroupView() {
                       </div>
                       <div className={styles.lawFooter}>
                         <span className={styles.lawNote}>
-                          {lawRow ? `${lawRow.changeCount} змін у потоці` : "Ще без змін"}
+                          {lawRow
+                            ? `${lawRow.changeCount} змін у потоці`
+                            : "Ще без змін"}
                         </span>
-                        <Link href={ROUTES.law(law._id)} className={styles.inlineLink}>
+                        <Link
+                          href={ROUTES.law(law._id)}
+                          className={styles.inlineLink}
+                        >
                           До закону
                           <ArrowUpRight size={14} />
                         </Link>

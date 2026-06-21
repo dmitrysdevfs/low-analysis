@@ -13,15 +13,21 @@ import AdminAnalyticsPage from "@/app/admin/analytics/page";
 import AdminLayout from "@/app/admin/layout";
 
 vi.mock("@/features/account1/AccountDashboard", () => ({
-  AccountDashboard: () => <div data-testid="account-dashboard">account-dashboard</div>,
+  AccountDashboard: () => (
+    <div data-testid="account-dashboard">account-dashboard</div>
+  ),
 }));
 
 vi.mock("@/features/account1/BillingDashboard", () => ({
-  BillingDashboard: () => <div data-testid="billing-dashboard">billing-dashboard</div>,
+  BillingDashboard: () => (
+    <div data-testid="billing-dashboard">billing-dashboard</div>
+  ),
 }));
 
 vi.mock("@/features/account1/SavedDashboard", () => ({
-  SavedDashboard: () => <div data-testid="saved-dashboard">saved-dashboard</div>,
+  SavedDashboard: () => (
+    <div data-testid="saved-dashboard">saved-dashboard</div>
+  ),
 }));
 
 vi.mock("@/components/admin/AdminDashboardView", () => ({

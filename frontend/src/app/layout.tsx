@@ -98,30 +98,32 @@ export default function RootLayout({
       <body className="min-h-full">
         <AppQueryProvider>
           <ErrorBoundary>
-            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "stub"}>
-            <AuthProvider>
-              <BillingProvider>
-                <GuestLimitsProvider>
-                  <AssistantProvider>
-                    <SidebarDataProvider>
-                      <div className="site-shell">
-                        <ApiMetricsTracker />
-                        <UserActivityTracker />
-                        <BackendWarmup />
-                        <ScrollRestore />
-                        <Header />
-                        <div className="site-content">
-                          <RouteAccessGate>{children}</RouteAccessGate>
+            <GoogleOAuthProvider
+              clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "stub"}
+            >
+              <AuthProvider>
+                <BillingProvider>
+                  <GuestLimitsProvider>
+                    <AssistantProvider>
+                      <SidebarDataProvider>
+                        <div className="site-shell">
+                          <ApiMetricsTracker />
+                          <UserActivityTracker />
+                          <BackendWarmup />
+                          <ScrollRestore />
+                          <Header />
+                          <div className="site-content">
+                            <RouteAccessGate>{children}</RouteAccessGate>
+                          </div>
+                          <AiAssistantLazy />
+                          <SupportChatWidget />
+                          <Footer />
                         </div>
-                        <AiAssistantLazy />
-                        <SupportChatWidget />
-                        <Footer />
-                      </div>
-                    </SidebarDataProvider>
-                  </AssistantProvider>
-                </GuestLimitsProvider>
-              </BillingProvider>
-            </AuthProvider>
+                      </SidebarDataProvider>
+                    </AssistantProvider>
+                  </GuestLimitsProvider>
+                </BillingProvider>
+              </AuthProvider>
             </GoogleOAuthProvider>
           </ErrorBoundary>
         </AppQueryProvider>

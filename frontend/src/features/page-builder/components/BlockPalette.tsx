@@ -18,7 +18,11 @@ import {
 import type { PageBuilderBlockType } from "@/types";
 import styles from "../PageBuilder.module.scss";
 
-type BlockItem = { type: PageBuilderBlockType; label: string; icon: React.ElementType };
+type BlockItem = {
+  type: PageBuilderBlockType;
+  label: string;
+  icon: React.ElementType;
+};
 
 const CATEGORIES: { label: string; blocks: BlockItem[] }[] = [
   {
@@ -97,7 +101,10 @@ export function BlockPalette({ onAdd }: Props) {
           onChange={(e) => setSearch(e.target.value)}
         />
         {search && (
-          <button className={styles.paletteSearchClear} onClick={() => setSearch("")}>
+          <button
+            className={styles.paletteSearchClear}
+            onClick={() => setSearch("")}
+          >
             <X size={11} />
           </button>
         )}
@@ -122,7 +129,9 @@ export function BlockPalette({ onAdd }: Props) {
                       title={`Додати блок: ${block.label}`}
                     >
                       <Icon size={20} className={styles.paletteBlockIcon} />
-                      <span className={styles.paletteBlockLabel}>{block.label}</span>
+                      <span className={styles.paletteBlockLabel}>
+                        {block.label}
+                      </span>
                     </button>
                   );
                 })}

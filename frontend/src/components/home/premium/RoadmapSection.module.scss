@@ -9,7 +9,12 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent 10%, rgba(218, 174, 72, 0.15) 50%, transparent 90%);
+    background: linear-gradient(
+      90deg,
+      transparent 10%,
+      rgba(218, 174, 72, 0.15) 50%,
+      transparent 90%
+    );
   }
 }
 
@@ -161,7 +166,11 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(218, 174, 72, 0.18) 0%, rgba(218, 174, 72, 0.04) 70%);
+  background: radial-gradient(
+    circle,
+    rgba(218, 174, 72, 0.18) 0%,
+    rgba(218, 174, 72, 0.04) 70%
+  );
   border: 1px solid rgba(218, 174, 72, 0.35);
   box-shadow:
     0 0 20px rgba(218, 174, 72, 0.15),
@@ -189,12 +198,22 @@
 }
 
 @keyframes orbPulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.04); }
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .orbRing1, .orbRing2 { animation: none; }
+  .orbRing1,
+  .orbRing2 {
+    animation: none;
+  }
 }
 
 /* Responsive */
@@ -211,6 +230,10 @@
 }
 
 @media (max-width: 600px) {
-  .inner { padding: 0 20px; }
-  .section { padding: 60px 0; }
+  .inner {
+    padding: 0 20px;
+  }
+  .section {
+    padding: 60px 0;
+  }
 }

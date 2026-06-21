@@ -53,9 +53,7 @@ export async function createGraphFork(data: {
 
 export async function updateGraphFork(
   id: string,
-  data: Partial<
-    Omit<GraphFork, "_id" | "userId" | "createdAt" | "updatedAt">
-  >,
+  data: Partial<Omit<GraphFork, "_id" | "userId" | "createdAt" | "updatedAt">>,
 ): Promise<GraphFork> {
   return requestJson<GraphFork>(`/graph-forks/${id}`, "PUT", data);
 }

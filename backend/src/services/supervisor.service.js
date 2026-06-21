@@ -116,7 +116,9 @@ async function loadSupervisorGroups(supervisorId) {
 
 async function loadActivityItems(groups) {
   const memberIds = [
-    ...new Set(groups.flatMap((group) => group.memberIds.map((member) => toId(member)))),
+    ...new Set(
+      groups.flatMap((group) => group.memberIds.map((member) => toId(member))),
+    ),
   ];
   const lawIds = [
     ...new Set(
@@ -165,7 +167,8 @@ async function loadActivityItems(groups) {
       createNormalizedItem({
         id: proposal._id,
         type: 'proposal',
-        title: proposal.reason || `Зміна до ${proposal.law_id?.title || 'закону'}`,
+        title:
+          proposal.reason || `Зміна до ${proposal.law_id?.title || 'закону'}`,
         status: proposal.status,
         updatedAt: proposal.updatedAt,
         law: proposal.law_id,
@@ -264,8 +267,12 @@ function buildDashboardSummary(groups, items) {
   for (const group of groups) {
     const groupId = String(group._id);
     const groupName = group.name;
-    const trackedLawIdSet = new Set(group.trackedLawIds.map((law) => toId(law)));
-    const memberById = new Map(group.memberIds.map((member) => [toId(member), member]));
+    const trackedLawIdSet = new Set(
+      group.trackedLawIds.map((law) => toId(law)),
+    );
+    const memberById = new Map(
+      group.memberIds.map((member) => [toId(member), member]),
+    );
 
     for (const item of items) {
       if (!trackedLawIdSet.has(item.lawId) || !memberById.has(item.authorId)) {
@@ -337,12 +344,11 @@ function buildDashboardSummary(groups, items) {
     });
 
   const recentActivity = items.slice(0, 16).map((item) => {
-    const matchingGroups = groups
-      .filter(
-        (group) =>
-          group.memberIds.some((member) => toId(member) === item.authorId) &&
-          group.trackedLawIds.some((law) => toId(law) === item.lawId),
-      );
+    const matchingGroups = groups.filter(
+      (group) =>
+        group.memberIds.some((member) => toId(member) === item.authorId) &&
+        group.trackedLawIds.some((law) => toId(law) === item.lawId),
+    );
     const groupNames = matchingGroups.map((group) => group.name);
 
     return {
@@ -423,7 +429,10 @@ export async function updateGroup(groupId, supervisorId, data) {
 
 export async function getGroupById(groupId, supervisorId) {
   const groups = await loadSupervisorGroups(supervisorId);
-  const summary = buildDashboardSummary(groups, await loadActivityItems(groups));
+  const summary = buildDashboardSummary(
+    groups,
+    await loadActivityItems(groups),
+  );
   const group = groups.find((item) => String(item._id) === String(groupId));
 
   if (!group) {
@@ -433,8 +442,9 @@ export async function getGroupById(groupId, supervisorId) {
   return {
     group,
     highlight:
-      summary.groupHighlights.find((item) => item.groupId === String(group._id)) ||
-      null,
+      summary.groupHighlights.find(
+        (item) => item.groupId === String(group._id),
+      ) || null,
     monitoring: summary.groupMonitoring.filter(
       (item) => item.groupId === String(group._id),
     ),

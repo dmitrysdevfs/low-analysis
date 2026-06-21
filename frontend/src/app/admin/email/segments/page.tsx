@@ -30,7 +30,11 @@ interface Rule {
   value: string;
 }
 
-const FIELD_OPTIONS: { value: RuleField; label: string; icon: React.ElementType }[] = [
+const FIELD_OPTIONS: {
+  value: RuleField;
+  label: string;
+  icon: React.ElementType;
+}[] = [
   { value: "role", label: "Роль", icon: Tag },
   { value: "billing", label: "Тариф", icon: CreditCard },
   { value: "activity", label: "Активність", icon: Activity },
@@ -74,25 +78,35 @@ export default function AdminEmailSegmentsPage() {
       .map((r) => r.value),
   };
 
-  const { data: countData, refetch, isFetching } = useQuery({
+  const {
+    data: countData,
+    refetch,
+    isFetching,
+  } = useQuery({
     queryKey: ["segment-preview", rules, logic],
     queryFn: () => adminApi.previewAudienceCount(audiencePayload),
     enabled: canPreview,
   });
 
   const addRule = useCallback(() => {
-    setRules((prev) => [...prev, { id: nextId++, field: "role", operator: "is", value: "user" }]);
+    setRules((prev) => [
+      ...prev,
+      { id: nextId++, field: "role", operator: "is", value: "user" },
+    ]);
   }, []);
 
   const removeRule = useCallback((id: number) => {
     setRules((prev) => prev.filter((r) => r.id !== id));
   }, []);
 
-  const updateRule = useCallback((id: number, patch: Partial<Omit<Rule, "id">>) => {
-    setRules((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, ...patch } : r))
-    );
-  }, []);
+  const updateRule = useCallback(
+    (id: number, patch: Partial<Omit<Rule, "id">>) => {
+      setRules((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, ...patch } : r)),
+      );
+    },
+    [],
+  );
 
   function handleUseSegment() {
     router.push(`${ROUTES.adminEmailCompose}?segment=custom`);
@@ -133,22 +147,24 @@ export default function AdminEmailSegmentsPage() {
             <div className={styles.rules}>
               {rules.map((rule, idx) => (
                 <div key={rule.id} className={styles.ruleRow}>
-                  {idx > 0 && (
-                    <div className={styles.ruleLogic}>{logic}</div>
-                  )}
+                  {idx > 0 && <div className={styles.ruleLogic}>{logic}</div>}
                   <div className={styles.ruleFields}>
                     {/* Field select */}
                     <div className={styles.selectWrap}>
                       <select
                         className={styles.select}
                         value={rule.field}
-                        onChange={(e) => updateRule(rule.id, {
-                          field: e.target.value as RuleField,
-                          value: FIELD_VALUES[e.target.value as RuleField][0],
-                        })}
+                        onChange={(e) =>
+                          updateRule(rule.id, {
+                            field: e.target.value as RuleField,
+                            value: FIELD_VALUES[e.target.value as RuleField][0],
+                          })
+                        }
                       >
                         {FIELD_OPTIONS.map((f) => (
-                          <option key={f.value} value={f.value}>{f.label}</option>
+                          <option key={f.value} value={f.value}>
+                            {f.label}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown size={11} className={styles.selectIcon} />
@@ -159,10 +175,16 @@ export default function AdminEmailSegmentsPage() {
                       <select
                         className={styles.select}
                         value={rule.operator}
-                        onChange={(e) => updateRule(rule.id, { operator: e.target.value as RuleOperator })}
+                        onChange={(e) =>
+                          updateRule(rule.id, {
+                            operator: e.target.value as RuleOperator,
+                          })
+                        }
                       >
                         {OPERATOR_OPTIONS.map((o) => (
-                          <option key={o.value} value={o.value}>{o.label}</option>
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown size={11} className={styles.selectIcon} />
@@ -173,10 +195,14 @@ export default function AdminEmailSegmentsPage() {
                       <select
                         className={styles.select}
                         value={rule.value}
-                        onChange={(e) => updateRule(rule.id, { value: e.target.value })}
+                        onChange={(e) =>
+                          updateRule(rule.id, { value: e.target.value })
+                        }
                       >
                         {FIELD_VALUES[rule.field].map((v) => (
-                          <option key={v} value={v}>{v}</option>
+                          <option key={v} value={v}>
+                            {v}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown size={11} className={styles.selectIcon} />
@@ -195,7 +221,11 @@ export default function AdminEmailSegmentsPage() {
               ))}
             </div>
 
-            <button type="button" className={styles.addRuleBtn} onClick={addRule}>
+            <button
+              type="button"
+              className={styles.addRuleBtn}
+              onClick={addRule}
+            >
               <Plus size={13} />
               Додати умову
             </button>
@@ -211,7 +241,10 @@ export default function AdminEmailSegmentsPage() {
                 onClick={() => refetch()}
                 disabled={isFetching || !canPreview}
               >
-                <RefreshCw size={12} className={isFetching ? styles.spinning : ""} />
+                <RefreshCw
+                  size={12}
+                  className={isFetching ? styles.spinning : ""}
+                />
                 Оновити
               </button>
             </div>
@@ -221,7 +254,7 @@ export default function AdminEmailSegmentsPage() {
                 <Users size={22} style={{ color: "#4a80d4" }} />
               </div>
               <div className={styles.resultNum}>
-                {isFetching ? "..." : countData?.count ?? "—"}
+                {isFetching ? "..." : (countData?.count ?? "—")}
               </div>
               <div className={styles.resultLabel}>користувачів у сегменті</div>
             </div>
@@ -239,7 +272,9 @@ export default function AdminEmailSegmentsPage() {
                 onClick={handleSave}
                 disabled={!segmentName}
               >
-                {saved ? <CheckCircle2 size={12} style={{ color: "#52b788" }} /> : null}
+                {saved ? (
+                  <CheckCircle2 size={12} style={{ color: "#52b788" }} />
+                ) : null}
                 {saved ? "Збережено" : "Зберегти"}
               </button>
               <button
@@ -262,17 +297,26 @@ export default function AdminEmailSegmentsPage() {
             <div className={styles.segmentList}>
               {SAVED_SEGMENTS.map((seg) => (
                 <div key={seg.id} className={styles.segmentItem}>
-                  <div className={styles.segmentDot} style={{ background: seg.color }} />
+                  <div
+                    className={styles.segmentDot}
+                    style={{ background: seg.color }}
+                  />
                   <div className={styles.segmentInfo}>
                     <div className={styles.segmentName}>{seg.name}</div>
-                    <div className={styles.segmentCount}>{seg.count} користувачів</div>
+                    <div className={styles.segmentCount}>
+                      {seg.count} користувачів
+                    </div>
                   </div>
                   <div className={styles.segmentItemActions}>
                     <button
                       type="button"
                       className={styles.segItemBtn}
                       title="Використати у розсилці"
-                      onClick={() => router.push(`${ROUTES.adminEmailCompose}?segment=${seg.id}`)}
+                      onClick={() =>
+                        router.push(
+                          `${ROUTES.adminEmailCompose}?segment=${seg.id}`,
+                        )
+                      }
                     >
                       <ArrowRight size={12} />
                     </button>

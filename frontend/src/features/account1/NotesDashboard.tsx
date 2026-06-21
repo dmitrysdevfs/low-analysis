@@ -51,7 +51,11 @@ const NAV_ITEMS = [
   { href: ROUTES.search, label: "Пошук документів", Icon: Search },
   { href: ROUTES.accountSaved, label: "Збережені документи", Icon: Bookmark },
   { href: ROUTES.accountNotes, label: "Нотатки", Icon: Bell },
-  { href: ROUTES.accountBilling, label: "Підписка та billing", Icon: CreditCard },
+  {
+    href: ROUTES.accountBilling,
+    label: "Підписка та billing",
+    Icon: CreditCard,
+  },
   { href: ROUTES.account, label: "Налаштування", Icon: Settings },
   { href: ROUTES.support, label: "Підтримка", Icon: HelpCircle },
 ];
@@ -71,7 +75,9 @@ export function NotesDashboard() {
         .filter((n) => activeFilter === "all" || n.color === activeFilter)
         .sort((a, b) => {
           if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         }),
     [notes, activeFilter],
   );
@@ -130,14 +136,14 @@ export function NotesDashboard() {
       {/* Main */}
       <main className={styles.content}>
         <div className={styles.contentInner}>
-
           {/* Header */}
           <div className={styles.pageHeader}>
             <div>
               <span className={styles.eyebrow}>Персональні нотатки</span>
               <h1 className={styles.pageTitle}>Нотатки та виділення</h1>
               <p className={styles.pageSub}>
-                Ваші особисті правові коментарі, виділення та нотатки до статей законів.
+                Ваші особисті правові коментарі, виділення та нотатки до статей
+                законів.
               </p>
             </div>
             <div className={styles.headerStats}>
@@ -186,7 +192,11 @@ export function NotesDashboard() {
                 key={value}
                 type="button"
                 className={`${styles.chip} ${activeFilter === value ? styles.chipActive : ""}`}
-                style={activeFilter === value ? { borderColor: COLOR_MAP[value], color: COLOR_MAP[value] } : {}}
+                style={
+                  activeFilter === value
+                    ? { borderColor: COLOR_MAP[value], color: COLOR_MAP[value] }
+                    : {}
+                }
                 onClick={() => setActiveFilter(value)}
               >
                 <span
@@ -216,8 +226,10 @@ export function NotesDashboard() {
               <AnimatePresence initial={false}>
                 {filtered.map((note, index) => {
                   const color = COLOR_MAP[note.color] ?? "#C8A843";
-                  const textTruncated = note.noteText && note.noteText.length > TEXT_LIMIT;
-                  const quoteTruncated = note.selectedText && note.selectedText.length > QUOTE_LIMIT;
+                  const textTruncated =
+                    note.noteText && note.noteText.length > TEXT_LIMIT;
+                  const quoteTruncated =
+                    note.selectedText && note.selectedText.length > QUOTE_LIMIT;
                   const hasMore = textTruncated || quoteTruncated;
 
                   return (
@@ -276,7 +288,8 @@ export function NotesDashboard() {
                             <span className={styles.noteType}>Виділення</span>
                             {note.selectedText && (
                               <blockquote className={styles.noteQuote}>
-                                {note.selectedText.length > QUOTE_LIMIT && !expandedNote
+                                {note.selectedText.length > QUOTE_LIMIT &&
+                                !expandedNote
                                   ? `${note.selectedText.slice(0, QUOTE_LIMIT)}…`
                                   : note.selectedText}
                               </blockquote>
@@ -286,7 +299,9 @@ export function NotesDashboard() {
 
                         {(note.lawId || note.lawTitle) && (
                           <div className={styles.noteSource}>
-                            <span className={styles.noteSourceLabel}>Джерело:</span>
+                            <span className={styles.noteSourceLabel}>
+                              Джерело:
+                            </span>
                             {note.lawTitle || note.lawId}
                             {note.articleNum ? ` · ст. ${note.articleNum}` : ""}
                           </div>
@@ -316,7 +331,8 @@ export function NotesDashboard() {
                               Читати →
                             </button>
                           )}
-                          {((note.lawId && note.articleNum) || note.pageUrl) && (
+                          {((note.lawId && note.articleNum) ||
+                            note.pageUrl) && (
                             <a
                               href={
                                 note.lawId && note.articleNum
@@ -407,7 +423,11 @@ export function NotesDashboard() {
           >
             <motion.div
               className={styles.expandModal}
-              style={{ "--note-color": COLOR_MAP[expandedNote.color] ?? "#C8A843" } as React.CSSProperties}
+              style={
+                {
+                  "--note-color": COLOR_MAP[expandedNote.color] ?? "#C8A843",
+                } as React.CSSProperties
+              }
               initial={{ opacity: 0, scale: 0.95, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 16 }}
@@ -444,7 +464,9 @@ export function NotesDashboard() {
                 <div className={styles.noteSource} style={{ marginTop: 12 }}>
                   <span className={styles.noteSourceLabel}>Джерело:</span>
                   {expandedNote.lawTitle || expandedNote.lawId}
-                  {expandedNote.articleNum ? ` · ст. ${expandedNote.articleNum}` : ""}
+                  {expandedNote.articleNum
+                    ? ` · ст. ${expandedNote.articleNum}`
+                    : ""}
                 </div>
               )}
 
@@ -456,11 +478,15 @@ export function NotesDashboard() {
                 <span className={styles.noteDate}>
                   {dateFormatter.format(new Date(expandedNote.createdAt))}
                 </span>
-                {((expandedNote.lawId && expandedNote.articleNum) || expandedNote.pageUrl) && (
+                {((expandedNote.lawId && expandedNote.articleNum) ||
+                  expandedNote.pageUrl) && (
                   <a
                     href={
                       expandedNote.lawId && expandedNote.articleNum
-                        ? ROUTES.article(expandedNote.lawId, expandedNote.articleNum)
+                        ? ROUTES.article(
+                            expandedNote.lawId,
+                            expandedNote.articleNum,
+                          )
                         : (expandedNote.pageUrl ?? "#")
                     }
                     target="_blank"

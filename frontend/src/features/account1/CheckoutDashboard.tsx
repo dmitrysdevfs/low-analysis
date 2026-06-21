@@ -24,9 +24,16 @@ type CardState = {
   cvv: string;
 };
 
-const PAYMENT_METHODS: BillingPaymentMethod[] = ["apple_pay", "google_pay", "card"];
+const PAYMENT_METHODS: BillingPaymentMethod[] = [
+  "apple_pay",
+  "google_pay",
+  "card",
+];
 
-const PAYMENT_COPY: Record<BillingPaymentMethod, { label: string; hint: string; logo: string }> = {
+const PAYMENT_COPY: Record<
+  BillingPaymentMethod,
+  { label: string; hint: string; logo: string }
+> = {
   apple_pay: {
     label: "Apple Pay demo",
     hint: "Styled like Apple Pay, but completed locally without merchant validation.",
@@ -60,10 +67,22 @@ function AppleIcon() {
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      <path
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+        fill="#4285F4"
+      />
+      <path
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+        fill="#34A853"
+      />
+      <path
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+        fill="#EA4335"
+      />
     </svg>
   );
 }
@@ -73,12 +92,20 @@ export function CheckoutDashboard() {
   const searchParams = useSearchParams();
   const { subscription, planCatalog, purchasePlan } = useBilling();
 
-  const [paymentMethod, setPaymentMethod] = useState<BillingPaymentMethod>("apple_pay");
-  const [card, setCard] = useState<CardState>({ holder: "", number: "", expiry: "", cvv: "" });
+  const [paymentMethod, setPaymentMethod] =
+    useState<BillingPaymentMethod>("apple_pay");
+  const [card, setCard] = useState<CardState>({
+    holder: "",
+    number: "",
+    expiry: "",
+    cvv: "",
+  });
   const [submitting, setSubmitting] = useState(false);
 
   const selectedPlanId =
-    (searchParams.get("plan") as BillingPlanId | null) ?? subscription?.planId ?? "trial";
+    (searchParams.get("plan") as BillingPlanId | null) ??
+    subscription?.planId ??
+    "trial";
   const [planId, setPlanId] = useState<BillingPlanId>(selectedPlanId);
 
   const selectedPlan = useMemo(
@@ -92,7 +119,10 @@ export function CheckoutDashboard() {
 
   if (!subscription) return null;
 
-  function handleCardChange<K extends keyof CardState>(key: K, val: CardState[K]) {
+  function handleCardChange<K extends keyof CardState>(
+    key: K,
+    val: CardState[K],
+  ) {
     setCard((prev) => ({ ...prev, [key]: val }));
   }
 
@@ -100,7 +130,12 @@ export function CheckoutDashboard() {
     e.preventDefault();
     if (paymentMethod === "card") {
       const num = card.number.replace(/\s+/g, "");
-      if (card.holder.trim().length < 2 || num.length < 12 || card.expiry.trim().length < 4 || card.cvv.trim().length < 3) {
+      if (
+        card.holder.trim().length < 2 ||
+        num.length < 12 ||
+        card.expiry.trim().length < 4 ||
+        card.cvv.trim().length < 3
+      ) {
         notify.warning("Заповніть усі поля картки перед оплатою.");
         return;
       }
@@ -113,22 +148,23 @@ export function CheckoutDashboard() {
       notify.warning(result.error ?? "Помилка demo-оплати.");
       return;
     }
-    notify.success(`${selectedPlan.label} активовано через ${PAYMENT_COPY[paymentMethod].label}.`);
+    notify.success(
+      `${selectedPlan.label} активовано через ${PAYMENT_COPY[paymentMethod].label}.`,
+    );
     router.push(ROUTES.accountBilling);
   }
 
   return (
     <div className={styles.page}>
-
       {/* ── Hero ── */}
       <div className={styles.hero}>
         <div className={styles.heroLeft}>
           <span className={styles.eyebrow}>Checkout Demo</span>
           <h1 className={styles.heroTitle}>Local plan activation</h1>
           <p className={styles.heroDesc}>
-            This checkout is a frontend-only demo. It writes only the selected plan,
-            payment method, and timestamp to local storage. Card numbers, CVV,
-            and expiry values are never persisted.
+            This checkout is a frontend-only demo. It writes only the selected
+            plan, payment method, and timestamp to local storage. Card numbers,
+            CVV, and expiry values are never persisted.
           </p>
         </div>
 
@@ -140,8 +176,12 @@ export function CheckoutDashboard() {
                 <Star size={20} />
               </div>
               <div>
-                <div className={styles.selectedPlanName}>{selectedPlan?.label}</div>
-                <div className={styles.selectedPlanBadge}>{selectedPlan?.badge}</div>
+                <div className={styles.selectedPlanName}>
+                  {selectedPlan?.label}
+                </div>
+                <div className={styles.selectedPlanBadge}>
+                  {selectedPlan?.badge}
+                </div>
               </div>
             </div>
           </div>
@@ -154,10 +194,8 @@ export function CheckoutDashboard() {
 
       {/* ── Checkout layout ── */}
       <div className={styles.checkoutGrid}>
-
         {/* Left: form */}
         <form className={styles.formPanel} onSubmit={handleSubmit}>
-
           {/* Step 1 */}
           <div className={styles.step}>
             <div className={styles.stepHeader}>
@@ -201,17 +239,25 @@ export function CheckoutDashboard() {
                     className={`${styles.methodRow} ${active ? styles.methodRowActive : ""}`}
                     onClick={() => setPaymentMethod(method)}
                   >
-                    <div className={`${styles.methodRadio} ${active ? styles.methodRadioActive : ""}`} />
+                    <div
+                      className={`${styles.methodRadio} ${active ? styles.methodRadioActive : ""}`}
+                    />
                     <div className={styles.methodLogoWrap}>
                       {method === "apple_pay" && <AppleIcon />}
                       {method === "google_pay" && <GoogleIcon />}
                       {method === "card" && <CreditCard size={18} />}
                     </div>
                     <div className={styles.methodInfo}>
-                      <div className={styles.methodLabel}>{PAYMENT_COPY[method].label}</div>
-                      <div className={styles.methodHint}>{PAYMENT_COPY[method].hint}</div>
+                      <div className={styles.methodLabel}>
+                        {PAYMENT_COPY[method].label}
+                      </div>
+                      <div className={styles.methodHint}>
+                        {PAYMENT_COPY[method].hint}
+                      </div>
                     </div>
-                    <span className={`${styles.methodBadge} ${active ? styles.methodBadgeActive : ""}`}>
+                    <span
+                      className={`${styles.methodBadge} ${active ? styles.methodBadgeActive : ""}`}
+                    >
                       {active ? "Selected" : "Tap to choose"}
                     </span>
                   </button>
@@ -240,7 +286,9 @@ export function CheckoutDashboard() {
                       inputMode="numeric"
                       placeholder="4242 4242 4242 4242"
                       value={card.number}
-                      onChange={(e) => handleCardChange("number", e.target.value)}
+                      onChange={(e) =>
+                        handleCardChange("number", e.target.value)
+                      }
                     />
                     <span className={styles.visaBadge}>VISA</span>
                   </div>
@@ -253,7 +301,9 @@ export function CheckoutDashboard() {
                       className={styles.input}
                       placeholder="MM / YY"
                       value={card.expiry}
-                      onChange={(e) => handleCardChange("expiry", e.target.value)}
+                      onChange={(e) =>
+                        handleCardChange("expiry", e.target.value)
+                      }
                     />
                   </label>
                   <label className={styles.fieldLabel}>
@@ -264,7 +314,9 @@ export function CheckoutDashboard() {
                         inputMode="numeric"
                         placeholder="123"
                         value={card.cvv}
-                        onChange={(e) => handleCardChange("cvv", e.target.value)}
+                        onChange={(e) =>
+                          handleCardChange("cvv", e.target.value)
+                        }
                       />
                       <Lock size={14} className={styles.inputSuffix} />
                     </div>
@@ -275,15 +327,19 @@ export function CheckoutDashboard() {
           </div>
 
           {/* Submit */}
-          <button type="submit" className={styles.submitBtn} disabled={submitting}>
+          <button
+            type="submit"
+            className={styles.submitBtn}
+            disabled={submitting}
+          >
             <Lock size={16} />
             {submitting ? "Обробка…" : "Complete demo payment"}
           </button>
 
           <p className={styles.smallPrint}>
             <Info size={13} />
-            Demo rule: payment method is stored, but card data is not. After submit,
-            card inputs are cleared immediately in the UI.
+            Demo rule: payment method is stored, but card data is not. After
+            submit, card inputs are cleared immediately in the UI.
           </p>
         </form>
 
@@ -296,7 +352,9 @@ export function CheckoutDashboard() {
               <span className={styles.summaryPriceSymbol}>$</span>
               {selectedPlan?.priceUsd}
             </div>
-            <div className={styles.summaryPeriod}>{selectedPlan?.periodLabel}</div>
+            <div className={styles.summaryPeriod}>
+              {selectedPlan?.periodLabel}
+            </div>
           </div>
 
           <ul className={styles.summaryFeatures}>
@@ -310,8 +368,12 @@ export function CheckoutDashboard() {
 
           <div className={styles.summaryMethod}>
             <span className={styles.summaryEyebrow}>Method</span>
-            <div className={styles.summaryMethodName}>{PAYMENT_COPY[paymentMethod].label}</div>
-            <div className={styles.summaryMethodHint}>{PAYMENT_COPY[paymentMethod].hint}</div>
+            <div className={styles.summaryMethodName}>
+              {PAYMENT_COPY[paymentMethod].label}
+            </div>
+            <div className={styles.summaryMethodHint}>
+              {PAYMENT_COPY[paymentMethod].hint}
+            </div>
           </div>
         </aside>
       </div>

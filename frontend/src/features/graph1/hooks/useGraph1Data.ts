@@ -361,24 +361,25 @@ export function useGraph1Data() {
   }, []);
 
   const addUserEdge = useCallback((connection: Connection) => {
-    setUserEdges((prev) =>
-      addEdge(
-        {
-          ...connection,
-          id: `user-${connection.source}-${connection.target}-${Date.now()}`,
-          type: "reference1Edge" as const,
-          data: {
-            refType: "direct" as const,
-            confidence: 1,
-            weight: 1,
-            fromArticle: null,
-            toArticle: null,
-            rawText: null,
-            isUserEdge: true,
+    setUserEdges(
+      (prev) =>
+        addEdge(
+          {
+            ...connection,
+            id: `user-${connection.source}-${connection.target}-${Date.now()}`,
+            type: "reference1Edge" as const,
+            data: {
+              refType: "direct" as const,
+              confidence: 1,
+              weight: 1,
+              fromArticle: null,
+              toArticle: null,
+              rawText: null,
+              isUserEdge: true,
+            },
           },
-        },
-        prev,
-      ) as Graph1Edge[],
+          prev,
+        ) as Graph1Edge[],
     );
   }, []);
 
@@ -489,9 +490,7 @@ export function useGraph1Data() {
     );
     setHighlightedNodeIds(new Set(viewState.highlightedNodeIds));
     setHighlightedEdgeIds(new Set(viewState.highlightedEdgeIds));
-    setNotes(
-      new Map(viewState.notes.map(({ lawId, text }) => [lawId, text])),
-    );
+    setNotes(new Map(viewState.notes.map(({ lawId, text }) => [lawId, text])));
     setFilters({
       edgeTypes: f.edgeTypes ?? ["direct", "blanket", "reflexive", "subject"],
       minConfidence: f.minConfidence ?? 0,

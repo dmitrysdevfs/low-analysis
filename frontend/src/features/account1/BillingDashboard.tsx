@@ -60,8 +60,14 @@ export function BillingDashboard() {
 
   if (!user || !subscription) return null;
 
-  const searchPercent = usagePercent(subscription.searchLimit, subscription.searchUsed);
-  const viewPercent   = usagePercent(subscription.viewLimit,   subscription.viewUsed);
+  const searchPercent = usagePercent(
+    subscription.searchLimit,
+    subscription.searchUsed,
+  );
+  const viewPercent = usagePercent(
+    subscription.viewLimit,
+    subscription.viewUsed,
+  );
 
   return (
     <div className={styles.page}>
@@ -69,11 +75,14 @@ export function BillingDashboard() {
       <div className={styles.hero}>
         <div className={styles.heroLeft}>
           <span className={styles.eyebrow}>Налаштування доступу</span>
-          <h1 className={styles.heroTitle}>Тариф, квоти та&nbsp;тестова оплата</h1>
+          <h1 className={styles.heroTitle}>
+            Тариф, квоти та&nbsp;тестова оплата
+          </h1>
           <p className={styles.heroDesc}>
-            Цей локальний сайт має лише 0 фрілсен. Ви раз зможу клієнту активувати пробний
-            тиждень, протягом якого можливий пошук і відстежувати квоти запитів — без збереження
-            даних журналів у бекенді.
+            Цей локальний сайт має лише 0 фрілсен. Ви раз зможу клієнту
+            активувати пробний тиждень, протягом якого можливий пошук і
+            відстежувати квоти запитів — без збереження даних журналів у
+            бекенді.
           </p>
           <div className={styles.heroActions}>
             <Link href={ROUTES.accountCheckout} className={styles.btnPrimary}>
@@ -89,11 +98,15 @@ export function BillingDashboard() {
         <aside className={styles.heroAside}>
           <div className={styles.heroAsideTop}>
             <span className={styles.asideEyebrow}>Поточний доступ</span>
-            <span className={`${styles.statusPill} ${subscription.status === "inactive" ? styles.statusPillActive : styles.statusPillGold}`}>
+            <span
+              className={`${styles.statusPill} ${subscription.status === "inactive" ? styles.statusPillActive : styles.statusPillGold}`}
+            >
               {statusLabel(subscription.status)}
             </span>
           </div>
-          <div className={styles.heroAsideValue}>{subscription.accessLabel}</div>
+          <div className={styles.heroAsideValue}>
+            {subscription.accessLabel}
+          </div>
           <p className={styles.heroAsideDesc}>{subscription.description}</p>
           <div className={styles.heroAsidePills}>
             <span className={styles.pill}>Ресурси</span>
@@ -108,7 +121,6 @@ export function BillingDashboard() {
 
       {/* ── 3-card usage row ── */}
       <div className={styles.usageRow}>
-
         {/* Current plan / demo */}
         <div className={styles.card}>
           <div className={styles.cardEyebrow}>
@@ -142,11 +154,18 @@ export function BillingDashboard() {
           <ul className={styles.demoChecks}>
             <li>
               Квота пошуку:{" "}
-              <strong>{usageLabel(subscription.searchLimit, subscription.searchRemaining)}</strong>
+              <strong>
+                {usageLabel(
+                  subscription.searchLimit,
+                  subscription.searchRemaining,
+                )}
+              </strong>
             </li>
             <li>
               Квота переглядів:{" "}
-              <strong>{usageLabel(subscription.viewLimit, subscription.viewRemaining)}</strong>
+              <strong>
+                {usageLabel(subscription.viewLimit, subscription.viewRemaining)}
+              </strong>
             </li>
             <li>Дані картки зберігаються лише в локальному стані форми.</li>
           </ul>
@@ -164,15 +183,24 @@ export function BillingDashboard() {
             <div className={styles.quotaTopRow}>
               <span className={styles.quotaLabel}>Запити пошуку</span>
               <span className={styles.quotaBadge}>
-                {usageLabel(subscription.searchLimit, subscription.searchRemaining)}
+                {usageLabel(
+                  subscription.searchLimit,
+                  subscription.searchRemaining,
+                )}
               </span>
             </div>
-            <div className={styles.quotaValue}>{subscription.searchUsed} використано</div>
+            <div className={styles.quotaValue}>
+              {subscription.searchUsed} використано
+            </div>
             <div className={styles.progressTrack}>
-              <span className={styles.progressFill} style={{ width: `${searchPercent}%` }} />
+              <span
+                className={styles.progressFill}
+                style={{ width: `${searchPercent}%` }}
+              />
             </div>
             <p className={styles.quotaMeta}>
-              Пошук проводиться через власний індекс сайту, що не у хмарах застосунку.
+              Пошук проводиться через власний індекс сайту, що не у хмарах
+              застосунку.
             </p>
           </div>
         </div>
@@ -192,12 +220,18 @@ export function BillingDashboard() {
                 {usageLabel(subscription.viewLimit, subscription.viewRemaining)}
               </span>
             </div>
-            <div className={styles.quotaValue}>{subscription.viewUsed} використано</div>
+            <div className={styles.quotaValue}>
+              {subscription.viewUsed} використано
+            </div>
             <div className={styles.progressTrack}>
-              <span className={styles.progressFill} style={{ width: `${viewPercent}%` }} />
+              <span
+                className={styles.progressFill}
+                style={{ width: `${viewPercent}%` }}
+              />
             </div>
             <p className={styles.quotaMeta}>
-              Дерево законів, статті та сторінки суб&apos;єктів витрачають цю квоту.
+              Дерево законів, статті та сторінки суб&apos;єктів витрачають цю
+              квоту.
             </p>
           </div>
         </div>
@@ -221,7 +255,9 @@ export function BillingDashboard() {
                 className={`${styles.planCard} ${isRecommended ? styles.planCardRecommended : ""} ${isCurrent ? styles.planCardCurrent : ""}`}
               >
                 {isRecommended && (
-                  <div className={styles.recommendedBadge}>⭐ Рекомендовано</div>
+                  <div className={styles.recommendedBadge}>
+                    ⭐ Рекомендовано
+                  </div>
                 )}
                 {isCurrent && !isRecommended && (
                   <div className={styles.currentBadge}>Поточний план</div>
@@ -238,7 +274,9 @@ export function BillingDashboard() {
                     </div>
                   </div>
                   <div className={styles.planPrice}>
-                    <span className={styles.planPriceValue}>${plan.priceUsd}</span>
+                    <span className={styles.planPriceValue}>
+                      ${plan.priceUsd}
+                    </span>
                     <span className={styles.planPricePer}>&nbsp;/ міс</span>
                   </div>
                 </div>
@@ -255,7 +293,11 @@ export function BillingDashboard() {
                 </ul>
 
                 {isCurrent ? (
-                  <button type="button" className={styles.planBtnCurrent} disabled>
+                  <button
+                    type="button"
+                    className={styles.planBtnCurrent}
+                    disabled
+                  >
                     Поточний план
                   </button>
                 ) : (
@@ -290,7 +332,9 @@ export function BillingDashboard() {
                     {formatDateFull(p.paidAt)} · від {p.actor}
                   </div>
                 </div>
-                <span className={styles.methodPill}>{p.method.replace("_", " ")}</span>
+                <span className={styles.methodPill}>
+                  {p.method.replace("_", " ")}
+                </span>
               </div>
             ))}
           </div>

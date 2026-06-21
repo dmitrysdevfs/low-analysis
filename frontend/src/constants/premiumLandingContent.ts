@@ -34,7 +34,12 @@ export const platformStructure: PlatformStructureItem[] = [
     iconId: "temple",
     title: "Правова база",
     desc: "Повна та актуальна база законодавства України з офіційних джерел. Зручна навігація, пошук та фільтри.",
-    bullets: ["Закони та кодекси", "Підзаконні акти", "Судова практика", "Міжнародні договори"],
+    bullets: [
+      "Закони та кодекси",
+      "Підзаконні акти",
+      "Судова практика",
+      "Міжнародні договори",
+    ],
     href: "/laws",
   },
   {
@@ -103,17 +108,53 @@ export const platformBenefits: PlatformBenefitItem[] = [
 ];
 
 export const premiumRoadmap: RoadmapItem[] = [
-  { done: true, text: "Запущено повноцінну правову базу", badgeLabel: "Готово" },
-  { done: true, text: "Розумний пошук та фільтрація документів", badgeLabel: "Готово" },
-  { done: true, text: "AI-помічник для аналізу норм і документів", badgeLabel: "Готово" },
-  { done: true, text: "Порівняння редакцій та історія змін", badgeLabel: "Готово" },
-  { done: true, text: "Персоналізований кабінет користувача", badgeLabel: "Готово" },
-  { done: true, text: "Система моніторингу змін законодавства", badgeLabel: "Готово" },
-  { done: false, text: "Інтеграція судової практики та аналітики", badgeLabel: "У планах" },
-  { done: false, text: "Конструктор правових документів", badgeLabel: "У планах" },
+  {
+    done: true,
+    text: "Запущено повноцінну правову базу",
+    badgeLabel: "Готово",
+  },
+  {
+    done: true,
+    text: "Розумний пошук та фільтрація документів",
+    badgeLabel: "Готово",
+  },
+  {
+    done: true,
+    text: "AI-помічник для аналізу норм і документів",
+    badgeLabel: "Готово",
+  },
+  {
+    done: true,
+    text: "Порівняння редакцій та історія змін",
+    badgeLabel: "Готово",
+  },
+  {
+    done: true,
+    text: "Персоналізований кабінет користувача",
+    badgeLabel: "Готово",
+  },
+  {
+    done: true,
+    text: "Система моніторингу змін законодавства",
+    badgeLabel: "Готово",
+  },
+  {
+    done: false,
+    text: "Інтеграція судової практики та аналітики",
+    badgeLabel: "У планах",
+  },
+  {
+    done: false,
+    text: "Конструктор правових документів",
+    badgeLabel: "У планах",
+  },
   { done: false, text: "Галузеві аналітичні дашборди", badgeLabel: "У планах" },
   { done: false, text: "Мобільний застосунок", badgeLabel: "У планах" },
-  { done: false, text: "API для інтеграції з вашими системами", badgeLabel: "У планах" },
+  {
+    done: false,
+    text: "API для інтеграції з вашими системами",
+    badgeLabel: "У планах",
+  },
   { done: false, text: "Мультимовність платформи", badgeLabel: "У планах" },
 ];
 

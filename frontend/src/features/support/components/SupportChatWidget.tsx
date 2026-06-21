@@ -236,7 +236,6 @@ export function SupportChatWidget() {
                 ) : (
                   <div className={styles.messagesList}>
                     {messages.map((item) => {
-
                       const isSupport =
                         item.senderType === "admin" ||
                         item.senderType === "telegram_support";
