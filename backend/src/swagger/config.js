@@ -56,6 +56,10 @@ API for parsing, structuring and analysing Ukrainian legislation.
       name: 'Laws',
       description: 'Laws, tree data, articles, stats and parsing',
     },
+    {
+      name: 'Search',
+      description: 'Повнотекстовий пошук по законах, статтях та метаданих',
+    },
     { name: 'Elements', description: 'Atomic law elements' },
     {
       name: 'Subjects',

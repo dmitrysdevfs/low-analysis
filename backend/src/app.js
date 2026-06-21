@@ -32,6 +32,7 @@ import billingRoutes from './routes/billingRoutes.js';
 import supervisorRoutes from './routes/supervisorRoutes.js';
 import forkRoutes from './routes/forkRoutes.js';
 import accessRequestRoutes from './routes/accessRequestRoutes.js';
+import searchRoutes from './routes/searchRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -109,6 +110,7 @@ app.use(
 );
 
 app.use('/api/laws', lawRoutes);
+app.use('/api/search', searchRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/taxonomies', taxonomyRoutes);
 app.use('/api/auth', authRoutes);
