@@ -117,14 +117,14 @@ describe("Account notes page", () => {
 
     expect(targetCard).not.toBeNull();
 
-    await user.click(
-      within(targetCard as HTMLElement).getByTitle("Видалити"),
-    );
+    await user.click(within(targetCard as HTMLElement).getByTitle("Видалити"));
     expect(screen.getByText("Видалити нотатку?")).toBeInTheDocument();
 
     const confirmSub = screen.getByText("Цю дію не можна скасувати.");
     const confirmActions = confirmSub.nextElementSibling as HTMLElement;
-    await user.click(within(confirmActions).getByRole("button", { name: "Видалити" }));
+    await user.click(
+      within(confirmActions).getByRole("button", { name: "Видалити" }),
+    );
     expect(removeNote).toHaveBeenCalledWith("note-1");
   });
 });
