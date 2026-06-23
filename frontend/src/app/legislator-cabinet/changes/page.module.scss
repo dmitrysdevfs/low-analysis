@@ -278,7 +278,9 @@
   color: var(--text-muted, var(--color-smoke));
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 
   &:hover {
     color: var(--text-primary, #fff7e8);
@@ -397,7 +399,9 @@
   font-size: 0.8rem;
   cursor: pointer;
   display: block;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 
   &:hover {
     border-color: rgba(231, 74, 74, 0.4);

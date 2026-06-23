@@ -31,7 +31,9 @@ describe("frontend route and config constants", () => {
     expect(ROUTES.supervisorChat).toBe("/supervisor/chat");
     expect(ROUTES.legislatorCabinetGroups).toBe("/legislator-cabinet/groups");
     expect(ROUTES.legislatorCabinetHistory).toBe("/legislator-cabinet/history");
-    expect(ROUTES.legislatorCabinetTemplates).toBe("/legislator-cabinet/templates");
+    expect(ROUTES.legislatorCabinetTemplates).toBe(
+      "/legislator-cabinet/templates",
+    );
     expect(ROUTES.legislatorCabinetChat).toBe("/legislator-cabinet/chat");
     expect(ROUTES.law("law-42")).toBe("/laws/law-42");
     expect(ROUTES.analysisLaw("law-42")).toBe("/analysis/laws/law-42");
