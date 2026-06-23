@@ -4,6 +4,9 @@ import { getSubjectCounts } from './subjectMetrics.service.js';
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+const MIN_QUERY_LENGTH = 2;
+const SEARCH_TIMEOUT_MS = 3000;
+
 // ── Read ──────────────────────────────────────────────────────────────────────
 
 export const getAllSubjects = async () => {
@@ -39,9 +42,9 @@ export const getSubjectById = async (id) => {
 /**
  * Autocomplete search over the subject registry.
  * Matches `q` against canonical_name and aliases (partial, case-insensitive).
- * Ranks exact matches first, then prefix, then partial; ties broken by mention
- * count (desc) and canonical name. Returns `{ _id, name, count }`.
- *
+ * Ranks exact matches first, then prefix, then partial; ties broken by law
+ * count (desc) and canonical name. `count` is the number of laws the subject
+ * appears in (matches the /api/laws?subjectId filter). Returns `{ _id, name, count }`.
  * @param {string} q - search term
  * @param {object} [opts]
  * @param {number} [opts.limit=10] - max results
@@ -49,13 +52,14 @@ export const getSubjectById = async (id) => {
  */
 export const searchSubjects = async (q, { limit = 10 } = {}) => {
   const term = (q ?? '').trim();
-  if (!term) return [];
+  if (term.length < MIN_QUERY_LENGTH) return [];
 
   const regex = new RegExp(escapeRegex(term), 'i');
   const subjects = await Subject.find({
     $or: [{ canonical_name: regex }, { aliases: regex }],
   })
     .select('canonical_name aliases')
+    .maxTimeMS(SEARCH_TIMEOUT_MS)
     .lean();
 
   if (subjects.length === 0) return [];
@@ -79,7 +83,7 @@ export const searchSubjects = async (q, { limit = 10 } = {}) => {
     .map((s) => ({
       subject: s,
       rank: matchRank(s),
-      count: counts.get(s._id.toString())?.elements_count ?? 0,
+      count: counts.get(s._id.toString())?.laws_count ?? 0,
     }))
     .sort(
       (a, b) =>
