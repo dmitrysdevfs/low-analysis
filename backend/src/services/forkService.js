@@ -87,6 +87,34 @@ export const submitFork = async (forkId, authorId) => {
   return fork.save();
 };
 
+export const getForksByUserIds = async (authorIds) => {
+  const forks = await LawFork.find({ authorId: { $in: authorIds } })
+    .populate('lawId', 'title code')
+    .populate('authorId', 'fullName email')
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  const forkIds = forks.map((f) => f._id);
+  const allChanges = await LawChange.find({ forkId: { $in: forkIds } }).lean();
+  const changeMap = {};
+  for (const c of allChanges) {
+    const key = String(c.forkId);
+    (changeMap[key] ??= []).push(c);
+  }
+  return forks.map((f) => ({ ...f, changes: changeMap[String(f._id)] ?? [] }));
+};
+
+export const reviewFork = async (forkId, action, reviewNote) => {
+  const fork = await LawFork.findById(forkId);
+  if (!fork) throw Object.assign(new Error('Fork not found'), { status: 404 });
+  if (fork.status !== 'review')
+    throw Object.assign(new Error('Fork is not in review status'), { status: 400 });
+
+  fork.status = action === 'approve' ? 'approved' : 'rejected';
+  fork.reviewNote = reviewNote ?? '';
+  return fork.save();
+};
+
 export const getDiff = async (forkId) => {
   const fork = await LawFork.findById(forkId)
     .populate('lawId', 'title code')

@@ -1,0 +1,541 @@
+/* ─── Full-page workspace layout ─────────────────────────────────────────── */
+
+.workspace {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-bg, #060e1c);
+}
+
+/* ─── Left sidebar ───────────────────────────────────────────────────────── */
+
+.sidebar {
+  width: 80px;
+  min-height: 100vh;
+  background: #050c18;
+  border-right: 1px solid rgba(28, 50, 96, 0.44);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 24px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+  overflow-x: hidden;
+}
+
+.sidebarTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.logoBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #c8a843 0%, #8a6e1e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.logoMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+
+  span {
+    font-family: var(--font-mono);
+    font-size: 0.54rem;
+    letter-spacing: 0.18em;
+    color: var(--color-smoke);
+    text-transform: uppercase;
+  }
+
+  span:first-child {
+    color: #f0d57a;
+  }
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.navItem {
+  width: 52px;
+  min-height: 52px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--color-smoke);
+  text-decoration: none;
+  transition:
+    background 0.18s,
+    color 0.18s;
+
+  &:hover {
+    background: rgba(74, 128, 212, 0.1);
+    color: #c8d8f4;
+  }
+}
+
+.navItemActive {
+  background: rgba(200, 168, 67, 0.14);
+  color: #f0d57a;
+  border: 1px solid rgba(200, 168, 67, 0.26);
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.18);
+    color: #f5dc8a;
+  }
+}
+
+.navLabel {
+  font-size: 0.52rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.sidebarBottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 2px solid rgba(200, 168, 67, 0.5);
+  background: rgba(200, 168, 67, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #f0d57a;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.userName,
+.userRole {
+  font-size: 0.5rem;
+  text-align: center;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+}
+
+.userName {
+  color: var(--color-smoke-light);
+}
+
+.userRole {
+  color: var(--color-smoke);
+}
+
+/* ─── Main scroll area ───────────────────────────────────────────────────── */
+
+.mainScroll {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* ─── Main content ───────────────────────────────────────────────────────── */
+
+.mainContent {
+  padding: 32px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ─── Hero eyebrow / title ───────────────────────────────────────────────── */
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-gold, #c8a843);
+  margin-bottom: 8px;
+}
+
+.pageTitle {
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  color: #fff7e8;
+}
+
+/* ─── Hero aside strip ───────────────────────────────────────────────────── */
+
+.heroAside {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.heroAsideItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heroAsideLabel {
+  font-size: 0.72rem;
+  color: var(--color-smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-mono);
+}
+
+.heroAsideValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff7e8;
+}
+
+/* ─── Period selector ────────────────────────────────────────────────────── */
+
+.periodSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--border, rgba(28, 50, 96, 0.76));
+  border-radius: 8px;
+  background: var(--surface, rgba(8, 17, 32, 0.72));
+  color: var(--text-primary, #fff7e8);
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+  cursor: pointer;
+  display: block;
+}
+
+/* ─── KPI row — 3 cards ──────────────────────────────────────────────────── */
+
+.kpiRow3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.kpiCard {
+  background: var(--surface, rgba(8, 17, 32, 0.72));
+  border: 1px solid var(--border, rgba(28, 50, 96, 0.76));
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  color: var(--color-smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  margin-top: 0;
+  font-family: var(--font-mono);
+}
+
+.kpiValue {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff7e8);
+  margin: 0;
+}
+
+/* ─── Section wrappers ───────────────────────────────────────────────────── */
+
+.section {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff7e8);
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+.chartArea {
+  background: var(--surface, rgba(8, 17, 32, 0.72));
+  border: 1px solid var(--border, rgba(28, 50, 96, 0.76));
+  border-radius: 12px;
+  padding: 20px;
+}
+
+/* ─── Bar chart ──────────────────────────────────────────────────────────── */
+
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  height: 140px;
+  padding-bottom: 8px;
+}
+
+.barGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.barGroupInner {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.bar {
+  width: 18px;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: height 0.3s;
+}
+
+.barSingle {
+  background: var(--accent, #c8a843);
+  width: 24px;
+}
+
+.barLabel {
+  font-size: 0.72rem;
+  color: var(--color-smoke);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* ─── Horizontal bar row ─────────────────────────────────────────────────── */
+
+.hBarList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hBarRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hBarName {
+  font-size: 0.875rem;
+  color: var(--text-primary, #fff7e8);
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.hBarTrack {
+  flex: 1;
+  height: 8px;
+  background: var(--border, rgba(28, 50, 96, 0.76));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hBarValue {
+  font-size: 0.8rem;
+  color: var(--color-smoke);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ─── Compare section ────────────────────────────────────────────────────── */
+
+.compareList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.compareRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compareLabel {
+  font-size: 0.85rem;
+  color: var(--color-smoke-light);
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.compareTrack {
+  flex: 1;
+  height: 10px;
+  background: var(--border, rgba(28, 50, 96, 0.76));
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.compareFillMy {
+  background: var(--accent, #c8a843);
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s;
+}
+
+.compareFillGroup {
+  background: #4a80d4;
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s;
+}
+
+.compareFillPlatform {
+  background: #9b5de5;
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s;
+}
+
+.compareNote {
+  font-size: 0.75rem;
+  color: var(--color-smoke);
+  font-style: italic;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+/* ─── Portfolio ──────────────────────────────────────────────────────────── */
+
+.portfolioRow {
+  display: flex;
+  gap: 14px;
+}
+
+.portfolioCard {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.portfolioApproved {
+  background: rgba(82, 183, 136, 0.08);
+  border: 1px solid rgba(82, 183, 136, 0.2);
+}
+
+.portfolioRejected {
+  background: rgba(231, 74, 74, 0.06);
+  border: 1px solid rgba(231, 74, 74, 0.15);
+}
+
+.portfolioPending {
+  background: rgba(231, 147, 47, 0.08);
+  border: 1px solid rgba(231, 147, 47, 0.2);
+}
+
+.portfolioNum {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff7e8);
+  margin: 0 0 4px;
+}
+
+.portfolioLabel {
+  font-size: 0.78rem;
+  color: var(--color-smoke);
+  margin: 0;
+}
+
+/* ─── Loading / Error states ─────────────────────────────────────────────── */
+
+.loadingState,
+.errorState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  font-size: 0.95rem;
+  color: var(--color-smoke);
+}
+
+.errorState {
+  color: #f39b9b;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .kpiRow3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 780px) {
+  .sidebar {
+    display: none;
+  }
+
+  .mainContent {
+    padding: 20px 16px;
+  }
+
+  .kpiRow3 {
+    grid-template-columns: 1fr;
+  }
+
+  .compareLabel {
+    width: 140px;
+  }
+
+  .portfolioRow {
+    flex-direction: column;
+  }
+
+  .hBarName {
+    width: 90px;
+  }
+}

@@ -72,6 +72,10 @@ export const castVote = async (proposal_id, user, vote) => {
   const proposal = await LawChangeProposal.findById(proposal_id);
   if (!proposal)
     throw Object.assign(new Error('Proposal not found'), { status: 404 });
+
+  if (proposal.created_by.toString() === user._id.toString())
+    throw Object.assign(new Error('Cannot vote on your own proposal'), { status: 403 });
+
   if (proposal.status !== 'active')
     throw Object.assign(
       new Error('Voting is only allowed on active proposals'),

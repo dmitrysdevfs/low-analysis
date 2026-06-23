@@ -53,6 +53,7 @@ const lawChangeProposalSchema = new mongoose.Schema(
         'withdrawn',
         'archived',
         'superseded',
+        'expired',
       ],
       default: 'draft',
       index: true,

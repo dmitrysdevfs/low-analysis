@@ -27,6 +27,7 @@ import {
   useSupervisorGroupDetail,
   useUpdateSupervisorGroup,
 } from "@/hooks/useSupervisor";
+import { useGroupRequests, useReviewRequest } from "@/hooks/useGroups";
 import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
 
@@ -185,13 +186,13 @@ function DetailSkeleton() {
 }
 
 export default function SupervisorGroupPage() {
-  const { isSupervisor, isHydrated } = useAuth();
+  const { isSupervisor, isAdmin, isHydrated } = useAuth();
 
   if (!isHydrated) {
     return <DetailSkeleton />;
   }
 
-  if (!isSupervisor) {
+  if (!isSupervisor && !isAdmin) {
     return <AccessGate />;
   }
 
@@ -207,6 +208,18 @@ function SupervisorGroupView() {
   const groupId = Array.isArray(params?.id) ? params.id[0] : params?.id || null;
   const { data, isLoading, error } = useSupervisorGroupDetail(groupId);
   const updateGroup = useUpdateSupervisorGroup();
+  const { data: groupRequests = [] } = useGroupRequests(groupId ?? "");
+  const reviewRequest = useReviewRequest(groupId ?? "");
+
+  const pendingRequests = groupRequests.filter((r) => r.status === "pending");
+
+  const handleReview = async (reqId: string, action: "approve" | "reject") => {
+    try {
+      await reviewRequest.mutateAsync({ reqId, action });
+    } catch {
+      // error handled via mutation state
+    }
+  };
 
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
@@ -706,6 +719,65 @@ function SupervisorGroupView() {
                     </div>
                   </article>
                 ))}
+              </div>
+            )}
+          </section>
+
+          {/* ── Pending Requests ─────────────────────────────────────────── */}
+          <section className={`${styles.sectionPanel} panel`}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <span className={styles.sectionEyebrow}>Заявки</span>
+                <h2 className={styles.sectionTitle}>Очікують розгляду</h2>
+              </div>
+              <span className={styles.sectionMeta}>{pendingRequests.length} pending</span>
+            </div>
+
+            {pendingRequests.length === 0 ? (
+              <div className={styles.emptyState}>
+                <Users size={18} />
+                <p>Немає нових заявок на вступ до групи.</p>
+              </div>
+            ) : (
+              <div className={styles.memberList}>
+                {pendingRequests.map((req) => {
+                  const user = typeof req.userId === "object" ? req.userId : null;
+                  return (
+                    <article key={req._id} className={styles.memberItem}>
+                      <div className={styles.memberMain}>
+                        <div className={styles.memberHeader}>
+                          <div>
+                            <h3 className={styles.memberName}>{user?.fullName ?? "—"}</h3>
+                            <p className={styles.memberEmail}>{user?.email ?? ""}</p>
+                          </div>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <button
+                              type="button"
+                              className="btn btn-primary"
+                              style={{ fontSize: "0.75rem", padding: "4px 12px" }}
+                              onClick={() => handleReview(req._id, "approve")}
+                              disabled={reviewRequest.isPending}
+                            >
+                              Прийняти
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-outline"
+                              style={{ fontSize: "0.75rem", padding: "4px 12px" }}
+                              onClick={() => handleReview(req._id, "reject")}
+                              disabled={reviewRequest.isPending}
+                            >
+                              Відхилити
+                            </button>
+                          </div>
+                        </div>
+                        {req.message && (
+                          <p className={styles.memberHint}>&ldquo;{req.message}&rdquo;</p>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
           </section>

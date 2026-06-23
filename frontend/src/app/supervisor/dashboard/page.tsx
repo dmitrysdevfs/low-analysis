@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
+  AlertTriangle,
   ArrowUpRight,
   BarChart3,
   BookOpen,
@@ -16,11 +18,13 @@ import {
   FolderKanban,
   GraduationCap,
   History,
-  LayoutGrid,
+  MessageCircle,
   MessagesSquare,
+  GitGraph,
   Network,
   PenLine,
   Plus,
+  Radar,
   RefreshCcw,
   Scale,
   Search,
@@ -29,14 +33,61 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import { ForkDiffModal } from "@/components/fork/ForkDiffModal";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
 import {
   useCreateSupervisorGroup,
   useSupervisorDashboard,
 } from "@/hooks/useSupervisor";
+import { getJson, requestJson } from "@/lib/api/_client";
+import type { LawChangeProposal } from "@/types/law-change.types";
 import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
+
+// ── Expired proposals helpers ─────────────────────────────────────────────────
+
+type ExpiredResponse = LawChangeProposal[] | { proposals: LawChangeProposal[]; total: number };
+
+function extractExpired(data: ExpiredResponse): LawChangeProposal[] {
+  if (Array.isArray(data)) return data;
+  return data.proposals;
+}
+
+function fetchExpiredProposals() {
+  return getJson<ExpiredResponse>("/law-change/proposals?status=expired");
+}
+
+function doReviewProposal(id: string, action: "approve" | "reject") {
+  return requestJson<LawChangeProposal>(`/law-change/proposals/${id}/review`, "POST", { action });
+}
+
+function useExpiredProposals() {
+  return useQuery({
+    queryKey: ["law-change-proposals-expired"],
+    queryFn: fetchExpiredProposals,
+    staleTime: 30_000,
+    select: extractExpired,
+  });
+}
+
+function useReviewProposal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, action }: { id: string; action: "approve" | "reject" }) =>
+      doReviewProposal(id, action),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["law-change-proposals-expired"] });
+    },
+  });
+}
+
+const CHANGE_TYPE_LABELS: Record<string, string> = {
+  edit: "Редагування",
+  add: "Додавання",
+  delete: "Видалення",
+  move: "Переміщення",
+};
 
 function formatRelativeDate(value: string | null) {
   if (!value) return "Без активності";
@@ -101,31 +152,32 @@ const SIDEBAR_NAV = [
     href: ROUTES.supervisorDashboard,
     active: true,
   },
-  { icon: <Users size={20} />, label: "Групи", href: "#groups" },
+  { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
   {
     icon: <FileText size={20} />,
     label: "Пропозиції",
-    href: ROUTES.legislatorCabinet,
+    href: ROUTES.supervisorProposals,
   },
   {
     icon: <PenLine size={20} />,
     label: "Поправки",
-    href: ROUTES.legislatorCabinet,
+    href: ROUTES.supervisorAmendments,
   },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinet },
+  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: "#changes" },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: "#comments" },
+  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
+  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
+  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
+  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
   {
     icon: <Shield size={20} />,
     label: "Правила",
-    href: ROUTES.rolesSupervisor,
+    href: ROUTES.supervisorRules,
   },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: "#analytics" },
-  { icon: <History size={20} />, label: "Історія", href: "#" },
-  { icon: <LayoutGrid size={20} />, label: "Шаблони", href: "#" },
-  { icon: <Settings size={20} />, label: "Налаштування", href: ROUTES.account },
+  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
+  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
+  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
 ];
 
 function SupervisorSidebar({
@@ -246,6 +298,120 @@ export default function SupervisorDashboardPage() {
   );
 }
 
+// ── Expired Proposals Section ─────────────────────────────────────────────────
+
+function ExpiredProposalsSection() {
+  const { data: proposals, isLoading, error } = useExpiredProposals();
+  const review = useReviewProposal();
+
+  async function handleReview(id: string, action: "approve" | "reject") {
+    try {
+      await review.mutateAsync({ id, action });
+      notify.success(action === "approve" ? "Затверджено" : "Відхилено");
+    } catch (err) {
+      notify.error(err instanceof Error ? err.message : "Помилка перегляду");
+    }
+  }
+
+  return (
+    <section className={`${styles.sectionPanel} panel`}>
+      <div className={styles.sectionHeader}>
+        <div>
+          <span className={styles.sectionEyebrow}>ПРОСТРОЧЕНІ ГОЛОСУВАННЯ</span>
+          <h2 className={styles.sectionTitle}>Прострочені голосування</h2>
+        </div>
+        {proposals && proposals.length > 0 && (
+          <span className={styles.expiredCount}>
+            <AlertTriangle size={14} />
+            {proposals.length}
+          </span>
+        )}
+      </div>
+
+      {isLoading && (
+        <div className={styles.emptyState}>
+          <RefreshCcw size={22} className={styles.emptyIcon} />
+          <p className={styles.emptyTitle}>Завантаження...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className={styles.emptyState}>
+          <p className={styles.emptyTitle}>Не вдалося завантажити дані</p>
+        </div>
+      )}
+
+      {!isLoading && !error && (!proposals || proposals.length === 0) && (
+        <div className={styles.emptyState}>
+          <CheckCircle2 size={28} className={styles.emptyIcon} />
+          <p className={styles.emptyTitle}>Прострочених голосувань немає</p>
+          <span className={styles.emptyDesc}>
+            Усі пропозиції розглянуті або знаходяться в активному голосуванні.
+          </span>
+        </div>
+      )}
+
+      {!isLoading && proposals && proposals.length > 0 && (
+        <div className={styles.expiredList}>
+          {proposals.map((proposal) => (
+            <article key={proposal._id} className={styles.expiredItem}>
+              <div className={styles.expiredItemHead}>
+                <div className={styles.expiredItemMeta}>
+                  <span className={styles.expiredTypeBadge}>
+                    {CHANGE_TYPE_LABELS[proposal.change_type] ?? proposal.change_type}
+                  </span>
+                  <span className={styles.expiredAuthor}>
+                    {proposal.author_display_name}
+                  </span>
+                  {proposal.voting_deadline && (
+                    <span className={styles.expiredDeadline}>
+                      <Clock3 size={12} />
+                      {new Date(proposal.voting_deadline).toLocaleDateString("uk-UA", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  )}
+                </div>
+                <div className={styles.expiredActions}>
+                  <button
+                    type="button"
+                    className={styles.expiredBtnApprove}
+                    disabled={review.isPending}
+                    onClick={() => handleReview(proposal._id, "approve")}
+                  >
+                    Затвердити ✓
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.expiredBtnReject}
+                    disabled={review.isPending}
+                    onClick={() => handleReview(proposal._id, "reject")}
+                  >
+                    Відхилити ✗
+                  </button>
+                </div>
+              </div>
+              {proposal.proposed_text && (
+                <p className={styles.expiredText}>
+                  {proposal.proposed_text.slice(0, 200)}
+                  {proposal.proposed_text.length > 200 ? "…" : ""}
+                </p>
+              )}
+              {proposal.reason && (
+                <p className={styles.expiredReason}>
+                  <span>Причина:</span> {proposal.reason}
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function SupervisorDashboardView() {
   const { data, isLoading, error } = useSupervisorDashboard();
   const createGroup = useCreateSupervisorGroup();
@@ -255,6 +421,7 @@ function SupervisorDashboardView() {
   const [groupCourse, setGroupCourse] = useState("");
   const [search, setSearch] = useState("");
   const [groupFilter, setGroupFilter] = useState("all");
+  const [diffForkId, setDiffForkId] = useState<string | null>(null);
 
   const filteredMonitoring = useMemo(() => {
     const rows = data?.groupMonitoring ?? [];
@@ -468,10 +635,10 @@ function SupervisorDashboardView() {
             tone: "gold",
           },
           {
-            label: "Коментарі",
+            label: "Учасники",
             value: data.totalMembers,
             note: "Людей, за активністю яких ви спостерігаєте",
-            icon: <MessagesSquare size={20} />,
+            icon: <Users size={20} />,
             tone: "blue",
           },
           {
@@ -853,6 +1020,15 @@ function SupervisorDashboardView() {
                     </p>
                     <div className={styles.feedBottom}>
                       <span className={styles.feedStatus}>{item.status}</span>
+                      {item.type === "fork" && item.id && (
+                        <button
+                          type="button"
+                          className={styles.inlineLink}
+                          onClick={() => setDiffForkId(item.id)}
+                        >
+                          Переглянути diff
+                        </button>
+                      )}
                       <Link
                         href={ROUTES.law(item.lawId)}
                         className={styles.inlineLink}
@@ -891,7 +1067,7 @@ function SupervisorDashboardView() {
               <ChevronRight size={14} />
             </Link>
             <Link
-              href={ROUTES.rolesSupervisor}
+              href={ROUTES.supervisorRules}
               className={styles.supervisorLink}
             >
               <Shield size={14} />
@@ -907,6 +1083,12 @@ function SupervisorDashboardView() {
           </div>
         </section>
       </div>
+      {/* ── EXPIRED PROPOSALS ────────────────────────────────────────────── */}
+      <ExpiredProposalsSection />
+
+      {diffForkId && (
+        <ForkDiffModal forkId={diffForkId} onClose={() => setDiffForkId(null)} />
+      )}
     </div>
   );
 }

@@ -10,13 +10,50 @@ import { THEMES } from './themes.js';
 const router = Router();
 router.use(protect, authorize('admin'));
 
-// GET /api/admin/email/themes
+/**
+ * @swagger
+ * /api/admin/email/themes:
+ *   get:
+ *     summary: List available email themes
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Available theme slugs and labels
+ */
 router.get('/themes', (_req, res) => {
   res.json(Object.entries(THEMES).map(([slug, t]) => ({ slug, name: t.name })));
 });
 
-// POST /api/admin/email/preview
-// Body: { templateSlug, theme, subject, previewText, props }
+/**
+ * @swagger
+ * /api/admin/email/preview:
+ *   post:
+ *     summary: Render email HTML preview
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               templateSlug: { type: string, example: password-reset }
+ *               theme: { type: string, example: default }
+ *               subject: { type: string, example: Welcome to Law Analysis }
+ *               previewText: { type: string, example: Preview text for inbox snippets }
+ *               props:
+ *                 type: object
+ *                 additionalProperties: true
+ *     responses:
+ *       200:
+ *         description: Rendered HTML preview
+ *       400:
+ *         description: Invalid template payload
+ */
 router.post('/preview', (req, res) => {
   try {
     const html = renderEmailTemplate(req.body);
@@ -26,8 +63,42 @@ router.post('/preview', (req, res) => {
   }
 });
 
-// POST /api/admin/email/audience-preview
-// Body: { type, roles, billingPlans, customEmails }
+/**
+ * @swagger
+ * /api/admin/email/audience-preview:
+ *   post:
+ *     summary: Preview recipient count for selected audience
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [type]
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 enum: [all, role, billing, custom]
+ *               roles:
+ *                 type: array
+ *                 items: { type: string }
+ *               billingPlans:
+ *                 type: array
+ *                 items: { type: string }
+ *               customEmails:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: email
+ *     responses:
+ *       200:
+ *         description: Audience size preview
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post('/audience-preview', async (req, res) => {
   try {
     const count = await previewAudienceCount(req.body);
@@ -37,7 +108,48 @@ router.post('/audience-preview', async (req, res) => {
   }
 });
 
-// GET /api/admin/email/campaigns
+/**
+ * @swagger
+ * /api/admin/email/campaigns:
+ *   get:
+ *     summary: List email campaigns
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recent campaigns
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ *   post:
+ *     summary: Save campaign draft
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [subject, templateSlug, theme, audience]
+ *             properties:
+ *               subject: { type: string }
+ *               previewText: { type: string }
+ *               templateSlug: { type: string }
+ *               theme: { type: string }
+ *               props:
+ *                 type: object
+ *                 additionalProperties: true
+ *               audience:
+ *                 type: object
+ *                 additionalProperties: true
+ *     responses:
+ *       201:
+ *         description: Campaign draft created
+ *       400:
+ *         description: Invalid campaign payload
+ */
 router.get('/campaigns', async (_req, res) => {
   try {
     const campaigns = await EmailCampaign.find()
@@ -50,7 +162,6 @@ router.get('/campaigns', async (_req, res) => {
   }
 });
 
-// POST /api/admin/email/campaigns (save draft)
 router.post('/campaigns', async (req, res) => {
   try {
     const { subject, previewText, templateSlug, theme, props, audience } =
@@ -78,7 +189,29 @@ router.post('/campaigns', async (req, res) => {
   }
 });
 
-// POST /api/admin/email/campaigns/:id/send
+/**
+ * @swagger
+ * /api/admin/email/campaigns/{id}/send:
+ *   post:
+ *     summary: Send a saved campaign
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Campaign send result
+ *       400:
+ *         description: Campaign already sent or invalid
+ *       404:
+ *         description: Campaign not found
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post('/campaigns/:id/send', async (req, res) => {
   try {
     const campaign = await EmailCampaign.findById(req.params.id);
@@ -123,7 +256,38 @@ router.post('/campaigns/:id/send', async (req, res) => {
   }
 });
 
-// POST /api/admin/email/send (compose + send in one step)
+/**
+ * @swagger
+ * /api/admin/email/send:
+ *   post:
+ *     summary: Compose and send campaign in one step
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [subject, templateSlug, theme, audience]
+ *             properties:
+ *               subject: { type: string }
+ *               previewText: { type: string }
+ *               templateSlug: { type: string }
+ *               theme: { type: string }
+ *               props:
+ *                 type: object
+ *                 additionalProperties: true
+ *               audience:
+ *                 type: object
+ *                 additionalProperties: true
+ *     responses:
+ *       200:
+ *         description: Campaign created and sent
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post('/send', async (req, res) => {
   try {
     const { subject, previewText, templateSlug, theme, props, audience } =
@@ -181,7 +345,25 @@ router.post('/send', async (req, res) => {
   }
 });
 
-// GET /api/admin/email/campaigns/:id/logs
+/**
+ * @swagger
+ * /api/admin/email/campaigns/{id}/logs:
+ *   get:
+ *     summary: Get delivery logs for a campaign
+ *     tags: [AdminEmail]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Delivery logs for the campaign
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.get('/campaigns/:id/logs', async (req, res) => {
   try {
     const logs = await EmailLog.find({ campaignId: req.params.id })

@@ -34,6 +34,10 @@ import supervisorRoutes from './routes/supervisorRoutes.js';
 import forkRoutes from './routes/forkRoutes.js';
 import accessRequestRoutes from './routes/accessRequestRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
+import groupRoutes from './routes/groups.routes.js';
+import graphProposalRoutes from './routes/graphProposal.routes.js';
+import radiantProposalRoutes from './routes/radiantProposal.routes.js';
+import groupChatRoutes from './modules/group-chat/groupChat.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import {
@@ -145,6 +149,10 @@ app.use('/api/billing', billingRoutes);
 app.use('/api/supervisor', supervisorRoutes);
 app.use('/api/forks', forkRoutes);
 app.use('/api/legislator-requests', accessRequestRoutes);
+app.use('/api/groups', groupRoutes);
+app.use('/api/graph-proposals', graphProposalRoutes);
+app.use('/api/radiant-proposals', radiantProposalRoutes);
+app.use('/api/group-chats', groupChatRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Low Analysis API is running', version: '0.1.0' });

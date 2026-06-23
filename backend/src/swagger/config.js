@@ -26,7 +26,8 @@ API for parsing, structuring and analysing Ukrainian legislation.
 - article and element drill-down
 - statistics and heatmap datasets
 - subjects and taxonomy
-- managed public pages for the project site
+- public and admin content management
+- collaboration flows for proposals, forks, groups and supervision
 
 ### Authentication
 1. Register via \`POST /api/auth/register\` or login via \`POST /api/auth/login\`
@@ -54,11 +55,11 @@ API for parsing, structuring and analysing Ukrainian legislation.
     { name: 'Auth', description: 'Authentication and account management' },
     {
       name: 'Laws',
-      description: 'Laws, tree data, articles, stats and parsing',
+      description: 'Laws, trees, articles, stats, parsing and law-scoped views',
     },
     {
       name: 'Search',
-      description: 'Повнотекстовий пошук по законах, статтях та метаданих',
+      description: 'Full-text and structured search across laws and metadata',
     },
     { name: 'Elements', description: 'Atomic law elements' },
     {
@@ -67,89 +68,112 @@ API for parsing, structuring and analysing Ukrainian legislation.
     },
     { name: 'Taxonomy', description: 'Taxonomy categories and classification' },
     { name: 'Pages', description: 'Managed public pages and page builder API' },
-    { name: 'Roadmap', description: 'Публічний roadmap і адмін-редагування' },
+    { name: 'Roadmap', description: 'Public roadmap and admin editing' },
     {
       name: 'Assistant',
-      description: 'Lex AI Помічник — чат, сесії, квота, фідбек',
+      description: 'Lex AI assistant: chat, sessions, quota and feedback',
     },
     {
       name: 'Proposals',
-      description: 'Законопроєкти (пакети пропонованих змін)',
+      description: 'Classic proposal workflow for amendment packages',
     },
     {
       name: 'Amendments',
-      description: 'Поправки на рівні окремих елементів закону',
+      description: 'Amendments on individual law elements',
     },
     {
       name: 'Comments',
-      description: 'Коментарі до законопроєктів та поправок',
+      description: 'Comments for proposals and amendments',
     },
-    { name: 'Votes', description: 'Голосування за поправки' },
+    { name: 'Votes', description: 'Voting endpoints' },
     {
       name: 'LawChange',
-      description:
-        'Законотворчий процес: пропозиції, голоси, затверджені зміни',
+      description: 'Law-change workflow: proposals, votes and approved changes',
     },
     {
       name: 'Support',
-      description: 'Клієнтська підтримка: web-чат та Telegram-доставка',
+      description: 'Client support: web chat and Telegram delivery',
+    },
+    {
+      name: 'AdminEmail',
+      description:
+        'Admin email center: themes, previews, audiences, campaigns and delivery logs',
     },
     {
       name: 'Admin',
-      description: 'Адмін-панель: дашборд, ключові метрики платформи',
+      description: 'Admin dashboard and platform-level controls',
     },
     {
       name: 'AdminUsers',
-      description: 'Адмін: управління користувачами, ролі, статуси, білінг',
+      description: 'Admin user management, roles, status and billing state',
     },
     {
       name: 'AdminAudit',
-      description: 'Адмін: операційний журнал подій та аудит-лог',
+      description: 'Admin audit log and operational events',
     },
     {
       name: 'AdminSupport',
       description:
-        'Адмін: управління зверненнями підтримки, ескалація, нотатки',
+        'Admin support operations, escalation, notes and Telegram bridge',
     },
     {
       name: 'AdminInbox',
-      description: 'Адмін: Gmail Inbox — треди, відповіді, синхронізація',
+      description: 'Admin Gmail inbox, threads, replies and sync',
     },
     {
       name: 'AdminBilling',
-      description: 'Адмін: призначення тарифних планів користувачам',
+      description: 'Admin plan assignment and billing operations',
     },
-    { name: 'AdminSuperCode', description: 'Адмін: супер-код входу, ротація' },
+    { name: 'AdminSuperCode', description: 'Admin super-code rotation' },
     {
       name: 'AdminNotifications',
-      description: 'Адмін: сповіщення, dismiss-стан',
+      description: 'Admin notifications and dismiss state',
     },
     {
       name: 'AdminActivity',
-      description: 'Адмін: активність конкретного користувача',
+      description: 'Admin-facing per-user activity feed',
     },
     {
       name: 'Me',
-      description: 'Поточний авторизований користувач: профіль, налаштування',
+      description: 'Current authenticated user preferences, saved items and analytics',
     },
-    { name: 'Notes', description: 'Нотатки до законів та статей' },
-    { name: 'Graph', description: "Граф зв'язків між законами та елементами" },
+    { name: 'Notes', description: 'Personal law and article notes' },
+    {
+      name: 'Graph',
+      description: 'Relationship graph between laws, references and subjects',
+    },
     {
       name: 'Forks',
-      description: 'Fork-версії законів для законотворчої роботи',
+      description: 'Fork-based collaborative legislative work',
     },
-    { name: 'Billing', description: 'Білінг: плани, квоти, статус підписки' },
+    { name: 'Billing', description: 'Plans, quotas and subscription overview' },
+    {
+      name: 'Groups',
+      description: 'Public and supervised work groups, requests and membership',
+    },
+    {
+      name: 'GroupChat',
+      description: 'Private group chat rooms and message history',
+    },
     {
       name: 'Supervisor',
-      description: 'Supervisor API для внутрішнього моніторингу',
+      description: 'Supervisor APIs for groups, monitoring and analytics',
+    },
+    {
+      name: 'GraphProposals',
+      description: 'Proposal workflow for the graph workspace',
+    },
+    {
+      name: 'RadiantProposals',
+      description: 'Proposal workflow for the radiant workspace',
     },
     {
       name: 'LegislatorRequests',
-      description: 'Запити на доступ до законотворчих функцій',
+      description: 'Requests for legislator access and role review',
     },
     {
       name: 'Activity',
-      description: 'Стрічка активності: дії користувачів та системи',
+      description: 'Tracked user activity and product events',
     },
   ],
   components: {
@@ -232,6 +256,7 @@ export const swaggerOptions = {
     './src/modules/queue/*.js',
     './src/modules/support/*.js',
     './src/modules/email/*.js',
+    './src/modules/group-chat/*.js',
   ],
 };
 

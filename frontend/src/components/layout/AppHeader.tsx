@@ -14,6 +14,7 @@ import { SessionMenu } from "./SessionMenu";
 import { AppSidebar } from "./AppSidebar";
 import { PatreonButton } from "@/components/support/PatreonButton";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
+import { useActiveProposalsCount } from "@/hooks/useLawChangeProposals";
 import styles from "./AppHeader.module.scss";
 
 export function AppHeader() {
@@ -37,6 +38,7 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   const [isDragging, setIsDragging] = useState(false);
   const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } =
     useAuth();
+  const activeProposalsCount = useActiveProposalsCount();
   const isAuthPage = pathname.startsWith(ROUTES.auth);
   const isAdminPage = false;
   const isHome = pathname === "/";
@@ -226,6 +228,23 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
                 className={`nav-link${isActive ? " active" : ""}`}
               >
                 {item.label}
+                {item.href === ROUTES.proposals && activeProposalsCount > 0 && (
+                  <span
+                    style={{
+                      marginLeft: 4,
+                      background: "var(--color-danger, #e53e3e)",
+                      color: "#fff",
+                      borderRadius: "10px",
+                      padding: "0 5px",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      lineHeight: "16px",
+                      display: "inline-block",
+                    }}
+                  >
+                    {activeProposalsCount}
+                  </span>
+                )}
               </Link>
             );
           })}

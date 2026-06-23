@@ -8,6 +8,7 @@
  * @returns {number} 0 | 1 | 3
  */
 export function calculateVoteWeight(role) {
+  if (role === 'supervisor') return 5;
   if (role === 'legislator') return 3;
   if (role === 'admin') return 0;
   return 1; // user, paid_user

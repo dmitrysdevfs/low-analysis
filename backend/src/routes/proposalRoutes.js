@@ -1,6 +1,6 @@
 import express from 'express';
 import * as proposalController from '../controllers/proposalController.js';
-import { protect, hasPermission } from '../middleware/authMiddleware.js';
+import { protect, hasPermission, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -278,6 +278,54 @@ router.get(
   protect,
   hasPermission('laws:read'),
   proposalController.generateDocument,
+);
+
+/**
+ * @swagger
+ * /api/proposals/{id}/review:
+ *   post:
+ *     summary: Review proposal as supervisor or admin
+ *     tags: [Proposals]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [action]
+ *             properties:
+ *               action:
+ *                 type: string
+ *                 enum: [approve, reject]
+ *               note:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Proposal reviewed
+ *       400:
+ *         description: Invalid review payload
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       404:
+ *         description: Proposal not found
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.post(
+  '/:id/review',
+  protect,
+  authorize('supervisor', 'admin'),
+  proposalController.reviewProposal,
 );
 
 export default router;

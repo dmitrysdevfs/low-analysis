@@ -15,17 +15,23 @@ export const createProposal = async (req, res, next) => {
 
 export const getProposals = async (req, res, next) => {
   try {
-    const { law_id, element_id, status } = req.query;
+    const { law_id, element_id, status, page, limit } = req.query;
     const filters = {};
     if (element_id) filters.element_id = element_id;
     if (status) filters.status = status;
 
-    if (!law_id)
-      return res
-        .status(400)
-        .json({ message: 'law_id query param is required' });
-    const proposals = await proposalService.getProposalsByLaw(law_id, filters);
-    res.json(proposals);
+    const pagination =
+      page && limit
+        ? { page: parseInt(page, 10), limit: parseInt(limit, 10) }
+        : null;
+
+    if (law_id) {
+      const proposals = await proposalService.getProposalsByLaw(law_id, filters);
+      res.json(proposals);
+    } else {
+      const result = await proposalService.getAllProposals(filters, pagination);
+      res.json(result);
+    }
   } catch (err) {
     next(err);
   }
@@ -93,4 +99,12 @@ export const deleteProposal = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+export const reviewProposal = async (req, res, next) => {
+  try {
+    const { action } = req.body; // 'approve' | 'reject'
+    const proposal = await proposalService.reviewProposal(req.params.id, action, req.user);
+    res.json(proposal);
+  } catch (err) { next(err); }
 };

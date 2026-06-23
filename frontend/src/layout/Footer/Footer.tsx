@@ -49,7 +49,7 @@ function CursorBlink({
 
 const WORKSPACE_ROUTES = [
   ROUTES.admin,
-  ROUTES.supervisorDashboard,
+  "/supervisor",
   ROUTES.legislatorCabinet,
 ];
 

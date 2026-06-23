@@ -33,7 +33,7 @@ router.get(
  * @swagger
  * /api/law-change/approved:
  *   get:
- *     summary: Get approved changes for a law (query: law_id)
+ *     summary: Get approved changes for a law
  *     tags: [LawChange]
  *     security:
  *       - bearerAuth: []
@@ -49,7 +49,7 @@ router.get(
  * @swagger
  * /api/law-change/approved/feed:
  *   get:
- *     summary: Paginated feed of approved changes (page, limit)
+ *     summary: Get paginated feed of approved changes
  *     tags: [LawChange]
  *     security:
  *       - bearerAuth: []

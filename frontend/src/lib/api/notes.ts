@@ -50,7 +50,7 @@ function mapNote(raw: Record<string, unknown>): Note {
 export const notesApi = {
   getAll: async (params?: { type?: string }): Promise<Note[]> => {
     const q = params?.type ? `?type=${params.type}` : "";
-    const raw = await notesFetch<Record<string, unknown>[]>(`/${q}`);
+    const raw = await notesFetch<Record<string, unknown>[]>(q);
     return raw.map(mapNote);
   },
 

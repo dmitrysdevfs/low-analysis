@@ -1,6 +1,10 @@
 import User from '../models/User.js';
+import { getLegislatorAnalytics as _getLegislatorAnalytics } from './analyticsService.js';
 import SavedArticle from '../models/SavedArticle.js';
 import UserFocusTopic from '../models/UserFocusTopic.js';
+import LawFork from '../models/LawFork.js';
+import Proposal from '../models/Proposal.js';
+import Amendment from '../models/Amendment.js';
 
 // ── Preferences ──────────────────────────────────────────────────────────────
 
@@ -130,3 +134,58 @@ export const bulkCreateFocusTopics = async (userId, topics) => {
   const docs = topics.map((t) => ({ userId, label: t.label ?? t }));
   return UserFocusTopic.insertMany(docs, { ordered: false });
 };
+
+// ── My Changes ────────────────────────────────────────────────────────────────
+
+export const getMyChanges = async (userId) => {
+  const [forks, proposals, amendments] = await Promise.all([
+    LawFork.find({ authorId: userId })
+      .populate('lawId', 'title code')
+      .sort({ createdAt: -1 })
+      .lean(),
+    Proposal.find({ created_by: userId })
+      .populate('law_id', 'title code')
+      .sort({ createdAt: -1 })
+      .lean(),
+    Amendment.find({ created_by: userId })
+      .populate('law_id', 'title')
+      .sort({ createdAt: -1 })
+      .lean(),
+  ]);
+
+  const forkEntries = forks.map((f) => ({
+    _id: f._id,
+    type: 'fork',
+    title: f.title,
+    lawTitle: f.lawId?.title ?? '',
+    lawCode: f.lawId?.code ?? '',
+    status: f.status,
+    createdAt: f.createdAt,
+  }));
+
+  const proposalEntries = proposals.map((p) => ({
+    _id: p._id,
+    type: 'proposal',
+    title: p.title,
+    lawTitle: p.law_id?.title ?? '',
+    lawCode: p.law_id?.code ?? '',
+    status: p.status,
+    createdAt: p.createdAt,
+  }));
+
+  const amendmentEntries = amendments.map((a) => ({
+    _id: a._id,
+    type: 'amendment',
+    title: `Поправка: ст. ${a.context?.article_num ?? '—'} (${a.change_type})`,
+    lawTitle: typeof a.law_id === 'object' ? (a.law_id?.title ?? '—') : '—',
+    lawCode: '—',
+    status: null,
+    createdAt: a.createdAt,
+  }));
+
+  const all = [...forkEntries, ...proposalEntries, ...amendmentEntries];
+  all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  return all;
+};
+
+export const getLegislatorAnalytics = (userId, period) => _getLegislatorAnalytics(userId, period);
