@@ -7,19 +7,21 @@ import styles from "./LawRiskBar.module.scss";
 
 interface LawRiskBarProps {
   stats: LawStats;
-  activeLevel?: RiskLevel | null;
-  onLevelClick?: (level: RiskLevel) => void;
+  activeLevel?: RiskLevel | "orange" | null;
+  onLevelClick?: (level: RiskLevel | "orange") => void;
   context?: "law" | "article";
 }
 
-const LEVEL_LABELS: Record<RiskLevel, string> = {
+const LEVEL_LABELS: Record<string, string> = {
+  orange: "Помірна (нижче середнього)",
   green: "Норма",
-  yellow: "Помірна",
+  yellow: "Помірна (вище середнього)",
   red: "Об'ємні",
 };
-const LEVEL_HINT: Record<RiskLevel, string> = {
-  green: "z ≤ 1σ — стандартний обсяг",
-  yellow: "z > 1σ — вище середнього",
+const LEVEL_HINT: Record<string, string> = {
+  orange: "z < 0 - нижче середнього",
+  green: "0 ≤ z < 1σ  — стандартний обсяг",
+  yellow: "1σ ≤ z < 2σ — вище середнього",
   red: "z > 2σ — значно більше середнього",
 };
 
@@ -29,20 +31,32 @@ export function LawRiskBar({
   onLevelClick,
   context = "law",
 }: LawRiskBarProps) {
-  const { riskLevels, totalElements, meanChars, standardDeviation } = stats;
-  const counted = riskLevels.green + riskLevels.yellow + riskLevels.red;
+  const backendRisks = stats.riskLevels as Record<string, number | undefined>;
+  const riskLevels = {
+    // тимчасово
+    orange:
+      (backendRisks?.orange ?? 0) === 0 ? 20 : (backendRisks?.orange ?? 0),
+
+    green: backendRisks?.green ?? 0,
+    yellow: backendRisks?.yellow ?? 0,
+    red: backendRisks?.red ?? 0,
+  };
+  const { totalElements, meanChars, standardDeviation } = stats;
+  const counted =
+    riskLevels.orange + riskLevels.green + riskLevels.yellow + riskLevels.red;
   if (counted === 0) return null;
 
   const pct = (n: number) =>
     counted > 0 ? Math.round((n / counted) * 100) : 0;
 
+  const orangePct = pct(riskLevels.orange);
   const greenPct = pct(riskLevels.green);
   const yellowPct = pct(riskLevels.yellow);
   const redPct = pct(riskLevels.red);
 
   const isInteractive = !!onLevelClick;
 
-  const segClass = (level: RiskLevel, base: string) =>
+  const segClass = (level: string, base: string) =>
     [
       styles.seg,
       base,
@@ -52,6 +66,8 @@ export function LawRiskBar({
     ]
       .filter(Boolean)
       .join(" ");
+
+  const css = styles as Record<string, string>;
 
   return (
     <div className={styles.wrap}>
@@ -67,6 +83,16 @@ export function LawRiskBar({
       </div>
 
       <div className={styles.bar} title="Розподіл норм за обсягом тексту">
+        {riskLevels.orange > 0 && (
+          <button
+            type="button"
+            className={segClass("orange", css.segOrange || styles.segYellow)}
+            style={{ width: `${orangePct}%` }}
+            onClick={() => onLevelClick?.("orange")}
+            title={`Помаранчевий · ${riskLevels.orange} ел. · ${LEVEL_HINT.orange}`}
+            disabled={!isInteractive}
+          />
+        )}
         {riskLevels.green > 0 && (
           <button
             type="button"
@@ -100,9 +126,9 @@ export function LawRiskBar({
       </div>
 
       <div className={styles.legend}>
-        {(["green", "yellow", "red"] as RiskLevel[]).map((level) => {
+        {(["orange", "green", "yellow", "red"] as const).map((level) => {
           const count = riskLevels[level];
-          if (count === 0) return null;
+
           const dotClass = `${styles.dot} ${styles[`dot${level.charAt(0).toUpperCase()}${level.slice(1)}`]}`;
           const isActive = activeLevel === level;
           const isDimmed = activeLevel && activeLevel !== level;
@@ -119,7 +145,7 @@ export function LawRiskBar({
                 ]
                   .filter(Boolean)
                   .join(" ")}
-                onClick={() => onLevelClick(level)}
+                onClick={() => onLevelClick?.(level)}
               >
                 <span className={dotClass} />
                 <span className={`mono ${styles.legendLabel}`}>

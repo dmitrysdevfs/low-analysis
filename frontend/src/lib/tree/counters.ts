@@ -96,13 +96,15 @@ export function computeStatsFromTree(
   );
   if (relevant.length === 0) return null;
 
-  let green = 0,
+  let orange = 0,
+    green = 0,
     yellow = 0,
     red = 0;
   let totalChars = 0;
 
   for (const node of relevant) {
-    if (node.risk_level === "green") green++;
+    if (node.risk_level === "orange") orange++;
+    else if (node.risk_level === "green") green++;
     else if (node.risk_level === "yellow") yellow++;
     else if (node.risk_level === "red") red++;
     totalChars += node.chars_count!;
@@ -121,12 +123,13 @@ export function computeStatsFromTree(
     totalElements,
     meanChars,
     standardDeviation,
-    riskLevels: { green, yellow, red, null: 0 },
-  };
+    riskLevels: { orange, green, yellow, red, null: 0 },
+  } as unknown as LawStats;
 }
 
-export type RiskLevel = "green" | "yellow" | "red";
+export type RiskLevel = "orange" | "green" | "yellow" | "red";
 export const RISK_RANK: Record<RiskLevel, number> = {
+  orange: -1,
   green: 0,
   yellow: 1,
   red: 2,

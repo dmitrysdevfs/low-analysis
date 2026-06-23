@@ -60,7 +60,7 @@ export interface TreeNode {
   subjects_count?: number;
   z_score?: number;
   factor?: number | null;
-  risk_level?: "green" | "yellow" | "red" | null;
+  risk_level?: "orange" | "green" | "yellow" | "red" | null;
   _structuralOnly?: boolean;
   taxonomy?: {
     legalFunctions: string[];

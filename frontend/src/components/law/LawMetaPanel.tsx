@@ -12,18 +12,20 @@ import {
 import { getRoleColor } from "@/lib/tree";
 import { LawRiskBar } from "./LawRiskBar";
 import type { RiskLevel } from "@/lib/tree";
+import styles from "./LawMetaPanel.module.scss";
 
-const RISK_DOT_COLOR: Record<RiskLevel, string> = {
+const RISK_DOT_COLOR: Record<string, string> = {
+  orange: "#e67e22",
   green: "#4a9e6b",
   yellow: "#c8a843",
   red: "#c0392b",
 };
-const RISK_LEVEL_LABEL: Record<RiskLevel, string> = {
+const RISK_LEVEL_LABEL: Record<string, string> = {
+  orange: "Помірна (нижче середнього)",
   green: "Норма",
-  yellow: "Помірна складність",
+  yellow: "Помірна (вище середнього)",
   red: "Об’ємні статті",
 };
-import styles from "./LawMetaPanel.module.scss";
 
 interface LawMetaPanelProps {
   law: Law | null;
@@ -43,8 +45,8 @@ interface LawMetaPanelProps {
   selectedSubjectId: string | null;
   onSubjectSelect: (value: string | null) => void;
   stats?: LawStats | null;
-  activeRiskLevel?: RiskLevel | null;
-  onRiskLevelClick?: (level: RiskLevel) => void;
+  activeRiskLevel?: RiskLevel | "orange" | null;
+  onRiskLevelClick?: (level: RiskLevel | "orange") => void;
   riskFilterCount?: number;
 }
 
