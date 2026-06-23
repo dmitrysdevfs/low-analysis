@@ -4,6 +4,9 @@ import Amendment from '../models/Amendment.js';
 import Element from '../models/Element.js';
 import Proposal from '../models/Proposal.js';
 
+const ELEMENT_ID = '507f1f77bcf86cd799439011';
+const SECTION_ID = '507f1f77bcf86cd799439012';
+
 vi.mock('../models/Amendment.js');
 vi.mock('../models/Element.js');
 vi.mock('../models/Proposal.js');
@@ -20,17 +23,17 @@ describe('amendmentService', () => {
   describe('createAmendment', () => {
     it('should create an amendment and populate context', async () => {
       const mockElement = {
-        _id: 'element1',
+        _id: ELEMENT_ID,
         code: 'CU.A1',
         number: '1',
         title: 'Article 1',
         text: 'Original text',
         type: 'article',
-        parentId: 'section1',
+        parentId: SECTION_ID,
       };
 
       const mockSection = {
-        _id: 'section1',
+        _id: SECTION_ID,
         type: 'section',
         title: 'Section 1',
         parentId: null,
@@ -47,7 +50,7 @@ describe('amendmentService', () => {
 
       const data = {
         law_id: 'law1',
-        element_id: 'element1',
+        element_id: ELEMENT_ID,
         proposal_id: 'proposal1',
         created_by: 'user1',
         change_type: 'edit',
@@ -61,7 +64,7 @@ describe('amendmentService', () => {
       expect(Amendment.create).toHaveBeenCalledWith(
         expect.objectContaining({
           law_id: 'law1',
-          element_id: 'element1',
+          element_id: ELEMENT_ID,
           proposal_id: 'proposal1',
           created_by: 'user1',
           change_type: 'edit',
@@ -101,7 +104,7 @@ describe('amendmentService', () => {
 
       const data = {
         law_id: 'law1',
-        element_id: 'element1',
+        element_id: ELEMENT_ID,
         proposal_id: 'proposal1',
         created_by: 'user1',
         change_type: 'add',
@@ -141,7 +144,7 @@ describe('amendmentService', () => {
 
       const data = {
         law_id: 'law1',
-        element_id: 'element1',
+        element_id: ELEMENT_ID,
         proposal_id: 'proposal1',
         created_by: 'user1',
         change_type: 'delete',
