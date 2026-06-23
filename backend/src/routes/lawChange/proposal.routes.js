@@ -26,7 +26,7 @@ const router = express.Router();
  *               proposed_text: { type: string }
  *               reason: { type: string }
  *   get:
- *     summary: List proposals (query: law_id, element_id?, status?)
+ *     summary: "List proposals (query: law_id, element_id?, status?)"
  *     tags: [LawChange]
  *     security:
  *       - bearerAuth: []
