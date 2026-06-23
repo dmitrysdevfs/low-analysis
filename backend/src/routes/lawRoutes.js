@@ -72,6 +72,13 @@ router.use(guestRateLimit);
  *           enum: [starts, contains, exact]
  *           default: starts
  *       - in: query
+ *         name: subjectId
+ *         required: false
+ *         description: Фільтр законів за суб'єктом регулювання (ObjectId суб'єкта з /api/subjects/search)
+ *         schema:
+ *           type: string
+ *           example: 507f1f77bcf86cd799439011
+ *       - in: query
  *         name: dateFrom
  *         required: false
  *         description: Фільтр за датою прийняття — від (включно)

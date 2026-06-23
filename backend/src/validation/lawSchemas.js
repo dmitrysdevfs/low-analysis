@@ -14,6 +14,10 @@ export const getLawsQuerySchema = z.object({
   documentType: z.string().trim().optional(),
   number: z.string().trim().optional(),
   numberType: z.enum(['starts', 'contains', 'exact']).default('starts'),
+  subjectId: z
+    .string()
+    .regex(/^[a-f\d]{24}$/i, 'Invalid subjectId')
+    .optional(),
   dateFrom: isoDate.optional(),
   dateTo: isoDate.optional(),
   page: z.coerce.number().int().min(1).default(1),
