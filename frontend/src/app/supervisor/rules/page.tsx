@@ -245,16 +245,24 @@ export default function SupervisorRulesPage() {
                 <Shield size={18} />
                 <span>Supervisor frame</span>
               </div>
-              <strong>Керує процесом, а не приховано переписує результат.</strong>
+              <strong>
+                Керує процесом, а не приховано переписує результат.
+              </strong>
               <p>
                 Фокус ролі: групи, моніторинг законів, контроль якості,
                 аналітика активності та підготовка змін до review.
               </p>
               <div className={styles.summaryActions}>
-                <Link href={ROUTES.supervisorDashboard} className="btn btn-primary">
+                <Link
+                  href={ROUTES.supervisorDashboard}
+                  className="btn btn-primary"
+                >
                   Відкрити дашборд
                 </Link>
-                <Link href={ROUTES.supervisorGroups} className="btn btn-outline">
+                <Link
+                  href={ROUTES.supervisorGroups}
+                  className="btn btn-outline"
+                >
                   Мої групи
                 </Link>
               </div>
@@ -284,7 +292,9 @@ export default function SupervisorRulesPage() {
           <div className={shellStyles.pageHeader}>
             <div className={shellStyles.pageHeaderLeft}>
               <span className={shellStyles.eyebrow}>ЩО МОЖЕ SUPERVISOR</span>
-              <h2 className={styles.sectionTitle}>Операційні можливості ролі</h2>
+              <h2 className={styles.sectionTitle}>
+                Операційні можливості ролі
+              </h2>
             </div>
           </div>
 
@@ -327,7 +337,10 @@ export default function SupervisorRulesPage() {
             </div>
             <ul className={styles.ruleList}>
               {CANNOT_DO.map((item) => (
-                <li key={item} className={`${styles.ruleItem} ${styles.ruleItemMuted}`}>
+                <li
+                  key={item}
+                  className={`${styles.ruleItem} ${styles.ruleItemMuted}`}
+                >
                   <Target size={16} />
                   <span>{item}</span>
                 </li>
@@ -382,7 +395,9 @@ export default function SupervisorRulesPage() {
           <div className={shellStyles.pageHeader}>
             <div className={shellStyles.pageHeaderLeft}>
               <span className={shellStyles.eyebrow}>УКРАЇНСЬКИЙ КОНТЕКСТ</span>
-              <h2 className={styles.sectionTitle}>Для чого ця роль у системі</h2>
+              <h2 className={styles.sectionTitle}>
+                Для чого ця роль у системі
+              </h2>
             </div>
           </div>
 

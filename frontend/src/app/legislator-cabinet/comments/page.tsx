@@ -87,20 +87,68 @@ const INITIAL_MOCK_COMMENTS: MockOwnComment[] = [
 
 const SIDEBAR_NAV = [
   { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.legislatorCabinet },
-  { icon: <Users size={20} />, label: "Групи", href: ROUTES.legislatorCabinetGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.legislatorCabinetProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.legislatorCabinetAmendments },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinetForks },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.legislatorCabinetProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.legislatorCabinetAmendments,
+  },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.legislatorCabinetChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.legislatorCabinetComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.legislatorCabinetRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.legislatorCabinetAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.legislatorCabinetHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.legislatorCabinetChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.legislatorCabinetRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -178,13 +226,17 @@ function CommentsContent() {
   const addComment = useAddComment();
   const deleteComment = useDeleteComment();
 
-  const [comments, setComments] = useState<MockOwnComment[]>(INITIAL_MOCK_COMMENTS);
+  const [comments, setComments] = useState<MockOwnComment[]>(
+    INITIAL_MOCK_COMMENTS,
+  );
 
   // Add form state
   const [formType, setFormType] = useState<TargetType>("proposal");
   const [formTargetId, setFormTargetId] = useState("");
   const [formText, setFormText] = useState("");
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
 
   const totalReplies = comments.reduce((sum, c) => sum + c.repliesCount, 0);
 
@@ -286,7 +338,9 @@ function CommentsContent() {
             </div>
 
             {submitStatus === "success" && (
-              <p className={styles.successMsg}>Коментар успішно опубліковано.</p>
+              <p className={styles.successMsg}>
+                Коментар успішно опубліковано.
+              </p>
             )}
             {submitStatus === "error" && (
               <p className={styles.errorMsg}>
@@ -297,7 +351,9 @@ function CommentsContent() {
             <button
               type="submit"
               className={styles.submitBtn}
-              disabled={addComment.isPending || !formText.trim() || !formTargetId.trim()}
+              disabled={
+                addComment.isPending || !formText.trim() || !formTargetId.trim()
+              }
             >
               {addComment.isPending ? "Публікуємо..." : "Опублікувати коментар"}
             </button>
@@ -310,7 +366,10 @@ function CommentsContent() {
 
           {comments.length === 0 ? (
             <div className={styles.emptyState}>
-              <MessagesSquare size={32} style={{ color: "rgba(74,128,212,0.44)" }} />
+              <MessagesSquare
+                size={32}
+                style={{ color: "rgba(74,128,212,0.44)" }}
+              />
               <p style={{ color: "var(--color-smoke)", fontSize: "0.9rem" }}>
                 У вас ще немає коментарів
               </p>
@@ -335,8 +394,12 @@ function CommentsContent() {
                   <p className={styles.commentText}>{c.text}</p>
 
                   <div className={styles.commentFooter}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span className={styles.commentDate}>{formatDate(c.createdAt)}</span>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 10 }}
+                    >
+                      <span className={styles.commentDate}>
+                        {formatDate(c.createdAt)}
+                      </span>
                       {c.repliesCount > 0 && (
                         <span
                           style={{

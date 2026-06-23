@@ -215,7 +215,14 @@ function ForkDetail({ id }: { id: string }) {
           </span>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 8 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+            marginTop: 8,
+          }}
+        >
           {changes.map((change, idx) => (
             <div
               key={idx}
@@ -271,7 +278,13 @@ function ForkDetail({ id }: { id: string }) {
               </div>
 
               {/* Diff body */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 0,
+                }}
+              >
                 <div
                   style={{
                     padding: "12px 16px",
@@ -356,7 +369,13 @@ function ForkDetail({ id }: { id: string }) {
       )}
 
       {fork.status === "review" && (
-        <p style={{ marginTop: 24, color: "var(--color-smoke)", fontSize: "0.9rem" }}>
+        <p
+          style={{
+            marginTop: 24,
+            color: "var(--color-smoke)",
+            fontSize: "0.9rem",
+          }}
+        >
           Очікує розгляду супервайзера
         </p>
       )}
@@ -441,7 +460,12 @@ function ProposalDetail({ id }: { id: string }) {
       {/* Amendments list */}
       {amendments.length > 0 && (
         <div
-          style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 16 }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            marginTop: 16,
+          }}
         >
           {amendments.map((a, idx) => (
             <div
@@ -462,7 +486,11 @@ function ProposalDetail({ id }: { id: string }) {
                 Ст. {a.context?.article_num ?? idx + 1} · {a.change_type}
               </p>
               <div
-                style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 12,
+                }}
               >
                 <div>
                   <p
@@ -573,7 +601,11 @@ function ProposalDetail({ id }: { id: string }) {
 /* ─── AmendmentDetail ───────────────────────────────────────────────────────── */
 
 function AmendmentDetail({ id }: { id: string }) {
-  const { data: amendment, isLoading, error } = useQuery({
+  const {
+    data: amendment,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["amendment", id],
     queryFn: () => getAmendmentById(id),
     enabled: !!id,

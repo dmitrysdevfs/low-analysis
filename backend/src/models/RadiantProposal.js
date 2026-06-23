@@ -7,9 +7,21 @@ const schema = new mongoose.Schema(
       enum: ['add_node', 'remove_node', 'add_link', 'remove_link'],
       required: true,
     },
-    node_law_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Law', default: null },
-    source_law_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Law', default: null },
-    target_law_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Law', default: null },
+    node_law_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Law',
+      default: null,
+    },
+    source_law_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Law',
+      default: null,
+    },
+    target_law_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Law',
+      default: null,
+    },
     link_type: { type: String, default: null },
     reason: { type: String, default: '' },
     created_by: {

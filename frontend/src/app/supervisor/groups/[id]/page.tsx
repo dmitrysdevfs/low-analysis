@@ -730,7 +730,9 @@ function SupervisorGroupView() {
                 <span className={styles.sectionEyebrow}>Заявки</span>
                 <h2 className={styles.sectionTitle}>Очікують розгляду</h2>
               </div>
-              <span className={styles.sectionMeta}>{pendingRequests.length} pending</span>
+              <span className={styles.sectionMeta}>
+                {pendingRequests.length} pending
+              </span>
             </div>
 
             {pendingRequests.length === 0 ? (
@@ -741,20 +743,28 @@ function SupervisorGroupView() {
             ) : (
               <div className={styles.memberList}>
                 {pendingRequests.map((req) => {
-                  const user = typeof req.userId === "object" ? req.userId : null;
+                  const user =
+                    typeof req.userId === "object" ? req.userId : null;
                   return (
                     <article key={req._id} className={styles.memberItem}>
                       <div className={styles.memberMain}>
                         <div className={styles.memberHeader}>
                           <div>
-                            <h3 className={styles.memberName}>{user?.fullName ?? "—"}</h3>
-                            <p className={styles.memberEmail}>{user?.email ?? ""}</p>
+                            <h3 className={styles.memberName}>
+                              {user?.fullName ?? "—"}
+                            </h3>
+                            <p className={styles.memberEmail}>
+                              {user?.email ?? ""}
+                            </p>
                           </div>
                           <div style={{ display: "flex", gap: 8 }}>
                             <button
                               type="button"
                               className="btn btn-primary"
-                              style={{ fontSize: "0.75rem", padding: "4px 12px" }}
+                              style={{
+                                fontSize: "0.75rem",
+                                padding: "4px 12px",
+                              }}
                               onClick={() => handleReview(req._id, "approve")}
                               disabled={reviewRequest.isPending}
                             >
@@ -763,7 +773,10 @@ function SupervisorGroupView() {
                             <button
                               type="button"
                               className="btn btn-outline"
-                              style={{ fontSize: "0.75rem", padding: "4px 12px" }}
+                              style={{
+                                fontSize: "0.75rem",
+                                padding: "4px 12px",
+                              }}
                               onClick={() => handleReview(req._id, "reject")}
                               disabled={reviewRequest.isPending}
                             >
@@ -772,7 +785,9 @@ function SupervisorGroupView() {
                           </div>
                         </div>
                         {req.message && (
-                          <p className={styles.memberHint}>&ldquo;{req.message}&rdquo;</p>
+                          <p className={styles.memberHint}>
+                            &ldquo;{req.message}&rdquo;
+                          </p>
                         )}
                       </div>
                     </article>

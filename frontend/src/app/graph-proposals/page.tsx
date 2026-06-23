@@ -11,14 +11,22 @@ import {
   useRemoveGraphVote,
   useCreateGraphProposal,
 } from "@/hooks/useGraphProposals";
-import { submitGraphProposal, deleteGraphProposal } from "@/lib/api/graphProposals";
-import type { GraphProposal, GraphProposalType } from "@/lib/api/graphProposals";
+import {
+  submitGraphProposal,
+  deleteGraphProposal,
+} from "@/lib/api/graphProposals";
+import type {
+  GraphProposal,
+  GraphProposalType,
+} from "@/lib/api/graphProposals";
 import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function getLawName(ref: string | { title: string; _id: string; code: string } | undefined): string {
+function getLawName(
+  ref: string | { title: string; _id: string; code: string } | undefined,
+): string {
   if (!ref) return "-";
   if (typeof ref === "object") return ref.title;
   return ref;
@@ -141,7 +149,10 @@ function ProposalCard({ proposal }: { proposal: GraphProposal }) {
   const tone = STATUS_TONE[proposal.status] ?? "gray";
 
   function renderSubject() {
-    if (proposal.proposal_type === "add_law" || proposal.proposal_type === "remove_law") {
+    if (
+      proposal.proposal_type === "add_law" ||
+      proposal.proposal_type === "remove_law"
+    ) {
       return (
         <p className={styles.subject}>
           <span className={styles.subjectLabel}>Закон:</span>{" "}
@@ -152,7 +163,8 @@ function ProposalCard({ proposal }: { proposal: GraphProposal }) {
     return (
       <p className={styles.subject}>
         <span className={styles.subjectLabel}>Зв'язок:</span>{" "}
-        {getLawName(proposal.source_law_id)} → {getLawName(proposal.target_law_id)}
+        {getLawName(proposal.source_law_id)} →{" "}
+        {getLawName(proposal.target_law_id)}
         {proposal.edge_type ? ` (${proposal.edge_type})` : ""}
       </p>
     );
@@ -162,12 +174,18 @@ function ProposalCard({ proposal }: { proposal: GraphProposal }) {
     <article className={styles.card}>
       <div className={styles.cardHead}>
         <div className={styles.badges}>
-          <span className={styles.typeBadge}>{TYPE_LABELS[proposal.proposal_type]}</span>
-          <span className={`${styles.statusBadge} ${styles[`statusBadge_${tone}`]}`}>
+          <span className={styles.typeBadge}>
+            {TYPE_LABELS[proposal.proposal_type]}
+          </span>
+          <span
+            className={`${styles.statusBadge} ${styles[`statusBadge_${tone}`]}`}
+          >
             {STATUS_LABELS[proposal.status] ?? proposal.status}
           </span>
         </div>
-        <span className={styles.deadline}>{formatDeadline(proposal.voting_deadline)}</span>
+        <span className={styles.deadline}>
+          {formatDeadline(proposal.voting_deadline)}
+        </span>
       </div>
 
       {renderSubject()}
@@ -177,8 +195,9 @@ function ProposalCard({ proposal }: { proposal: GraphProposal }) {
       <div className={styles.meta}>
         <span>Автор: {proposal.author_display_name}</span>
         <span className={styles.votes}>
-          За: {proposal.votes_for_weighted} очк. ({proposal.votes_for_count}) | Проти:{" "}
-          {proposal.votes_against_weighted} очк. ({proposal.votes_against_count})
+          За: {proposal.votes_for_weighted} очк. ({proposal.votes_for_count}) |
+          Проти: {proposal.votes_against_weighted} очк. (
+          {proposal.votes_against_count})
         </span>
       </div>
 
@@ -192,7 +211,8 @@ function ProposalCard({ proposal }: { proposal: GraphProposal }) {
 function CreateProposalForm({ onClose }: { onClose: () => void }) {
   const createProposal = useCreateGraphProposal();
 
-  const [proposalType, setProposalType] = useState<GraphProposalType>("add_law");
+  const [proposalType, setProposalType] =
+    useState<GraphProposalType>("add_law");
   const [lawId, setLawId] = useState("");
   const [sourceLawId, setSourceLawId] = useState("");
   const [targetLawId, setTargetLawId] = useState("");
@@ -217,7 +237,9 @@ function CreateProposalForm({ onClose }: { onClose: () => void }) {
       notify.error("Вкажіть причину пропозиції");
       return;
     }
-    let created: Awaited<ReturnType<typeof createProposal.mutateAsync>> | undefined;
+    let created:
+      | Awaited<ReturnType<typeof createProposal.mutateAsync>>
+      | undefined;
     try {
       created = await createProposal.mutateAsync(buildPayload());
       await submitGraphProposal(created._id, reason.trim());
@@ -225,7 +247,9 @@ function CreateProposalForm({ onClose }: { onClose: () => void }) {
       onClose();
     } catch (err) {
       if (created) {
-        try { await deleteGraphProposal(created._id); } catch {}
+        try {
+          await deleteGraphProposal(created._id);
+        } catch {}
       }
       notify.error(err instanceof Error ? err.message : "Помилка подачі");
     }
@@ -263,7 +287,9 @@ function CreateProposalForm({ onClose }: { onClose: () => void }) {
           <select
             className="form-control form-select"
             value={proposalType}
-            onChange={(e) => setProposalType(e.target.value as GraphProposalType)}
+            onChange={(e) =>
+              setProposalType(e.target.value as GraphProposalType)
+            }
           >
             <option value="add_law">Додати закон</option>
             <option value="remove_law">Видалити закон</option>
@@ -355,7 +381,8 @@ function CreateProposalForm({ onClose }: { onClose: () => void }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function GraphProposalsPage() {
-  const { isAuthenticated, isHydrated, isLegislator, isSupervisor, isAdmin } = useAuth();
+  const { isAuthenticated, isHydrated, isLegislator, isSupervisor, isAdmin } =
+    useAuth();
   const router = useRouter();
 
   const [statusFilter, setStatusFilter] = useState("");
@@ -384,7 +411,10 @@ export default function GraphProposalsPage() {
     if (!a.voting_deadline && !b.voting_deadline) return 0;
     if (!a.voting_deadline) return 1;
     if (!b.voting_deadline) return -1;
-    return new Date(a.voting_deadline).getTime() - new Date(b.voting_deadline).getTime();
+    return (
+      new Date(a.voting_deadline).getTime() -
+      new Date(b.voting_deadline).getTime()
+    );
   });
 
   return (
@@ -408,15 +438,16 @@ export default function GraphProposalsPage() {
           )}
         </div>
 
-        {showForm && (
-          <CreateProposalForm onClose={() => setShowForm(false)} />
-        )}
+        {showForm && <CreateProposalForm onClose={() => setShowForm(false)} />}
 
         <div className={styles.filters}>
           <select
             className="form-control form-select"
             value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
           >
             <option value="">Усі статуси</option>
             <option value="active">Активні</option>
@@ -427,7 +458,10 @@ export default function GraphProposalsPage() {
           <select
             className="form-control form-select"
             value={typeFilter}
-            onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setTypeFilter(e.target.value);
+              setPage(1);
+            }}
           >
             <option value="">Усі типи</option>
             <option value="add_law">Додати закон</option>
@@ -437,9 +471,7 @@ export default function GraphProposalsPage() {
           </select>
         </div>
 
-        {isLoading && (
-          <div className={styles.loading}>Завантаження...</div>
-        )}
+        {isLoading && <div className={styles.loading}>Завантаження...</div>}
 
         {error && (
           <div className={styles.errorBox}>
@@ -471,7 +503,9 @@ export default function GraphProposalsPage() {
             >
               ← Назад
             </button>
-            <span className={styles.pageInfo}>{page} / {pages}</span>
+            <span className={styles.pageInfo}>
+              {page} / {pages}
+            </span>
             <button
               className={styles.pageBtn}
               disabled={page >= pages}

@@ -27,21 +27,65 @@ import type { Proposal, ProposalStatus } from "@/types/legislator";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+  },
   { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.supervisorProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.supervisorAmendments },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.supervisorProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.supervisorAmendments,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.supervisorRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.supervisorRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 function SupervisorSidebar({
@@ -152,7 +196,9 @@ const STATUS_BADGE_CLASS: Record<ProposalStatus, string> = {
 function ProposalsView() {
   const { data: proposals, isLoading } = useSupervisorGroupProposals();
 
-  const [statusFilter, setStatusFilter] = useState<ProposalStatus | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<ProposalStatus | "all">(
+    "all",
+  );
   const [search, setSearch] = useState("");
 
   const list = proposals ?? [];
@@ -175,7 +221,9 @@ function ProposalsView() {
       <section className={`${styles.sectionPanel} panel`}>
         <div className={styles.sectionHeader}>
           <div>
-            <span className={styles.sectionEyebrow}>SUPERVISOR · ПРОПОЗИЦІЇ</span>
+            <span className={styles.sectionEyebrow}>
+              SUPERVISOR · ПРОПОЗИЦІЇ
+            </span>
             <h1
               className={styles.sectionTitle}
               style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}

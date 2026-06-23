@@ -28,21 +28,65 @@ import type { Amendment, AmendmentChangeType } from "@/types/legislator";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+  },
   { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.supervisorProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.supervisorAmendments },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.supervisorProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.supervisorAmendments,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.supervisorRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.supervisorRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 function SupervisorSidebar({
@@ -136,7 +180,9 @@ function ChangeBadge({ type }: { type: AmendmentChangeType }) {
       : type === "add"
         ? styles.badgeAdd
         : styles.badgeDelete;
-  return <span className={`${styles.badge} ${cls}`}>{getChangeTypeLabel(type)}</span>;
+  return (
+    <span className={`${styles.badge} ${cls}`}>{getChangeTypeLabel(type)}</span>
+  );
 }
 
 function getAmendmentStatus(a: Amendment): FilterStatus {
@@ -180,7 +226,9 @@ function AmendmentRow({ amendment: a, isOpen, onToggle }: AmendmentRowProps) {
         <ChangeBadge type={a.change_type} />
         <span className={styles.amendmentAuthor}>{author}</span>
         <span className={styles.amendmentDate}>{date}</span>
-        <span className={styles.toggleHint}>{isOpen ? "Згорнути" : "Розгорнути"}</span>
+        <span className={styles.toggleHint}>
+          {isOpen ? "Згорнути" : "Розгорнути"}
+        </span>
       </div>
 
       {isOpen && (
@@ -234,7 +282,8 @@ function AmendmentsView() {
 
   const filtered = list.filter((a) => {
     if (filterType !== "all" && a.change_type !== filterType) return false;
-    if (filterStatus !== "all" && getAmendmentStatus(a) !== filterStatus) return false;
+    if (filterStatus !== "all" && getAmendmentStatus(a) !== filterStatus)
+      return false;
     if (search) {
       const q = search.toLowerCase();
       const lawTitle =
@@ -252,8 +301,12 @@ function AmendmentsView() {
     return true;
   });
 
-  const pendingCount = list.filter((a) => getAmendmentStatus(a) === "pending").length;
-  const approvedCount = list.filter((a) => getAmendmentStatus(a) === "approved").length;
+  const pendingCount = list.filter(
+    (a) => getAmendmentStatus(a) === "pending",
+  ).length;
+  const approvedCount = list.filter(
+    (a) => getAmendmentStatus(a) === "approved",
+  ).length;
 
   if (isLoading) {
     return (

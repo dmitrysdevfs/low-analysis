@@ -54,21 +54,65 @@ function typeName(type: ChangeEntry["type"]): string {
 // ─── Sidebar nav ──────────────────────────────────────────────────────────────
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+  },
   { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.supervisorProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.supervisorAmendments },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.supervisorProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.supervisorAmendments,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.supervisorRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.supervisorRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 // ─── Sidebar component ────────────────────────────────────────────────────────
@@ -187,7 +231,9 @@ function ActionBadge({ status }: { status: ChangeEntry["status"] }) {
 // ─── Changes view ─────────────────────────────────────────────────────────────
 
 function ChangesView() {
-  const [filterType, setFilterType] = useState<"all" | ChangeEntry["type"]>("all");
+  const [filterType, setFilterType] = useState<"all" | ChangeEntry["type"]>(
+    "all",
+  );
   const [filterLaw, setFilterLaw] = useState("all");
   const [search, setSearch] = useState("");
   const { data: changes = [], isLoading } = useSupervisorChanges();
@@ -226,7 +272,10 @@ function ChangesView() {
         <div className={styles.sectionHeader}>
           <div>
             <span className={styles.sectionEyebrow}>SUPERVISOR · ЗМІНИ</span>
-            <h1 className={styles.sectionTitle} style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}>
+            <h1
+              className={styles.sectionTitle}
+              style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}
+            >
               Стрічка змін
             </h1>
           </div>
@@ -307,11 +356,18 @@ function ChangesView() {
                   <p style={{ margin: 0 }}>
                     {entry.authorName && (
                       <>
-                        <span className={styles.feedAuthor}>{entry.authorName}</span>
+                        <span className={styles.feedAuthor}>
+                          {entry.authorName}
+                        </span>
                         {" · "}
                       </>
                     )}
-                    <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                    <span
+                      style={{
+                        fontSize: "0.78rem",
+                        color: "var(--text-muted)",
+                      }}
+                    >
                       {typeName(entry.type)}
                     </span>
                   </p>
@@ -328,8 +384,18 @@ function ChangesView() {
                   </p>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, flexShrink: 0 }}>
-                  <span className={styles.feedTime}>{relativeTime(entry.createdAt)}</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    gap: 6,
+                    flexShrink: 0,
+                  }}
+                >
+                  <span className={styles.feedTime}>
+                    {relativeTime(entry.createdAt)}
+                  </span>
                   <ActionBadge status={entry.status} />
                 </div>
               </article>

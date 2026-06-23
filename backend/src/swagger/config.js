@@ -135,7 +135,8 @@ API for parsing, structuring and analysing Ukrainian legislation.
     },
     {
       name: 'Me',
-      description: 'Current authenticated user preferences, saved items and analytics',
+      description:
+        'Current authenticated user preferences, saved items and analytics',
     },
     { name: 'Notes', description: 'Personal law and article notes' },
     {

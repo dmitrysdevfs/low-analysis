@@ -74,7 +74,9 @@ export const castVote = async (proposal_id, user, vote) => {
     throw Object.assign(new Error('Proposal not found'), { status: 404 });
 
   if (proposal.created_by.toString() === user._id.toString())
-    throw Object.assign(new Error('Cannot vote on your own proposal'), { status: 403 });
+    throw Object.assign(new Error('Cannot vote on your own proposal'), {
+      status: 403,
+    });
 
   if (proposal.status !== 'active')
     throw Object.assign(

@@ -24,7 +24,10 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import { useSupervisorGroupForks, useReviewGroupFork } from "@/hooks/useSupervisor";
+import {
+  useSupervisorGroupForks,
+  useReviewGroupFork,
+} from "@/hooks/useSupervisor";
 import { useMyGraphForks } from "@/hooks/useGraphForks";
 import type { LawFork } from "@/lib/api/forks";
 import type { GraphFork } from "@/lib/api/graphForks";
@@ -32,21 +35,65 @@ import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+  },
   { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.supervisorProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.supervisorAmendments },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.supervisorProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.supervisorAmendments,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.supervisorRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.supervisorRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 function SupervisorSidebar({
@@ -126,39 +173,57 @@ function AccessGate() {
 
 function getStatusBadgeClass(status: LawFork["status"]): string {
   switch (status) {
-    case "draft": return styles.badgeDraft;
-    case "review": return styles.badgeReview;
-    case "approved": return styles.badgeApproved;
-    case "rejected": return styles.badgeRejected;
-    default: return styles.badge;
+    case "draft":
+      return styles.badgeDraft;
+    case "review":
+      return styles.badgeReview;
+    case "approved":
+      return styles.badgeApproved;
+    case "rejected":
+      return styles.badgeRejected;
+    default:
+      return styles.badge;
   }
 }
 
 function getStatusLabel(status: LawFork["status"]): string {
   switch (status) {
-    case "draft": return "Чернетка";
-    case "review": return "На розгляді";
-    case "approved": return "Схвалено";
-    case "rejected": return "Відхилено";
-    default: return status;
+    case "draft":
+      return "Чернетка";
+    case "review":
+      return "На розгляді";
+    case "approved":
+      return "Схвалено";
+    case "rejected":
+      return "Відхилено";
+    default:
+      return status;
   }
 }
 
 function getOperationBadgeClass(op: "edit" | "add" | "delete"): string {
   switch (op) {
-    case "edit": return styles.badgeEdit;
-    case "add": return styles.badgeAdd;
-    case "delete": return styles.badgeDelete;
-    default: return styles.badge;
+    case "edit":
+      return styles.badgeEdit;
+    case "add":
+      return styles.badgeAdd;
+    case "delete":
+      return styles.badgeDelete;
+    default:
+      return styles.badge;
   }
 }
 
 function getOperationLabel(op: "edit" | "add" | "delete"): string {
   switch (op) {
-    case "edit": return "Редагування";
-    case "add": return "Додавання";
-    case "delete": return "Видалення";
-    default: return op;
+    case "edit":
+      return "Редагування";
+    case "add":
+      return "Додавання";
+    case "delete":
+      return "Видалення";
+    default:
+      return op;
   }
 }
 
@@ -168,7 +233,8 @@ function getLawTitle(lawId: LawFork["lawId"]): string {
 }
 
 function getAuthorName(authorId: LawFork["authorId"]): string {
-  if (typeof authorId === "object" && authorId !== null) return authorId.fullName;
+  if (typeof authorId === "object" && authorId !== null)
+    return authorId.fullName;
   return typeof authorId === "string" ? authorId : "Невідомий автор";
 }
 
@@ -186,10 +252,18 @@ function LawForksSection() {
   const [reviewingId, setReviewingId] = useState<string | null>(null);
 
   if (isLoading) {
-    return <p style={{ color: "var(--color-smoke)", padding: "40px 0" }}>Завантаження...</p>;
+    return (
+      <p style={{ color: "var(--color-smoke)", padding: "40px 0" }}>
+        Завантаження...
+      </p>
+    );
   }
   if (error) {
-    return <p style={{ color: "#f39b9b", padding: "40px 0" }}>Помилка завантаження</p>;
+    return (
+      <p style={{ color: "#f39b9b", padding: "40px 0" }}>
+        Помилка завантаження
+      </p>
+    );
   }
 
   const allForks = forks ?? [];
@@ -199,13 +273,18 @@ function LawForksSection() {
 
   const filtered = allForks.filter((f) => {
     const matchStatus = statusFilter === "all" || f.status === statusFilter;
-    const matchSearch = !searchQuery || f.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchSearch =
+      !searchQuery || f.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchStatus && matchSearch;
   });
 
   const handleReview = async (forkId: string, action: "approve" | "reject") => {
     try {
-      await reviewFork.mutateAsync({ forkId, action, reviewNote: reviewNote.trim() || undefined });
+      await reviewFork.mutateAsync({
+        forkId,
+        action,
+        reviewNote: reviewNote.trim() || undefined,
+      });
       notify.success(action === "approve" ? "Форк схвалено" : "Форк відхилено");
       setReviewingId(null);
       setReviewNote("");
@@ -220,8 +299,13 @@ function LawForksSection() {
       <section className={`${styles.sectionPanel} panel`}>
         <div className={styles.sectionHeader}>
           <div>
-            <span className={styles.sectionEyebrow}>SUPERVISOR · ФОРКИ ЗАКОНІВ</span>
-            <h1 className={styles.sectionTitle} style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}>
+            <span className={styles.sectionEyebrow}>
+              SUPERVISOR · ФОРКИ ЗАКОНІВ
+            </span>
+            <h1
+              className={styles.sectionTitle}
+              style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}
+            >
               Форки учасників та мої
             </h1>
           </div>
@@ -289,18 +373,32 @@ function LawForksSection() {
                       <p className={styles.forkTitle}>{fork.title}</p>
                       {lawTitle && <p className={styles.forkLaw}>{lawTitle}</p>}
                       <div className={styles.forkMeta}>
-                        <span className={`${styles.badge} ${getStatusBadgeClass(fork.status)}`}>
+                        <span
+                          className={`${styles.badge} ${getStatusBadgeClass(fork.status)}`}
+                        >
                           {getStatusLabel(fork.status)}
                         </span>
-                        <span style={{ fontSize: "0.8rem", color: "var(--color-smoke)" }}>
+                        <span
+                          style={{
+                            fontSize: "0.8rem",
+                            color: "var(--color-smoke)",
+                          }}
+                        >
                           {authorName}
                         </span>
-                        <span style={{ fontSize: "0.8rem", color: "var(--color-smoke)" }}>
+                        <span
+                          style={{
+                            fontSize: "0.8rem",
+                            color: "var(--color-smoke)",
+                          }}
+                        >
                           {new Date(fork.createdAt).toLocaleDateString("uk-UA")}
                         </span>
                       </div>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 12 }}
+                    >
                       <Link
                         href={`/legislator-cabinet/forks/${fork._id}`}
                         className={styles.btnSm}
@@ -319,26 +417,50 @@ function LawForksSection() {
                   {isOpen && (
                     <div className={styles.forkCardBody}>
                       {changes.length === 0 ? (
-                        <p style={{ fontSize: "0.85rem", color: "var(--color-smoke)", marginTop: 14 }}>
+                        <p
+                          style={{
+                            fontSize: "0.85rem",
+                            color: "var(--color-smoke)",
+                            marginTop: 14,
+                          }}
+                        >
                           Змін немає
                         </p>
                       ) : (
                         <div className={styles.changesList}>
                           {changes.map((change, idx) => (
-                            <div key={change._id ?? idx} className={styles.changeItem}>
-                              <span className={styles.changeCode}>{change.elementCode}</span>
-                              <span className={`${styles.badge} ${getOperationBadgeClass(change.operation)}`}>
+                            <div
+                              key={change._id ?? idx}
+                              className={styles.changeItem}
+                            >
+                              <span className={styles.changeCode}>
+                                {change.elementCode}
+                              </span>
+                              <span
+                                className={`${styles.badge} ${getOperationBadgeClass(change.operation)}`}
+                              >
                                 {getOperationLabel(change.operation)}
                               </span>
-                              <p className={styles.changePreview}>{change.proposedText}</p>
+                              <p className={styles.changePreview}>
+                                {change.proposedText}
+                              </p>
                             </div>
                           ))}
                         </div>
                       )}
 
                       {fork.submittedAt && (
-                        <p style={{ fontSize: "0.8rem", color: "var(--color-smoke)", marginTop: 10 }}>
-                          Подано: {new Date(fork.submittedAt).toLocaleDateString("uk-UA")}
+                        <p
+                          style={{
+                            fontSize: "0.8rem",
+                            color: "var(--color-smoke)",
+                            marginTop: 10,
+                          }}
+                        >
+                          Подано:{" "}
+                          {new Date(fork.submittedAt).toLocaleDateString(
+                            "uk-UA",
+                          )}
                         </p>
                       )}
 
@@ -348,23 +470,45 @@ function LawForksSection() {
 
                       {/* Approve/Reject for review-status forks */}
                       {fork.status === "review" && (
-                        <div style={{ marginTop: 16, borderTop: "1px solid var(--color-border)", paddingTop: 12 }}>
+                        <div
+                          style={{
+                            marginTop: 16,
+                            borderTop: "1px solid var(--color-border)",
+                            paddingTop: 12,
+                          }}
+                        >
                           {isReviewing ? (
-                            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 10,
+                              }}
+                            >
                               <textarea
                                 className={styles.filterInput}
                                 placeholder="Коментар до рішення (необов'язково)"
                                 value={reviewNote}
                                 onChange={(e) => setReviewNote(e.target.value)}
                                 rows={2}
-                                style={{ resize: "vertical", fontFamily: "inherit", fontSize: "0.85rem" }}
+                                style={{
+                                  resize: "vertical",
+                                  fontFamily: "inherit",
+                                  fontSize: "0.85rem",
+                                }}
                               />
                               <div style={{ display: "flex", gap: 8 }}>
                                 <button
                                   type="button"
                                   className={styles.btnSm}
-                                  style={{ background: "var(--color-success, #2ea043)", color: "#fff", border: "none" }}
-                                  onClick={() => handleReview(fork._id, "approve")}
+                                  style={{
+                                    background: "var(--color-success, #2ea043)",
+                                    color: "#fff",
+                                    border: "none",
+                                  }}
+                                  onClick={() =>
+                                    handleReview(fork._id, "approve")
+                                  }
                                   disabled={reviewFork.isPending}
                                 >
                                   {reviewFork.isPending ? "..." : "Схвалити"}
@@ -372,8 +516,14 @@ function LawForksSection() {
                                 <button
                                   type="button"
                                   className={styles.btnSm}
-                                  style={{ background: "#c0392b", color: "#fff", border: "none" }}
-                                  onClick={() => handleReview(fork._id, "reject")}
+                                  style={{
+                                    background: "#c0392b",
+                                    color: "#fff",
+                                    border: "none",
+                                  }}
+                                  onClick={() =>
+                                    handleReview(fork._id, "reject")
+                                  }
                                   disabled={reviewFork.isPending}
                                 >
                                   {reviewFork.isPending ? "..." : "Відхилити"}
@@ -381,7 +531,10 @@ function LawForksSection() {
                                 <button
                                   type="button"
                                   className={styles.btnSm}
-                                  onClick={() => { setReviewingId(null); setReviewNote(""); }}
+                                  onClick={() => {
+                                    setReviewingId(null);
+                                    setReviewNote("");
+                                  }}
                                 >
                                   Скасувати
                                 </button>
@@ -414,10 +567,18 @@ function GraphForksSection() {
   const { data: graphForks, isLoading, error } = useMyGraphForks();
 
   if (isLoading) {
-    return <p style={{ color: "var(--color-smoke)", padding: "40px 0" }}>Завантаження...</p>;
+    return (
+      <p style={{ color: "var(--color-smoke)", padding: "40px 0" }}>
+        Завантаження...
+      </p>
+    );
   }
   if (error) {
-    return <p style={{ color: "#f39b9b", padding: "40px 0" }}>Помилка завантаження</p>;
+    return (
+      <p style={{ color: "#f39b9b", padding: "40px 0" }}>
+        Помилка завантаження
+      </p>
+    );
   }
 
   const list = graphForks ?? [];
@@ -427,8 +588,13 @@ function GraphForksSection() {
       <section className={`${styles.sectionPanel} panel`}>
         <div className={styles.sectionHeader}>
           <div>
-            <span className={styles.sectionEyebrow}>SUPERVISOR · ЗБЕРЕЖЕНІ ГРАФИ</span>
-            <h1 className={styles.sectionTitle} style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}>
+            <span className={styles.sectionEyebrow}>
+              SUPERVISOR · ЗБЕРЕЖЕНІ ГРАФИ
+            </span>
+            <h1
+              className={styles.sectionTitle}
+              style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}
+            >
               Мої збережені графи
             </h1>
           </div>
@@ -441,7 +607,12 @@ function GraphForksSection() {
             <p className={styles.emptyTitle}>Збережених графів поки немає</p>
             <p style={{ fontSize: "0.85rem", color: "var(--color-smoke)" }}>
               Збережіть стан графу на сторінці{" "}
-              <Link href={ROUTES.graph} style={{ color: "var(--color-accent)" }}>Граф</Link>
+              <Link
+                href={ROUTES.graph}
+                style={{ color: "var(--color-accent)" }}
+              >
+                Граф
+              </Link>
             </p>
           </div>
         ) : (
@@ -452,22 +623,40 @@ function GraphForksSection() {
 
               return (
                 <article key={gf._id} className={styles.forkCard}>
-                  <div className={styles.forkCardHeader} style={{ cursor: "default" }}>
+                  <div
+                    className={styles.forkCardHeader}
+                    style={{ cursor: "default" }}
+                  >
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p className={styles.forkTitle}>{gf.name}</p>
                       {gf.description && (
                         <p className={styles.forkLaw}>{gf.description}</p>
                       )}
                       <div className={styles.forkMeta}>
-                        <span style={{ fontSize: "0.8rem", color: "var(--color-smoke)" }}>
+                        <span
+                          style={{
+                            fontSize: "0.8rem",
+                            color: "var(--color-smoke)",
+                          }}
+                        >
                           {nodesCount} вузлів
                         </span>
                         {notesCount > 0 && (
-                          <span style={{ fontSize: "0.8rem", color: "var(--color-smoke)" }}>
+                          <span
+                            style={{
+                              fontSize: "0.8rem",
+                              color: "var(--color-smoke)",
+                            }}
+                          >
                             {notesCount} нотаток
                           </span>
                         )}
-                        <span style={{ fontSize: "0.8rem", color: "var(--color-smoke)" }}>
+                        <span
+                          style={{
+                            fontSize: "0.8rem",
+                            color: "var(--color-smoke)",
+                          }}
+                        >
                           {new Date(gf.updatedAt).toLocaleDateString("uk-UA")}
                         </span>
                       </div>
@@ -498,9 +687,10 @@ function ForksView() {
       <div style={{ display: "flex", gap: 8, padding: "24px 32px 0" }}>
         <button
           type="button"
-          className={`${styles.filterSelect} ${activeSection === "law-forks" ? styles.tabActive ?? "" : ""}`}
+          className={`${styles.filterSelect} ${activeSection === "law-forks" ? (styles.tabActive ?? "") : ""}`}
           style={{
-            background: activeSection === "law-forks" ? "var(--color-accent)" : undefined,
+            background:
+              activeSection === "law-forks" ? "var(--color-accent)" : undefined,
             color: activeSection === "law-forks" ? "#fff" : undefined,
             border: "1px solid var(--color-border)",
             borderRadius: 6,
@@ -515,7 +705,10 @@ function ForksView() {
         <button
           type="button"
           style={{
-            background: activeSection === "graph-forks" ? "var(--color-accent)" : undefined,
+            background:
+              activeSection === "graph-forks"
+                ? "var(--color-accent)"
+                : undefined,
             color: activeSection === "graph-forks" ? "#fff" : undefined,
             border: "1px solid var(--color-border)",
             borderRadius: 6,
@@ -529,7 +722,11 @@ function ForksView() {
         </button>
       </div>
 
-      {activeSection === "law-forks" ? <LawForksSection /> : <GraphForksSection />}
+      {activeSection === "law-forks" ? (
+        <LawForksSection />
+      ) : (
+        <GraphForksSection />
+      )}
     </div>
   );
 }

@@ -6,15 +6,18 @@ import Group from '../models/Group.js';
 
 // ─── Supervisor history ───────────────────────────────────────────────────────
 
-export async function getSupervisorHistory(supervisorId, { from, to, type, page = 1, limit = 20 } = {}) {
+export async function getSupervisorHistory(
+  supervisorId,
+  { from, to, type, page = 1, limit = 20 } = {},
+) {
   const oid = new mongoose.Types.ObjectId(supervisorId);
   const fromDate = from ? new Date(from) : null;
-  const toDate   = to   ? new Date(to + 'T23:59:59.999Z') : null;
+  const toDate = to ? new Date(to + 'T23:59:59.999Z') : null;
 
   const inRange = (date) => {
     if (!date) return false;
     if (fromDate && date < fromDate) return false;
-    if (toDate   && date > toDate)   return false;
+    if (toDate && date > toDate) return false;
     return true;
   };
 
@@ -24,18 +27,25 @@ export async function getSupervisorHistory(supervisorId, { from, to, type, page 
 
   const memberIds = [
     ...new Set(
-      groups.flatMap((g) => g.members.map((m) => m.userId?._id?.toString())).filter(Boolean),
+      groups
+        .flatMap((g) => g.members.map((m) => m.userId?._id?.toString()))
+        .filter(Boolean),
     ),
   ];
   const memberOids = memberIds.map((id) => new mongoose.Types.ObjectId(id));
 
-  const needForks = !type || type === 'all' || type === 'approve' || type === 'reject';
-  const forks = needForks && memberOids.length > 0
-    ? await LawFork.find({ authorId: { $in: memberOids }, status: { $in: ['approved', 'rejected'] } })
-        .populate('authorId', 'displayName email')
-        .populate('lawId', 'title number')
-        .lean()
-    : [];
+  const needForks =
+    !type || type === 'all' || type === 'approve' || type === 'reject';
+  const forks =
+    needForks && memberOids.length > 0
+      ? await LawFork.find({
+          authorId: { $in: memberOids },
+          status: { $in: ['approved', 'rejected'] },
+        })
+          .populate('authorId', 'displayName email')
+          .populate('lawId', 'title number')
+          .lean()
+      : [];
 
   const events = [];
 
@@ -123,15 +133,15 @@ export async function getSupervisorHistory(supervisorId, { from, to, type, page 
 
   events.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  const total  = events.length;
-  const pg     = Math.max(1, parseInt(page));
-  const lim    = Math.min(100, Math.max(1, parseInt(limit)));
-  const skip   = (pg - 1) * lim;
+  const total = events.length;
+  const pg = Math.max(1, parseInt(page));
+  const lim = Math.min(100, Math.max(1, parseInt(limit)));
+  const skip = (pg - 1) * lim;
 
   return {
     items: events.slice(skip, skip + lim),
     total,
-    page:  pg,
+    page: pg,
     pages: Math.max(1, Math.ceil(total / lim)),
     limit: lim,
   };
@@ -139,29 +149,45 @@ export async function getSupervisorHistory(supervisorId, { from, to, type, page 
 
 // ─── Legislator history ───────────────────────────────────────────────────────
 
-export async function getLegislatorHistory(userId, { type, page = 1, limit = 20 } = {}) {
+export async function getLegislatorHistory(
+  userId,
+  { type, page = 1, limit = 20 } = {},
+) {
   const oid = new mongoose.Types.ObjectId(userId);
 
   const wantType = (t) => !type || type === 'all' || type === t;
 
-  const [forks, proposals, amendments, groups, kpiForks, kpiProposals, kpiAmendments] =
-    await Promise.all([
-      (wantType('fork_created') || wantType('fork_submitted'))
-        ? LawFork.find({ authorId: oid }).populate('lawId', 'title number').lean()
-        : [],
-      (wantType('proposal_created') || wantType('proposal_approved') || wantType('proposal_rejected'))
-        ? Proposal.find({ created_by: oid }).populate('law_id', 'title number').lean()
-        : [],
-      wantType('amendment_created')
-        ? Amendment.find({ created_by: oid }).populate('law_id', 'title number').lean()
-        : [],
-      wantType('group_joined')
-        ? Group.find({ 'members.userId': oid }).lean()
-        : [],
-      LawFork.countDocuments({ authorId: oid }),
-      Proposal.countDocuments({ created_by: oid }),
-      Amendment.countDocuments({ created_by: oid }),
-    ]);
+  const [
+    forks,
+    proposals,
+    amendments,
+    groups,
+    kpiForks,
+    kpiProposals,
+    kpiAmendments,
+  ] = await Promise.all([
+    wantType('fork_created') || wantType('fork_submitted')
+      ? LawFork.find({ authorId: oid }).populate('lawId', 'title number').lean()
+      : [],
+    wantType('proposal_created') ||
+    wantType('proposal_approved') ||
+    wantType('proposal_rejected')
+      ? Proposal.find({ created_by: oid })
+          .populate('law_id', 'title number')
+          .lean()
+      : [],
+    wantType('amendment_created')
+      ? Amendment.find({ created_by: oid })
+          .populate('law_id', 'title number')
+          .lean()
+      : [],
+    wantType('group_joined')
+      ? Group.find({ 'members.userId': oid }).lean()
+      : [],
+    LawFork.countDocuments({ authorId: oid }),
+    Proposal.countDocuments({ created_by: oid }),
+    Amendment.countDocuments({ created_by: oid }),
+  ]);
 
   const events = [];
 
@@ -252,7 +278,9 @@ export async function getLegislatorHistory(userId, { type, page = 1, limit = 20 
 
   if (wantType('group_joined')) {
     for (const g of groups) {
-      const member = g.members.find((m) => m.userId?.toString() === oid.toString());
+      const member = g.members.find(
+        (m) => m.userId?.toString() === oid.toString(),
+      );
       if (!member?.joinedAt) continue;
       events.push({
         id: `group_joined_${g._id}`,
@@ -268,19 +296,19 @@ export async function getLegislatorHistory(userId, { type, page = 1, limit = 20 
   events.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const total = events.length;
-  const pg    = Math.max(1, parseInt(page));
-  const lim   = Math.min(100, Math.max(1, parseInt(limit)));
-  const skip  = (pg - 1) * lim;
+  const pg = Math.max(1, parseInt(page));
+  const lim = Math.min(100, Math.max(1, parseInt(limit)));
+  const skip = (pg - 1) * lim;
 
   return {
     items: events.slice(skip, skip + lim),
     total,
-    page:  pg,
+    page: pg,
     pages: Math.max(1, Math.ceil(total / lim)),
     limit: lim,
     kpi: {
-      forks:      kpiForks,
-      proposals:  kpiProposals,
+      forks: kpiForks,
+      proposals: kpiProposals,
       amendments: kpiAmendments,
     },
   };

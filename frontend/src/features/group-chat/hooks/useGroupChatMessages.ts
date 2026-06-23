@@ -72,5 +72,13 @@ export function useGroupChatMessages(groupId: string | null) {
     }
   }, [groupId, hasMore, isLoading, messages]);
 
-  return { messages, hasMore, isLoading, appendMessage, confirmOptimistic, addOptimistic, loadMore };
+  return {
+    messages,
+    hasMore,
+    isLoading,
+    appendMessage,
+    confirmOptimistic,
+    addOptimistic,
+    loadMore,
+  };
 }

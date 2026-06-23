@@ -30,20 +30,68 @@ import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
   { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.legislatorCabinet },
-  { icon: <Users size={20} />, label: "Групи", href: ROUTES.legislatorCabinetGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.legislatorCabinetProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.legislatorCabinetAmendments },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinetForks },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.legislatorCabinetProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.legislatorCabinetAmendments,
+  },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.legislatorCabinetChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.legislatorCabinetComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.legislatorCabinetRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.legislatorCabinetAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.legislatorCabinetHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.legislatorCabinetChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.legislatorCabinetRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 // ─── Sidebar component ────────────────────────────────────────────────────────
@@ -116,10 +164,17 @@ function AnalyticsContent() {
       };
       const dateStr = new Date().toLocaleDateString("uk-UA");
       const esc = (s: string) =>
-        String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
 
-      const maxWeekly = Math.max(...data.weeklyActivity.map((w) => w.actions), 1);
-      const totalDist = data.stats.forks + data.stats.proposals + data.stats.amendments || 1;
+      const maxWeekly = Math.max(
+        ...data.weeklyActivity.map((w) => w.actions),
+        1,
+      );
+      const totalDist =
+        data.stats.forks + data.stats.proposals + data.stats.amendments || 1;
       const maxCompare = Math.max(
         data.comparison.myScore,
         data.comparison.groupAvg,
@@ -144,7 +199,11 @@ function AnalyticsContent() {
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
             ${[
               { label: "Форків", val: data.stats.forks, color: "#9b5de5" },
-              { label: "Пропозицій", val: data.stats.proposals, color: "#4a80d4" },
+              {
+                label: "Пропозицій",
+                val: data.stats.proposals,
+                color: "#4a80d4",
+              },
               { label: "Схвалень", val: data.stats.approved, color: "#52b788" },
             ]
               .map(
@@ -160,10 +219,16 @@ function AnalyticsContent() {
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px;">
             ${[
               { label: "Всього дій", val: String(data.total), small: false },
-              { label: "% схвалення", val: `${data.approvalRate}%`, small: false },
+              {
+                label: "% схвалення",
+                val: `${data.approvalRate}%`,
+                small: false,
+              },
               {
                 label: "Найактивніший",
-                val: data.mostActive ? `${esc(data.mostActive.label)} (${data.mostActive.count})` : "—",
+                val: data.mostActive
+                  ? `${esc(data.mostActive.label)} (${data.mostActive.count})`
+                  : "—",
                 small: true,
               },
             ]
@@ -198,8 +263,16 @@ function AnalyticsContent() {
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:20px;display:flex;flex-direction:column;gap:9px;">
             ${[
               { label: "Форки", count: data.stats.forks, color: "#9b5de5" },
-              { label: "Пропозиції", count: data.stats.proposals, color: "#4a80d4" },
-              { label: "Поправки", count: data.stats.amendments, color: "#52b788" },
+              {
+                label: "Пропозиції",
+                count: data.stats.proposals,
+                color: "#4a80d4",
+              },
+              {
+                label: "Поправки",
+                count: data.stats.amendments,
+                color: "#52b788",
+              },
             ]
               .map(
                 (item) => `
@@ -217,9 +290,21 @@ function AnalyticsContent() {
           <div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:5px;font-family:Arial,sans-serif;">Порівняння з групою (анонімно)</div>
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px;">
             ${[
-              { label: "Мій показник", value: data.comparison.myScore, color: "#c8a843" },
-              { label: "Середнє по групі", value: data.comparison.groupAvg, color: "#4a80d4" },
-              { label: "Середнє по платформі", value: data.comparison.platformAvg, color: "#9b5de5" },
+              {
+                label: "Мій показник",
+                value: data.comparison.myScore,
+                color: "#c8a843",
+              },
+              {
+                label: "Середнє по групі",
+                value: data.comparison.groupAvg,
+                color: "#4a80d4",
+              },
+              {
+                label: "Середнє по платформі",
+                value: data.comparison.platformAvg,
+                color: "#9b5de5",
+              },
             ]
               .map(
                 (row) => `
@@ -264,11 +349,19 @@ function AnalyticsContent() {
       container.innerHTML = html;
       document.body.appendChild(container);
 
-      const canvas = await html2canvas(container, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
       document.body.removeChild(container);
 
       const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
       const pdfW = pdf.internal.pageSize.getWidth();
       const pdfH = pdf.internal.pageSize.getHeight();
       const imgH = (canvas.height * pdfW) / canvas.width;
@@ -284,23 +377,54 @@ function AnalyticsContent() {
         heightLeft -= pdfH;
       }
 
-      pdf.save(`my-analytics-${period}-${new Date().toISOString().slice(0, 10)}.pdf`);
+      pdf.save(
+        `my-analytics-${period}-${new Date().toISOString().slice(0, 10)}.pdf`,
+      );
     } catch (e) {
       console.error("PDF export failed", e);
     }
   };
 
-  if (isLoading) return <div className={styles.mainContent}><p className={styles.loadingState}>Завантаження...</p></div>;
-  if (error || !data) return <div className={styles.mainContent}><p className={styles.errorState}>Помилка завантаження</p></div>;
+  if (isLoading)
+    return (
+      <div className={styles.mainContent}>
+        <p className={styles.loadingState}>Завантаження...</p>
+      </div>
+    );
+  if (error || !data)
+    return (
+      <div className={styles.mainContent}>
+        <p className={styles.errorState}>Помилка завантаження</p>
+      </div>
+    );
 
-  const { stats, approvalRate, total, mostActive, weeklyActivity, comparison, portfolio } = data;
+  const {
+    stats,
+    approvalRate,
+    total,
+    mostActive,
+    weeklyActivity,
+    comparison,
+    portfolio,
+  } = data;
   const maxWeekly = Math.max(...weeklyActivity.map((w) => w.actions), 1);
   const totalDist = stats.forks + stats.proposals + stats.amendments || 1;
-  const maxCompare = Math.max(comparison.myScore, comparison.groupAvg, comparison.platformAvg, 1);
+  const maxCompare = Math.max(
+    comparison.myScore,
+    comparison.groupAvg,
+    comparison.platformAvg,
+    1,
+  );
 
   return (
     <div className={styles.mainContent}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
         <div>
           <span className={styles.eyebrow}>ЗАКОНОТВОРЕЦЬ · АНАЛІТИКА</span>
           <h1 className={styles.pageTitle}>Моя аналітика</h1>
@@ -381,7 +505,9 @@ function AnalyticsContent() {
                   <div className={styles.barGroupInner}>
                     <div
                       className={`${styles.bar} ${styles.barSingle}`}
-                      style={{ height: `${(week.actions / maxWeekly) * 120}px` }}
+                      style={{
+                        height: `${(week.actions / maxWeekly) * 120}px`,
+                      }}
                     />
                   </div>
                   <p className={styles.barLabel}>{week.week}</p>
@@ -428,14 +554,29 @@ function AnalyticsContent() {
         <div className={styles.chartArea}>
           <div className={styles.compareList}>
             {[
-              { label: "Мій показник", value: comparison.myScore, cls: styles.compareFillMy },
-              { label: "Середнє по групі", value: comparison.groupAvg, cls: styles.compareFillGroup },
-              { label: "Середнє по платформі", value: comparison.platformAvg, cls: styles.compareFillPlatform },
+              {
+                label: "Мій показник",
+                value: comparison.myScore,
+                cls: styles.compareFillMy,
+              },
+              {
+                label: "Середнє по групі",
+                value: comparison.groupAvg,
+                cls: styles.compareFillGroup,
+              },
+              {
+                label: "Середнє по платформі",
+                value: comparison.platformAvg,
+                cls: styles.compareFillPlatform,
+              },
             ].map((row) => (
               <div key={row.label} className={styles.compareRow}>
                 <span className={styles.compareLabel}>{row.label}</span>
                 <div className={styles.compareTrack}>
-                  <div className={row.cls} style={{ width: `${(row.value / maxCompare) * 100}%` }} />
+                  <div
+                    className={row.cls}
+                    style={{ width: `${(row.value / maxCompare) * 100}%` }}
+                  />
                 </div>
                 <span className={styles.hBarValue}>{row.value}</span>
               </div>
@@ -449,11 +590,15 @@ function AnalyticsContent() {
       <section className={styles.section}>
         <p className={styles.sectionTitle}>Мій portfolio</p>
         <div className={styles.portfolioRow}>
-          <div className={`${styles.portfolioCard} ${styles.portfolioApproved}`}>
+          <div
+            className={`${styles.portfolioCard} ${styles.portfolioApproved}`}
+          >
             <p className={styles.portfolioNum}>{portfolio.approved}</p>
             <p className={styles.portfolioLabel}>Схвалено ✓</p>
           </div>
-          <div className={`${styles.portfolioCard} ${styles.portfolioRejected}`}>
+          <div
+            className={`${styles.portfolioCard} ${styles.portfolioRejected}`}
+          >
             <p className={styles.portfolioNum}>{portfolio.rejected}</p>
             <p className={styles.portfolioLabel}>Відхилено ✗</p>
           </div>

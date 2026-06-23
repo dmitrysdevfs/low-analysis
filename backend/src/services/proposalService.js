@@ -186,10 +186,14 @@ export const submitProposal = async (id, userId) => {
  */
 export const reviewProposal = async (id, action) => {
   const proposal = await Proposal.findById(id);
-  if (!proposal) throw Object.assign(new Error('Proposal not found'), { statusCode: 404 });
+  if (!proposal)
+    throw Object.assign(new Error('Proposal not found'), { statusCode: 404 });
 
   if (proposal.status !== 'review') {
-    throw Object.assign(new Error('Only proposals in review status can be reviewed'), { statusCode: 400 });
+    throw Object.assign(
+      new Error('Only proposals in review status can be reviewed'),
+      { statusCode: 400 },
+    );
   }
 
   proposal.status = action === 'approve' ? 'approved' : 'rejected';

@@ -59,7 +59,8 @@ const INITIAL_PUBLIC: TemplateCard[] = [
     id: "lg-public-1",
     name: "Аргументована редакція",
     type: "edit",
-    description: "Публічний шаблон для переписування норми з коротким поясненням і джерелами.",
+    description:
+      "Публічний шаблон для переписування норми з коротким поясненням і джерелами.",
     text: "Пропонується викласти норму у такій редакції...",
     law: "Універсальний",
     author: "Law Analysis",
@@ -69,7 +70,8 @@ const INITIAL_PUBLIC: TemplateCard[] = [
     id: "lg-public-2",
     name: "Новий пункт",
     type: "add",
-    description: "Каркас для додавання нового пункту, статті або перехідного положення.",
+    description:
+      "Каркас для додавання нового пункту, статті або перехідного положення.",
     text: "Доповнити закон пунктом такого змісту...",
     law: "Універсальний",
     author: "Legal Lab",
@@ -79,7 +81,8 @@ const INITIAL_PUBLIC: TemplateCard[] = [
     id: "lg-public-3",
     name: "Скасування дублюючої норми",
     type: "delete",
-    description: "Застосовується для вилучення повторів або конфліктних фрагментів.",
+    description:
+      "Застосовується для вилучення повторів або конфліктних фрагментів.",
     text: "Положення статті виключити...",
     law: "Універсальний",
     author: "Mentor Board",
@@ -132,7 +135,8 @@ const INITIAL_SAVED: TemplateCard[] = [
     id: "lg-saved-2",
     name: "Збережене доповнення",
     type: "add",
-    description: "Швидка заготовка на випадок, коли треба додати окремий блок норм.",
+    description:
+      "Швидка заготовка на випадок, коли треба додати окремий блок норм.",
     text: "Доповнити статтю положенням такого змісту...",
     law: "Універсальний",
     author: "Legal Lab",
@@ -245,11 +249,15 @@ export default function LegislatorTemplatesPage() {
   }
 
   function removeSavedTemplate(templateId: string) {
-    setSavedTemplates((current) => current.filter((item) => item.id !== templateId));
+    setSavedTemplates((current) =>
+      current.filter((item) => item.id !== templateId),
+    );
   }
 
   function deleteMyTemplate(templateId: string) {
-    setMyTemplates((current) => current.filter((item) => item.id !== templateId));
+    setMyTemplates((current) =>
+      current.filter((item) => item.id !== templateId),
+    );
   }
 
   if (!isHydrated) {
@@ -288,7 +296,9 @@ export default function LegislatorTemplatesPage() {
         <section className={`${shellStyles.panel} ${styles.heroPanel}`}>
           <div className={shellStyles.pageHeader}>
             <div className={shellStyles.pageHeaderLeft}>
-              <span className={shellStyles.eyebrow}>ЗАКОНОТВОРЕЦЬ · ШАБЛОНИ</span>
+              <span className={shellStyles.eyebrow}>
+                ЗАКОНОТВОРЕЦЬ · ШАБЛОНИ
+              </span>
               <h1 className={shellStyles.pageTitle}>Шаблони поправок</h1>
               <p className={shellStyles.pageSubtitle}>
                 Працюйте з публічними заготовками, збирайте власну бібліотеку та
@@ -296,7 +306,11 @@ export default function LegislatorTemplatesPage() {
               </p>
             </div>
             <div className={shellStyles.toolbar}>
-              <button type="button" className="btn btn-primary" onClick={openNewModal}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={openNewModal}
+              >
                 <Plus size={14} />
                 Новий шаблон
               </button>
@@ -348,7 +362,9 @@ export default function LegislatorTemplatesPage() {
                   >
                     {TEMPLATE_TYPES[template.type]}
                   </span>
-                  <span className={styles.cardDate}>{formatUkDate(template.createdAt)}</span>
+                  <span className={styles.cardDate}>
+                    {formatUkDate(template.createdAt)}
+                  </span>
                 </div>
 
                 <h3 className={styles.cardTitle}>{template.name}</h3>
@@ -364,7 +380,9 @@ export default function LegislatorTemplatesPage() {
                       <button
                         type="button"
                         className="btn btn-primary"
-                        onClick={() => console.log("use public template", template.id)}
+                        onClick={() =>
+                          console.log("use public template", template.id)
+                        }
                       >
                         <LayoutGrid size={14} />
                         Використати
@@ -471,7 +489,9 @@ export default function LegislatorTemplatesPage() {
                 </label>
 
                 <label className={shellStyles.field}>
-                  <span className={shellStyles.fieldLabel}>Прив&apos;язаний закон</span>
+                  <span className={shellStyles.fieldLabel}>
+                    Прив&apos;язаний закон
+                  </span>
                   <input
                     className={shellStyles.input}
                     value={formState.law}
@@ -517,7 +537,11 @@ export default function LegislatorTemplatesPage() {
               </label>
 
               <div className={shellStyles.modalActions}>
-                <button type="button" className="btn btn-outline" onClick={closeModal}>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={closeModal}
+                >
                   Скасувати
                 </button>
                 <button type="submit" className="btn btn-primary">

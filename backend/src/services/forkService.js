@@ -108,7 +108,9 @@ export const reviewFork = async (forkId, action, reviewNote) => {
   const fork = await LawFork.findById(forkId);
   if (!fork) throw Object.assign(new Error('Fork not found'), { status: 404 });
   if (fork.status !== 'review')
-    throw Object.assign(new Error('Fork is not in review status'), { status: 400 });
+    throw Object.assign(new Error('Fork is not in review status'), {
+      status: 400,
+    });
 
   fork.status = action === 'approve' ? 'approved' : 'rejected';
   fork.reviewNote = reviewNote ?? '';

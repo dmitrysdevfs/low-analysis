@@ -70,7 +70,9 @@ export default function LegislatorHistoryPage() {
         <section className={`${shellStyles.panel} ${styles.heroPanel}`}>
           <div className={shellStyles.pageHeader}>
             <div className={shellStyles.pageHeaderLeft}>
-              <span className={shellStyles.eyebrow}>ЗАКОНОТВОРЕЦЬ · ІСТОРІЯ</span>
+              <span className={shellStyles.eyebrow}>
+                ЗАКОНОТВОРЕЦЬ · ІСТОРІЯ
+              </span>
               <h1 className={shellStyles.pageTitle}>Моя історія</h1>
               <p className={shellStyles.pageSubtitle}>
                 Відстежуйте власні дії по форках, поправках і пропозиціях, щоб
@@ -139,7 +141,9 @@ export default function LegislatorHistoryPage() {
                         <p className={styles.timelineStamp}>
                           {formatUkDate(item.date)} · {formatUkTime(item.date)}
                         </p>
-                        <h3 className={styles.timelineTitle}>{item.description}</h3>
+                        <h3 className={styles.timelineTitle}>
+                          {item.description}
+                        </h3>
                       </div>
                       <span
                         className={`${shellStyles.badge} ${styles[`typeBadge_${item.type}`]}`}
@@ -149,21 +153,30 @@ export default function LegislatorHistoryPage() {
                     </div>
 
                     <div className={styles.timelineFooter}>
-                      <Link href={ROUTES.law(item.lawId)} className={styles.lawLink}>
+                      <Link
+                        href={ROUTES.law(item.lawId)}
+                        className={styles.lawLink}
+                      >
                         <Scale size={14} />
                         <span>{item.lawLabel}</span>
                       </Link>
 
-                      {item.type === "fork_created" && item.status === "draft" && (
-                        <button
-                          type="button"
-                          className="btn btn-outline"
-                          onClick={() => console.log("cancel draft history action", item.id)}
-                        >
-                          <Undo2 size={14} />
-                          Скасувати
-                        </button>
-                      )}
+                      {item.type === "fork_created" &&
+                        item.status === "draft" && (
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            onClick={() =>
+                              console.log(
+                                "cancel draft history action",
+                                item.id,
+                              )
+                            }
+                          >
+                            <Undo2 size={14} />
+                            Скасувати
+                          </button>
+                        )}
                     </div>
                   </div>
                 </article>
@@ -176,24 +189,36 @@ export default function LegislatorHistoryPage() {
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Форки</p>
             <h2 className={shellStyles.kpiValue}>{data?.kpi.forks ?? "…"}</h2>
-            <p className={shellStyles.kpiNote}>Чернетки та подані версії змін.</p>
+            <p className={shellStyles.kpiNote}>
+              Чернетки та подані версії змін.
+            </p>
           </article>
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Пропозиції</p>
-            <h2 className={shellStyles.kpiValue}>{data?.kpi.proposals ?? "…"}</h2>
-            <p className={shellStyles.kpiNote}>Створені, погоджені та відхилені.</p>
+            <h2 className={shellStyles.kpiValue}>
+              {data?.kpi.proposals ?? "…"}
+            </h2>
+            <p className={shellStyles.kpiNote}>
+              Створені, погоджені та відхилені.
+            </p>
           </article>
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Поправки</p>
-            <h2 className={shellStyles.kpiValue}>{data?.kpi.amendments ?? "…"}</h2>
-            <p className={shellStyles.kpiNote}>Зміни, створені у вашому кабінеті.</p>
+            <h2 className={shellStyles.kpiValue}>
+              {data?.kpi.amendments ?? "…"}
+            </h2>
+            <p className={shellStyles.kpiNote}>
+              Зміни, створені у вашому кабінеті.
+            </p>
           </article>
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Активність</p>
             <h2 className={shellStyles.kpiValue}>
               <Sparkles size={24} />
             </h2>
-            <p className={shellStyles.kpiNote}>Вся персональна історія в одному місці.</p>
+            <p className={shellStyles.kpiNote}>
+              Вся персональна історія в одному місці.
+            </p>
           </article>
         </section>
       </div>

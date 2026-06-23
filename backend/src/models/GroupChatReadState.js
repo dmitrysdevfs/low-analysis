@@ -19,5 +19,8 @@ const groupChatReadStateSchema = new mongoose.Schema(
 
 groupChatReadStateSchema.index({ groupId: 1, userId: 1 }, { unique: true });
 
-const GroupChatReadState = mongoose.model('GroupChatReadState', groupChatReadStateSchema);
+const GroupChatReadState = mongoose.model(
+  'GroupChatReadState',
+  groupChatReadStateSchema,
+);
 export default GroupChatReadState;

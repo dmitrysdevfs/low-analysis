@@ -23,7 +23,12 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { notify } from "@/lib/toast";
-import { useMyForks, useCreateFork, useSubmitFork, useAddChange } from "@/hooks/useForks";
+import {
+  useMyForks,
+  useCreateFork,
+  useSubmitFork,
+  useAddChange,
+} from "@/hooks/useForks";
 import { useMyGraphForks, useDeleteGraphFork } from "@/hooks/useGraphForks";
 import type { LawFork } from "@/lib/api/forks";
 import type { GraphFork } from "@/lib/api/graphForks";
@@ -32,20 +37,68 @@ import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
   { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.legislatorCabinet },
-  { icon: <Users size={20} />, label: "Групи", href: ROUTES.legislatorCabinetGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.legislatorCabinetProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.legislatorCabinetAmendments },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinetForks },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.legislatorCabinetProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.legislatorCabinetAmendments,
+  },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.legislatorCabinetChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.legislatorCabinetComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.legislatorCabinetRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.legislatorCabinetAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.legislatorCabinetHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.legislatorCabinetChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.legislatorCabinetRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 function LegislatorSidebar({
@@ -185,8 +238,10 @@ function ForksPageContent() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAddChangeModal, setShowAddChangeModal] = useState(false);
   const [currentForkId, setCurrentForkId] = useState<string | null>(null);
-  const [createForm, setCreateForm] = useState<CreateForkForm>(EMPTY_CREATE_FORM);
-  const [changeForm, setChangeForm] = useState<AddChangeForm>(EMPTY_CHANGE_FORM);
+  const [createForm, setCreateForm] =
+    useState<CreateForkForm>(EMPTY_CREATE_FORM);
+  const [changeForm, setChangeForm] =
+    useState<AddChangeForm>(EMPTY_CHANGE_FORM);
 
   const allForks = forks ?? [];
   const draftCount = allForks.filter((f) => f.status === "draft").length;
@@ -194,7 +249,9 @@ function ForksPageContent() {
   const approvedCount = allForks.filter((f) => f.status === "approved").length;
 
   const filtered =
-    activeTab === "all" ? allForks : allForks.filter((f) => f.status === activeTab);
+    activeTab === "all"
+      ? allForks
+      : allForks.filter((f) => f.status === activeTab);
 
   const handleCreateFork = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,7 +266,9 @@ function ForksPageContent() {
       setCreateForm(EMPTY_CREATE_FORM);
       setShowCreateModal(false);
     } catch (err) {
-      notify.error(err instanceof Error ? err.message : "Не вдалося створити форк");
+      notify.error(
+        err instanceof Error ? err.message : "Не вдалося створити форк",
+      );
     }
   };
 
@@ -218,7 +277,9 @@ function ForksPageContent() {
       await submitFork.mutateAsync(forkId);
       notify.success("Форк подано на розгляд");
     } catch (err) {
-      notify.error(err instanceof Error ? err.message : "Не вдалося подати форк");
+      notify.error(
+        err instanceof Error ? err.message : "Не вдалося подати форк",
+      );
     }
   };
 
@@ -242,7 +303,9 @@ function ForksPageContent() {
       setShowAddChangeModal(false);
       setCurrentForkId(null);
     } catch (err) {
-      notify.error(err instanceof Error ? err.message : "Не вдалося додати зміну");
+      notify.error(
+        err instanceof Error ? err.message : "Не вдалося додати зміну",
+      );
     }
   };
 
@@ -299,12 +362,8 @@ function ForksPageContent() {
       </div>
 
       {/* CONTENT */}
-      {isLoading && (
-        <p className={styles.loadingState}>Завантаження...</p>
-      )}
-      {error && (
-        <p className={styles.errorState}>Помилка завантаження</p>
-      )}
+      {isLoading && <p className={styles.loadingState}>Завантаження...</p>}
+      {error && <p className={styles.errorState}>Помилка завантаження</p>}
 
       {!isLoading && !error && filtered.length === 0 && (
         <div className={styles.emptyState}>
@@ -324,13 +383,13 @@ function ForksPageContent() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className={styles.forkTitleRow}>
                       <p className={styles.forkTitle}>{fork.title}</p>
-                      <span className={`${styles.badge} ${getStatusBadgeClass(fork.status)}`}>
+                      <span
+                        className={`${styles.badge} ${getStatusBadgeClass(fork.status)}`}
+                      >
                         {getStatusLabel(fork.status)}
                       </span>
                     </div>
-                    {lawTitle && (
-                      <p className={styles.forkLaw}>{lawTitle}</p>
-                    )}
+                    {lawTitle && <p className={styles.forkLaw}>{lawTitle}</p>}
                     {fork.description && (
                       <p className={styles.forkDesc}>{fork.description}</p>
                     )}
@@ -342,7 +401,10 @@ function ForksPageContent() {
                         <>
                           <span>·</span>
                           <span>
-                            Подано: {new Date(fork.submittedAt).toLocaleDateString("uk-UA")}
+                            Подано:{" "}
+                            {new Date(fork.submittedAt).toLocaleDateString(
+                              "uk-UA",
+                            )}
                           </span>
                         </>
                       )}
@@ -369,7 +431,9 @@ function ForksPageContent() {
                         onClick={() => handleSubmitFork(fork._id)}
                         disabled={submitFork.isPending}
                       >
-                        {submitFork.isPending ? "Подаємо..." : "Подати на розгляд"}
+                        {submitFork.isPending
+                          ? "Подаємо..."
+                          : "Подати на розгляд"}
                       </button>
                       <button
                         type="button"
@@ -393,10 +457,7 @@ function ForksPageContent() {
           className={styles.modalBackdrop}
           onClick={() => setShowCreateModal(false)}
         >
-          <div
-            className={styles.modalBox}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
             <h2 className={styles.modalTitle}>Новий форк</h2>
             <form
               onSubmit={handleCreateFork}
@@ -409,7 +470,10 @@ function ForksPageContent() {
                   type="text"
                   value={createForm.lawId}
                   onChange={(e) =>
-                    setCreateForm((prev) => ({ ...prev, lawId: e.target.value }))
+                    setCreateForm((prev) => ({
+                      ...prev,
+                      lawId: e.target.value,
+                    }))
                   }
                   placeholder="ID або назва закону"
                   required
@@ -423,7 +487,10 @@ function ForksPageContent() {
                   type="text"
                   value={createForm.title}
                   onChange={(e) =>
-                    setCreateForm((prev) => ({ ...prev, title: e.target.value }))
+                    setCreateForm((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
                   }
                   placeholder="Назва вашого форку"
                   required
@@ -435,7 +502,10 @@ function ForksPageContent() {
                   className={styles.textarea}
                   value={createForm.description}
                   onChange={(e) =>
-                    setCreateForm((prev) => ({ ...prev, description: e.target.value }))
+                    setCreateForm((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
                   }
                   placeholder="Необов'язковий опис"
                   rows={3}
@@ -471,10 +541,7 @@ function ForksPageContent() {
             setCurrentForkId(null);
           }}
         >
-          <div
-            className={styles.modalBox}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
             <h2 className={styles.modalTitle}>Додати зміну</h2>
             <form
               onSubmit={handleAddChange}
@@ -487,7 +554,10 @@ function ForksPageContent() {
                   type="text"
                   value={changeForm.elementId}
                   onChange={(e) =>
-                    setChangeForm((prev) => ({ ...prev, elementId: e.target.value }))
+                    setChangeForm((prev) => ({
+                      ...prev,
+                      elementId: e.target.value,
+                    }))
                   }
                   placeholder="element-id"
                   autoFocus
@@ -500,7 +570,10 @@ function ForksPageContent() {
                   type="text"
                   value={changeForm.elementCode}
                   onChange={(e) =>
-                    setChangeForm((prev) => ({ ...prev, elementCode: e.target.value }))
+                    setChangeForm((prev) => ({
+                      ...prev,
+                      elementCode: e.target.value,
+                    }))
                   }
                   placeholder="art.1.p.2"
                 />
@@ -528,7 +601,10 @@ function ForksPageContent() {
                   className={styles.textarea}
                   value={changeForm.originalText}
                   onChange={(e) =>
-                    setChangeForm((prev) => ({ ...prev, originalText: e.target.value }))
+                    setChangeForm((prev) => ({
+                      ...prev,
+                      originalText: e.target.value,
+                    }))
                   }
                   placeholder="Поточний текст елементу"
                   rows={3}
@@ -540,7 +616,10 @@ function ForksPageContent() {
                   className={styles.textarea}
                   value={changeForm.proposedText}
                   onChange={(e) =>
-                    setChangeForm((prev) => ({ ...prev, proposedText: e.target.value }))
+                    setChangeForm((prev) => ({
+                      ...prev,
+                      proposedText: e.target.value,
+                    }))
                   }
                   placeholder="Новий текст елементу"
                   rows={3}
@@ -552,7 +631,10 @@ function ForksPageContent() {
                   className={styles.textarea}
                   value={changeForm.rationale}
                   onChange={(e) =>
-                    setChangeForm((prev) => ({ ...prev, rationale: e.target.value }))
+                    setChangeForm((prev) => ({
+                      ...prev,
+                      rationale: e.target.value,
+                    }))
                   }
                   placeholder="Чому потрібна ця зміна"
                   rows={2}
@@ -612,7 +694,9 @@ function GraphForksSection() {
           <p className={styles.emptyTitle}>Збережених графів поки немає</p>
           <span className={styles.emptyDesc}>
             Збережіть стан графу на сторінці{" "}
-            <Link href={ROUTES.graph} style={{ color: "var(--color-accent)" }}>Граф</Link>
+            <Link href={ROUTES.graph} style={{ color: "var(--color-accent)" }}>
+              Граф
+            </Link>
           </span>
         </div>
       ) : (
@@ -633,9 +717,16 @@ function GraphForksSection() {
                     )}
                     <div className={styles.forkMeta}>
                       <span>{nodesCount} вузлів</span>
-                      {notesCount > 0 && <><span>·</span><span>{notesCount} нотаток</span></>}
+                      {notesCount > 0 && (
+                        <>
+                          <span>·</span>
+                          <span>{notesCount} нотаток</span>
+                        </>
+                      )}
                       <span>·</span>
-                      <span>{new Date(gf.updatedAt).toLocaleDateString("uk-UA")}</span>
+                      <span>
+                        {new Date(gf.updatedAt).toLocaleDateString("uk-UA")}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -683,14 +774,26 @@ function ForksTabsWrapper() {
   return (
     <div>
       <div style={{ display: "flex", gap: 8, padding: "24px 32px 0" }}>
-        <button type="button" style={tabStyle(activeSection === "law-forks")} onClick={() => setActiveSection("law-forks")}>
+        <button
+          type="button"
+          style={tabStyle(activeSection === "law-forks")}
+          onClick={() => setActiveSection("law-forks")}
+        >
           Форки законів
         </button>
-        <button type="button" style={tabStyle(activeSection === "graph-forks")} onClick={() => setActiveSection("graph-forks")}>
+        <button
+          type="button"
+          style={tabStyle(activeSection === "graph-forks")}
+          onClick={() => setActiveSection("graph-forks")}
+        >
           Збережені графи
         </button>
       </div>
-      {activeSection === "law-forks" ? <ForksPageContent /> : <GraphForksSection />}
+      {activeSection === "law-forks" ? (
+        <ForksPageContent />
+      ) : (
+        <GraphForksSection />
+      )}
     </div>
   );
 }

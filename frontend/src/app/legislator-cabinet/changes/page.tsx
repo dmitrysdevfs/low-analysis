@@ -56,20 +56,68 @@ function formatDate(iso: string): string {
 
 const SIDEBAR_NAV = [
   { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.legislatorCabinet },
-  { icon: <Users size={20} />, label: "Групи", href: ROUTES.legislatorCabinetGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.legislatorCabinetProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.legislatorCabinetAmendments },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinetForks },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.legislatorCabinetProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.legislatorCabinetAmendments,
+  },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.legislatorCabinetChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.legislatorCabinetComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.legislatorCabinetRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.legislatorCabinetAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.legislatorCabinetHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.legislatorCabinetChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.legislatorCabinetRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 // ─── Sidebar component ────────────────────────────────────────────────────────
@@ -179,9 +227,7 @@ function MyChangesContent() {
   const reviewCount = changes.filter((c) => c.status === "review").length;
 
   const filtered =
-    activeTab === "all"
-      ? changes
-      : changes.filter((c) => c.type === activeTab);
+    activeTab === "all" ? changes : changes.filter((c) => c.type === activeTab);
 
   const tabs: { key: TabFilter; label: string }[] = [
     { key: "all", label: "Всі" },
@@ -208,7 +254,9 @@ function MyChangesContent() {
             <span className={styles.heroStatLabel}>схвалено</span>
           </div>
           <div className={styles.heroStat}>
-            <span className={`${styles.heroStatValue} ${styles.heroStatOrange}`}>
+            <span
+              className={`${styles.heroStatValue} ${styles.heroStatOrange}`}
+            >
               {reviewCount}
             </span>
             <span className={styles.heroStatLabel}>на розгляді</span>
@@ -266,7 +314,8 @@ function MyChangesContent() {
 
                 <div className={styles.timelineMeta}>
                   <span className={styles.timelineTime}>
-                    {formatDate(entry.createdAt)} · {relativeTime(entry.createdAt)}
+                    {formatDate(entry.createdAt)} ·{" "}
+                    {relativeTime(entry.createdAt)}
                   </span>
                 </div>
 

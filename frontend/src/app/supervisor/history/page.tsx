@@ -17,7 +17,10 @@ import {
   formatUkDate,
 } from "@/features/role-workspace/roleWorkspace";
 import { useSupervisorHistory } from "@/hooks/useHistory";
-import type { SupervisorEventFilter, SupervisorEventType } from "@/lib/api/history";
+import type {
+  SupervisorEventFilter,
+  SupervisorEventType,
+} from "@/lib/api/history";
 import shellStyles from "@/features/role-workspace/roleWorkspace.module.scss";
 import styles from "./page.module.scss";
 
@@ -97,8 +100,8 @@ export default function SupervisorHistoryPage() {
               <span className={shellStyles.eyebrow}>SUPERVISOR · ІСТОРІЯ</span>
               <h1 className={shellStyles.pageTitle}>Журнал подій</h1>
               <p className={shellStyles.pageSubtitle}>
-                Відстежуйте, хто приєднався до груп, які рішення були ухвалені та
-                які навчальні групи створено або заархівовано.
+                Відстежуйте, хто приєднався до груп, які рішення були ухвалені
+                та які навчальні групи створено або заархівовано.
               </p>
             </div>
             <div className={styles.summaryCard}>
@@ -166,7 +169,9 @@ export default function SupervisorHistoryPage() {
             </div>
           ) : error ? (
             <div className={shellStyles.emptyState}>
-              <p className={shellStyles.emptyTitle}>Помилка завантаження журналу</p>
+              <p className={shellStyles.emptyTitle}>
+                Помилка завантаження журналу
+              </p>
             </div>
           ) : pageItems.length === 0 ? (
             <div className={shellStyles.emptyState}>

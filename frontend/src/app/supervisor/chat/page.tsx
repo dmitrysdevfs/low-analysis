@@ -17,12 +17,19 @@ import {
   formatUkDate,
   formatUkTime,
 } from "@/features/role-workspace/roleWorkspace";
-import { useGroupChatRooms, useInvalidateRooms } from "@/features/group-chat/hooks/useGroupChatRooms";
+import {
+  useGroupChatRooms,
+  useInvalidateRooms,
+} from "@/features/group-chat/hooks/useGroupChatRooms";
 import { useGroupChatMessages } from "@/features/group-chat/hooks/useGroupChatMessages";
 import { useGroupChatSocket } from "@/features/group-chat/hooks/useGroupChatSocket";
 import { sendWsMessage } from "@/features/group-chat/lib/chatSocket";
 import { markRead } from "@/features/group-chat/api/groupChatApi";
-import type { ChatRoom, ChatMessage, WsEvent } from "@/features/group-chat/types";
+import type {
+  ChatRoom,
+  ChatMessage,
+  WsEvent,
+} from "@/features/group-chat/types";
 import shellStyles from "@/features/role-workspace/roleWorkspace.module.scss";
 import styles from "./page.module.scss";
 

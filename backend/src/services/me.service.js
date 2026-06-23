@@ -188,4 +188,5 @@ export const getMyChanges = async (userId) => {
   return all;
 };
 
-export const getLegislatorAnalytics = (userId, period) => _getLegislatorAnalytics(userId, period);
+export const getLegislatorAnalytics = (userId, period) =>
+  _getLegislatorAnalytics(userId, period);

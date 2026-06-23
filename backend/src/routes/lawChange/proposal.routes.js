@@ -1,6 +1,10 @@
 import express from 'express';
 import * as proposalController from '../../controllers/lawChange/proposal.controller.js';
-import { protect, hasPermission, authorize } from '../../middleware/authMiddleware.js';
+import {
+  protect,
+  hasPermission,
+  authorize,
+} from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
 

@@ -326,8 +326,13 @@ router.get('/changes', async (req, res, next) => {
 router.get('/history', async (req, res, next) => {
   try {
     const { type, page, limit } = req.query;
-    const { getLegislatorHistory } = await import('../services/historyService.js');
-    const data = await getLegislatorHistory(req.user._id, { type, page, limit });
+    const { getLegislatorHistory } =
+      await import('../services/historyService.js');
+    const data = await getLegislatorHistory(req.user._id, {
+      type,
+      page,
+      limit,
+    });
     res.json(data);
   } catch (err) {
     next(err);

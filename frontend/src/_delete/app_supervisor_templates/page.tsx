@@ -54,7 +54,8 @@ const INITIAL_MY_TEMPLATES: TemplateCard[] = [
     name: "Уточнення термінів",
     type: "edit",
     law: "Про запобігання корупції",
-    description: "Шаблон для правок формулювань у визначеннях та прикінцевих положеннях.",
+    description:
+      "Шаблон для правок формулювань у визначеннях та прикінцевих положеннях.",
     text: "Пропонується викласти абзац у такій редакції...",
     createdAt: "2026-06-18T09:00:00.000Z",
   },
@@ -63,7 +64,8 @@ const INITIAL_MY_TEMPLATES: TemplateCard[] = [
     name: "Додавання винятків",
     type: "add",
     law: "Бюджетний кодекс України",
-    description: "Застосовується для додавання окремого пункту з чіткими умовами винятку.",
+    description:
+      "Застосовується для додавання окремого пункту з чіткими умовами винятку.",
     text: "Доповнити статтю новим пунктом такого змісту...",
     createdAt: "2026-06-16T14:00:00.000Z",
   },
@@ -72,7 +74,8 @@ const INITIAL_MY_TEMPLATES: TemplateCard[] = [
     name: "Видалення дублювань",
     type: "delete",
     law: "Про Національну поліцію",
-    description: "Шаблон для зняття повторюваних абзаців із посиланням на чинну редакцію.",
+    description:
+      "Шаблон для зняття повторюваних абзаців із посиланням на чинну редакцію.",
     text: "Виключити абзац другий частини третьої...",
     createdAt: "2026-06-12T11:20:00.000Z",
   },
@@ -84,7 +87,8 @@ const PUBLIC_TEMPLATES: TemplateCard[] = [
     name: "Базова поправка до статті",
     type: "edit",
     law: "Універсальний",
-    description: "Публічний каркас для переписування статті з аргументацією та посиланням на джерела.",
+    description:
+      "Публічний каркас для переписування статті з аргументацією та посиланням на джерела.",
     text: "Статтю викласти у такій редакції...",
     createdAt: "2026-06-10T09:00:00.000Z",
     author: "Legal Lab",
@@ -95,7 +99,8 @@ const PUBLIC_TEMPLATES: TemplateCard[] = [
     name: "Нове положення",
     type: "add",
     law: "Універсальний",
-    description: "Структура для додавання окремого пункту або нової статті зі змістом і метою.",
+    description:
+      "Структура для додавання окремого пункту або нової статті зі змістом і метою.",
     text: "Доповнити закон новою статтею такого змісту...",
     createdAt: "2026-06-09T12:10:00.000Z",
     author: "Law Analysis",
@@ -106,7 +111,8 @@ const PUBLIC_TEMPLATES: TemplateCard[] = [
     name: "Скасування норми",
     type: "delete",
     law: "Універсальний",
-    description: "Використовується для вилучення неактуального або конфліктного положення.",
+    description:
+      "Використовується для вилучення неактуального або конфліктного положення.",
     text: "Положення пункту визнати таким, що втратив чинність...",
     createdAt: "2026-06-05T16:40:00.000Z",
     author: "Mentor Board",
@@ -241,7 +247,11 @@ export default function SupervisorTemplatesPage() {
               </p>
             </div>
             <div className={shellStyles.toolbar}>
-              <button type="button" className="btn btn-primary" onClick={openCreateModal}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={openCreateModal}
+              >
                 <Plus size={14} />
                 Створити шаблон
               </button>
@@ -252,8 +262,12 @@ export default function SupervisorTemplatesPage() {
         <section className={shellStyles.kpiGrid}>
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Мої шаблони</p>
-            <h2 className={shellStyles.kpiValue}>{libraryStats.privateCount}</h2>
-            <p className={shellStyles.kpiNote}>Персональні заготовки для груп.</p>
+            <h2 className={shellStyles.kpiValue}>
+              {libraryStats.privateCount}
+            </h2>
+            <p className={shellStyles.kpiNote}>
+              Персональні заготовки для груп.
+            </p>
           </article>
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Публічні</p>
@@ -263,14 +277,18 @@ export default function SupervisorTemplatesPage() {
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Використання</p>
             <h2 className={shellStyles.kpiValue}>92</h2>
-            <p className={shellStyles.kpiNote}>Сумарні використання шаблонів.</p>
+            <p className={shellStyles.kpiNote}>
+              Сумарні використання шаблонів.
+            </p>
           </article>
           <article className={shellStyles.kpiCard}>
             <p className={shellStyles.kpiLabel}>Стан</p>
             <h2 className={shellStyles.kpiValue}>
               <Sparkles size={24} />
             </h2>
-            <p className={shellStyles.kpiNote}>Готово до розшарення з групами.</p>
+            <p className={shellStyles.kpiNote}>
+              Готово до розшарення з групами.
+            </p>
           </article>
         </section>
 
@@ -290,7 +308,9 @@ export default function SupervisorTemplatesPage() {
                   >
                     {TEMPLATE_TYPE_LABELS[template.type]}
                   </span>
-                  <span className={styles.cardDate}>{formatUkDate(template.createdAt)}</span>
+                  <span className={styles.cardDate}>
+                    {formatUkDate(template.createdAt)}
+                  </span>
                 </div>
                 <h3 className={styles.cardTitle}>{template.name}</h3>
                 <p className={styles.cardLaw}>{template.law}</p>
@@ -334,7 +354,9 @@ export default function SupervisorTemplatesPage() {
                   >
                     {TEMPLATE_TYPE_LABELS[template.type]}
                   </span>
-                  <span className={styles.cardUses}>{template.uses} використань</span>
+                  <span className={styles.cardUses}>
+                    {template.uses} використань
+                  </span>
                 </div>
                 <h3 className={styles.cardTitle}>{template.name}</h3>
                 <p className={styles.cardLaw}>{template.author}</p>
@@ -365,8 +387,8 @@ export default function SupervisorTemplatesPage() {
               </span>
               <h2 className={shellStyles.modalTitle}>Створити шаблон</h2>
               <p className={shellStyles.modalSubtitle}>
-                Задайте структуру поправки, привʼязаний закон і текст, який потім
-                можна буде використати або поширити в групі.
+                Задайте структуру поправки, привʼязаний закон і текст, який
+                потім можна буде використати або поширити в групі.
               </p>
             </div>
 
@@ -407,7 +429,9 @@ export default function SupervisorTemplatesPage() {
                 </label>
 
                 <label className={shellStyles.field}>
-                  <span className={shellStyles.fieldLabel}>Прив&apos;язаний закон</span>
+                  <span className={shellStyles.fieldLabel}>
+                    Прив&apos;язаний закон
+                  </span>
                   <input
                     className={shellStyles.input}
                     value={formState.law}
@@ -456,7 +480,11 @@ export default function SupervisorTemplatesPage() {
               </label>
 
               <div className={shellStyles.modalActions}>
-                <button type="button" className="btn btn-outline" onClick={closeModal}>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={closeModal}
+                >
                   Скасувати
                 </button>
                 <button type="submit" className="btn btn-primary">

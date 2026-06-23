@@ -26,7 +26,10 @@ export const getProposals = async (req, res, next) => {
         : null;
 
     if (law_id) {
-      const proposals = await proposalService.getProposalsByLaw(law_id, filters);
+      const proposals = await proposalService.getProposalsByLaw(
+        law_id,
+        filters,
+      );
       res.json(proposals);
     } else {
       const result = await proposalService.getAllProposals(filters, pagination);
@@ -104,7 +107,13 @@ export const deleteProposal = async (req, res, next) => {
 export const reviewProposal = async (req, res, next) => {
   try {
     const { action } = req.body; // 'approve' | 'reject'
-    const proposal = await proposalService.reviewProposal(req.params.id, action, req.user);
+    const proposal = await proposalService.reviewProposal(
+      req.params.id,
+      action,
+      req.user,
+    );
     res.json(proposal);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };

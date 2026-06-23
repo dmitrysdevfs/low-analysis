@@ -58,7 +58,8 @@ function ForkDetail({ id }: { id: string }) {
   const [reviewNote, setReviewNote] = useState("");
 
   if (isLoading) return <p className={styles.loadingState}>Завантаження...</p>;
-  if (error || !data) return <p className={styles.errorState}>Форк не знайдено</p>;
+  if (error || !data)
+    return <p className={styles.errorState}>Форк не знайдено</p>;
 
   const { fork, changes } = data;
 
@@ -79,7 +80,13 @@ function ForkDetail({ id }: { id: string }) {
         <StatusBadge status={fork.status} />
       </div>
       {fork.law && (
-        <p style={{ color: "var(--color-smoke)", fontSize: "0.9rem", marginBottom: 24 }}>
+        <p
+          style={{
+            color: "var(--color-smoke)",
+            fontSize: "0.9rem",
+            marginBottom: 24,
+          }}
+        >
           <FileText size={14} style={{ marginRight: 6 }} />
           {fork.law.title} ({fork.law.code})
         </p>
@@ -118,11 +125,22 @@ function ForkDetail({ id }: { id: string }) {
           <p className={styles.emptyTitle}>Змін немає</p>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 8 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+            marginTop: 8,
+          }}
+        >
           {changes.map((change, idx) => (
             <div
               key={idx}
-              style={{ border: "1px solid var(--color-border)", borderRadius: 8, overflow: "hidden" }}
+              style={{
+                border: "1px solid var(--color-border)",
+                borderRadius: 8,
+                overflow: "hidden",
+              }}
             >
               <div
                 style={{
@@ -165,12 +183,24 @@ function ForkDetail({ id }: { id: string }) {
                       : "Видалення"}
                 </span>
                 {change.rationale && (
-                  <span style={{ fontSize: "0.8rem", color: "var(--color-smoke)", marginLeft: "auto" }}>
+                  <span
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "var(--color-smoke)",
+                      marginLeft: "auto",
+                    }}
+                  >
                     {change.rationale}
                   </span>
                 )}
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 0,
+                }}
+              >
                 <div
                   style={{
                     padding: "12px 16px",
@@ -178,7 +208,14 @@ function ForkDetail({ id }: { id: string }) {
                     background: "#1a0a0a",
                   }}
                 >
-                  <p style={{ fontSize: "0.7rem", color: "#c0392b", fontWeight: 600, marginBottom: 8 }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "#c0392b",
+                      fontWeight: 600,
+                      marginBottom: 8,
+                    }}
+                  >
                     − ОРИГІНАЛ
                   </p>
                   <pre
@@ -195,7 +232,14 @@ function ForkDetail({ id }: { id: string }) {
                   </pre>
                 </div>
                 <div style={{ padding: "12px 16px", background: "#0a1a0a" }}>
-                  <p style={{ fontSize: "0.7rem", color: "#2ea043", fontWeight: 600, marginBottom: 8 }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "#2ea043",
+                      fontWeight: 600,
+                      marginBottom: 8,
+                    }}
+                  >
                     + ПРОПОЗИЦІЯ
                   </p>
                   <pre
@@ -228,7 +272,9 @@ function ForkDetail({ id }: { id: string }) {
             background: "var(--color-surface)",
           }}
         >
-          <p style={{ fontWeight: 600, marginBottom: 12 }}>Рішення супервайзера</p>
+          <p style={{ fontWeight: 600, marginBottom: 12 }}>
+            Рішення супервайзера
+          </p>
           <textarea
             style={{
               width: "100%",
@@ -282,7 +328,13 @@ function ForkDetail({ id }: { id: string }) {
         </div>
       )}
       {fork.status !== "review" && (
-        <p style={{ marginTop: 24, color: "var(--color-smoke)", fontSize: "0.9rem" }}>
+        <p
+          style={{
+            marginTop: 24,
+            color: "var(--color-smoke)",
+            fontSize: "0.9rem",
+          }}
+        >
           Статус: <StatusBadge status={fork.status} />
         </p>
       )}
@@ -297,7 +349,8 @@ function ProposalDetail({ id }: { id: string }) {
   const reviewProposalMutation = useReviewProposal();
 
   if (isLoading) return <p className={styles.loadingState}>Завантаження...</p>;
-  if (error || !data) return <p className={styles.errorState}>Законопроєкт не знайдено</p>;
+  if (error || !data)
+    return <p className={styles.errorState}>Законопроєкт не знайдено</p>;
 
   const proposal = data as Proposal & { amendments?: Amendment[] };
   const amendments = proposal.amendments ?? [];
@@ -308,7 +361,9 @@ function ProposalDetail({ id }: { id: string }) {
     try {
       await reviewProposalMutation.mutateAsync({ id, action });
       notify.success(
-        action === "approve" ? "Законопроєкт схвалено" : "Законопроєкт відхилено",
+        action === "approve"
+          ? "Законопроєкт схвалено"
+          : "Законопроєкт відхилено",
       );
     } catch (e) {
       notify.error(e instanceof Error ? e.message : "Помилка");
@@ -323,12 +378,20 @@ function ProposalDetail({ id }: { id: string }) {
         <StatusBadge status={proposal.status} />
       </div>
       {lawTitle && (
-        <p style={{ color: "var(--color-smoke)", fontSize: "0.9rem", marginBottom: 16 }}>
+        <p
+          style={{
+            color: "var(--color-smoke)",
+            fontSize: "0.9rem",
+            marginBottom: 16,
+          }}
+        >
           {lawTitle}
         </p>
       )}
       {proposal.description && (
-        <p style={{ marginBottom: 24, fontSize: "0.9rem" }}>{proposal.description}</p>
+        <p style={{ marginBottom: 24, fontSize: "0.9rem" }}>
+          {proposal.description}
+        </p>
       )}
 
       <div className={styles.kpiStrip}>
@@ -339,18 +402,47 @@ function ProposalDetail({ id }: { id: string }) {
       </div>
 
       {amendments.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 16 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            marginTop: 16,
+          }}
+        >
           {amendments.map((a, idx) => (
             <div
               key={a._id}
-              style={{ border: "1px solid var(--color-border)", borderRadius: 8, padding: 16 }}
+              style={{
+                border: "1px solid var(--color-border)",
+                borderRadius: 8,
+                padding: 16,
+              }}
             >
-              <p style={{ fontSize: "0.8rem", color: "var(--color-smoke)", marginBottom: 8 }}>
+              <p
+                style={{
+                  fontSize: "0.8rem",
+                  color: "var(--color-smoke)",
+                  marginBottom: 8,
+                }}
+              >
                 Ст. {a.context?.article_num ?? idx + 1} · {a.change_type}
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 12,
+                }}
+              >
                 <div>
-                  <p style={{ fontSize: "0.7rem", color: "#c0392b", marginBottom: 4 }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "#c0392b",
+                      marginBottom: 4,
+                    }}
+                  >
                     − ОРИГІНАЛ
                   </p>
                   <pre
@@ -365,7 +457,13 @@ function ProposalDetail({ id }: { id: string }) {
                   </pre>
                 </div>
                 <div>
-                  <p style={{ fontSize: "0.7rem", color: "#2ea043", marginBottom: 4 }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "#2ea043",
+                      marginBottom: 4,
+                    }}
+                  >
                     + ПРОПОЗИЦІЯ
                   </p>
                   <pre
@@ -381,7 +479,13 @@ function ProposalDetail({ id }: { id: string }) {
                 </div>
               </div>
               {a.reason && (
-                <p style={{ fontSize: "0.85rem", marginTop: 8, color: "var(--color-smoke)" }}>
+                <p
+                  style={{
+                    fontSize: "0.85rem",
+                    marginTop: 8,
+                    color: "var(--color-smoke)",
+                  }}
+                >
                   <strong>Причина:</strong> {a.reason}
                 </p>
               )}
@@ -400,7 +504,9 @@ function ProposalDetail({ id }: { id: string }) {
             background: "var(--color-surface)",
           }}
         >
-          <p style={{ fontWeight: 600, marginBottom: 12 }}>Рішення супервайзера</p>
+          <p style={{ fontWeight: 600, marginBottom: 12 }}>
+            Рішення супервайзера
+          </p>
           <div style={{ display: "flex", gap: 10 }}>
             <button
               type="button"
@@ -455,7 +561,8 @@ function AmendmentDetail({ id }: { id: string }) {
   });
 
   if (isLoading) return <p className={styles.loadingState}>Завантаження...</p>;
-  if (error || !amendment) return <p className={styles.errorState}>Поправку не знайдено</p>;
+  if (error || !amendment)
+    return <p className={styles.errorState}>Поправку не знайдено</p>;
 
   const articleNum = amendment.context?.article_num ?? "—";
   const lawTitle =
@@ -473,7 +580,13 @@ function AmendmentDetail({ id }: { id: string }) {
             : "Видалення"}
       </h1>
       {lawTitle && (
-        <p style={{ color: "var(--color-smoke)", fontSize: "0.9rem", marginBottom: 16 }}>
+        <p
+          style={{
+            color: "var(--color-smoke)",
+            fontSize: "0.9rem",
+            marginBottom: 16,
+          }}
+        >
           {lawTitle}
         </p>
       )}
@@ -515,7 +628,14 @@ function AmendmentDetail({ id }: { id: string }) {
             borderRight: "1px solid var(--color-border)",
           }}
         >
-          <p style={{ fontSize: "0.7rem", color: "#c0392b", fontWeight: 600, marginBottom: 8 }}>
+          <p
+            style={{
+              fontSize: "0.7rem",
+              color: "#c0392b",
+              fontWeight: 600,
+              marginBottom: 8,
+            }}
+          >
             − ОРИГІНАЛ
           </p>
           <pre
@@ -532,7 +652,14 @@ function AmendmentDetail({ id }: { id: string }) {
           </pre>
         </div>
         <div style={{ padding: "12px 16px", background: "#0a1a0a" }}>
-          <p style={{ fontSize: "0.7rem", color: "#2ea043", fontWeight: 600, marginBottom: 8 }}>
+          <p
+            style={{
+              fontSize: "0.7rem",
+              color: "#2ea043",
+              fontWeight: 600,
+              marginBottom: 8,
+            }}
+          >
             + ПРОПОЗИЦІЯ
           </p>
           <pre
@@ -555,7 +682,13 @@ function AmendmentDetail({ id }: { id: string }) {
           <strong>Причина:</strong> {amendment.reason}
         </p>
       )}
-      <p style={{ marginTop: 24, color: "var(--color-smoke)", fontSize: "0.85rem" }}>
+      <p
+        style={{
+          marginTop: 24,
+          color: "var(--color-smoke)",
+          fontSize: "0.85rem",
+        }}
+      >
         Поправки не потребують окремого схвалення супервайзером
       </p>
     </>
@@ -569,7 +702,11 @@ export default function SupervisorChangeDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const id = params?.id as string;
-  const type = searchParams?.get("type") as "fork" | "proposal" | "amendment" | null;
+  const type = searchParams?.get("type") as
+    | "fork"
+    | "proposal"
+    | "amendment"
+    | null;
 
   if (!isHydrated) {
     return (

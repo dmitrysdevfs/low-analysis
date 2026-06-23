@@ -29,21 +29,65 @@ import styles from "./page.module.scss";
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+  },
   { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.supervisorProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.supervisorAmendments },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.supervisorProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.supervisorAmendments,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.supervisorRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.supervisorRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 function SupervisorSidebar({
@@ -117,15 +161,28 @@ function AnalyticsContent() {
       };
       const dateStr = new Date().toLocaleDateString("uk-UA");
       const esc = (s: string) =>
-        String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
 
       const maxBar = Math.max(
-        ...data.weeklyActivity.flatMap((w) => [w.forks, w.proposals, w.amendments]),
+        ...data.weeklyActivity.flatMap((w) => [
+          w.forks,
+          w.proposals,
+          w.amendments,
+        ]),
         1,
       );
-      const maxApproved = Math.max(...data.topLegislators.map((l) => l.approved), 1);
+      const maxApproved = Math.max(
+        ...data.topLegislators.map((l) => l.approved),
+        1,
+      );
       const lawMaxForks = Math.max(...data.lawCoverage.map((l) => l.forks), 1);
-      const lawMaxProposals = Math.max(...data.lawCoverage.map((l) => l.proposals), 1);
+      const lawMaxProposals = Math.max(
+        ...data.lawCoverage.map((l) => l.proposals),
+        1,
+      );
 
       const html = `
         <div style="background:#ffffff;color:#111111;font-family:Georgia,serif;padding:40px 48px;width:730px;box-sizing:border-box;">
@@ -144,9 +201,18 @@ function AnalyticsContent() {
           <div style="font-size:9px;letter-spacing:2px;color:#6b7280;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:8px;">Ключові показники</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
             ${[
-              { label: "Активних законодавців", val: data.kpi.activeLegislators },
-              { label: "Схвалень за період", val: data.kpi.approvalsThisPeriod },
-              { label: "Груп (акт./всього)", val: `${data.kpi.groups.active}/${data.kpi.groups.total}` },
+              {
+                label: "Активних законодавців",
+                val: data.kpi.activeLegislators,
+              },
+              {
+                label: "Схвалень за період",
+                val: data.kpi.approvalsThisPeriod,
+              },
+              {
+                label: "Груп (акт./всього)",
+                val: `${data.kpi.groups.active}/${data.kpi.groups.total}`,
+              },
             ]
               .map(
                 (k) => `
@@ -264,11 +330,19 @@ function AnalyticsContent() {
       container.innerHTML = html;
       document.body.appendChild(container);
 
-      const canvas = await html2canvas(container, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
       document.body.removeChild(container);
 
       const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
       const pdfW = pdf.internal.pageSize.getWidth();
       const pdfH = pdf.internal.pageSize.getHeight();
       const imgH = (canvas.height * pdfW) / canvas.width;
@@ -284,14 +358,26 @@ function AnalyticsContent() {
         heightLeft -= pdfH;
       }
 
-      pdf.save(`supervisor-analytics-${period}-${new Date().toISOString().slice(0, 10)}.pdf`);
+      pdf.save(
+        `supervisor-analytics-${period}-${new Date().toISOString().slice(0, 10)}.pdf`,
+      );
     } catch (e) {
       console.error("PDF export failed", e);
     }
   };
 
-  if (isLoading) return <div className={styles.page}><p style={{ padding: 32 }}>Завантаження...</p></div>;
-  if (error || !data) return <div className={styles.page}><p style={{ padding: 32 }}>Помилка завантаження</p></div>;
+  if (isLoading)
+    return (
+      <div className={styles.page}>
+        <p style={{ padding: 32 }}>Завантаження...</p>
+      </div>
+    );
+  if (error || !data)
+    return (
+      <div className={styles.page}>
+        <p style={{ padding: 32 }}>Помилка завантаження</p>
+      </div>
+    );
 
   const { kpi, weeklyActivity, topLegislators, lawCoverage } = data;
 
@@ -300,7 +386,7 @@ function AnalyticsContent() {
     1,
   );
   const maxApproved = Math.max(...topLegislators.map((l) => l.approved), 1);
-  const lawMaxForks     = Math.max(...lawCoverage.map((l) => l.forks), 1);
+  const lawMaxForks = Math.max(...lawCoverage.map((l) => l.forks), 1);
   const lawMaxProposals = Math.max(...lawCoverage.map((l) => l.proposals), 1);
 
   return (
@@ -309,12 +395,21 @@ function AnalyticsContent() {
       <section className={`${styles.sectionPanel} panel`}>
         <div className={styles.pageHeader}>
           <div>
-            <span className={styles.sectionEyebrow}>SUPERVISOR · АНАЛІТИКА</span>
-            <h1 className={styles.sectionTitle} style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}>
+            <span className={styles.sectionEyebrow}>
+              SUPERVISOR · АНАЛІТИКА
+            </span>
+            <h1
+              className={styles.sectionTitle}
+              style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}
+            >
               Аналітика груп
             </h1>
           </div>
-          <button type="button" className={styles.exportBtn} onClick={handleExportPDF}>
+          <button
+            type="button"
+            className={styles.exportBtn}
+            onClick={handleExportPDF}
+          >
             ↓ Звіт PDF
           </button>
         </div>
@@ -325,11 +420,15 @@ function AnalyticsContent() {
           </div>
           <div className={styles.kpiCard}>
             <p className={styles.kpiLabel}>Схвалень за період</p>
-            <strong className={styles.kpiValue}>{kpi.approvalsThisPeriod}</strong>
+            <strong className={styles.kpiValue}>
+              {kpi.approvalsThisPeriod}
+            </strong>
           </div>
           <div className={styles.kpiCard}>
             <p className={styles.kpiLabel}>Груп</p>
-            <strong className={styles.kpiValue}>{kpi.groups.active} / {kpi.groups.total}</strong>
+            <strong className={styles.kpiValue}>
+              {kpi.groups.active} / {kpi.groups.total}
+            </strong>
           </div>
         </div>
       </section>
@@ -369,8 +468,12 @@ function AnalyticsContent() {
       {/* Weekly activity */}
       <section className={styles.section}>
         <p className={styles.sectionTitle2}>Активність по тижнях</p>
-        {weeklyActivity.every((w) => w.forks === 0 && w.proposals === 0 && w.amendments === 0) ? (
-          <p style={{ opacity: 0.5, padding: "16px 0" }}>Немає даних за цей період</p>
+        {weeklyActivity.every(
+          (w) => w.forks === 0 && w.proposals === 0 && w.amendments === 0,
+        ) ? (
+          <p style={{ opacity: 0.5, padding: "16px 0" }}>
+            Немає даних за цей період
+          </p>
         ) : (
           <div className={styles.chartArea}>
             <div className={styles.barChart}>
@@ -379,15 +482,21 @@ function AnalyticsContent() {
                   <div className={styles.barGroupInner}>
                     <div
                       className={`${styles.bar} ${styles.barFork}`}
-                      style={{ height: `${(week.forks / maxBarValue) * 120}px` }}
+                      style={{
+                        height: `${(week.forks / maxBarValue) * 120}px`,
+                      }}
                     />
                     <div
                       className={`${styles.bar} ${styles.barProposal}`}
-                      style={{ height: `${(week.proposals / maxBarValue) * 120}px` }}
+                      style={{
+                        height: `${(week.proposals / maxBarValue) * 120}px`,
+                      }}
                     />
                     <div
                       className={`${styles.bar} ${styles.barAmendment}`}
-                      style={{ height: `${(week.amendments / maxBarValue) * 120}px` }}
+                      style={{
+                        height: `${(week.amendments / maxBarValue) * 120}px`,
+                      }}
                     />
                   </div>
                   <p className={styles.barLabel}>{week.week}</p>
@@ -396,15 +505,24 @@ function AnalyticsContent() {
             </div>
             <div className={styles.chartLegend}>
               <span className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: "#9b5de5" }} />
+                <span
+                  className={styles.legendDot}
+                  style={{ background: "#9b5de5" }}
+                />
                 Форки
               </span>
               <span className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: "#4a80d4" }} />
+                <span
+                  className={styles.legendDot}
+                  style={{ background: "#4a80d4" }}
+                />
                 Пропозиції
               </span>
               <span className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: "#52b788" }} />
+                <span
+                  className={styles.legendDot}
+                  style={{ background: "#52b788" }}
+                />
                 Поправки
               </span>
             </div>
@@ -420,19 +538,23 @@ function AnalyticsContent() {
         ) : (
           <div className={styles.chartArea}>
             <div className={styles.hBarList}>
-              {[...topLegislators].sort((a, b) => b.approved - a.approved).map((leg, i) => (
-                <div key={leg.name} className={styles.hBarRow}>
-                  <span className={styles.hBarRank}>{i + 1}</span>
-                  <span className={styles.hBarName}>{leg.name}</span>
-                  <div className={styles.hBarTrack}>
-                    <div
-                      className={styles.hBarFill}
-                      style={{ width: `${(leg.approved / maxApproved) * 100}%` }}
-                    />
+              {[...topLegislators]
+                .sort((a, b) => b.approved - a.approved)
+                .map((leg, i) => (
+                  <div key={leg.name} className={styles.hBarRow}>
+                    <span className={styles.hBarRank}>{i + 1}</span>
+                    <span className={styles.hBarName}>{leg.name}</span>
+                    <div className={styles.hBarTrack}>
+                      <div
+                        className={styles.hBarFill}
+                        style={{
+                          width: `${(leg.approved / maxApproved) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span className={styles.hBarValue}>{leg.approved}</span>
                   </div>
-                  <span className={styles.hBarValue}>{leg.approved}</span>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         )}
@@ -448,7 +570,10 @@ function AnalyticsContent() {
                 <p className={styles.lawName}>{law.law}</p>
                 <div className={styles.hBarList}>
                   <div className={styles.hBarRow}>
-                    <span className={styles.hBarName} style={{ width: 80, fontSize: "0.78rem" }}>
+                    <span
+                      className={styles.hBarName}
+                      style={{ width: 80, fontSize: "0.78rem" }}
+                    >
                       Форки
                     </span>
                     <div className={styles.hBarTrack}>
@@ -460,7 +585,10 @@ function AnalyticsContent() {
                     <span className={styles.hBarValue}>{law.forks}</span>
                   </div>
                   <div className={styles.hBarRow}>
-                    <span className={styles.hBarName} style={{ width: 80, fontSize: "0.78rem" }}>
+                    <span
+                      className={styles.hBarName}
+                      style={{ width: 80, fontSize: "0.78rem" }}
+                    >
                       Пропозиції
                     </span>
                     <div className={styles.hBarTrack}>
@@ -494,7 +622,8 @@ function AccessGate() {
         <span className="eyebrow">Supervisor Access</span>
         <h1 className={styles.gateTitle}>Доступ лише для ролі Supervisor</h1>
         <p className={styles.gateText}>
-          Цей workspace призначений для викладачів, менторів та керівників робочих груп.
+          Цей workspace призначений для викладачів, менторів та керівників
+          робочих груп.
         </p>
         <div className={styles.gateActions}>
           <Link href={ROUTES.rolesSupervisor} className="btn btn-primary">

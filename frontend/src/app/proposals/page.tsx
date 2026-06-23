@@ -12,7 +12,11 @@ import {
 } from "@/hooks/useLawChangeProposals";
 import { notify } from "@/lib/toast";
 import { ROUTES } from "@/constants/routes";
-import type { LawChangeProposal, LawChangeStatus, LawChangeType } from "@/types/law-change.types";
+import type {
+  LawChangeProposal,
+  LawChangeStatus,
+  LawChangeType,
+} from "@/types/law-change.types";
 import styles from "./page.module.scss";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -55,7 +59,11 @@ function statusBadgeClass(status: LawChangeStatus): string {
 function getLawName(
   law_id: LawChangeProposal["law_id"] | { _id: string; title: string },
 ): string {
-  if (typeof law_id === "object" && law_id !== null && "title" in (law_id as object)) {
+  if (
+    typeof law_id === "object" &&
+    law_id !== null &&
+    "title" in (law_id as object)
+  ) {
     return (law_id as { _id: string; title: string }).title;
   }
   return String(law_id);
@@ -66,7 +74,10 @@ function sortByDeadline(proposals: LawChangeProposal[]): LawChangeProposal[] {
     if (!a.voting_deadline && !b.voting_deadline) return 0;
     if (!a.voting_deadline) return 1;
     if (!b.voting_deadline) return -1;
-    return new Date(a.voting_deadline).getTime() - new Date(b.voting_deadline).getTime();
+    return (
+      new Date(a.voting_deadline).getTime() -
+      new Date(b.voting_deadline).getTime()
+    );
   });
 }
 
@@ -109,7 +120,10 @@ function ProposalCard({
           await removeVote.mutateAsync(proposal._id);
           notify.success("Голос знято");
         } else {
-          await castVote.mutateAsync({ proposalId: proposal._id, vote: direction });
+          await castVote.mutateAsync({
+            proposalId: proposal._id,
+            vote: direction,
+          });
           notify.success("Голос враховано");
         }
       } catch (err) {
@@ -144,16 +158,24 @@ function ProposalCard({
     <article className={styles.card}>
       {/* Header */}
       <div className={styles.cardHeader}>
-        <span className={styles.cardLawName}>{getLawName(proposal.law_id)}</span>
-        <span className={styles.typeBadge}>{TYPE_LABELS[proposal.change_type]}</span>
-        <span className={`${styles.statusBadge} ${statusBadgeClass(proposal.status)}`}>
+        <span className={styles.cardLawName}>
+          {getLawName(proposal.law_id)}
+        </span>
+        <span className={styles.typeBadge}>
+          {TYPE_LABELS[proposal.change_type]}
+        </span>
+        <span
+          className={`${styles.statusBadge} ${statusBadgeClass(proposal.status)}`}
+        >
           {STATUS_LABELS[proposal.status] ?? proposal.status}
         </span>
       </div>
 
       {/* Meta */}
       <div className={styles.cardMeta}>
-        <span className={styles.cardAuthor}>Автор: {proposal.author_display_name}</span>
+        <span className={styles.cardAuthor}>
+          Автор: {proposal.author_display_name}
+        </span>
         <span>·</span>
         <span className={styles.cardDeadline}>{deadline}</span>
       </div>
@@ -163,9 +185,9 @@ function ProposalCard({
         {proposal.change_type !== "add" && proposal.original_text && (
           <span className={styles.diffOriginal}>{proposal.original_text}</span>
         )}
-        {proposal.change_type !== "add" && proposal.change_type !== "delete" && proposal.proposed_text && (
-          <span className={styles.diffArrow}>→</span>
-        )}
+        {proposal.change_type !== "add" &&
+          proposal.change_type !== "delete" &&
+          proposal.proposed_text && <span className={styles.diffArrow}>→</span>}
         {proposal.change_type !== "delete" && proposal.proposed_text && (
           <span className={styles.diffProposed}>{proposal.proposed_text}</span>
         )}
@@ -174,11 +196,13 @@ function ProposalCard({
       {/* Vote counts */}
       <div className={styles.voteCounts}>
         <span className={styles.voteFor}>
-          За: {proposal.votes_for_weighted} очк. ({proposal.votes_for_count} осіб)
+          За: {proposal.votes_for_weighted} очк. ({proposal.votes_for_count}{" "}
+          осіб)
         </span>
         {" | "}
         <span className={styles.voteAgainst}>
-          Проти: {proposal.votes_against_weighted} очк. ({proposal.votes_against_count} осіб)
+          Проти: {proposal.votes_against_weighted} очк. (
+          {proposal.votes_against_count} осіб)
         </span>
       </div>
 
@@ -266,7 +290,9 @@ export default function ProposalsPage() {
 
   // Client-side type filter + sort by deadline
   const filtered = sortByDeadline(
-    typeFilter ? allProposals.filter((p) => p.change_type === typeFilter) : allProposals,
+    typeFilter
+      ? allProposals.filter((p) => p.change_type === typeFilter)
+      : allProposals,
   );
 
   if (!isHydrated) {

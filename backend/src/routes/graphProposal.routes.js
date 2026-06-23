@@ -1,6 +1,10 @@
 import express from 'express';
 import * as ctrl from '../controllers/graphProposal.controller.js';
-import { protect, hasPermission, authorize } from '../middleware/authMiddleware.js';
+import {
+  protect,
+  hasPermission,
+  authorize,
+} from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -44,7 +48,12 @@ const router = express.Router();
  *       200:
  *         description: Proposal list
  */
-router.post('/', protect, hasPermission('graph_proposals:create'), ctrl.createProposal);
+router.post(
+  '/',
+  protect,
+  hasPermission('graph_proposals:create'),
+  ctrl.createProposal,
+);
 router.get('/', protect, hasPermission('law_changes:read'), ctrl.getProposals);
 
 /**
@@ -111,9 +120,24 @@ router.get('/my', protect, ctrl.getMyProposals);
  *       204:
  *         description: Proposal deleted
  */
-router.get('/:id', protect, hasPermission('law_changes:read'), ctrl.getProposalById);
-router.patch('/:id', protect, hasPermission('graph_proposals:create'), ctrl.updateProposal);
-router.delete('/:id', protect, hasPermission('graph_proposals:create'), ctrl.deleteProposal);
+router.get(
+  '/:id',
+  protect,
+  hasPermission('law_changes:read'),
+  ctrl.getProposalById,
+);
+router.patch(
+  '/:id',
+  protect,
+  hasPermission('graph_proposals:create'),
+  ctrl.updateProposal,
+);
+router.delete(
+  '/:id',
+  protect,
+  hasPermission('graph_proposals:create'),
+  ctrl.deleteProposal,
+);
 
 /**
  * @swagger
@@ -132,7 +156,12 @@ router.delete('/:id', protect, hasPermission('graph_proposals:create'), ctrl.del
  *       200:
  *         description: Submitted proposal
  */
-router.post('/:id/submit', protect, hasPermission('graph_proposals:create'), ctrl.submitProposal);
+router.post(
+  '/:id/submit',
+  protect,
+  hasPermission('graph_proposals:create'),
+  ctrl.submitProposal,
+);
 
 /**
  * @swagger
@@ -194,7 +223,12 @@ router.post('/:id/withdraw', protect, ctrl.withdrawProposal);
  *       200:
  *         description: Updated proposal after vote removal
  */
-router.post('/:id/vote', protect, hasPermission('graph_proposals:vote'), ctrl.castVote);
+router.post(
+  '/:id/vote',
+  protect,
+  hasPermission('graph_proposals:vote'),
+  ctrl.castVote,
+);
 router.delete('/:id/vote', protect, ctrl.removeVote);
 
 /**
@@ -214,7 +248,12 @@ router.delete('/:id/vote', protect, ctrl.removeVote);
  *       200:
  *         description: Vote stats
  */
-router.get('/:id/votes', protect, hasPermission('law_changes:read'), ctrl.getVoteStats);
+router.get(
+  '/:id/votes',
+  protect,
+  hasPermission('law_changes:read'),
+  ctrl.getVoteStats,
+);
 
 /**
  * @swagger
@@ -244,6 +283,11 @@ router.get('/:id/votes', protect, hasPermission('law_changes:read'), ctrl.getVot
  *       200:
  *         description: Reviewed proposal
  */
-router.post('/:id/review', protect, authorize('supervisor', 'admin'), ctrl.reviewProposal);
+router.post(
+  '/:id/review',
+  protect,
+  authorize('supervisor', 'admin'),
+  ctrl.reviewProposal,
+);
 
 export default router;

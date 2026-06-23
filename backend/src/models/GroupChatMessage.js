@@ -23,5 +23,8 @@ const groupChatMessageSchema = new mongoose.Schema(
 
 groupChatMessageSchema.index({ groupId: 1, createdAt: -1 });
 
-const GroupChatMessage = mongoose.model('GroupChatMessage', groupChatMessageSchema);
+const GroupChatMessage = mongoose.model(
+  'GroupChatMessage',
+  groupChatMessageSchema,
+);
 export default GroupChatMessage;

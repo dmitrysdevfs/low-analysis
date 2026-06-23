@@ -67,7 +67,8 @@ export const createAmendment = async ({
     created_by,
     change_type,
     original_text,
-    proposed_text: change_type === 'edit' || change_type === 'add' ? proposed_text : null,
+    proposed_text:
+      change_type === 'edit' || change_type === 'add' ? proposed_text : null,
     reason,
     context,
   });

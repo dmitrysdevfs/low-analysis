@@ -75,7 +75,7 @@ const CANNOT_DO = [
   "Не приховує історію змін і не редагує аудит заднім числом.",
   "Не публікує результат як офіційний державний акт від імені органу влади.",
   "Не передає сирі, неаргументовані або колізійні правки як готові до review.",
-  'Не підміняє proposal коротким коментарем без тексту правки.',
+  "Не підміняє proposal коротким коментарем без тексту правки.",
 ] as const;
 
 const WORKFLOW = [
@@ -257,10 +257,10 @@ export default function LegislatorRulesPage() {
                 Роль автора змін, форків і законодавчих пропозицій.
               </h1>
               <p className={shellStyles.pageSubtitle}>
-                Законотворець у Law Analysis аналізує закон, готує правки, створює
-                fork, порівнює редакції та передає результат на review. Усе працює
-                як цілісний контур підготовки змін: від першої ідеї до готового
-                review-ready пакета.
+                Законотворець у Law Analysis аналізує закон, готує правки,
+                створює fork, порівнює редакції та передає результат на review.
+                Усе працює як цілісний контур підготовки змін: від першої ідеї
+                до готового review-ready пакета.
               </p>
             </div>
 
@@ -274,11 +274,14 @@ export default function LegislatorRulesPage() {
                 перевірки.
               </strong>
               <p>
-                Фокус ролі: proposals, amendments, forks, diff, шаблони, історія та
-                передача результату на наступний етап процесу.
+                Фокус ролі: proposals, amendments, forks, diff, шаблони, історія
+                та передача результату на наступний етап процесу.
               </p>
               <div className={styles.summaryActions}>
-                <Link href={ROUTES.legislatorCabinet} className="btn btn-primary">
+                <Link
+                  href={ROUTES.legislatorCabinet}
+                  className="btn btn-primary"
+                >
                   Відкрити кабінет
                 </Link>
                 <Link
@@ -314,7 +317,9 @@ export default function LegislatorRulesPage() {
           <div className={shellStyles.pageHeader}>
             <div className={shellStyles.pageHeaderLeft}>
               <span className={shellStyles.eyebrow}>ЩО МОЖЕ ЗАКОНОТВОРЕЦЬ</span>
-              <h2 className={styles.sectionTitle}>Операційні можливості ролі</h2>
+              <h2 className={styles.sectionTitle}>
+                Операційні можливості ролі
+              </h2>
             </div>
           </div>
 
@@ -357,7 +362,10 @@ export default function LegislatorRulesPage() {
             </div>
             <ul className={styles.ruleList}>
               {CANNOT_DO.map((item) => (
-                <li key={item} className={`${styles.ruleItem} ${styles.ruleItemMuted}`}>
+                <li
+                  key={item}
+                  className={`${styles.ruleItem} ${styles.ruleItemMuted}`}
+                >
                   <Target size={16} />
                   <span>{item}</span>
                 </li>
@@ -370,7 +378,9 @@ export default function LegislatorRulesPage() {
           <div className={shellStyles.pageHeader}>
             <div className={shellStyles.pageHeaderLeft}>
               <span className={shellStyles.eyebrow}>РОБОЧИЙ ПРОЦЕС</span>
-              <h2 className={styles.sectionTitle}>Як законотворець веде зміну</h2>
+              <h2 className={styles.sectionTitle}>
+                Як законотворець веде зміну
+              </h2>
               <p className={shellStyles.pageSubtitle}>
                 Це базовий флоу для ролі, яка не просто читає норми, а готує
                 повноцінний пакет змін у межах навчального, стажувального або
@@ -436,7 +446,9 @@ export default function LegislatorRulesPage() {
           <div className={shellStyles.pageHeader}>
             <div className={shellStyles.pageHeaderLeft}>
               <span className={shellStyles.eyebrow}>УКРАЇНСЬКИЙ КОНТЕКСТ</span>
-              <h2 className={styles.sectionTitle}>Для чого ця роль у системі</h2>
+              <h2 className={styles.sectionTitle}>
+                Для чого ця роль у системі
+              </h2>
             </div>
           </div>
 
@@ -490,7 +502,10 @@ export default function LegislatorRulesPage() {
             <Link href={ROUTES.legislatorCabinet} className="btn btn-primary">
               До кабінету
             </Link>
-            <Link href={ROUTES.legislatorCabinetForks} className="btn btn-outline">
+            <Link
+              href={ROUTES.legislatorCabinetForks}
+              className="btn btn-outline"
+            >
               До форків <ArrowRight size={14} />
             </Link>
           </div>

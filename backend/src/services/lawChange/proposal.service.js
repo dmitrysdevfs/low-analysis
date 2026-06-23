@@ -191,7 +191,9 @@ export const reviewProposal = async (id, action, _user) => {
   } else if (action === 'reject') {
     proposal.status = 'rejected';
   } else {
-    throw Object.assign(new Error('Invalid action. Use approve or reject'), { status: 400 });
+    throw Object.assign(new Error('Invalid action. Use approve or reject'), {
+      status: 400,
+    });
   }
 
   return await proposal.save();

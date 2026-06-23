@@ -28,7 +28,9 @@ function DiffContent({ forkId }: { forkId: string }) {
   }
 
   if (error || !data) {
-    return <p className={styles.errorState}>Форк не знайдено або немає доступу</p>;
+    return (
+      <p className={styles.errorState}>Форк не знайдено або немає доступу</p>
+    );
   }
 
   const { fork, changes } = data;
@@ -38,7 +40,14 @@ function DiffContent({ forkId }: { forkId: string }) {
       {/* Back link */}
       <Link
         href={ROUTES.legislatorCabinetForks}
-        style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--color-smoke)", fontSize: "0.85rem", marginBottom: 20 }}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          color: "var(--color-smoke)",
+          fontSize: "0.85rem",
+          marginBottom: 20,
+        }}
       >
         <ArrowLeft size={14} />
         Назад до форків
@@ -75,7 +84,13 @@ function DiffContent({ forkId }: { forkId: string }) {
       </div>
 
       {fork.law && (
-        <p style={{ color: "var(--color-smoke)", fontSize: "0.9rem", marginBottom: 24 }}>
+        <p
+          style={{
+            color: "var(--color-smoke)",
+            fontSize: "0.9rem",
+            marginBottom: 24,
+          }}
+        >
           <FileText size={14} style={{ marginRight: 6 }} />
           {fork.law.title} ({fork.law.code})
         </p>
@@ -89,15 +104,21 @@ function DiffContent({ forkId }: { forkId: string }) {
         </div>
         <div className={styles.kpiCard}>
           <p className={styles.kpiLabel}>Редагувань</p>
-          <strong className={styles.kpiValue}>{changes.filter((c) => c.operation === "edit").length}</strong>
+          <strong className={styles.kpiValue}>
+            {changes.filter((c) => c.operation === "edit").length}
+          </strong>
         </div>
         <div className={styles.kpiCard}>
           <p className={styles.kpiLabel}>Додавань</p>
-          <strong className={styles.kpiValue}>{changes.filter((c) => c.operation === "add").length}</strong>
+          <strong className={styles.kpiValue}>
+            {changes.filter((c) => c.operation === "add").length}
+          </strong>
         </div>
         <div className={styles.kpiCard}>
           <p className={styles.kpiLabel}>Видалень</p>
-          <strong className={styles.kpiValue}>{changes.filter((c) => c.operation === "delete").length}</strong>
+          <strong className={styles.kpiValue}>
+            {changes.filter((c) => c.operation === "delete").length}
+          </strong>
         </div>
       </div>
 
@@ -106,10 +127,19 @@ function DiffContent({ forkId }: { forkId: string }) {
         <div className={styles.emptyState}>
           <Zap size={32} style={{ marginBottom: 8, opacity: 0.4 }} />
           <p className={styles.emptyTitle}>Змін поки немає</p>
-          <span className={styles.emptyDesc}>Додайте зміни через сторінку форків</span>
+          <span className={styles.emptyDesc}>
+            Додайте зміни через сторінку форків
+          </span>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 8 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+            marginTop: 8,
+          }}
+        >
           {changes.map((change, idx) => (
             <div
               key={idx}
@@ -152,14 +182,26 @@ function DiffContent({ forkId }: { forkId: string }) {
                   {getOperationLabel(change.operation)}
                 </span>
                 {change.rationale && (
-                  <span style={{ fontSize: "0.8rem", color: "var(--color-smoke)", marginLeft: "auto" }}>
+                  <span
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "var(--color-smoke)",
+                      marginLeft: "auto",
+                    }}
+                  >
                     {change.rationale}
                   </span>
                 )}
               </div>
 
               {/* Diff body */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 0,
+                }}
+              >
                 <div
                   style={{
                     padding: "12px 16px",
@@ -167,7 +209,14 @@ function DiffContent({ forkId }: { forkId: string }) {
                     background: "#1a0a0a",
                   }}
                 >
-                  <p style={{ fontSize: "0.7rem", color: "#c0392b", fontWeight: 600, marginBottom: 8 }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "#c0392b",
+                      fontWeight: 600,
+                      marginBottom: 8,
+                    }}
+                  >
                     − ОРИГІНАЛ
                   </p>
                   <pre
@@ -189,7 +238,14 @@ function DiffContent({ forkId }: { forkId: string }) {
                     background: "#0a1a0a",
                   }}
                 >
-                  <p style={{ fontSize: "0.7rem", color: "#2ea043", fontWeight: 600, marginBottom: 8 }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "#2ea043",
+                      fontWeight: 600,
+                      marginBottom: 8,
+                    }}
+                  >
                     + ПРОПОЗИЦІЯ
                   </p>
                   <pre

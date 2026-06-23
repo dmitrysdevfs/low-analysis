@@ -34,20 +34,68 @@ import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
   { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.legislatorCabinet },
-  { icon: <Users size={20} />, label: "Групи", href: ROUTES.legislatorCabinetGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.legislatorCabinetProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.legislatorCabinetAmendments },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinetForks },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.legislatorCabinetProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.legislatorCabinetAmendments,
+  },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.legislatorCabinetChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.legislatorCabinetComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.legislatorCabinetRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.legislatorCabinetAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.legislatorCabinetHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.legislatorCabinetChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.legislatorCabinetRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 function LegislatorSidebar({
@@ -213,7 +261,9 @@ function CreateProposalModal({
               className={styles.btnPrimary}
               disabled={createProposal.isPending}
             >
-              {createProposal.isPending ? "Збереження..." : "Створити пропозицію"}
+              {createProposal.isPending
+                ? "Збереження..."
+                : "Створити пропозицію"}
             </button>
           </div>
         </form>
@@ -223,9 +273,7 @@ function CreateProposalModal({
 }
 
 function ProposalsContent({ userId }: { userId: string | undefined }) {
-  const { data: proposals, isLoading } = useProposals(
-    userId ? { userId } : {},
-  );
+  const { data: proposals, isLoading } = useProposals(userId ? { userId } : {});
   const submitProposal = useSubmitProposal();
 
   const [tab, setTab] = useState<TabFilter>("all");
@@ -237,8 +285,7 @@ function ProposalsContent({ userId }: { userId: string | undefined }) {
   const reviewCount = list.filter((p) => p.status === "review").length;
   const approvedCount = list.filter((p) => p.status === "approved").length;
 
-  const filtered =
-    tab === "all" ? list : list.filter((p) => p.status === tab);
+  const filtered = tab === "all" ? list : list.filter((p) => p.status === tab);
 
   const handleSubmit = async (id: string) => {
     try {
@@ -308,7 +355,9 @@ function ProposalsContent({ userId }: { userId: string | undefined }) {
               <div className={styles.proposalTitle}>{p.title}</div>
               <div className={styles.proposalLaw}>{getLawTitle(p.law_id)}</div>
               <div className={styles.proposalMeta}>
-                <span className={`${styles.badge} ${STATUS_BADGE_CLASS[p.status]}`}>
+                <span
+                  className={`${styles.badge} ${STATUS_BADGE_CLASS[p.status]}`}
+                >
                   {STATUS_LABELS[p.status]}
                 </span>
                 <span className={styles.proposalDate}>

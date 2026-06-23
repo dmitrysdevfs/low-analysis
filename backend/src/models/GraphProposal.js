@@ -8,8 +8,16 @@ const schema = new mongoose.Schema(
       required: true,
     },
     law_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Law', default: null },
-    source_law_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Law', default: null },
-    target_law_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Law', default: null },
+    source_law_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Law',
+      default: null,
+    },
+    target_law_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Law',
+      default: null,
+    },
     edge_type: { type: String, default: null },
     reason: { type: String, default: '' },
     created_by: {

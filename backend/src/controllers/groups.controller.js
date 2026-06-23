@@ -61,7 +61,11 @@ export const getGroupById = async (req, res, next) => {
 
 export const updateGroup = async (req, res, next) => {
   try {
-    const group = await groupsService.updateGroup(req.params.id, req.user._id, req.body);
+    const group = await groupsService.updateGroup(
+      req.params.id,
+      req.user._id,
+      req.body,
+    );
     res.json(group);
   } catch (error) {
     next(error);
@@ -92,7 +96,10 @@ export const createRequest = async (req, res, next) => {
 
 export const getGroupRequests = async (req, res, next) => {
   try {
-    const requests = await groupsService.getGroupRequests(req.params.id, req.user._id);
+    const requests = await groupsService.getGroupRequests(
+      req.params.id,
+      req.user._id,
+    );
     res.json(requests);
   } catch (error) {
     next(error);
@@ -115,7 +122,10 @@ export const reviewRequest = async (req, res, next) => {
 
 export const cancelRequest = async (req, res, next) => {
   try {
-    const request = await groupsService.cancelRequest(req.params.reqId, req.user._id);
+    const request = await groupsService.cancelRequest(
+      req.params.reqId,
+      req.user._id,
+    );
     res.json(request);
   } catch (error) {
     next(error);
@@ -137,7 +147,10 @@ export const removeMember = async (req, res, next) => {
 
 export const getGroupActivity = async (req, res, next) => {
   try {
-    const activity = await groupsService.getGroupActivity(req.params.id, req.user._id);
+    const activity = await groupsService.getGroupActivity(
+      req.params.id,
+      req.user._id,
+    );
     res.json(activity);
   } catch (error) {
     next(error);

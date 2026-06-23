@@ -4,7 +4,12 @@ import GroupRequest from '../models/GroupRequest.js';
 /**
  * Get public active groups with optional search/filter.
  */
-export const getPublicGroups = async ({ page = 1, limit = 20, search, supervisorId } = {}) => {
+export const getPublicGroups = async ({
+  page = 1,
+  limit = 20,
+  search,
+  supervisorId,
+} = {}) => {
   const query = { status: 'active', visibility: 'public' };
   if (search) {
     query.$or = [
@@ -32,8 +37,18 @@ export const getPublicGroups = async ({ page = 1, limit = 20, search, supervisor
 /**
  * Create a new group. Supervisor can have at most 3 active groups.
  */
-export const createGroup = async ({ name, course, supervisorId, trackedLaws, maxMembers, visibility }) => {
-  const activeCount = await Group.countDocuments({ supervisorId, status: 'active' });
+export const createGroup = async ({
+  name,
+  course,
+  supervisorId,
+  trackedLaws,
+  maxMembers,
+  visibility,
+}) => {
+  const activeCount = await Group.countDocuments({
+    supervisorId,
+    status: 'active',
+  });
   if (activeCount >= 3) {
     const err = new Error('Supervisor cannot have more than 3 active groups');
     err.statusCode = 400;
@@ -57,13 +72,17 @@ export const createGroup = async ({ name, course, supervisorId, trackedLaws, max
  */
 export const getMyGroups = async (userId, role) => {
   if (role === 'supervisor') {
-    return Group.find({ supervisorId: userId }).populate('supervisorId', 'fullName email').sort({ createdAt: -1 });
+    return Group.find({ supervisorId: userId })
+      .populate('supervisorId', 'fullName email')
+      .sort({ createdAt: -1 });
   }
   // legislator: groups where user is an active member
   return Group.find({
     members: { $elemMatch: { userId, status: 'active' } },
     status: 'active',
-  }).populate('supervisorId', 'fullName email').sort({ createdAt: -1 });
+  })
+    .populate('supervisorId', 'fullName email')
+    .sort({ createdAt: -1 });
 };
 
 /**
@@ -113,7 +132,11 @@ export const archiveGroup = async (groupId, supervisorId) => {
     throw err;
   }
 
-  return Group.findByIdAndUpdate(groupId, { status: 'archived' }, { new: true });
+  return Group.findByIdAndUpdate(
+    groupId,
+    { status: 'archived' },
+    { new: true },
+  );
 };
 
 /**
@@ -156,14 +179,20 @@ export const createRequest = async (groupId, userId, message) => {
     throw err;
   }
 
-  const existingRequest = await GroupRequest.findOne({ groupId, userId, status: 'pending' });
+  const existingRequest = await GroupRequest.findOne({
+    groupId,
+    userId,
+    status: 'pending',
+  });
   if (existingRequest) {
     const err = new Error('You already have a pending request for this group');
     err.statusCode = 400;
     throw err;
   }
 
-  const activeMembers = group.members.filter((m) => m.status === 'active').length;
+  const activeMembers = group.members.filter(
+    (m) => m.status === 'active',
+  ).length;
   if (activeMembers >= group.maxMembers) {
     const err = new Error('Group is full');
     err.statusCode = 400;
@@ -223,14 +252,22 @@ export const reviewRequest = async (groupId, reqId, supervisorId, action) => {
   }
 
   if (action === 'approve') {
-    const activeMembers = group.members.filter((m) => m.status === 'active').length;
+    const activeMembers = group.members.filter(
+      (m) => m.status === 'active',
+    ).length;
     if (activeMembers >= group.maxMembers) {
       const err = new Error('Group is full');
       err.statusCode = 400;
       throw err;
     }
     await Group.findByIdAndUpdate(groupId, {
-      $push: { members: { userId: request.userId, joinedAt: new Date(), status: 'active' } },
+      $push: {
+        members: {
+          userId: request.userId,
+          joinedAt: new Date(),
+          status: 'active',
+        },
+      },
     });
     request.status = 'approved';
   } else if (action === 'reject') {
@@ -295,7 +332,9 @@ export const removeMember = async (groupId, memberId, callerId) => {
     throw err;
   }
 
-  const memberExists = group.members.some((m) => String(m.userId) === String(memberId));
+  const memberExists = group.members.some(
+    (m) => String(m.userId) === String(memberId),
+  );
   if (!memberExists) {
     const err = new Error('Member not found in this group');
     err.statusCode = 404;

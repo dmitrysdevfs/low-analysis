@@ -47,7 +47,9 @@ import styles from "./page.module.scss";
 
 // ── Expired proposals helpers ─────────────────────────────────────────────────
 
-type ExpiredResponse = LawChangeProposal[] | { proposals: LawChangeProposal[]; total: number };
+type ExpiredResponse =
+  | LawChangeProposal[]
+  | { proposals: LawChangeProposal[]; total: number };
 
 function extractExpired(data: ExpiredResponse): LawChangeProposal[] {
   if (Array.isArray(data)) return data;
@@ -59,7 +61,11 @@ function fetchExpiredProposals() {
 }
 
 function doReviewProposal(id: string, action: "approve" | "reject") {
-  return requestJson<LawChangeProposal>(`/law-change/proposals/${id}/review`, "POST", { action });
+  return requestJson<LawChangeProposal>(
+    `/law-change/proposals/${id}/review`,
+    "POST",
+    { action },
+  );
 }
 
 function useExpiredProposals() {
@@ -74,10 +80,17 @@ function useExpiredProposals() {
 function useReviewProposal() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, action }: { id: string; action: "approve" | "reject" }) =>
-      doReviewProposal(id, action),
+    mutationFn: ({
+      id,
+      action,
+    }: {
+      id: string;
+      action: "approve" | "reject";
+    }) => doReviewProposal(id, action),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["law-change-proposals-expired"] });
+      queryClient.invalidateQueries({
+        queryKey: ["law-change-proposals-expired"],
+      });
     },
   });
 }
@@ -166,18 +179,46 @@ const SIDEBAR_NAV = [
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
   {
     icon: <Shield size={20} />,
     label: "Правила",
     href: ROUTES.supervisorRules,
   },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 function SupervisorSidebar({
@@ -358,7 +399,8 @@ function ExpiredProposalsSection() {
               <div className={styles.expiredItemHead}>
                 <div className={styles.expiredItemMeta}>
                   <span className={styles.expiredTypeBadge}>
-                    {CHANGE_TYPE_LABELS[proposal.change_type] ?? proposal.change_type}
+                    {CHANGE_TYPE_LABELS[proposal.change_type] ??
+                      proposal.change_type}
                   </span>
                   <span className={styles.expiredAuthor}>
                     {proposal.author_display_name}
@@ -366,11 +408,14 @@ function ExpiredProposalsSection() {
                   {proposal.voting_deadline && (
                     <span className={styles.expiredDeadline}>
                       <Clock3 size={12} />
-                      {new Date(proposal.voting_deadline).toLocaleDateString("uk-UA", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      {new Date(proposal.voting_deadline).toLocaleDateString(
+                        "uk-UA",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        },
+                      )}
                     </span>
                   )}
                 </div>
@@ -1087,7 +1132,10 @@ function SupervisorDashboardView() {
       <ExpiredProposalsSection />
 
       {diffForkId && (
-        <ForkDiffModal forkId={diffForkId} onClose={() => setDiffForkId(null)} />
+        <ForkDiffModal
+          forkId={diffForkId}
+          onClose={() => setDiffForkId(null)}
+        />
       )}
     </div>
   );

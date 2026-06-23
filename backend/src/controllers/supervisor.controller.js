@@ -103,7 +103,9 @@ export const reviewGroupFork = async (req, res, next) => {
     const { forkId } = req.params;
     const { action, reviewNote } = req.body;
     if (action !== 'approve' && action !== 'reject') {
-      return res.status(400).json({ message: 'action must be approve or reject' });
+      return res
+        .status(400)
+        .json({ message: 'action must be approve or reject' });
     }
     const fork = await forkService.reviewFork(forkId, action, reviewNote);
     res.json(fork);
@@ -115,7 +117,10 @@ export const reviewGroupFork = async (req, res, next) => {
 export const getAnalytics = async (req, res, next) => {
   try {
     const period = req.query.period || 'month';
-    const data = await analyticsService.getSupervisorAnalytics(req.user._id, period);
+    const data = await analyticsService.getSupervisorAnalytics(
+      req.user._id,
+      period,
+    );
     res.json(data);
   } catch (err) {
     next(err);
@@ -125,7 +130,13 @@ export const getAnalytics = async (req, res, next) => {
 export const getHistory = async (req, res, next) => {
   try {
     const { from, to, type, page, limit } = req.query;
-    const data = await historyService.getSupervisorHistory(req.user._id, { from, to, type, page, limit });
+    const data = await historyService.getSupervisorHistory(req.user._id, {
+      from,
+      to,
+      type,
+      page,
+      limit,
+    });
     res.json(data);
   } catch (err) {
     next(err);
@@ -159,7 +170,8 @@ export const getSupervisorChanges = async (req, res, next) => {
       lawTitle: typeof p.law_id === 'object' ? (p.law_id?.title ?? '') : '',
       lawCode: typeof p.law_id === 'object' ? (p.law_id?.code ?? '') : '',
       status: p.status,
-      authorName: typeof p.created_by === 'object' ? (p.created_by?.fullName ?? '') : '',
+      authorName:
+        typeof p.created_by === 'object' ? (p.created_by?.fullName ?? '') : '',
       createdAt: p.createdAt,
     }));
 
@@ -170,7 +182,8 @@ export const getSupervisorChanges = async (req, res, next) => {
       lawTitle: typeof a.law_id === 'object' ? (a.law_id?.title ?? '—') : '—',
       lawCode: '—',
       status: null,
-      authorName: typeof a.created_by === 'object' ? (a.created_by?.fullName ?? '') : '',
+      authorName:
+        typeof a.created_by === 'object' ? (a.created_by?.fullName ?? '') : '',
       createdAt: a.createdAt,
     }));
 

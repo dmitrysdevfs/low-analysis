@@ -7,7 +7,10 @@ const VOTING_DURATION_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 
 async function recalcVotes(proposal_id) {
   const votes = await GraphProposalVote.find({ proposal_id });
-  let for_w = 0, against_w = 0, for_c = 0, against_c = 0;
+  let for_w = 0,
+    against_w = 0,
+    for_c = 0,
+    against_c = 0;
   for (const v of votes) {
     if (v.vote === 'for') {
       for_w += v.vote_weight;
@@ -54,11 +57,16 @@ export const getProposals = async (filters = {}, pagination = null) => {
 };
 
 export const getMyProposals = async (userId) => {
-  return await GraphProposal.find({ created_by: userId }).sort({ createdAt: -1 });
+  return await GraphProposal.find({ created_by: userId }).sort({
+    createdAt: -1,
+  });
 };
 
 export const getProposalById = async (id) => {
-  const proposal = await GraphProposal.findById(id).populate('created_by', 'fullName role');
+  const proposal = await GraphProposal.findById(id).populate(
+    'created_by',
+    'fullName role',
+  );
   if (!proposal)
     throw Object.assign(new Error('Proposal not found'), { status: 404 });
   return proposal;
@@ -71,9 +79,18 @@ export const updateProposal = async (id, userId, patch) => {
   if (!compareIds(proposal.created_by, userId))
     throw Object.assign(new Error('Forbidden'), { status: 403 });
   if (proposal.status !== 'draft')
-    throw Object.assign(new Error('Only draft proposals can be updated'), { status: 400 });
+    throw Object.assign(new Error('Only draft proposals can be updated'), {
+      status: 400,
+    });
 
-  const allowed = ['proposal_type', 'law_id', 'source_law_id', 'target_law_id', 'edge_type', 'reason'];
+  const allowed = [
+    'proposal_type',
+    'law_id',
+    'source_law_id',
+    'target_law_id',
+    'edge_type',
+    'reason',
+  ];
   allowed.forEach((key) => {
     if (patch[key] !== undefined) proposal[key] = patch[key];
   });
@@ -87,7 +104,9 @@ export const deleteProposal = async (id, userId) => {
   if (!compareIds(proposal.created_by, userId))
     throw Object.assign(new Error('Forbidden'), { status: 403 });
   if (proposal.status !== 'draft')
-    throw Object.assign(new Error('Only draft proposals can be deleted'), { status: 400 });
+    throw Object.assign(new Error('Only draft proposals can be deleted'), {
+      status: 400,
+    });
   await proposal.deleteOne();
 };
 
@@ -98,9 +117,13 @@ export const submitProposal = async (id, userId) => {
   if (!compareIds(proposal.created_by, userId))
     throw Object.assign(new Error('Forbidden'), { status: 403 });
   if (proposal.status !== 'draft')
-    throw Object.assign(new Error('Only draft proposals can be submitted'), { status: 400 });
+    throw Object.assign(new Error('Only draft proposals can be submitted'), {
+      status: 400,
+    });
   if (!proposal.reason)
-    throw Object.assign(new Error('reason is required to submit'), { status: 422 });
+    throw Object.assign(new Error('reason is required to submit'), {
+      status: 422,
+    });
 
   proposal.status = 'active';
   proposal.voting_deadline = new Date(Date.now() + VOTING_DURATION_MS);
@@ -114,7 +137,9 @@ export const withdrawProposal = async (id, userId) => {
   if (!compareIds(proposal.created_by, userId))
     throw Object.assign(new Error('Forbidden'), { status: 403 });
   if (proposal.status !== 'active')
-    throw Object.assign(new Error('Only active proposals can be withdrawn'), { status: 400 });
+    throw Object.assign(new Error('Only active proposals can be withdrawn'), {
+      status: 400,
+    });
 
   proposal.status = 'withdrawn';
   return await proposal.save();
@@ -129,10 +154,15 @@ export const castVote = async (proposalId, user, vote) => {
     throw Object.assign(new Error('Proposal not found'), { status: 404 });
 
   if (proposal.created_by.toString() === user._id.toString())
-    throw Object.assign(new Error('Cannot vote on your own proposal'), { status: 403 });
+    throw Object.assign(new Error('Cannot vote on your own proposal'), {
+      status: 403,
+    });
 
   if (proposal.status !== 'active')
-    throw Object.assign(new Error('Voting is only allowed on active proposals'), { status: 400 });
+    throw Object.assign(
+      new Error('Voting is only allowed on active proposals'),
+      { status: 400 },
+    );
 
   const vote_weight = calculateVoteWeight(user.role);
 
@@ -144,7 +174,10 @@ export const castVote = async (proposalId, user, vote) => {
 
   const updated = await recalcVotes(proposalId);
 
-  if (updated.votes_for_weighted >= 10 && updated.votes_for_weighted > updated.votes_against_weighted) {
+  if (
+    updated.votes_for_weighted >= 10 &&
+    updated.votes_for_weighted > updated.votes_against_weighted
+  ) {
     updated.status = 'approved';
     await updated.save();
   }
@@ -157,9 +190,15 @@ export const removeVote = async (proposalId, userId) => {
   if (!proposal)
     throw Object.assign(new Error('Proposal not found'), { status: 404 });
   if (proposal.status !== 'active')
-    throw Object.assign(new Error('Cannot remove vote on non-active proposal'), { status: 400 });
+    throw Object.assign(
+      new Error('Cannot remove vote on non-active proposal'),
+      { status: 400 },
+    );
 
-  await GraphProposalVote.findOneAndDelete({ proposal_id: proposalId, user_id: userId });
+  await GraphProposalVote.findOneAndDelete({
+    proposal_id: proposalId,
+    user_id: userId,
+  });
   return await recalcVotes(proposalId);
 };
 
@@ -169,7 +208,10 @@ export const getVoteStats = async (proposalId, userId) => {
     throw Object.assign(new Error('Proposal not found'), { status: 404 });
 
   const myVote = userId
-    ? await GraphProposalVote.findOne({ proposal_id: proposalId, user_id: userId }).lean()
+    ? await GraphProposalVote.findOne({
+        proposal_id: proposalId,
+        user_id: userId,
+      }).lean()
     : null;
 
   return {
@@ -186,14 +228,19 @@ export const reviewProposal = async (id, action, _user) => {
   if (!proposal)
     throw Object.assign(new Error('Proposal not found'), { status: 404 });
   if (!['active', 'expired'].includes(proposal.status))
-    throw Object.assign(new Error('Can only review active or expired proposals'), { status: 403 });
+    throw Object.assign(
+      new Error('Can only review active or expired proposals'),
+      { status: 403 },
+    );
 
   if (action === 'approve') {
     proposal.status = 'approved';
   } else if (action === 'reject') {
     proposal.status = 'rejected';
   } else {
-    throw Object.assign(new Error('Invalid action. Use approve or reject'), { status: 400 });
+    throw Object.assign(new Error('Invalid action. Use approve or reject'), {
+      status: 400,
+    });
   }
 
   return await proposal.save();

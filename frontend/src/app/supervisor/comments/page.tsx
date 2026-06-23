@@ -26,21 +26,65 @@ import styles from "./page.module.scss";
 // ─── Sidebar nav ───────────────────────────────────────────────────────────────
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+  },
   { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.supervisorProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.supervisorAmendments },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.supervisorProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.supervisorAmendments,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.supervisorRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.supervisorRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
@@ -106,7 +150,8 @@ function AccessGate() {
         <span className="eyebrow">Supervisor Access</span>
         <h1 className={styles.gateTitle}>Доступ лише для ролі Supervisor</h1>
         <p className={styles.gateText}>
-          Цей workspace призначений для викладачів, менторів та керівників робочих груп.
+          Цей workspace призначений для викладачів, менторів та керівників
+          робочих груп.
         </p>
         <div className={styles.gateActions}>
           <Link href={ROUTES.rolesSupervisor} className="btn btn-primary">
@@ -129,7 +174,9 @@ function CommentsView() {
       <section className={`${styles.sectionPanel} panel`}>
         <div className={styles.sectionHeader}>
           <div>
-            <span className={styles.sectionEyebrow}>SUPERVISOR · КОМЕНТАРІ</span>
+            <span className={styles.sectionEyebrow}>
+              SUPERVISOR · КОМЕНТАРІ
+            </span>
             <h1 className={styles.sectionTitle}>Коментарі учасників</h1>
           </div>
         </div>
@@ -151,12 +198,22 @@ function CommentsView() {
 
       <section className={`${styles.sectionPanel} panel`}>
         <div className={styles.emptyState}>
-          <MessagesSquare size={36} style={{ color: "rgba(74,128,212,0.44)" }} />
+          <MessagesSquare
+            size={36}
+            style={{ color: "rgba(74,128,212,0.44)" }}
+          />
           <p style={{ color: "var(--color-smoke-light)", fontWeight: 600 }}>
             Коментарі учасників
           </p>
-          <p style={{ color: "var(--color-smoke)", fontSize: "0.875rem", marginTop: 8 }}>
-            Функціонал перегляду та модерації коментарів учасників груп знаходиться в розробці.
+          <p
+            style={{
+              color: "var(--color-smoke)",
+              fontSize: "0.875rem",
+              marginTop: 8,
+            }}
+          >
+            Функціонал перегляду та модерації коментарів учасників груп
+            знаходиться в розробці.
           </p>
         </div>
       </section>

@@ -25,26 +25,74 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import { useMyGroups, useCreateGroup, useSupervisorPendingCount } from "@/hooks/useGroups";
+import {
+  useMyGroups,
+  useCreateGroup,
+  useSupervisorPendingCount,
+} from "@/hooks/useGroups";
 import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
-  { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.supervisorDashboard },
+  {
+    icon: <Eye size={20} />,
+    label: "Нагляд",
+    href: ROUTES.supervisorDashboard,
+  },
   { icon: <Users size={20} />, label: "Групи", href: ROUTES.supervisorGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.supervisorProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.supervisorAmendments },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.supervisorProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.supervisorAmendments,
+  },
   { icon: <Zap size={20} />, label: "Форки", href: ROUTES.supervisorForks },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.supervisorChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.supervisorComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.supervisorRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.supervisorAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.supervisorHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.supervisorChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.supervisorChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.supervisorComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.supervisorRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.supervisorAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.supervisorHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.supervisorChat,
+  },
 ];
 
 function SupervisorSidebar({
@@ -130,13 +178,16 @@ function GroupsView() {
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [maxMembers, setMaxMembers] = useState(20);
-  const [visibility, setVisibility] = useState<"public" | "invite_only">("public");
+  const [visibility, setVisibility] = useState<"public" | "invite_only">(
+    "public",
+  );
 
   const activeGroups = groups?.filter((g) => g.status === "active") ?? [];
-  const totalMembers = groups?.reduce(
-    (sum, g) => sum + g.members.filter((m) => m.status === "active").length,
-    0,
-  ) ?? 0;
+  const totalMembers =
+    groups?.reduce(
+      (sum, g) => sum + g.members.filter((m) => m.status === "active").length,
+      0,
+    ) ?? 0;
   const activeGroupIds = activeGroups.map((g) => g._id);
   const pendingCount = useSupervisorPendingCount(activeGroupIds);
 
@@ -195,7 +246,10 @@ function GroupsView() {
         <div className={styles.sectionHeader}>
           <div>
             <span className={styles.sectionEyebrow}>SUPERVISOR · ГРУПИ</span>
-            <h1 className={styles.sectionTitle} style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}>
+            <h1
+              className={styles.sectionTitle}
+              style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}
+            >
               Мої групи
             </h1>
           </div>
@@ -287,7 +341,11 @@ function GroupsView() {
                       style={{ marginBottom: 6 }}
                     >
                       <span>
-                        {group.members.filter((m) => m.status === "active").length} / {group.maxMembers} учасників
+                        {
+                          group.members.filter((m) => m.status === "active")
+                            .length
+                        }{" "}
+                        / {group.maxMembers} учасників
                       </span>
                       <span>·</span>
                       <span>{lawsCount} законів</span>
@@ -321,13 +379,16 @@ function GroupsView() {
 
       {/* CREATE MODAL */}
       {showModal && (
-        <div className={styles.modalBackdrop} onClick={() => setShowModal(false)}>
-          <div
-            className={styles.modalBox}
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div
+          className={styles.modalBackdrop}
+          onClick={() => setShowModal(false)}
+        >
+          <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
             <h2 className={styles.modalTitle}>Нова група</h2>
-            <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <form
+              onSubmit={handleCreate}
+              style={{ display: "flex", flexDirection: "column", gap: 16 }}
+            >
               <label className={styles.field}>
                 <span>Назва групи *</span>
                 <input

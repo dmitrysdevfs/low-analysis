@@ -19,7 +19,9 @@ export async function getMessages(
 ): Promise<MessagesResponse> {
   const params = new URLSearchParams({ limit: String(limit) });
   if (before) params.set("before", before);
-  return getJson<MessagesResponse>(`/group-chats/${groupId}/messages?${params}`);
+  return getJson<MessagesResponse>(
+    `/group-chats/${groupId}/messages?${params}`,
+  );
 }
 
 export async function markRead(groupId: string): Promise<void> {

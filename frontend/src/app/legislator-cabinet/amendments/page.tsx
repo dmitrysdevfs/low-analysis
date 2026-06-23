@@ -35,20 +35,68 @@ import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
   { icon: <Eye size={20} />, label: "Нагляд", href: ROUTES.legislatorCabinet },
-  { icon: <Users size={20} />, label: "Групи", href: ROUTES.legislatorCabinetGroups },
-  { icon: <FileText size={20} />, label: "Пропозиції", href: ROUTES.legislatorCabinetProposals },
-  { icon: <PenLine size={20} />, label: "Поправки", href: ROUTES.legislatorCabinetAmendments },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinetForks },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
+  {
+    icon: <FileText size={20} />,
+    label: "Пропозиції",
+    href: ROUTES.legislatorCabinetProposals,
+  },
+  {
+    icon: <PenLine size={20} />,
+    label: "Поправки",
+    href: ROUTES.legislatorCabinetAmendments,
+  },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.legislatorCabinetChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.legislatorCabinetComments },
-  { icon: <Shield size={20} />, label: "Правила", href: ROUTES.legislatorCabinetRules },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.legislatorCabinetAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.legislatorCabinetHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.legislatorCabinetChat },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
+  {
+    icon: <Shield size={20} />,
+    label: "Правила",
+    href: ROUTES.legislatorCabinetRules,
+  },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 function LegislatorSidebar({
@@ -262,7 +310,9 @@ function CreateModal({ onClose }: CreateModalProps) {
             <select
               className={styles.select}
               value={changeType}
-              onChange={(e) => setChangeType(e.target.value as AmendmentChangeType)}
+              onChange={(e) =>
+                setChangeType(e.target.value as AmendmentChangeType)
+              }
             >
               <option value="edit">Редагування</option>
               <option value="add">Додавання</option>
@@ -273,7 +323,9 @@ function CreateModal({ onClose }: CreateModalProps) {
           <div className={styles.field}>
             <span className={styles.label}>
               Оригінальний текст{" "}
-              <em style={{ fontWeight: 400, fontStyle: "normal", opacity: 0.7 }}>
+              <em
+                style={{ fontWeight: 400, fontStyle: "normal", opacity: 0.7 }}
+              >
                 (скопіюйте з тексту закону)
               </em>
             </span>
@@ -319,7 +371,9 @@ function CreateModal({ onClose }: CreateModalProps) {
               className={styles.btnPrimary}
               disabled={createAmendment.isPending}
             >
-              {createAmendment.isPending ? "Збереження..." : "Створити поправку"}
+              {createAmendment.isPending
+                ? "Збереження..."
+                : "Створити поправку"}
             </button>
           </div>
         </form>
@@ -340,14 +394,15 @@ function AmendmentsContent({ userId }: { userId: string | undefined }) {
   const list = amendments ?? [];
 
   const filtered =
-    filterTab === "all" ? list : list.filter((a) => a.change_type === filterTab);
+    filterTab === "all"
+      ? list
+      : list.filter((a) => a.change_type === filterTab);
 
   const approvedCount = list.filter(
     (a) => a.votes_summary.positive > a.votes_summary.negative,
   ).length;
   const draftCount = list.filter(
-    (a) =>
-      a.votes_summary.positive === 0 && a.votes_summary.negative === 0,
+    (a) => a.votes_summary.positive === 0 && a.votes_summary.negative === 0,
   ).length;
 
   const handleDelete = async (id: string) => {

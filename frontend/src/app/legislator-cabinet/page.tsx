@@ -53,7 +53,11 @@ const SIDEBAR_NAV = [
     href: ROUTES.legislatorCabinet,
     active: true,
   },
-  { icon: <Users size={20} />, label: "Групи", href: ROUTES.legislatorCabinetGroups },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
   {
     icon: <FileText size={20} />,
     label: "Пропозиції",
@@ -64,21 +68,53 @@ const SIDEBAR_NAV = [
     label: "Поправки",
     href: ROUTES.legislatorCabinetAmendments,
   },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinetForks },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <GitGraph size={20} />, label: "Пропоз. Граф", href: ROUTES.graphProposals },
-  { icon: <Radar size={20} />, label: "Пропоз. Радіант", href: ROUTES.radiantProposals },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: ROUTES.legislatorCabinetChanges },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: ROUTES.legislatorCabinetComments },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
   {
     icon: <Shield size={20} />,
     label: "Правила",
     href: ROUTES.legislatorCabinetRules,
   },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: ROUTES.legislatorCabinetAnalytics },
-  { icon: <History size={20} />, label: "Історія", href: ROUTES.legislatorCabinetHistory },
-  { icon: <MessageCircle size={20} />, label: "Чат", href: ROUTES.legislatorCabinetChat },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 function LegislatorSidebar({
@@ -685,7 +721,8 @@ function LegislatorDashboardView({ isSupervisor }: { isSupervisor: boolean }) {
                               value={selectedElementId}
                               onChange={(e) => {
                                 const elId = e.target.value;
-                                let found: import("@/types").TreeNode | null = null;
+                                let found: import("@/types").TreeNode | null =
+                                  null;
                                 if (articleDetail) {
                                   if (
                                     String(articleDetail.article._id) === elId
@@ -726,7 +763,7 @@ function LegislatorDashboardView({ isSupervisor }: { isSupervisor: boolean }) {
                                       ? "п."
                                       : child.type === "paragraph"
                                         ? "абз."
-                                        : child.type ?? "";
+                                        : (child.type ?? "");
                                 return (
                                   <option
                                     key={String(child._id)}

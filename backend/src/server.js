@@ -17,7 +17,8 @@ const startServer = async () => {
     console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
   });
 
-  const { attachGroupChatWS } = await import('./modules/group-chat/groupChat.ws.js');
+  const { attachGroupChatWS } =
+    await import('./modules/group-chat/groupChat.ws.js');
   attachGroupChatWS(httpServer);
 
   if (

@@ -33,7 +33,9 @@ async function authenticateFromToken(ws, token) {
   ws.userId = String(decoded.id || decoded._id);
 
   const [asSuper, asMember] = await Promise.all([
-    Group.find({ supervisorId: ws.userId, status: 'active' }).select('_id').lean(),
+    Group.find({ supervisorId: ws.userId, status: 'active' })
+      .select('_id')
+      .lean(),
     Group.find({
       'members.userId': ws.userId,
       'members.status': 'active',
@@ -95,7 +97,11 @@ export function attachGroupChatWS(httpServer) {
         if (ws.userId) {
           // Already authenticated via cookie — just confirm
           ws.send(
-            JSON.stringify({ type: 'auth.ok', userId: ws.userId, rooms: ws.groupIds }),
+            JSON.stringify({
+              type: 'auth.ok',
+              userId: ws.userId,
+              rooms: ws.groupIds,
+            }),
           );
           return;
         }
@@ -152,9 +158,18 @@ export function attachGroupChatWS(httpServer) {
 
         // Sender gets ack, others get message.new
         ws.send(
-          JSON.stringify({ type: 'message.ack', groupId, message: msgPayload, optimisticId }),
+          JSON.stringify({
+            type: 'message.ack',
+            groupId,
+            message: msgPayload,
+            optimisticId,
+          }),
         );
-        broadcast(groupId, { type: 'message.new', groupId, message: msgPayload }, ws);
+        broadcast(
+          groupId,
+          { type: 'message.new', groupId, message: msgPayload },
+          ws,
+        );
         return;
       }
 
@@ -162,11 +177,7 @@ export function attachGroupChatWS(httpServer) {
       if (msg.type === 'typing.start' || msg.type === 'typing.stop') {
         const { groupId } = msg;
         if (!ws.groupIds.includes(groupId)) return;
-        broadcast(
-          groupId,
-          { type: msg.type, groupId, userId: ws.userId },
-          ws,
-        );
+        broadcast(groupId, { type: msg.type, groupId, userId: ws.userId }, ws);
       }
     });
 
