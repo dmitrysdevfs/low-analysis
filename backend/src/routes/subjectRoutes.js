@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   getAllSubjects,
+  searchSubjects,
   getSubjectElements,
   analyzeElementHandler,
   analyzeBatchHandler,
@@ -33,6 +34,50 @@ const router = express.Router();
  *         $ref: '#/components/responses/ServerError'
  */
 router.get('/', getAllSubjects);
+
+/**
+ * @swagger
+ * /api/subjects/search:
+ *   get:
+ *     tags: [Subjects]
+ *     summary: Автокомпліт суб'єктів регулювання
+ *     description: >
+ *       Шукає суб'єктів за назвою (canonical_name) та aliases — частковий збіг,
+ *       регістронезалежно. Сортує: точний збіг → префікс → частковий, далі за
+ *       кількістю згадувань (count desc). Повертає `{ data: [{ _id, name, count }] }`.
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: false
+ *         description: Пошуковий рядок (порожній → порожній список)
+ *         schema:
+ *           type: string
+ *           example: банк
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         description: Максимум результатів (1–50)
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 50
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Список знайдених суб'єктів
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/SubjectSearchResult'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.get('/search', searchSubjects);
 
 /**
  * @swagger
