@@ -108,4 +108,39 @@ describe('GET /api/search', () => {
     expect(res.status).toBe(400);
     expect(searchService.search).not.toHaveBeenCalled();
   });
+
+  it('passes subjectId through to the service', async () => {
+    searchService.search.mockResolvedValue(MOCK_RESULTS);
+
+    await request(app).get(
+      '/api/search?q=фінанси&subjectId=507f1f77bcf86cd799439022',
+    );
+
+    expect(searchService.search).toHaveBeenCalledWith(
+      expect.objectContaining({
+        q: 'фінанси',
+        subjectId: '507f1f77bcf86cd799439022',
+      }),
+    );
+  });
+
+  it('allows subjectId without q (subject-only search)', async () => {
+    searchService.search.mockResolvedValue(MOCK_RESULTS);
+
+    const res = await request(app).get(
+      '/api/search?subjectId=507f1f77bcf86cd799439022',
+    );
+
+    expect(res.status).toBe(200);
+    expect(searchService.search).toHaveBeenCalledWith(
+      expect.objectContaining({ subjectId: '507f1f77bcf86cd799439022' }),
+    );
+  });
+
+  it('returns 400 for an invalid subjectId', async () => {
+    const res = await request(app).get('/api/search?subjectId=not-an-id');
+
+    expect(res.status).toBe(400);
+    expect(searchService.search).not.toHaveBeenCalled();
+  });
 });

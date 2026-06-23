@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Law from '../models/Law.js';
 import Element from '../models/Element.js';
 
@@ -79,10 +80,11 @@ const resolveFilteredLawIds = async ({ status, dateFrom, dateTo }) => {
  * Law-title hits (tier 3). Laws are a small catalogue, so every match is
  * fetched and ranked in memory.
  */
-const searchLaws = async (q, { status, dateFrom, dateTo }) => {
+const searchLaws = async (q, { status, dateFrom, dateTo, lawIds }) => {
   if (!q) return [];
 
   const filter = { title: { $regex: new RegExp(escapeRegex(q), 'i') } };
+  if (lawIds) filter._id = { $in: lawIds };
   if (status) {
     filter.status = { $regex: new RegExp(`^${escapeRegex(status)}$`, 'i') };
   }
@@ -115,16 +117,29 @@ const searchLaws = async (q, { status, dateFrom, dateTo }) => {
  * inside MongoDB and returns an exact total via $facet.
  * @returns {Promise<{docs: object[], total: number}>}
  */
-const searchElementsPaged = async (q, lawIds, skip, take) => {
-  if (!q) return { docs: [], total: 0 };
-
-  const baseMatch = lawIds ? { lawId: { $in: lawIds } } : {};
-  const escaped = escapeRegex(q);
+const searchElementsPaged = async (q, baseMatch, skip, take) => {
+  if (!q && Object.keys(baseMatch).length === 0) return { docs: [], total: 0 };
 
   const facet = { total: [{ $count: 'n' }] };
   if (take > 0) {
     facet.data = [{ $skip: skip }, { $limit: take }];
   }
+
+  if (!q) {
+    const pipeline = [
+      { $match: baseMatch },
+      { $addFields: { _score: 0, _tier: TIER.ARTICLE_TEXT } },
+      { $sort: { _id: 1 } },
+      { $facet: facet },
+    ];
+    const [result] = await Element.aggregate(pipeline).allowDiskUse(true);
+    return {
+      docs: result?.data ?? [],
+      total: result?.total?.[0]?.n ?? 0,
+    };
+  }
+
+  const escaped = escapeRegex(q);
 
   const pipeline = [
     { $match: { ...baseMatch, $text: { $search: q } } },
@@ -204,13 +219,15 @@ const mapElementDocs = async (docs, q) => {
 };
 
 /**
- * Full-text search across laws and articles.
+ * Full-text search across laws and articles, optionally filtered by subject.
+ * Either `q` or `subjectId` must be provided.
  * @param {object} params
- * @param {string} params.q - search query (required, non-empty)
+ * @param {string} [params.q] - search query (optional when subjectId is set)
  * @param {'law'|'article'|'all'} [params.type='all']
  * @param {string} [params.status]
  * @param {Date} [params.dateFrom]
  * @param {Date} [params.dateTo]
+ * @param {string} [params.subjectId] - restrict hits to this regulatory subject
  * @param {number} [params.page=1]
  * @param {number} [params.limit=20]
  * @returns {Promise<{data: object[], pagination: object}>}
@@ -221,16 +238,30 @@ export const search = async ({
   status,
   dateFrom,
   dateTo,
+  subjectId,
   page = 1,
   limit = 20,
 } = {}) => {
-  const lawIds =
+  const subjectOid = subjectId ? new mongoose.Types.ObjectId(subjectId) : null;
+
+  const statusDateLawIds =
     type === 'law'
       ? null
       : await resolveFilteredLawIds({ status, dateFrom, dateTo });
 
+  const subjectLawIds = subjectOid
+    ? await Element.distinct('lawId', { 'subjects.subject_id': subjectOid })
+    : null;
+
   const lawRows =
-    type === 'article' ? [] : await searchLaws(q, { status, dateFrom, dateTo });
+    type === 'article'
+      ? []
+      : await searchLaws(q, {
+          status,
+          dateFrom,
+          dateTo,
+          lawIds: subjectLawIds,
+        });
   lawRows.sort(byRelevance);
   const lawTotal = lawRows.length;
 
@@ -238,10 +269,14 @@ export const search = async ({
   const elemSkip = Math.max(0, skip - lawTotal);
   const elemTake = Math.max(0, skip + limit - lawTotal - elemSkip);
 
+  const elementMatch = {};
+  if (statusDateLawIds) elementMatch.lawId = { $in: statusDateLawIds };
+  if (subjectOid) elementMatch['subjects.subject_id'] = subjectOid;
+
   const { docs: elementDocs, total: elementTotal } =
     type === 'law'
       ? { docs: [], total: 0 }
-      : await searchElementsPaged(q, lawIds, elemSkip, elemTake);
+      : await searchElementsPaged(q, elementMatch, elemSkip, elemTake);
 
   const total = lawTotal + elementTotal;
 
