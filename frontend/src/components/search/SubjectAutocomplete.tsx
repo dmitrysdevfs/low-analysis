@@ -12,6 +12,7 @@ interface SubjectAutocompleteProps {
 }
 
 const DEBOUNCE_MS = 250;
+const MIN_QUERY_LENGTH = 2;
 
 /**
  * Controlled subject autocomplete. The selected subject lives in the parent
@@ -36,7 +37,7 @@ export function SubjectAutocomplete({
     return () => clearTimeout(timer);
   }, [subjectName]);
 
-  const enabled = open && !subjectId && debounced.length > 0;
+  const enabled = open && !subjectId && debounced.length >= MIN_QUERY_LENGTH;
 
   const { data, isFetching } = useQuery({
     queryKey: ["subject-search", debounced],

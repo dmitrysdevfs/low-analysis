@@ -7,5 +7,7 @@ export interface SearchParams {
   numberType: "starts" | "contains" | "exact";
   number: string;
   status: string;
+  subjectId: string;
+  subjectName: string;
   sort: "date" | "title" | "relevance";
 }

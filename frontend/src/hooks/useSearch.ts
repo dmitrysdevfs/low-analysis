@@ -29,6 +29,8 @@ const DEFAULT_PARAMS: SearchParams = {
   numberType: "starts",
   number: "",
   status: "",
+  subjectId: "",
+  subjectName: "",
   sort: "date",
 };
 
@@ -74,7 +76,8 @@ export function useSearch() {
         normalizedParams.docType ||
         normalizedParams.dateFrom ||
         normalizedParams.dateTo ||
-        normalizedParams.status;
+        normalizedParams.status ||
+        normalizedParams.subjectId;
 
       if (!hasCriteria) {
         setState({ results: [], loading: false, error: null, searched: false });
@@ -92,6 +95,7 @@ export function useSearch() {
         dateTo: normalizedParams.dateTo || undefined,
         number: normalizedParams.number.trim() || undefined,
         numberType: normalizedParams.numberType,
+        subjectId: normalizedParams.subjectId || undefined,
         ...toSortQuery(normalizedParams.sort),
       };
       const cacheKey = JSON.stringify({

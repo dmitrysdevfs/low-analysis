@@ -125,6 +125,51 @@ describe("useSearch", () => {
     expect(result.current.searched).toBe(true);
   });
 
+  it("passes subjectId to getLaws", async () => {
+    vi.mocked(getLaws).mockResolvedValue([LAW_FIXTURE]);
+
+    const { result } = renderHook(() => useSearch());
+
+    act(() => {
+      result.current.search({
+        q: "фінанси",
+        subjectId: "507f1f77bcf86cd799439011",
+        subjectName: "Національний банк України",
+      });
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(getLaws).toHaveBeenCalledWith(
+      "фінанси",
+      expect.anything(),
+      expect.objectContaining({ subjectId: "507f1f77bcf86cd799439011" }),
+    );
+    expect(result.current.results).toEqual([LAW_FIXTURE]);
+  });
+
+  it("searches by subjectId alone, without a keyword", async () => {
+    vi.mocked(getLaws).mockResolvedValue([LAW_FIXTURE]);
+
+    const { result } = renderHook(() => useSearch());
+
+    act(() => {
+      result.current.search({
+        subjectId: "507f1f77bcf86cd799439011",
+        subjectName: "Національний банк України",
+      });
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(getLaws).toHaveBeenCalledWith(
+      "",
+      expect.anything(),
+      expect.objectContaining({ subjectId: "507f1f77bcf86cd799439011" }),
+    );
+    expect(result.current.searched).toBe(true);
+  });
+
   it("keeps server order for relevance sort", async () => {
     vi.mocked(getLaws).mockResolvedValue([
       LAW_FIXTURE_2,
