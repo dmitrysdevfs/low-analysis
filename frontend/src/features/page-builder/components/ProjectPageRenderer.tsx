@@ -334,14 +334,14 @@ export function ProjectPageRenderer({
 
   return (
     <div
-      className={`${styles.publicPage} ${embedded ? styles.publicPageEmbedded : ""}`}
+      className={`container section ${styles.publicPage} ${embedded ? styles.publicPageEmbedded : ""}`}
     >
       {!embedded && (
         <header className={styles.publicPageHeader}>
           <span className={styles.publicPageEyebrow}>
             {eyebrow ?? "Інформація про платформу"}
           </span>
-          <h1>{page.title}</h1>
+          <h1 className="title">{page.title}</h1>
           {page.description && <p>{page.description}</p>}
         </header>
       )}

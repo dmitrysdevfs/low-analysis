@@ -208,7 +208,7 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
           </div>
         </div>
 
-        <nav className={`nav-desktop ${styles.desktopNav}`}>
+        <nav className={styles.desktopNav}>
           {visibleNavItems.map((item) => {
             const isActive =
               pathname === item.href ||

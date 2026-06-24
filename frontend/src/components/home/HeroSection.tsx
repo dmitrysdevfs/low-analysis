@@ -9,7 +9,7 @@ import styles from "@/app/page.module.scss";
 
 export function HeroSection({ w }: { w: number }) {
   return (
-    <section className={styles.heroSection}>
+    <section className={`container section ${styles.heroSection}`}>
       <div className={styles.blobTopRight} />
       <div className={styles.blobBottomLeft} />
 
@@ -28,14 +28,14 @@ export function HeroSection({ w }: { w: number }) {
         >
           <motion.h1
             variants={childFade}
-            className={`display ${styles.heroH1}`}
+            className={styles.heroH1}
           >
             Law Analysis
           </motion.h1>
 
           <motion.p
             variants={childFade}
-            className={`display ${styles.heroSubtitle}`}
+            className={styles.heroSubtitle}
           >
             Правова екосистема для громадян, юристів та законотворців
           </motion.p>
@@ -49,7 +49,7 @@ export function HeroSection({ w }: { w: number }) {
           <motion.div variants={childFade} className={styles.heroBtns}>
             <Link
               href={ROUTES.laws}
-              className={`btn btn-outline ${styles.btnWithIcon}`}
+              className={`btn btn-primary ${styles.btnWithIcon}`}
             >
               Переглянути закони
               <motion.span

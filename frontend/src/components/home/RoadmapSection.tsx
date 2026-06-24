@@ -21,8 +21,8 @@ export function RoadmapSection({
   const progress = Math.round((done.length / roadmap.length) * 100);
 
   return (
-    <section className={styles.section}>
-      <div className={styles.inner}>
+    <section className={`section ${styles.section}`}>
+      <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -30,8 +30,8 @@ export function RoadmapSection({
           transition={{ duration: 0.45 }}
           className={styles.header}
         >
-          <div className={styles.label}>Дорожня карта</div>
-          <h2 className={`display ${styles.h2}`}>Що зроблено і що далі</h2>
+          <div className={`mono ${styles.label}`}>Дорожня карта</div>
+          <h2 className={`subtitle ${styles.h2}`}>Що зроблено і що далі</h2>
         </motion.div>
 
         {/* Progress bar */}

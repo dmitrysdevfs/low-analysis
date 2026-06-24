@@ -41,8 +41,8 @@ export function RoadmapPublicView() {
   return (
     <div className={styles.page}>
       {/* Hero */}
-      <section className={styles.hero}>
-        <div className={styles.heroInner}>
+      <section className={`section ${styles.hero}`}>
+        <div className={`container ${styles.heroInner}`}>
           <p className={styles.eyebrow}>Відкритий Roadmap</p>
           <h1 className={styles.heroTitle}>Як будується платформа</h1>
           <p className={styles.heroSub}>

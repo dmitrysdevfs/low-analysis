@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
+import {Inter, JetBrains_Mono } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
@@ -23,11 +23,11 @@ import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
 import { UserActivityTracker } from "@/components/layout/UserActivityTracker";
 
-const display = Cormorant_Garamond({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-display",
-  weight: ["500", "600", "700"],
-});
+// const display = Cormorant_Garamond({
+//   subsets: ["latin", "cyrillic"],
+//   variable: "--font-display",
+//   weight: ["500", "600", "700"],
+// });
 
 const body = Inter({
   subsets: ["latin", "cyrillic"],
@@ -92,7 +92,7 @@ export default function RootLayout({
   return (
     <html
       lang="uk"
-      className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
+      className={`${body.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <AppQueryProvider>

@@ -79,16 +79,17 @@ export default function LawsPage() {
         <div className={styles.blobGold} />
         <div className={styles.blobBlue} />
 
-        <div className={`section-pad ${styles.sectionInner}`}>
-          <motion.div
+        <div className={`container section ${styles.sectionInner}`}>
+          <div className={styles.border}>
+                   <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             className={styles.heroMotion}
           >
-            <h1 className={`display ${styles.heading}`}>
+            <h1 className={`title ${styles.heading}`}>
               Закони
-              <br />
+          
               <span className={styles.headingAccent}>України</span>
             </h1>
 
@@ -148,6 +149,7 @@ export default function LawsPage() {
               </button>
             ))}
           </motion.div>
+   </div>
 
           <LawParseForm onSuccess={() => setRefreshKey((prev) => prev + 1)} />
 
@@ -159,7 +161,7 @@ export default function LawsPage() {
               transition={{ delay: 0.3, duration: 0.4 }}
               className={styles.recentSection}
             >
-              <div className={`mono ${styles.recentLabel}`}>
+              <div className={styles.recentLabel}>
                 Нещодавно переглянуті
               </div>
               <div className={styles.recentList}>
@@ -185,7 +187,7 @@ export default function LawsPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className={`mono ${styles.countLine}`}
+                className={styles.countLine}
               >
                 {query
                   ? `${total} результат${total === 1 ? "" : "ів"} для «${query}»`

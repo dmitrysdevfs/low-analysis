@@ -35,9 +35,7 @@
 }
 
 .inner {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 56px 24px 100px;
+  padding-bottom: 28px;
 }
 
 .heroMotion {
@@ -53,19 +51,20 @@
 
 .headingAccent {
   color: #c8a843;
+  margin-left: 12px;
 }
 
 .subtitle {
   font-size: 0.95rem;
-  color: #7a98c0;
+  color: var(--color-smoke);
   margin: 0;
-  max-width: 460px;
+  max-width: 560px;
   line-height: 1.65;
 }
 
 .countLine {
   font-size: 0.68rem;
-  color: #7a98c0;
+  color: var(--color-azure);
   margin-bottom: 16px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -260,9 +259,10 @@
   align-items: center;
   padding: 4px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(200, 168, 67, 0.24);
+  border: 1px solid var(--color-gold);
   background: rgba(9, 20, 44, 0.26);
-  color: #eef3fb;
+  color: var(--color-gold);
+  font-weight: 700;
   font-size: 0.65rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -278,9 +278,9 @@
 }
 
 .chipActive {
-  background: rgba(200, 168, 67, 0.2);
+  background: var(--color-gold);
   border-color: #c8a843;
-  color: #eef3fb;
+  color: black;
 }
 
 .taxonomyBar {
