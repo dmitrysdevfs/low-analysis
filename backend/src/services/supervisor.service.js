@@ -1,6 +1,6 @@
 import LawFork from '../models/LawFork.js';
 import LawChangeProposal from '../models/LawChangeProposal.js';
-import SupervisorGroup from '../models/SupervisorGroup.js';
+import Group from '../models/Group.js';
 
 function toId(value) {
   if (!value) return null;
@@ -107,11 +107,28 @@ function createNormalizedItem({
   };
 }
 
+function normalizeGroupToSupervisorSchema(group) {
+  if (!group) return null;
+  const groupObj =
+    typeof group.toObject === 'function' ? group.toObject() : group;
+
+  const memberIds = (groupObj.members || [])
+    .filter((m) => m.status === 'active' && m.userId)
+    .map((m) => m.userId); // populated User object or string ID
+
+  return {
+    ...groupObj,
+    memberIds,
+    trackedLawIds: groupObj.trackedLaws || [],
+  };
+}
+
 async function loadSupervisorGroups(supervisorId) {
-  return SupervisorGroup.find({ supervisorId, status: 'active' })
-    .populate('trackedLawIds', 'title code')
-    .populate('memberIds', 'fullName email role')
+  const groups = await Group.find({ supervisorId, status: 'active' })
+    .populate('trackedLaws', 'title code')
+    .populate('members.userId', 'fullName email role')
     .lean();
+  return groups.map(normalizeGroupToSupervisorSchema);
 }
 
 async function loadActivityItems(groups) {
@@ -402,17 +419,30 @@ export async function createGroup(
   supervisorId,
   { name, course, memberIds = [], trackedLawIds = [] },
 ) {
-  return SupervisorGroup.create({
+  const members = memberIds.map((userId) => ({
+    userId,
+    status: 'active',
+    joinedAt: new Date(),
+  }));
+
+  const group = await Group.create({
     supervisorId,
     name,
     course,
+    members,
+    trackedLaws: trackedLawIds,
+    status: 'active',
+  });
+
+  return {
+    ...group.toObject(),
     memberIds,
     trackedLawIds,
-  });
+  };
 }
 
 export async function updateGroup(groupId, supervisorId, data) {
-  const group = await SupervisorGroup.findOne({ _id: groupId, supervisorId });
+  const group = await Group.findOne({ _id: groupId, supervisorId });
   if (!group)
     throw Object.assign(new Error('Group not found or not authorized'), {
       statusCode: 404,
@@ -421,11 +451,22 @@ export async function updateGroup(groupId, supervisorId, data) {
   const { name, course, memberIds, trackedLawIds, status } = data;
   if (name !== undefined) group.name = name;
   if (course !== undefined) group.course = course;
-  if (memberIds !== undefined) group.memberIds = memberIds;
-  if (trackedLawIds !== undefined) group.trackedLawIds = trackedLawIds;
   if (status !== undefined) group.status = status;
+  if (memberIds !== undefined) {
+    group.members = memberIds.map((userId) => ({
+      userId,
+      status: 'active',
+      joinedAt: new Date(),
+    }));
+  }
+  if (trackedLawIds !== undefined) group.trackedLaws = trackedLawIds;
 
-  return group.save();
+  const saved = await group.save();
+  return {
+    ...saved.toObject(),
+    memberIds: memberIds || saved.members.map((m) => m.userId),
+    trackedLawIds: trackedLawIds || saved.trackedLaws,
+  };
 }
 
 export async function getGroupById(groupId, supervisorId) {
