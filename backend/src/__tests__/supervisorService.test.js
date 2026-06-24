@@ -115,7 +115,7 @@ describe('supervisorService', () => {
           authorId: { _id: 'u1', fullName: 'User 1', email: 'u1@test.com' },
           title: 'My Fork',
           status: 'review',
-          updatedAt: new Date(),
+          updatedAt: new Date(Date.now() - 10000),
         },
       ];
       const mockForkChain = {
