@@ -1,5 +1,5 @@
 import LawFork from '../models/LawFork.js';
-import LawChangeProposal from '../models/LawChangeProposal.js';
+import Proposal from '../models/Proposal.js';
 import Group from '../models/Group.js';
 
 function toId(value) {
@@ -54,7 +54,7 @@ function workflowBucket(type, status) {
   if (['rejected', 'withdrawn', 'archived', 'superseded'].includes(status)) {
     return 'rejected';
   }
-  if (status === 'active') return 'review';
+  if (status === 'active' || status === 'review') return 'review';
   return 'draft';
 }
 
@@ -156,11 +156,11 @@ async function loadActivityItems(groups) {
       .populate('lawId', 'title code')
       .populate('authorId', 'fullName email')
       .lean(),
-    LawChangeProposal.find({
+    Proposal.find({
       created_by: { $in: memberIds },
       law_id: { $in: lawIds },
     })
-      .select('law_id created_by reason status updatedAt')
+      .select('law_id created_by title status updatedAt')
       .populate('law_id', 'title code')
       .populate('created_by', 'fullName email')
       .lean(),
@@ -185,7 +185,7 @@ async function loadActivityItems(groups) {
         id: proposal._id,
         type: 'proposal',
         title:
-          proposal.reason || `Зміна до ${proposal.law_id?.title || 'закону'}`,
+          proposal.title || `Зміна до ${proposal.law_id?.title || 'закону'}`,
         status: proposal.status,
         updatedAt: proposal.updatedAt,
         law: proposal.law_id,
