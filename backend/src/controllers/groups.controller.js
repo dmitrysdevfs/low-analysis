@@ -4,8 +4,8 @@ export const listPublicGroups = async (req, res, next) => {
   try {
     const { page, limit, search, supervisorId } = req.query;
     const result = await groupsService.getPublicGroups({
-      page: page ? Number(page) : 1,
-      limit: limit ? Number(limit) : 20,
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 20,
       search,
       supervisorId,
     });
