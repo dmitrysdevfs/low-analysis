@@ -434,11 +434,7 @@ export async function createGroup(
     status: 'active',
   });
 
-  return {
-    ...group.toObject(),
-    memberIds,
-    trackedLawIds,
-  };
+  return normalizeGroupToSupervisorSchema(group);
 }
 
 export async function updateGroup(groupId, supervisorId, data) {
@@ -462,11 +458,7 @@ export async function updateGroup(groupId, supervisorId, data) {
   if (trackedLawIds !== undefined) group.trackedLaws = trackedLawIds;
 
   const saved = await group.save();
-  return {
-    ...saved.toObject(),
-    memberIds: memberIds || saved.members.map((m) => m.userId),
-    trackedLawIds: trackedLawIds || saved.trackedLaws,
-  };
+  return normalizeGroupToSupervisorSchema(saved);
 }
 
 export async function getGroupById(groupId, supervisorId) {
