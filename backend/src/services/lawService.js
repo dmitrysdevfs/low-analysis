@@ -16,11 +16,19 @@ export const getAllLaws = async ({
   documentType,
   number,
   numberType = 'starts',
+  subjectId,
   page = 1,
   limit = 10,
 } = {}) => {
   const filter = {};
   const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  if (subjectId) {
+    const lawIds = await Element.distinct('lawId', {
+      'subjects.subject_id': new mongoose.Types.ObjectId(subjectId),
+    });
+    filter._id = { $in: lawIds };
+  }
 
   if (q) {
     const qRegex = new RegExp(escapeRegex(q), 'i');

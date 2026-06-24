@@ -19,6 +19,7 @@ export interface LawsSearchOptions {
   dateTo?: string;
   number?: string;
   numberType?: "starts" | "contains" | "exact";
+  subjectId?: string;
   sortBy?: "date" | "title";
   sortOrder?: "asc" | "desc";
 }
@@ -43,6 +44,7 @@ export async function getLaws(
     sortOrder: o?.sortOrder,
     number: o?.number,
     numberType: o?.number ? o?.numberType : undefined,
+    subjectId: o?.subjectId,
   });
 
   const res = await getJson<{ data: Law[] } | Law[]>(

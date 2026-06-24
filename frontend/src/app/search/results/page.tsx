@@ -22,6 +22,8 @@ function SearchResultsContent() {
   const dateTo = urlParams.get("dateTo") || "";
   const number = urlParams.get("number") || "";
   const status = urlParams.get("status") || "";
+  const subjectId = urlParams.get("subjectId") || "";
+  const subjectName = urlParams.get("subjectName") || "";
   const wordField = (urlParams.get("wordField") || "title") as
     | "title"
     | "text"
@@ -56,6 +58,8 @@ function SearchResultsContent() {
       dateTo,
       number,
       status,
+      subjectId,
+      subjectName,
       wordField,
       numberType,
       sort,
@@ -67,6 +71,8 @@ function SearchResultsContent() {
     dateTo,
     number,
     status,
+    subjectId,
+    subjectName,
     wordField,
     numberType,
     sort,

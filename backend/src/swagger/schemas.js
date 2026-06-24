@@ -279,6 +279,24 @@ export const schemas = {
     },
   },
 
+  SubjectSearchResult: {
+    type: 'object',
+    description: "Результат автокомпліту суб'єктів (#182)",
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439022' },
+      name: {
+        type: 'string',
+        example: 'Національний банк України',
+        description: "Канонічна назва суб'єкта (canonical_name)",
+      },
+      count: {
+        type: 'integer',
+        example: 152,
+        description: "Кількість елементів, де згадується суб'єкт",
+      },
+    },
+  },
+
   PaginatedLaws: {
     type: 'object',
     description: 'Пагінований список законів',

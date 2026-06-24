@@ -147,7 +147,9 @@ describe("interactive frontend components", () => {
     const onSearch = vi.fn();
     const onReset = vi.fn();
 
-    render(<SearchForm onSearch={onSearch} onReset={onReset} />);
+    render(<SearchForm onSearch={onSearch} onReset={onReset} />, {
+      wrapper: createWrapper(),
+    });
 
     const selects = screen.getAllByRole("combobox");
     fireEvent.change(screen.getByPlaceholderText("Введіть ключові слова..."), {
@@ -161,7 +163,7 @@ describe("interactive frontend components", () => {
       target: { value: "254" },
     });
     fireEvent.change(selects[1], { target: { value: "ЗАКОН УКРАЇНИ" } });
-    fireEvent.change(selects[4], { target: { value: "title" } });
+    fireEvent.change(selects[5], { target: { value: "title" } });
     fireEvent.submit(screen.getByRole("button", { name: /Шукати/i }));
 
     expect(onSearch).toHaveBeenCalledWith({
@@ -173,6 +175,8 @@ describe("interactive frontend components", () => {
       numberType: "starts",
       number: "254",
       status: "",
+      subjectId: "",
+      subjectName: "",
       sort: "title",
     });
 

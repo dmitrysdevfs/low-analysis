@@ -22,6 +22,8 @@ const DEFAULT: SearchParams = {
   numberType: "starts",
   number: "",
   status: "",
+  subjectId: "",
+  subjectName: "",
   sort: "date",
 };
 

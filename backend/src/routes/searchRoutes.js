@@ -17,14 +17,24 @@ router.use(guestRateLimit);
  *       Повертає плоский список результатів зі snippet та типом збігу, відсортований
  *       за релевантністю (назва закону > назва статті > текст статті).
  *       Існуючий `GET /api/laws` лишається як backward-compatible пошук по назві закону.
+ *       Потрібен хоча б один із параметрів `q` або `subjectId`.
  *     parameters:
  *       - in: query
  *         name: q
- *         required: true
- *         description: Пошуковий рядок (мінімум 1 символ)
+ *         required: false
+ *         description: Пошуковий рядок (мінімум 1 символ). Необов'язковий, якщо задано subjectId
  *         schema:
  *           type: string
  *           example: податок
+ *       - in: query
+ *         name: subjectId
+ *         required: false
+ *         description: >
+ *           Жорсткий фільтр по суб'єкту регулювання (id з GET /api/subjects/search).
+ *           Обмежує результати статтями/законами, де згадується цей суб'єкт.
+ *         schema:
+ *           type: string
+ *           example: 507f1f77bcf86cd799439022
  *       - in: query
  *         name: type
  *         required: false
@@ -85,7 +95,7 @@ router.use(guestRateLimit);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *             example:
- *               message: 'q: q is required'
+ *               message: 'q: q or subjectId is required'
  *       500:
  *         description: Помилка сервера
  *         content:

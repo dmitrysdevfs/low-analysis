@@ -13,6 +13,20 @@ export const getAllSubjects = async (req, res, next) => {
   }
 };
 
+export const searchSubjects = async (req, res, next) => {
+  try {
+    const { q, limit } = req.query;
+    const parsedLimit = Math.min(
+      Math.max(parseInt(limit ?? '10', 10) || 10, 1),
+      50,
+    );
+    const data = await subjectService.searchSubjects(q, { limit: parsedLimit });
+    res.json({ data });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getSubjectElements = async (req, res, next) => {
   try {
     const { id } = req.params;
