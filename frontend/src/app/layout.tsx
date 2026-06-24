@@ -24,6 +24,12 @@ import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
 import { UserActivityTracker } from "@/components/layout/UserActivityTracker";
 
+const display = Cormorant_Garamond({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
+});
+
 const body = Inter({
   subsets: ["latin", "cyrillic"],
   variable: "--font-body",
@@ -87,7 +93,7 @@ export default function RootLayout({
   return (
     <html
       lang="uk"
-      className={`${body.variable} ${mono.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <AppQueryProvider>
