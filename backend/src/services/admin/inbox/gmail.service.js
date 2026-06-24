@@ -186,6 +186,30 @@ function buildReplyRaw({ from, to, subject, text, inReplyTo, references }) {
     .replace(/=+$/g, '');
 }
 
+function buildEmailRaw({ from, to, subject, text }) {
+  const headers = [
+    `From: ${from}`,
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    'MIME-Version: 1.0',
+  ];
+  const message = `${headers.join('\r\n')}\r\n\r\n${text}`;
+  return Buffer.from(message)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+}
+
+export async function sendNewEmail(accessToken, { from, to, subject, text }) {
+  const raw = buildEmailRaw({ from, to, subject, text });
+  return await gmailRequest(accessToken, 'post', '/messages/send', {
+    headers: { 'Content-Type': 'application/json' },
+    data: { raw },
+  });
+}
+
 export async function sendThreadReply(accessToken, payload) {
   const raw = buildReplyRaw(payload);
   return await gmailRequest(accessToken, 'post', '/messages/send', {

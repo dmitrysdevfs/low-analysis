@@ -18,7 +18,7 @@ export function useSupportChat({ enabled = true }: { enabled?: boolean } = {}) {
     queryKey: ["support-chat", "current"],
     queryFn: supportApi.getCurrentConversation,
     enabled: enabled && configQuery.data?.enabled !== false,
-    refetchInterval: enabled ? 5000 : false,
+    refetchInterval: enabled ? 30_000 : false,
   });
 
   const sendMutation = useMutation({

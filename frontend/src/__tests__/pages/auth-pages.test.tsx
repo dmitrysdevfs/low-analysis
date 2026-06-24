@@ -1,6 +1,15 @@
+import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import LoginPage from "@/app/auth/login/page";
 import RegisterPage from "@/app/auth/register/page";
+
+vi.mock("@react-oauth/google", () => ({
+  GoogleOAuthProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+  useGoogleLogin: () => vi.fn(),
+  GoogleLogin: () => null,
+}));
 
 describe("auth pages", () => {
   it("switches from login to register inside the same auth card", () => {

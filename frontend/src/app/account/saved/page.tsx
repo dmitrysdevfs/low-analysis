@@ -1,10 +1,5 @@
-﻿import { Layout } from "@/components/layout/Layout";
-import { ClientWorkspaceSaved } from "@/components/account/ClientWorkspaceSaved";
+import { SavedDashboard } from "@/features/account1/SavedDashboard";
 
 export default function AccountSavedPage() {
-  return (
-    <Layout fullHeight>
-      <ClientWorkspaceSaved />
-    </Layout>
-  );
+  return <SavedDashboard />;
 }

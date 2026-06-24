@@ -86,3 +86,21 @@ export const generateDocument = async (req, res, next) => {
     next(error);
   }
 };
+
+export const reviewProposal = async (req, res, next) => {
+  try {
+    const { action } = req.body;
+    if (action !== 'approve' && action !== 'reject') {
+      return res
+        .status(400)
+        .json({ message: 'action must be approve or reject' });
+    }
+    const proposal = await proposalService.reviewProposal(
+      req.params.id,
+      action,
+    );
+    res.json(proposal);
+  } catch (error) {
+    next(error);
+  }
+};

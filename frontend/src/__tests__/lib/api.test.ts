@@ -6,6 +6,7 @@ import {
   getSubjectElements,
   getSubjects,
   parseLaw,
+  searchSubjects,
 } from "@/lib/api";
 import {
   ARTICLE_RESPONSE_FIXTURE,
@@ -123,6 +124,46 @@ describe("frontend API client", () => {
       `/api/subjects/${SUBJECT_FIXTURE._id}/elements`,
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
+  });
+
+  it("passes subjectId when requesting laws", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => [LAW_FIXTURE],
+    });
+
+    await getLaws("фінанси", undefined, {
+      subjectId: "507f1f77bcf86cd799439011",
+    });
+
+    const params = new URLSearchParams({ limit: "500" });
+    params.set("q", "фінанси");
+    params.set("subjectId", "507f1f77bcf86cd799439011");
+    expect(fetchMock).toHaveBeenCalledWith(
+      `/api/laws?${params.toString()}`,
+      expect.anything(),
+    );
+  });
+
+  it("searches subjects via the autocomplete endpoint", async () => {
+    const data = [{ _id: "1", name: "Національний банк України", count: 152 }];
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({ data }),
+    });
+
+    await expect(searchSubjects("  банк  ")).resolves.toEqual(data);
+
+    const params = new URLSearchParams({ q: "банк" });
+    expect(fetchMock).toHaveBeenCalledWith(
+      `/api/subjects/search?${params.toString()}`,
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("skips the request for a blank subject query", async () => {
+    await expect(searchSubjects("   ")).resolves.toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("sends a POST request to parse a law by URL", async () => {

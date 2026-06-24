@@ -14,6 +14,7 @@ import { SessionMenu } from "./SessionMenu";
 import { AppSidebar } from "./AppSidebar";
 import { PatreonButton } from "@/components/support/PatreonButton";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
+import { useActiveProposalsCount } from "@/hooks/useLawChangeProposals";
 import styles from "./AppHeader.module.scss";
 
 export function AppHeader() {
@@ -35,18 +36,20 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   const [headerScrolledAway, setHeaderScrolledAway] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const { isAuthenticated, isAdmin, isLegislator, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } =
+    useAuth();
+  const activeProposalsCount = useActiveProposalsCount();
   const isAuthPage = pathname.startsWith(ROUTES.auth);
   const isAdminPage = false;
   const isHome = pathname === "/";
   const visibleNavItems = useMemo(
-    () => buildNavItems({ isAuthenticated }),
-    [isAuthenticated],
+    () => buildNavItems({ isAuthenticated, isLegislator, isSupervisor }),
+    [isAuthenticated, isLegislator, isSupervisor],
   );
 
   const sessionMenuItems = useMemo(
-    () => buildSessionMenuItems({ isAdmin, isLegislator }),
-    [isAdmin, isLegislator],
+    () => buildSessionMenuItems({ isAdmin, isLegislator, isSupervisor }),
+    [isAdmin, isLegislator, isSupervisor],
   );
 
   const mobileNavItems = visibleNavItems;
@@ -79,10 +82,14 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
     return () => io.disconnect();
   }, [isHome]);
 
-  // Close sidebar on scroll — capture:true catches scrolls inside overflow containers too
+  // Close sidebar on scroll — capture:true catches scrolls inside overflow containers too,
+  // but we skip events that originate inside the sidebar itself
   useEffect(() => {
     if (!sidebarOpen) return;
-    function onScroll() {
+    function onScroll(e: Event) {
+      if (e.target instanceof Element && e.target.closest("[data-sidebar]")) {
+        return;
+      }
       setSidebarOpen(false);
     }
     document.addEventListener("scroll", onScroll, {
@@ -221,6 +228,23 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
                 className={`nav-link${isActive ? " active" : ""}`}
               >
                 {item.label}
+                {item.href === ROUTES.proposals && activeProposalsCount > 0 && (
+                  <span
+                    style={{
+                      marginLeft: 4,
+                      background: "var(--color-danger, #e53e3e)",
+                      color: "#fff",
+                      borderRadius: "10px",
+                      padding: "0 5px",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      lineHeight: "16px",
+                      display: "inline-block",
+                    }}
+                  >
+                    {activeProposalsCount}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -281,7 +305,7 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
         />
       )}
 
-      <AppSidebar visible={sidebarOpen} />
+      <AppSidebar visible={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </>
   );
 }

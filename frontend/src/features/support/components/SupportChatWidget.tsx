@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, SendHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -58,6 +58,7 @@ export function SupportChatWidget() {
   const [guestEmail, setGuestEmail] = useState("");
   const [dialogWidth, setDialogWidth] = useState(390);
   const [dialogHeight, setDialogHeight] = useState(560);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { configQuery, conversationQuery, sendMutation, markReadMutation } =
     useSupportChat({ enabled: !isHidden });
@@ -82,6 +83,10 @@ export function SupportChatWidget() {
     if (!isOpen || !conversation?.id || unreadForUser === 0) return;
     markReadMutation.mutate(conversation.id);
   }, [conversation?.id, isOpen, unreadForUser, markReadMutation]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   useEffect(() => {
     const updateViewport = () => {
@@ -258,6 +263,7 @@ export function SupportChatWidget() {
                         </article>
                       );
                     })}
+                    <div ref={messagesEndRef} />
                   </div>
                 )}
               </div>

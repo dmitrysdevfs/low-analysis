@@ -142,12 +142,11 @@ describe("Project page builder routes", () => {
       screen.getAllByRole("heading", { name: "Інформація про проєкт" }).length,
     ).toBeGreaterThan(0);
     expect(
-      screen.getByRole("link", { name: /відкрити публічну сторінку/i }),
+      screen.getByRole("link", { name: /перейти на сайт/i }),
     ).toHaveAttribute("href", "/project-info");
     expect(
       screen.getByRole("button", { name: /опублікувати/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Відновлення")).toBeInTheDocument();
-    expect(screen.getByText("#3")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /версії/i })).toBeInTheDocument();
   });
 });

@@ -49,6 +49,15 @@ const subjectSchema = new mongoose.Schema(
 // Case-insensitive index for fast lookup by alias
 subjectSchema.index({ aliases: 1 });
 
+subjectSchema.index(
+  { canonical_name: 'text', aliases: 'text' },
+  {
+    weights: { canonical_name: 10, aliases: 5 },
+    name: 'subject_fulltext',
+    default_language: 'none',
+  },
+);
+
 const Subject = mongoose.model('Subject', subjectSchema);
 
 export default Subject;

@@ -2,9 +2,18 @@ import UserActivity from '../models/UserActivity.js';
 
 export const trackEvent = async (
   userId,
-  { type, path, query, lawId, meta } = {},
+  { type, path, query, lawId, meta, ipAddress, userAgent } = {},
 ) => {
-  return UserActivity.create({ userId, type, path, query, lawId, meta });
+  return UserActivity.create({
+    userId,
+    type,
+    path,
+    query,
+    lawId,
+    meta,
+    ipAddress,
+    userAgent,
+  });
 };
 
 export const getUserActivity = async (

@@ -103,6 +103,16 @@ elementSchema.index({ lawId: 1 });
 elementSchema.index({ lawId: 1, type: 1 });
 elementSchema.index({ parentId: 1 });
 elementSchema.index({ lawId: 1, depth: 1, order: 1 });
+elementSchema.index({ type: 1, number: 1 });
+
+elementSchema.index(
+  { title: 'text', text: 'text' },
+  {
+    weights: { title: 10, text: 5 },
+    name: 'element_fulltext',
+    default_language: 'none',
+  },
+);
 
 const Element = mongoose.model('Element', elementSchema);
 

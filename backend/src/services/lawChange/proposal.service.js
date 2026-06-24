@@ -150,3 +150,51 @@ export const getMyProposals = async (userId) => {
     .sort({ createdAt: -1 })
     .populate('law_id', 'title code');
 };
+
+export const getAllProposals = async (filters = {}, pagination = null) => {
+  const query = { ...filters };
+  if (pagination) {
+    const { page, limit } = pagination;
+    const skip = (page - 1) * limit;
+    const [proposals, total] = await Promise.all([
+      LawChangeProposal.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('created_by', 'fullName role'),
+      LawChangeProposal.countDocuments(query),
+    ]);
+    return {
+      proposals,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    };
+  }
+  return await LawChangeProposal.find(query)
+    .sort({ createdAt: -1 })
+    .populate('created_by', 'fullName role');
+};
+
+export const reviewProposal = async (id, action, _user) => {
+  const proposal = await LawChangeProposal.findById(id);
+  if (!proposal)
+    throw Object.assign(new Error('Proposal not found'), { status: 404 });
+  if (!['active', 'expired'].includes(proposal.status))
+    throw Object.assign(
+      new Error('Can only review active or expired proposals'),
+      { status: 403 },
+    );
+
+  if (action === 'approve') {
+    proposal.status = 'approved';
+  } else if (action === 'reject') {
+    proposal.status = 'rejected';
+  } else {
+    throw Object.assign(new Error('Invalid action. Use approve or reject'), {
+      status: 400,
+    });
+  }
+
+  return await proposal.save();
+};

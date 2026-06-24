@@ -3,12 +3,25 @@ import Element from '../models/Element.js';
 /**
  * Aggregates elements_count and laws_count per subject.
  * Source of truth: Element.subjects[].subject_id (reverse lookup).
- * Returns a Map<subjectId.toString(), { elements_count, laws_count }>.
+ *
+ * @param {object} [opts]
+ * @param {Array<string|import('mongoose').Types.ObjectId>} [opts.subjectIds]
+ *   When provided, only these subjects are counted — scopes the aggregation to
+ *   matched elements instead of scanning the whole collection (autocomplete).
+ * @returns {Promise<Map<string, { elements_count: number, laws_count: number }>>}
  */
-export async function getSubjectCounts() {
+export async function getSubjectCounts({ subjectIds } = {}) {
+  const match = { 'subjects.0': { $exists: true } };
+  if (subjectIds) {
+    match['subjects.subject_id'] = { $in: subjectIds };
+  }
+
   const rows = await Element.aggregate([
-    { $match: { 'subjects.0': { $exists: true } } },
+    { $match: match },
     { $unwind: '$subjects' },
+    ...(subjectIds
+      ? [{ $match: { 'subjects.subject_id': { $in: subjectIds } } }]
+      : []),
     {
       $group: {
         _id: '$subjects.subject_id',

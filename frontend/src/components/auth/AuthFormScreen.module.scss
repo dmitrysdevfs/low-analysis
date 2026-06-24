@@ -655,6 +655,73 @@
   font-size: 0.8rem;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 14px;
+  position: relative;
+  z-index: 1;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(218, 174, 72, 0.15);
+  }
+}
+
+.dividerText {
+  font-size: 0.72rem;
+  color: rgba(159, 178, 199, 0.55);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.googleButton {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: #f7f2e8;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.18s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(218, 174, 72, 0.35);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.googleHint {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(159, 178, 199, 0.45);
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+}
+
 @media (max-width: 520px) {
   .page {
     padding-left: 12px;

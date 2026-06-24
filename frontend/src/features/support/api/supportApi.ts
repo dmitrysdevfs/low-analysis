@@ -8,6 +8,9 @@ import type {
   SupportConversationPayload,
   SupportConversationStatus,
   SupportSendPayload,
+  SupportNote,
+  SupportSyncResult,
+  TelegramWebhookInfo,
 } from "../types";
 
 async function supportFetch<T>(
@@ -102,9 +105,47 @@ export const adminSupportApi = {
   updateStatus: (id: string, status: SupportConversationStatus) =>
     supportFetch<{ conversation: SupportConversation }>(
       `/api/admin/support/conversations/${id}/status`,
-      {
-        method: "POST",
-        body: JSON.stringify({ status }),
-      },
+      { method: "POST", body: JSON.stringify({ status }) },
     ),
+
+  assignConversation: (id: string, adminId: string | null) =>
+    supportFetch<{ conversation: SupportConversation }>(
+      `/api/admin/support/conversations/${id}/assign`,
+      { method: "POST", body: JSON.stringify({ adminId }) },
+    ),
+
+  markAsSpam: (id: string) =>
+    supportFetch<{ conversation: SupportConversation }>(
+      `/api/admin/support/conversations/${id}/spam`,
+      { method: "POST" },
+    ),
+
+  escalateConversation: (id: string) =>
+    supportFetch<{ conversation: SupportConversation }>(
+      `/api/admin/support/conversations/${id}/escalate`,
+      { method: "POST" },
+    ),
+
+  listNotes: (id: string) =>
+    supportFetch<SupportNote[]>(`/api/admin/support/conversations/${id}/notes`),
+
+  addNote: (id: string, text: string) =>
+    supportFetch<{ note: SupportNote }>(
+      `/api/admin/support/conversations/${id}/notes`,
+      { method: "POST", body: JSON.stringify({ text }) },
+    ),
+
+  syncCheck: () =>
+    supportFetch<SupportSyncResult>("/api/admin/support/sync-check", {
+      method: "POST",
+    }),
+
+  registerWebhook: (webhookUrl: string) =>
+    supportFetch<{ ok: boolean; description: string; url: string }>(
+      "/api/admin/support/webhook/register",
+      { method: "POST", body: JSON.stringify({ webhookUrl }) },
+    ),
+
+  getWebhookInfo: () =>
+    supportFetch<TelegramWebhookInfo>("/api/admin/support/webhook/info"),
 };

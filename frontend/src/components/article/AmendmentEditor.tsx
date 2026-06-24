@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCreateAmendment } from "@/hooks/useAmendments";
 import { useProposals } from "@/hooks/useProposals";
 import type { TreeBranch } from "@/lib/tree";
+import { notify } from "@/lib/toast";
 import styles from "./AmendmentEditor.module.scss";
 
 interface AmendmentEditorProps {
@@ -26,15 +27,24 @@ export function AmendmentEditor({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createMutation.mutateAsync({
-      law_id: lawId,
-      element_id: node._id,
-      proposal_id: proposalId || undefined,
-      change_type: "edit",
-      proposed_text: proposedText,
-      reason,
-    });
-    onClose();
+    if (!proposedText.trim()) {
+      notify.error("Текст поправки не може бути порожнім");
+      return;
+    }
+    try {
+      await createMutation.mutateAsync({
+        law_id: lawId,
+        element_id: node._id,
+        proposal_id: proposalId || undefined,
+        change_type: "edit",
+        proposed_text: proposedText,
+        reason,
+      });
+      notify.success("Поправку збережено");
+      onClose();
+    } catch (err) {
+      notify.error(err instanceof Error ? err.message : "Помилка збереження");
+    }
   };
 
   return (

@@ -1,0 +1,820 @@
+$panel-bg: linear-gradient(
+  180deg,
+  rgba(11, 25, 44, 0.96) 0%,
+  rgba(8, 19, 34, 0.92) 100%
+);
+$panel-border: 1px solid rgba(216, 167, 53, 0.22);
+$panel-shadow:
+  0 24px 60px rgba(0, 0, 0, 0.34),
+  inset 0 1px 0 rgba(255, 255, 255, 0.05);
+$panel-radius: 22px;
+$text-main: #f6f1e7;
+$text-soft: #cdd8e8;
+$text-muted: #91a5bf;
+$accent: #d8a735;
+$accent-strong: #f2c766;
+$accent-border: rgba(216, 167, 53, 0.3);
+
+@mixin panel {
+  position: relative;
+  background: $panel-bg;
+  border: $panel-border;
+  border-radius: $panel-radius;
+  box-shadow: $panel-shadow;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 10% 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(216, 167, 53, 0.3),
+      transparent
+    );
+    pointer-events: none;
+  }
+}
+
+.page {
+  position: relative;
+  width: min(1680px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 72px;
+  display: grid;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.pageGlowTop,
+.pageGlowBottom {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 999px;
+}
+
+.pageGlowTop {
+  top: -280px;
+  right: -220px;
+  width: 760px;
+  height: 760px;
+  background:
+    radial-gradient(circle at center, rgba(25, 70, 120, 0.16), transparent 56%),
+    radial-gradient(circle at center, rgba(216, 167, 53, 0.08), transparent 70%);
+}
+
+.pageGlowBottom {
+  right: -180px;
+  bottom: -320px;
+  width: 740px;
+  height: 740px;
+  background:
+    radial-gradient(circle at center, rgba(10, 44, 78, 0.18), transparent 54%),
+    radial-gradient(circle at center, rgba(216, 167, 53, 0.08), transparent 70%);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.65fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.heroCopy {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+  padding: 8px 14px 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  color: $accent;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  margin: 0;
+  max-width: 760px;
+  color: $text-main;
+  font-size: clamp(2.6rem, 4vw, 4.65rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+
+  span {
+    color: $accent-strong;
+  }
+}
+
+.heroDescription {
+  max-width: 700px;
+  margin: 0;
+  color: $text-soft;
+  font-size: 1.12rem;
+  line-height: 1.66;
+}
+
+.heroAside {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+
+.heroPromo {
+  @include panel;
+
+  display: grid;
+  grid-template-columns: 124px minmax(0, 1fr);
+  gap: 22px;
+  padding: 28px 30px;
+  min-height: 186px;
+}
+
+.heroPromoIcon {
+  width: 108px;
+  height: 108px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+  background: radial-gradient(
+    circle,
+    rgba(216, 167, 53, 0.12),
+    rgba(216, 167, 53, 0.04)
+  );
+  border: 1px solid rgba(216, 167, 53, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 24px rgba(216, 167, 53, 0.08);
+}
+
+.heroPromoBody {
+  display: grid;
+  gap: 18px;
+}
+
+.heroPromoTitle {
+  margin: 0;
+  color: $text-main;
+  font-size: clamp(1.7rem, 2.2vw, 2.45rem);
+  line-height: 1.16;
+}
+
+.heroPromoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.highlightList {
+  @include panel;
+
+  list-style: none;
+  margin: 0;
+  padding: 22px 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.highlightItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: $text-main;
+  font-size: 1.02rem;
+  line-height: 1.45;
+}
+
+.highlightIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+  background: rgba(216, 167, 53, 0.08);
+  border: 1px solid rgba(216, 167, 53, 0.2);
+}
+
+.roleGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.roleCard {
+  @include panel;
+
+  display: grid;
+  gap: 16px;
+  padding: 20px 20px 22px;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(216, 167, 53, 0.34);
+    box-shadow:
+      0 28px 70px rgba(0, 0, 0, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+}
+
+.roleCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.roleIconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+  background: radial-gradient(
+    circle,
+    rgba(216, 167, 53, 0.1),
+    rgba(216, 167, 53, 0.03)
+  );
+  border: 1px solid rgba(216, 167, 53, 0.24);
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(216, 167, 53, 0.22);
+  background: rgba(216, 167, 53, 0.08);
+  color: $accent;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.roleTitle {
+  margin: 0;
+  color: $text-main;
+  font-size: clamp(1.6rem, 1.8vw, 2rem);
+  line-height: 1.08;
+}
+
+.roleDescription {
+  margin: 0;
+  color: $text-soft;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.roleFeatureList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.roleFeatureItem {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+  color: $text-main;
+  font-size: 0.95rem;
+  line-height: 1.45;
+
+  svg {
+    margin-top: 1px;
+    flex-shrink: 0;
+    color: $accent;
+  }
+}
+
+.roleCta {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 20px;
+  width: fit-content;
+  border-radius: 12px;
+  border: 1px solid rgba(216, 167, 53, 0.3);
+  color: $text-main;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
+
+  &:hover {
+    background: rgba(216, 167, 53, 0.08);
+    border-color: rgba(216, 167, 53, 0.42);
+    transform: translateY(-1px);
+  }
+}
+
+.journeyPanel {
+  @include panel;
+
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  padding: 18px 22px;
+}
+
+.journeyIntro {
+  display: grid;
+  gap: 10px;
+}
+
+.journeyTitle {
+  color: $accent;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.journeyDescription {
+  margin: 0;
+  color: $text-soft;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.journeySteps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  align-items: center;
+}
+
+.journeyStep {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.journeyStepInner {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.journeyIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+  background: rgba(216, 167, 53, 0.08);
+  border: 1px solid rgba(216, 167, 53, 0.2);
+}
+
+.journeyCopy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.journeyStepTitle {
+  color: $text-main;
+  font-size: 1.35rem;
+  line-height: 1.05;
+}
+
+.journeyStepDescription {
+  color: $text-soft;
+  font-size: 0.96rem;
+  line-height: 1.45;
+}
+
+.journeyArrow {
+  color: #31a9dd;
+  flex-shrink: 0;
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(320px, 0.9fr);
+  gap: 18px;
+}
+
+.matrixPanel,
+.faqPanel,
+.ctaPanel {
+  @include panel;
+}
+
+.matrixPanel {
+  padding: 18px 20px 20px;
+}
+
+.matrixIntro,
+.faqIntro {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.panelTitle {
+  margin: 0;
+  color: $accent;
+  font-size: 1.95rem;
+  line-height: 1.08;
+}
+
+.panelDescription {
+  margin: 8px 0 0;
+  color: $text-soft;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  max-width: 320px;
+}
+
+.matrixScroller {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.matrixTable {
+  min-width: 880px;
+  border: 1px solid rgba(216, 167, 53, 0.16);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.matrixHead,
+.matrixRow {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.4fr) repeat(5, minmax(96px, 1fr));
+}
+
+.matrixHead {
+  background: rgba(216, 167, 53, 0.04);
+  border-bottom: 1px solid rgba(216, 167, 53, 0.12);
+}
+
+.matrixHeadSpacer,
+.matrixHeadCell,
+.matrixLabelCell,
+.matrixCell {
+  min-height: 56px;
+  padding: 12px 14px;
+}
+
+.matrixHeadSpacer {
+  border-right: 1px solid rgba(216, 167, 53, 0.08);
+}
+
+.matrixHeadCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+  text-align: center;
+  font-size: 0.96rem;
+  font-weight: 600;
+  border-left: 1px solid rgba(216, 167, 53, 0.08);
+}
+
+.matrixRow {
+  border-bottom: 1px solid rgba(216, 167, 53, 0.07);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.matrixLabelCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $text-main;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  border-right: 1px solid rgba(216, 167, 53, 0.08);
+}
+
+.matrixLabelIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+  background: rgba(216, 167, 53, 0.08);
+}
+
+.matrixCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid rgba(216, 167, 53, 0.06);
+}
+
+.capabilityYes {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #dff7e9;
+  background: linear-gradient(180deg, #507d56 0%, #396140 100%);
+  border: 1px solid rgba(171, 229, 186, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.capabilityNo {
+  color: rgba(145, 165, 191, 0.55);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.faqPanel {
+  padding: 18px 18px 16px;
+}
+
+.faqList {
+  display: grid;
+  gap: 12px;
+}
+
+.faqItem {
+  border: 1px solid rgba(216, 167, 53, 0.14);
+  border-radius: 14px;
+  background: rgba(8, 18, 33, 0.38);
+  padding: 0 16px;
+
+  &[open] .faqToggle {
+    transform: rotate(180deg);
+  }
+}
+
+.faqSummary {
+  list-style: none;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 0 12px;
+  cursor: pointer;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+.faqQuestionWrap {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+  color: $text-main;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+
+  svg {
+    flex-shrink: 0;
+    color: $text-soft;
+    margin-top: 2px;
+  }
+}
+
+.faqToggle {
+  color: $text-soft;
+  transition: transform 0.18s ease;
+}
+
+.faqAnswer {
+  margin: 0;
+  padding: 0 0 16px 28px;
+  color: $text-soft;
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.ctaPanel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  padding: 24px 28px;
+}
+
+.ctaIconWrap {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle, rgba(216, 167, 53, 0.14), transparent 68%),
+    rgba(8, 18, 33, 0.24);
+  border: 1px solid rgba(216, 167, 53, 0.2);
+}
+
+.ctaIcon {
+  filter: drop-shadow(0 0 14px rgba(216, 167, 53, 0.28));
+}
+
+.ctaCopy {
+  display: grid;
+  gap: 10px;
+}
+
+.ctaTitle {
+  margin: 0;
+  color: $text-main;
+  font-size: clamp(1.75rem, 2.2vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.ctaDescription {
+  margin: 0;
+  color: $text-soft;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.ctaButton {
+  min-width: 220px;
+}
+
+@media (max-width: 1540px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroCopy {
+    padding: 0;
+  }
+}
+
+@media (max-width: 1360px) {
+  .roleGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .journeyPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .journeySteps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaPanel {
+    grid-template-columns: auto 1fr;
+  }
+
+  .ctaActions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 1120px) {
+  .page {
+    width: min(100%, calc(100% - 32px));
+    padding-top: 36px;
+  }
+
+  .heroAside {
+    grid-template-columns: 1fr;
+  }
+
+  .heroPromo {
+    grid-template-columns: 96px minmax(0, 1fr);
+    padding: 24px;
+  }
+
+  .journeySteps {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 840px) {
+  .page {
+    width: calc(100% - 24px);
+    padding-bottom: 56px;
+    gap: 14px;
+  }
+
+  .heroTitle {
+    font-size: clamp(2.3rem, 11vw, 3.8rem);
+  }
+
+  .heroDescription {
+    font-size: 1rem;
+  }
+
+  .heroPromo {
+    grid-template-columns: 1fr;
+  }
+
+  .heroPromoIcon {
+    width: 88px;
+    height: 88px;
+  }
+
+  .roleGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .journeySteps {
+    grid-template-columns: 1fr;
+  }
+
+  .journeyStep {
+    grid-template-columns: 1fr;
+  }
+
+  .journeyArrow {
+    display: none;
+  }
+
+  .ctaPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaActions {
+    justify-content: stretch;
+  }
+
+  .ctaButton {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .roleGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .roleCard,
+  .journeyPanel,
+  .matrixPanel,
+  .faqPanel,
+  .ctaPanel {
+    border-radius: 18px;
+  }
+
+  .heroPromoActions,
+  .ctaActions {
+    flex-direction: column;
+  }
+
+  .heroPromoActions :global(.btn),
+  .ctaActions :global(.btn) {
+    width: 100%;
+  }
+
+  .panelTitle {
+    font-size: 1.55rem;
+  }
+
+  .faqAnswer {
+    padding-left: 0;
+  }
+}

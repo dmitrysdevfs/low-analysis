@@ -8,7 +8,7 @@ export {
   getLawHeatmap,
 } from "./laws";
 export type { LawsQuery } from "./laws";
-export { getSubjects, getSubjectElements } from "./subjects";
+export { getSubjects, getSubjectElements, searchSubjects } from "./subjects";
 export { parseLaw } from "./parse";
 export {
   getAdminPage,

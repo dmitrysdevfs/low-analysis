@@ -5,10 +5,22 @@ export const getAuditLog = async (req, res, next) => {
     const limit = Math.min(parseInt(req.query.limit) || 50, 200);
     const skip = parseInt(req.query.skip) || 0;
     const targetEmail = req.query.targetEmail || null;
+    const targetUserId = req.query.targetUserId || null;
+    const severity = req.query.severity || null;
+    const actor = req.query.actor || null;
+    const q = req.query.q || null;
+    const dateFrom = req.query.dateFrom || null;
+    const dateTo = req.query.dateTo || null;
     const entries = await auditService.getAuditLog({
       limit,
       skip,
       targetEmail,
+      targetUserId,
+      severity,
+      actor,
+      q,
+      dateFrom,
+      dateTo,
     });
     res.json(entries);
   } catch (err) {
@@ -28,6 +40,15 @@ export const appendAuditEntry = async (req, res, next) => {
       severity,
     });
     res.status(201).json(entry);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAuditOverview = async (req, res, next) => {
+  try {
+    const overview = await auditService.getAuditOverview();
+    res.json(overview);
   } catch (err) {
     next(err);
   }

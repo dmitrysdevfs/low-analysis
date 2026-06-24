@@ -4,14 +4,9 @@ import { validateChatRequest } from './assistant.validation.js';
 import { getAssistantMode, isAssistantEnabled } from './assistant.config.js';
 import AssistantSession from './assistant.session.model.js';
 import { SSE_EVENTS } from './assistant.constants.js';
+import { getClientIp as _getClientIp } from '../../utils/getClientIp.js';
 
-function getClientIp(req) {
-  return (
-    req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-    req.socket?.remoteAddress ||
-    'unknown'
-  );
-}
+const getClientIp = (req) => _getClientIp(req) ?? 'unknown';
 
 export async function getConfig(req, res) {
   res.json({

@@ -1,10 +1,5 @@
-﻿import { Layout } from "@/components/layout/Layout";
-import { ClientWorkspaceHome } from "@/components/account/ClientWorkspaceHome";
+import { AccountDashboard } from "@/features/account1/AccountDashboard";
 
 export default function AccountPage() {
-  return (
-    <Layout fullHeight>
-      <ClientWorkspaceHome />
-    </Layout>
-  );
+  return <AccountDashboard />;
 }

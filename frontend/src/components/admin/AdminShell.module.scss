@@ -84,11 +84,8 @@
 .navViewport {
   min-height: 0;
   overflow-y: auto;
-  padding-right: 4px;
-  margin-right: -4px;
   scrollbar-width: thin;
   scrollbar-color: var(--color-line) var(--color-canvas);
-  scrollbar-gutter: stable;
 }
 
 .navViewport::-webkit-scrollbar {
@@ -131,9 +128,9 @@
 }
 
 .navLink:hover {
-  transform: translateX(2px);
-  border-color: rgba(200, 168, 67, 0.22);
-  background: rgba(200, 168, 67, 0.08);
+  border-color: rgba(200, 168, 67, 0.28);
+  background: rgba(200, 168, 67, 0.1);
+  box-shadow: inset 3px 0 0 rgba(200, 168, 67, 0.5);
 }
 
 .navLinkActive {
@@ -269,8 +266,13 @@
 }
 
 .main > * {
-  width: min(100%, 1180px);
+  width: min(100%, 1280px);
   margin-inline: auto;
+}
+
+.mainExpanded > * {
+  width: min(100%, 1480px);
+  margin-inline: 0;
 }
 
 .mainWide > * {

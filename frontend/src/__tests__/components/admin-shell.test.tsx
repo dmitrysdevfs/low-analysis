@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { setMockPathname } from "@/test/mocks/next-navigation";
@@ -47,5 +47,58 @@ describe("AdminShell", () => {
       screen.getByRole("heading", { name: "Користувачі" }),
     ).toBeInTheDocument();
     expect(screen.getByText("nested-admin-child")).toBeInTheDocument();
+  });
+
+  it("expands operational admin screens when the sidebar is collapsed", () => {
+    setMockPathname("/admin");
+
+    render(
+      <AdminShell>
+        <div>dashboard-module</div>
+      </AdminShell>,
+    );
+
+    const main = screen.getByRole("main");
+
+    expect(main).toHaveAttribute("data-content-mode", "default");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Згорнути бічну панель" }),
+    );
+
+    expect(main).toHaveAttribute("data-content-mode", "expanded");
+  });
+
+  it("keeps detail and help screens constrained after sidebar collapse", () => {
+    setMockPathname("/admin/help");
+
+    render(
+      <AdminShell>
+        <div>help-module</div>
+      </AdminShell>,
+    );
+
+    const main = screen.getByRole("main");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Згорнути бічну панель" }),
+    );
+
+    expect(main).toHaveAttribute("data-content-mode", "default");
+  });
+
+  it("keeps dedicated wide-canvas routes full width", () => {
+    setMockPathname("/admin/project-page");
+
+    render(
+      <AdminShell>
+        <div>page-builder-module</div>
+      </AdminShell>,
+    );
+
+    expect(screen.getByRole("main")).toHaveAttribute(
+      "data-content-mode",
+      "full",
+    );
   });
 });

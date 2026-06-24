@@ -23,6 +23,7 @@ export const getAllLaws = async (req, res, next) => {
       documentType,
       number,
       numberType,
+      subjectId,
       dateFrom,
       dateTo,
       page,
@@ -38,6 +39,7 @@ export const getAllLaws = async (req, res, next) => {
       documentType,
       number,
       numberType,
+      subjectId,
       dateFrom,
       dateTo,
       page,
@@ -75,6 +77,19 @@ export const getLawStats = async (req, res, next) => {
     if (!stats)
       return res.status(404).json({ message: 'Stats not found for this law' });
 
+    res.json(stats);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLawStatsBulk = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'ids array is required' });
+    }
+    const stats = await lawService.getLawStatsBulk(ids);
     res.json(stats);
   } catch (error) {
     next(error);

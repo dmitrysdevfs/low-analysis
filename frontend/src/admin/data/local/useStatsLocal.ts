@@ -69,5 +69,10 @@ export function useStatsLocal(laws: Law[]) {
     };
   }, [lawsKey, laws]);
 
-  return { statsMap, loading };
+  return {
+    statsMap,
+    loading,
+    fetchError: null as string | null,
+    retry: () => {},
+  };
 }

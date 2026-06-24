@@ -18,6 +18,7 @@ import {
   updateUserProfile,
   changeUserPassword as changePasswordApi,
   logoutUserApi,
+  loginWithGoogle as loginWithGoogleApi,
 } from "@/lib/auth/authClient";
 import type { AuthSession, LoginPayload, RegisterPayload } from "@/types";
 
@@ -37,6 +38,7 @@ type AuthContextValue = {
   user: AuthSession | null;
   login: (payload: LoginPayload) => Promise<AuthActionResult>;
   register: (payload: RegisterPayload) => Promise<AuthActionResult>;
+  loginWithGoogle: (accessToken: string) => Promise<AuthActionResult>;
   updateProfile: (displayName: string) => Promise<AuthActionResult>;
   changePassword: (
     currentPassword: string,
@@ -54,6 +56,10 @@ const AUTH_CONTEXT_DEFAULT: AuthContextValue = {
   user: null,
   login: async () => ({ ok: false, error: "Auth provider is unavailable." }),
   register: async () => ({ ok: false, error: "Auth provider is unavailable." }),
+  loginWithGoogle: async () => ({
+    ok: false,
+    error: "Auth provider is unavailable.",
+  }),
   updateProfile: async () => ({
     ok: false,
     error: "Auth provider is unavailable.",
@@ -103,6 +109,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return registerUser(payload);
   }, []);
 
+  const loginWithGoogle = useCallback(async (accessToken: string) => {
+    const result = await loginWithGoogleApi(accessToken);
+    if (result.ok && result.session) setUser(result.session);
+    return result;
+  }, []);
+
   const updateProfile = useCallback(async (displayName: string) => {
     const result = await updateUserProfile(displayName);
 
@@ -138,11 +150,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       login,
       register,
+      loginWithGoogle,
       updateProfile,
       changePassword,
       logout,
     }),
-    [changePassword, isHydrated, login, logout, register, updateProfile, user],
+    [
+      changePassword,
+      isHydrated,
+      login,
+      loginWithGoogle,
+      logout,
+      register,
+      updateProfile,
+      user,
+    ],
   );
 
   return (

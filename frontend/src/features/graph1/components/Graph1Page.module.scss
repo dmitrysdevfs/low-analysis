@@ -1,0 +1,182 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #060e1c;
+  color: #c7d5ea;
+}
+
+.topbar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  background: rgba(5, 12, 26, 0.97);
+  border-bottom: 1px solid rgba(28, 50, 96, 0.5);
+  flex-shrink: 0;
+}
+
+.topbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.topbarRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(199, 213, 234, 0.12);
+  border-radius: 6px;
+  color: rgba(199, 213, 234, 0.6);
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(199, 213, 234, 0.25);
+    color: #c7d5ea;
+  }
+}
+
+.topbarIcon {
+  color: #c8a843;
+  flex-shrink: 0;
+}
+
+.topbarTitle {
+  font-family: monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c8a843;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.betaBadge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(200, 168, 67, 0.12);
+  border: 1px solid rgba(200, 168, 67, 0.3);
+  color: #c8a843;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.topbarBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(26, 62, 138, 0.2);
+  border: 1px solid rgba(200, 168, 67, 0.15);
+  border-radius: 6px;
+  color: rgba(199, 213, 234, 0.7);
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgba(26, 62, 138, 0.4);
+    border-color: rgba(200, 168, 67, 0.3);
+    color: #c7d5ea;
+  }
+}
+
+.topbarBtnActive {
+  background: rgba(200, 168, 67, 0.14);
+  border-color: rgba(200, 168, 67, 0.4);
+  color: #c8a843;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.canvas {
+  flex: 1;
+  position: relative;
+
+  // ReactFlow overrides
+  :global(.react-flow__attribution) {
+    display: none;
+  }
+
+  :global(.react-flow__controls-button) {
+    background: transparent;
+    border-bottom-color: rgba(200, 168, 67, 0.15);
+    color: rgba(199, 213, 234, 0.7);
+
+    &:hover {
+      background: rgba(200, 168, 67, 0.1);
+    }
+
+    svg {
+      fill: rgba(199, 213, 234, 0.7);
+    }
+  }
+}
+
+.rightPanels {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(28, 50, 96, 0.5);
+  overflow-y: auto;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: #c8a843;
+  background: #060e1c;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #e05252;
+  background: #060e1c;
+}

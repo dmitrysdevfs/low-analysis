@@ -1,0 +1,193 @@
+.panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: rgba(5, 12, 26, 0.97);
+  border-left: 1px solid rgba(28, 50, 96, 0.5);
+  padding: 16px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: 0.82rem;
+  color: #c7d5ea;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(200, 168, 67, 0.2);
+    border-radius: 2px;
+  }
+}
+
+.section {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(28, 50, 96, 0.45);
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// --- Header ---
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.codeLabel {
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: rgba(199, 213, 234, 0.5);
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: rgba(199, 213, 234, 0.45);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #c7d5ea;
+  }
+}
+
+// --- Type badge ---
+
+.typeBadge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+// --- Title ---
+
+.title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #c7d5ea;
+  margin: 0;
+}
+
+// --- Meta ---
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+}
+
+.metaKey {
+  font-size: 0.72rem;
+  color: rgba(199, 213, 234, 0.45);
+}
+
+.metaVal {
+  font-size: 0.72rem;
+  color: rgba(199, 213, 234, 0.8);
+  font-family: monospace;
+}
+
+// --- Actions ---
+
+.actionsCol {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.primaryBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(74, 128, 212, 0.14);
+  border: 1px solid rgba(74, 128, 212, 0.4);
+  border-radius: 7px;
+  color: #7ab0f0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    background: rgba(74, 128, 212, 0.24);
+    border-color: rgba(74, 128, 212, 0.6);
+  }
+}
+
+.ghostBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(199, 213, 234, 0.18);
+  border-radius: 7px;
+  color: rgba(199, 213, 234, 0.65);
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    border-color: rgba(199, 213, 234, 0.38);
+    color: #c7d5ea;
+  }
+
+  &[data-active="true"] {
+    background: rgba(200, 168, 67, 0.1);
+    border-color: rgba(200, 168, 67, 0.4);
+    color: #c8a843;
+  }
+}
+
+// --- Note ---
+
+.noteTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(28, 50, 96, 0.7);
+  border-radius: 7px;
+  color: #c7d5ea;
+  font-size: 0.78rem;
+  padding: 7px 9px;
+  resize: vertical;
+  min-height: 72px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  margin-bottom: 7px;
+
+  &::placeholder {
+    color: rgba(199, 213, 234, 0.3);
+  }
+
+  &:focus {
+    border-color: rgba(74, 128, 212, 0.55);
+  }
+}

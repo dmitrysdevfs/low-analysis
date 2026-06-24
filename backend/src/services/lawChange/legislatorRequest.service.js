@@ -1,9 +1,14 @@
 import LegislatorAccessRequest from '../../models/LegislatorAccessRequest.js';
 import User from '../../models/User.js';
 
-export const submitRequest = async (userId, { organization, reason }) => {
+const COOLDOWN_HOURS = 24;
+
+export const submitRequest = async (
+  userId,
+  { organization, reason, requestedRole = 'legislator' },
+) => {
   const existing = await LegislatorAccessRequest.findOne({
-    user_id: userId,
+    userId,
     status: 'pending',
   });
   if (existing)
@@ -11,15 +16,33 @@ export const submitRequest = async (userId, { organization, reason }) => {
       status: 409,
     });
 
+  const lastRejected = await LegislatorAccessRequest.findOne({
+    userId,
+    status: 'rejected',
+  }).sort({ updatedAt: -1 });
+
+  if (lastRejected?.updatedAt) {
+    const msSinceRejection =
+      Date.now() - new Date(lastRejected.updatedAt).getTime();
+    const cooldownMs = COOLDOWN_HOURS * 3_600_000;
+    if (msSinceRejection < cooldownMs) {
+      throw Object.assign(
+        new Error('Повторний запит можливий через 24 години після відмови'),
+        { status: 429, retryAfterMs: cooldownMs - msSinceRejection },
+      );
+    }
+  }
+
   return await LegislatorAccessRequest.create({
-    user_id: userId,
+    userId,
+    requestedRole,
     organization,
     reason,
   });
 };
 
 export const getMyRequest = async (userId) => {
-  return await LegislatorAccessRequest.findOne({ user_id: userId }).sort({
+  return await LegislatorAccessRequest.findOne({ userId }).sort({
     createdAt: -1,
   });
 };
@@ -28,8 +51,8 @@ export const getAllRequests = async ({ status } = {}) => {
   const query = status ? { status } : {};
   return await LegislatorAccessRequest.find(query)
     .sort({ createdAt: -1 })
-    .populate('user_id', 'fullName email role')
-    .populate('reviewed_by', 'fullName');
+    .populate('userId', 'fullName email role')
+    .populate('reviewedBy', 'fullName');
 };
 
 export const approveRequest = async (id, adminId) => {
@@ -40,14 +63,15 @@ export const approveRequest = async (id, adminId) => {
     throw Object.assign(new Error('Request is not pending'), { status: 400 });
 
   request.status = 'approved';
-  request.reviewed_by = adminId;
+  request.reviewedBy = adminId;
+  request.reviewedAt = new Date();
   await request.save();
 
-  await User.findByIdAndUpdate(request.user_id, { role: 'legislator' });
+  await User.findByIdAndUpdate(request.userId, { role: request.requestedRole });
   return request;
 };
 
-export const rejectRequest = async (id, adminId, review_note = '') => {
+export const rejectRequest = async (id, adminId, adminNote = '') => {
   const request = await LegislatorAccessRequest.findById(id);
   if (!request)
     throw Object.assign(new Error('Request not found'), { status: 404 });
@@ -55,13 +79,24 @@ export const rejectRequest = async (id, adminId, review_note = '') => {
     throw Object.assign(new Error('Request is not pending'), { status: 400 });
 
   request.status = 'rejected';
-  request.reviewed_by = adminId;
-  request.review_note = review_note;
+  request.reviewedBy = adminId;
+  request.reviewedAt = new Date();
+  request.adminNote = adminNote;
   return await request.save();
 };
 
+export const revokeRole = async (userId) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { role: 'user' },
+    { new: true },
+  ).select('-password');
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  return user;
+};
+
 export const setUserRole = async (userId, role) => {
-  const allowed = ['user', 'paid_user', 'legislator', 'admin'];
+  const allowed = ['user', 'paid_user', 'legislator', 'supervisor', 'admin'];
   if (!allowed.includes(role))
     throw Object.assign(new Error(`Invalid role: ${role}`), { status: 400 });
 

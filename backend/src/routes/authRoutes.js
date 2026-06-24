@@ -8,8 +8,10 @@ import {
   updateUserPassword,
   forgotPassword,
   resetPassword,
+  googleAuth,
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { guestRateLimit } from '../middleware/guestRateLimit.js';
 
 const router = express.Router();
 
@@ -89,7 +91,7 @@ function passwordResetRateLimit(req, res, next) {
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.post('/register', registerUser);
+router.post('/register', guestRateLimit, registerUser);
 
 /**
  * @swagger
@@ -125,7 +127,7 @@ router.post('/register', registerUser);
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.post('/login', loginUser);
+router.post('/login', guestRateLimit, loginUser);
 
 /**
  * @swagger
@@ -253,7 +255,118 @@ router.put('/password', protect, updateUserPassword);
  */
 router.post('/logout', logoutUser);
 
+/**
+ * @swagger
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Start password reset flow
+ *     description: Accepts an email address and sends reset instructions if the account exists. The response is intentionally generic.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: Reset flow accepted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: If this email exists, a reset link was sent.
+ *       400:
+ *         description: Email is missing
+ *       429:
+ *         description: Too many reset attempts from the same IP
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post('/forgot-password', passwordResetRateLimit, forgotPassword);
+
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Reset password with emailed token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [token, password]
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 example: 9c493f790d3f4f53f56b1f8abf0f6f1d
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *                 example: NewSecurePass1!
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password reset successfully
+ *       400:
+ *         description: Missing token/password, weak password or expired token
+ *       429:
+ *         description: Too many reset attempts from the same IP
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post('/reset-password', passwordResetRateLimit, resetPassword);
+
+/**
+ * @swagger
+ * /api/auth/google:
+ *   post:
+ *     summary: Login or register with Google access token
+ *     description: Uses Google userinfo endpoint to resolve identity and returns the platform JWT.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [accessToken]
+ *             properties:
+ *               accessToken:
+ *                 type: string
+ *                 example: ya29.a0AfH6SMD-example
+ *     responses:
+ *       200:
+ *         description: Successful Google authentication
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthTokenResponse'
+ *       400:
+ *         description: Access token is missing
+ *       401:
+ *         description: Invalid Google token
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.post('/google', guestRateLimit, googleAuth);
 
 export default router;

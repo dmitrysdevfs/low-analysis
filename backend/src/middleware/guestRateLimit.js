@@ -8,6 +8,8 @@
  *   - 2-minute cooldown after limit is hit
  */
 
+import { getClientIp as _getClientIp } from '../utils/getClientIp.js';
+
 const WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_REQUESTS = 60;
 const COOLDOWN_MS = 2 * 60 * 1000; // 2 minutes after limit
@@ -15,12 +17,7 @@ const COOLDOWN_MS = 2 * 60 * 1000; // 2 minutes after limit
 // Map<ip, { timestamps: number[], cooldownUntil: number }>
 const store = new Map();
 
-function getClientIp(req) {
-  // trust X-Forwarded-For only if behind a known proxy (Render/Vercel)
-  const forwarded = req.headers['x-forwarded-for'];
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.socket?.remoteAddress ?? 'unknown';
-}
+const getClientIp = (req) => _getClientIp(req) ?? 'unknown';
 
 function prune(timestamps, now) {
   const cutoff = now - WINDOW_MS;

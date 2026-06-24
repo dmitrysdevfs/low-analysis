@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
 import { Layout } from "@/components/layout/Layout";
-import { ManagedPageView } from "@/features/page-builder/components/ManagedPageView";
-import { ROLES_GUEST_FALLBACK } from "@/features/page-builder/lib/roleFallbacks";
+import { RoleDetailView } from "@/features/roles-detail/components/RoleDetailView";
+import { ROLE_DETAIL_CONFIGS } from "@/features/roles-detail/lib/roleDetailConfigs";
 
 export const metadata: Metadata = {
   title: "Гість · Law Analysis",
-  description: "Що доступно без реєстрації на платформі Law Analysis.",
+  description:
+    "Що доступно без реєстрації на платформі Law Analysis: закони, пошук і відкрита аналітика.",
 };
 
 export default function RolesGuestPage() {
   return (
     <Layout>
-      <ManagedPageView
-        slug="roles-guest"
-        fallback={ROLES_GUEST_FALLBACK}
-        eyebrow="Ролі платформи"
-      />
+      <RoleDetailView config={ROLE_DETAIL_CONFIGS.guest} />
     </Layout>
   );
 }

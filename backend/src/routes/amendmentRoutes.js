@@ -8,8 +8,8 @@ const router = express.Router();
  * @swagger
  * /api/amendments:
  *   post:
- *     summary: Створити нову поправку (Amendment)
- *     description: Дозволяє законотворцю запропонувати зміну (редагування, додавання або видалення) для конкретного елемента закону.
+ *     summary: Create amendment
+ *     description: Create a new amendment for a law element inside proposal workflow.
  *     tags: [Amendments]
  *     security:
  *       - bearerAuth: []
@@ -23,26 +23,23 @@ const router = express.Router();
  *             properties:
  *               law_id:
  *                 type: string
- *                 example: '69f84aa7395f1789bc7b2b89'
+ *                 example: 69f84aa7395f1789bc7b2b89
  *               element_id:
  *                 type: string
- *                 example: '69f84aa7395f1789bc7b2b8a'
+ *                 example: 69f84aa7395f1789bc7b2b8a
  *               proposal_id:
  *                 type: string
- *                 example: '507f1f77bcf86cd799439055'
+ *                 example: 507f1f77bcf86cd799439055
  *               change_type:
  *                 type: string
  *                 enum: [edit, add, delete]
- *                 example: 'edit'
  *               proposed_text:
  *                 type: string
- *                 example: 'Новий текст закону для цього абзацу'
  *               reason:
  *                 type: string
- *                 example: 'Уточнення формулювання для усунення корупційних ризиків'
  *     responses:
  *       201:
- *         description: Поправку створено
+ *         description: Amendment created
  *         content:
  *           application/json:
  *             schema:
@@ -53,32 +50,25 @@ const router = express.Router();
  *         $ref: '#/components/responses/Forbidden'
  *       500:
  *         $ref: '#/components/responses/ServerError'
- *
  *   get:
- *     summary: Отримати список поправок
- *     description: Завантажує список поправок із можливістю фільтрації за `proposalId`, `lawId` або `userId`.
+ *     summary: List amendments
+ *     description: Filter amendments by proposalId, lawId or userId.
  *     tags: [Amendments]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: proposalId
- *         schema:
- *           type: string
- *         description: Фільтрація за ID законопроєкту
+ *         schema: { type: string }
  *       - in: query
  *         name: lawId
- *         schema:
- *           type: string
- *         description: Фільтрація за ID закону
+ *         schema: { type: string }
  *       - in: query
  *         name: userId
- *         schema:
- *           type: string
- *         description: Фільтрація за ID автора
+ *         schema: { type: string }
  *     responses:
  *       200:
- *         description: Список поправок
+ *         description: Amendment list
  *         content:
  *           application/json:
  *             schema:
@@ -103,8 +93,7 @@ router
  * @swagger
  * /api/amendments/{id}:
  *   get:
- *     summary: Отримати поправку за ID
- *     description: Завантажує повні дані поправки за її ідентифікатором.
+ *     summary: Get amendment by id
  *     tags: [Amendments]
  *     security:
  *       - bearerAuth: []
@@ -112,12 +101,10 @@ router
  *       - in: path
  *         name: id
  *         required: true
- *         schema:
- *           type: string
- *         description: ID поправки
+ *         schema: { type: string }
  *     responses:
  *       200:
- *         description: Деталі поправки
+ *         description: Amendment details
  *         content:
  *           application/json:
  *             schema:
@@ -125,13 +112,12 @@ router
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  *       404:
- *         description: Поправку не знайдено
+ *         description: Amendment not found
  *       500:
  *         $ref: '#/components/responses/ServerError'
- *
  *   patch:
- *     summary: Оновити поправку
- *     description: Дозволяє автору поправки змінити пропонований текст або обґрунтування (поки законопроєкт у статусі draft).
+ *     summary: Update amendment
+ *     description: Update amendment text or reason while proposal is still editable.
  *     tags: [Amendments]
  *     security:
  *       - bearerAuth: []
@@ -139,9 +125,7 @@ router
  *       - in: path
  *         name: id
  *         required: true
- *         schema:
- *           type: string
- *         description: ID поправки
+ *         schema: { type: string }
  *     requestBody:
  *       required: true
  *       content:
@@ -151,13 +135,11 @@ router
  *             properties:
  *               proposed_text:
  *                 type: string
- *                 example: 'Оновлений пропонований текст'
  *               reason:
  *                 type: string
- *                 example: 'Оновлене обґрунтування...'
  *     responses:
  *       200:
- *         description: Поправку оновлено
+ *         description: Updated amendment
  *         content:
  *           application/json:
  *             schema:
@@ -165,15 +147,14 @@ router
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  *       403:
- *         description: Редагування дозволено тільки автору в статусі draft
+ *         description: Only the author can edit amendment in draft context
  *       404:
- *         description: Поправку не знайдено
+ *         description: Amendment not found
  *       500:
  *         $ref: '#/components/responses/ServerError'
- *
  *   delete:
- *     summary: Видалити поправку
- *     description: Дозволяє автору видалити поправку (поки законопроєкт у статусі draft).
+ *     summary: Delete amendment
+ *     description: Remove amendment while proposal is still editable.
  *     tags: [Amendments]
  *     security:
  *       - bearerAuth: []
@@ -181,26 +162,16 @@ router
  *       - in: path
  *         name: id
  *         required: true
- *         schema:
- *           type: string
- *         description: ID поправки
+ *         schema: { type: string }
  *     responses:
- *       200:
- *         description: Поправку видалено
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Amendment deleted successfully
+ *       204:
+ *         description: Amendment deleted
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  *       403:
- *         description: Видалення дозволено тільки автору в статусі draft
+ *         description: Only the author can delete amendment in draft context
  *       404:
- *         description: Поправку не знайдено
+ *         description: Amendment not found
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */

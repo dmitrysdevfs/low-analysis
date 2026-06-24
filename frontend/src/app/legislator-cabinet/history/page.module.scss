@@ -1,0 +1,206 @@
+.heroPanel,
+.filterPanel,
+.timelinePanel {
+  padding: 24px;
+}
+
+.historyMeta {
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(94, 155, 255, 0.18);
+  background: rgba(8, 17, 32, 0.58);
+
+  svg {
+    color: var(--accent, #c8a843);
+  }
+
+  strong,
+  span {
+    display: block;
+  }
+
+  strong {
+    color: var(--text-primary, #fff7e8);
+    font-size: 1.38rem;
+  }
+
+  span {
+    color: var(--text-muted, rgba(207, 220, 243, 0.54));
+    font-size: 0.82rem;
+  }
+}
+
+.filterField {
+  max-width: 340px;
+}
+
+.timeline {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  padding-left: 24px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 7px;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      rgba(200, 168, 67, 0.36),
+      rgba(74, 128, 212, 0.14)
+    );
+  }
+}
+
+.timelineItem {
+  position: relative;
+}
+
+.timelineDot {
+  position: absolute;
+  top: 10px;
+  left: -24px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 3px solid rgba(6, 14, 28, 1);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.02);
+}
+
+.timelineDot_fork_created {
+  background: #f0d57a;
+}
+
+.timelineDot_fork_submitted {
+  background: #7ab8ff;
+}
+
+.timelineDot_proposal_created {
+  background: #75d49f;
+}
+
+.timelineDot_proposal_approved {
+  background: #5fb0ff;
+}
+
+.timelineDot_proposal_rejected {
+  background: #ff8d8d;
+}
+
+.timelineDot_amendment_created {
+  background: #c29cff;
+}
+
+.timelineDot_group_joined {
+  background: #ffb465;
+}
+
+.timelineBody {
+  display: grid;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(28, 50, 96, 0.44);
+  background: rgba(8, 17, 32, 0.54);
+}
+
+.timelineTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.timelineStamp {
+  margin: 0 0 6px;
+  color: var(--text-muted, rgba(207, 220, 243, 0.54));
+  font-size: 0.8rem;
+}
+
+.timelineTitle {
+  margin: 0;
+  color: var(--text-primary, #fff7e8);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.timelineFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lawLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ec0ff;
+  text-decoration: none;
+  font-size: 0.92rem;
+
+  &:hover {
+    color: #c4daff;
+  }
+}
+
+.typeBadge_fork_created,
+.typeBadge_fork_submitted {
+  background: rgba(240, 213, 122, 0.12);
+  border-color: rgba(240, 213, 122, 0.28);
+  color: #f0d57a;
+}
+
+.typeBadge_proposal_created,
+.typeBadge_group_joined {
+  background: rgba(82, 183, 136, 0.14);
+  border-color: rgba(82, 183, 136, 0.28);
+  color: #75d49f;
+}
+
+.typeBadge_proposal_approved {
+  background: rgba(74, 128, 212, 0.16);
+  border-color: rgba(74, 128, 212, 0.3);
+  color: #9ec0ff;
+}
+
+.typeBadge_proposal_rejected {
+  background: rgba(229, 90, 90, 0.14);
+  border-color: rgba(229, 90, 90, 0.28);
+  color: #ff9d9d;
+}
+
+.typeBadge_amendment_created {
+  background: rgba(157, 107, 255, 0.14);
+  border-color: rgba(157, 107, 255, 0.28);
+  color: #c7acff;
+}
+
+.kpiGridCustom {
+  display: grid;
+}
+
+.emptyIcon {
+  color: rgba(74, 128, 212, 0.5);
+}
+
+@media (max-width: 780px) {
+  .heroPanel,
+  .filterPanel,
+  .timelinePanel {
+    padding: 20px;
+  }
+
+  .historyMeta {
+    width: 100%;
+  }
+}

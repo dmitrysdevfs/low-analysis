@@ -75,6 +75,9 @@ function useAdminWorkspaceCore() {
           | "pro",
         createdAt: account.createdAt,
         updatedAt: account.lastLoginAt ?? account.createdAt,
+        lastLoginAt: account.lastLoginAt ?? null,
+        lastLoginIp: null,
+        lastLoginDevice: null,
       }),
     );
   }, [snapshot]);

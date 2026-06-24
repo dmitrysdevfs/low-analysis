@@ -22,11 +22,21 @@ const router = express.Router();
  *             properties:
  *               organization: { type: string }
  *               reason: { type: string }
+ *     responses:
+ *       201:
+ *         description: Access request submitted
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       409:
+ *         description: Active request already exists
  *   get:
  *     summary: Get all access requests (admin only)
  *     tags: [LawChange]
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Access requests
  */
 router
   .route('/')
@@ -41,8 +51,25 @@ router
  *     tags: [LawChange]
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user's latest request or null
  */
 router.get('/my', protect, legislatorRequestController.getMyRequest);
+
+/**
+ * @swagger
+ * /api/law-change/legislator-requests/revoke:
+ *   post:
+ *     summary: Revoke own role (returns to user)
+ *     tags: [LawChange]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Role revoked
+ */
+router.post('/revoke', protect, legislatorRequestController.revokeRole);
 
 /**
  * @swagger
@@ -52,6 +79,9 @@ router.get('/my', protect, legislatorRequestController.getMyRequest);
  *     tags: [LawChange]
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Request approved
  */
 router.post(
   '/:id/approve',
@@ -68,6 +98,9 @@ router.post(
  *     tags: [LawChange]
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Request rejected
  */
 router.post(
   '/:id/reject',

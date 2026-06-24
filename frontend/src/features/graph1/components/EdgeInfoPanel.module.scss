@@ -1,0 +1,223 @@
+.panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: rgba(5, 12, 26, 0.97);
+  border-left: 1px solid rgba(28, 50, 96, 0.5);
+  padding: 16px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: 0.82rem;
+  color: #c7d5ea;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(200, 168, 67, 0.2);
+    border-radius: 2px;
+  }
+}
+
+.section {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(28, 50, 96, 0.45);
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// --- Header ---
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.headerTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(199, 213, 234, 0.55);
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: rgba(199, 213, 234, 0.45);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #c7d5ea;
+  }
+}
+
+// --- Type badge ---
+
+.typeBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.typeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.typeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.typeDesc {
+  font-size: 0.74rem;
+  color: rgba(199, 213, 234, 0.55);
+  line-height: 1.4;
+}
+
+// --- Confidence ---
+
+.confidenceRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.confidenceLabel {
+  font-size: 0.72rem;
+  color: rgba(199, 213, 234, 0.5);
+  white-space: nowrap;
+}
+
+.confidenceBar {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.confidenceFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.confidencePct {
+  font-size: 0.72rem;
+  font-family: monospace;
+  color: rgba(199, 213, 234, 0.7);
+  white-space: nowrap;
+}
+
+// --- From / To ---
+
+.relationRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.relationItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.relationDir {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(199, 213, 234, 0.4);
+}
+
+.relationName {
+  font-size: 0.78rem;
+  color: #c7d5ea;
+  font-weight: 500;
+}
+
+.arrow {
+  color: rgba(199, 213, 234, 0.3);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+// --- Quote ---
+
+.articleLine {
+  font-size: 0.72rem;
+  font-family: monospace;
+  color: rgba(199, 213, 234, 0.5);
+  margin-bottom: 6px;
+}
+
+.quote {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 2px solid rgba(74, 128, 212, 0.5);
+  background: rgba(74, 128, 212, 0.06);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.75rem;
+  color: rgba(199, 213, 234, 0.75);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+// --- Actions ---
+
+.ghostBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(199, 213, 234, 0.18);
+  border-radius: 7px;
+  color: rgba(199, 213, 234, 0.65);
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background 0.2s;
+
+  &:hover {
+    border-color: rgba(199, 213, 234, 0.38);
+    color: #c7d5ea;
+  }
+
+  &[data-active="true"] {
+    background: rgba(200, 168, 67, 0.1);
+    border-color: rgba(200, 168, 67, 0.4);
+    color: #c8a843;
+  }
+}

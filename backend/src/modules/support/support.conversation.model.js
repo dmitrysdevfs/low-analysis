@@ -93,6 +93,23 @@ const supportConversationSchema = new mongoose.Schema(
       default: null,
       trim: true,
     },
+    priority: {
+      type: String,
+      enum: ['normal', 'high', 'urgent'],
+      default: 'normal',
+    },
+    spamFlag: {
+      type: Boolean,
+      default: false,
+    },
+    escalatedAt: {
+      type: Date,
+      default: null,
+    },
+    assignedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

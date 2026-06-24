@@ -215,6 +215,23 @@ describe('GET /api/laws', () => {
     expect(res.body.message).toMatch(/numberType/);
   });
 
+  it('passes subjectId to the service', async () => {
+    lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
+
+    await request(app).get('/api/laws?subjectId=507f1f77bcf86cd799439011');
+
+    expect(lawService.getAllLaws).toHaveBeenCalledWith(
+      expect.objectContaining({ subjectId: '507f1f77bcf86cd799439011' }),
+    );
+  });
+
+  it('returns 400 for invalid subjectId', async () => {
+    const res = await request(app).get('/api/laws?subjectId=not-an-objectid');
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/subjectId/);
+  });
+
   it('passes page and limit to the service', async () => {
     lawService.getAllLaws.mockResolvedValue(MOCK_PAGINATED);
 

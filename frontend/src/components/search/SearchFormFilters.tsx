@@ -3,6 +3,7 @@
 import type { SearchParams } from "@/types/search.types";
 import styles from "./SearchForm.module.scss";
 import { DATE_PLACEHOLDER, formatDateInput } from "@/lib/utils/dateInput";
+import { SubjectAutocomplete } from "./SubjectAutocomplete";
 
 interface SearchFormFiltersProps {
   params: SearchParams;
@@ -91,6 +92,15 @@ export function SearchFormFilters({
             className={`form-control ${styles.inputFlex}`}
           />
         </div>
+      </div>
+
+      <div className={styles.row}>
+        <span className={styles.label}>Суб'єкт</span>
+        <SubjectAutocomplete
+          subjectId={params.subjectId}
+          subjectName={params.subjectName}
+          onChange={onChange}
+        />
       </div>
 
       <div className={styles.row}>

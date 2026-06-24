@@ -53,6 +53,15 @@ const supportMessageSchema = new mongoose.Schema(
       default: null,
       trim: true,
     },
+    telegramSenderId: {
+      type: String,
+      default: null,
+    },
+    telegramSenderUsername: {
+      type: String,
+      default: null,
+      trim: true,
+    },
   },
   {
     timestamps: true,

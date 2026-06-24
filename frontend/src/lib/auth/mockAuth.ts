@@ -47,7 +47,7 @@ type DevAccountOverride = Partial<
 >;
 
 export type AdminAccessMatrixRow = {
-  role: "Гість" | "Клієнт" | "Законотворець" | "Адмін";
+  role: "guest" | "user" | "legislator" | "supervisor" | "admin";
   home: boolean;
   laws: boolean;
   subjects: boolean;
@@ -55,6 +55,7 @@ export type AdminAccessMatrixRow = {
   account: boolean;
   adminPanel: boolean;
   legislatorCabinet: boolean;
+  supervisorDashboard: boolean;
 };
 
 export type AdminAccountSummary = {
@@ -102,6 +103,7 @@ export type AdminAuditLogEntry = {
   actor: string;
   createdAt: string;
   severity: "info" | "warning" | "security";
+  ipAddress?: string | null;
 };
 
 export type AdminGuestPressureSnapshot = {
@@ -848,7 +850,7 @@ export function getAdminDashboardSnapshot() {
     },
     accessMatrix: [
       {
-        role: "Гість",
+        role: "guest",
         home: true,
         laws: true,
         subjects: true,
@@ -856,9 +858,10 @@ export function getAdminDashboardSnapshot() {
         account: false,
         adminPanel: false,
         legislatorCabinet: false,
+        supervisorDashboard: false,
       },
       {
-        role: "Клієнт",
+        role: "user",
         home: true,
         laws: true,
         subjects: true,
@@ -866,9 +869,10 @@ export function getAdminDashboardSnapshot() {
         account: true,
         adminPanel: false,
         legislatorCabinet: false,
+        supervisorDashboard: false,
       },
       {
-        role: "Законотворець",
+        role: "legislator",
         home: true,
         laws: true,
         subjects: true,
@@ -876,9 +880,21 @@ export function getAdminDashboardSnapshot() {
         account: true,
         adminPanel: false,
         legislatorCabinet: true,
+        supervisorDashboard: false,
       },
       {
-        role: "Адмін",
+        role: "supervisor",
+        home: true,
+        laws: true,
+        subjects: true,
+        search: true,
+        account: true,
+        adminPanel: false,
+        legislatorCabinet: false,
+        supervisorDashboard: true,
+      },
+      {
+        role: "admin",
         home: true,
         laws: true,
         subjects: true,
@@ -886,6 +902,7 @@ export function getAdminDashboardSnapshot() {
         account: true,
         adminPanel: true,
         legislatorCabinet: true,
+        supervisorDashboard: true,
       },
     ],
   } satisfies AdminDashboardSnapshot;

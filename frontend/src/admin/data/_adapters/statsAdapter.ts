@@ -11,5 +11,5 @@ export function useAdminStats(laws: Law[]): AdminStatsResult {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   if (LOCAL_MODE) return useStatsLocal(laws);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useStatsServer(ids) as unknown as AdminStatsResult;
+  return useStatsServer(ids);
 }

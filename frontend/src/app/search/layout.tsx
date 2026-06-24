@@ -9,9 +9,8 @@ export const metadata: Metadata = {
     description:
       "Пошук за назвою, номером, датою та статусом нормативно-правових актів України.",
   },
-  alternates: {
-    canonical: "/search",
-  },
+  // canonical lives per-page: /search/page.tsx has it, /search/results does not
+  // (results URLs are dynamic /?q=... and should not share one canonical)
 };
 
 export default function SearchLayout({

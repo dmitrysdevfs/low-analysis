@@ -35,10 +35,13 @@ const ACCESS_ROLE_LABELS = {
   Guest: "Гість",
   Client: "Клієнт",
   Legislator: "Законотворець",
+  Supervisor: "Супервайзер",
   Admin: "Адмін",
   guest: "Гість",
+  user: "Клієнт",
   client: "Клієнт",
   legislator: "Законотворець",
+  supervisor: "Супервайзер",
   admin: "Адмін",
   Законотворець: "Законотворець",
 } as const;

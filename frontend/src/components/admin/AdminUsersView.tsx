@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Users, User, ShieldCheck, UserX } from "lucide-react";
 import { AdminUserRow } from "./AdminUserRow";
 
 function exportUsersCSV(accounts: ReturnType<typeof useAdminUsers>["users"]) {
@@ -95,42 +96,63 @@ export function AdminUsersView() {
 
       <section className={styles.metricsGrid}>
         <article className={styles.metricCard}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(74,128,212,0.12)", color: "#6aa1ff" }}
+          >
+            <Users size={15} />
+          </span>
           <span className={styles.metricLabel}>Усього</span>
           <strong className={styles.metricValue}>
             {snapshot.totalAccounts}
           </strong>
           <p className={styles.metricNote}>
-            Усі збережені та вбудовані розробницькі ідентичності, які бачить
-            адмін-простір.
+            Усі збережені та вбудовані розробницькі ідентичності.
           </p>
         </article>
         <article className={styles.metricCard}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(74,158,107,0.12)", color: "#7ee8a2" }}
+          >
+            <User size={15} />
+          </span>
           <span className={styles.metricLabel}>Клієнти</span>
           <strong className={styles.metricValue}>
             {snapshot.clientAccounts}
           </strong>
           <p className={styles.metricNote}>
-            Клієнтські сесії зі стандартним доступом до законів, суб'єктів і
-            пошуку.
+            Клієнтські сесії зі стандартним доступом до законів.
           </p>
         </article>
         <article className={styles.metricCard}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(200,168,67,0.12)", color: "#c8a843" }}
+          >
+            <ShieldCheck size={15} />
+          </span>
           <span className={styles.metricLabel}>Адміни</span>
           <strong className={styles.metricValue}>
             {snapshot.adminAccounts}
           </strong>
           <p className={styles.metricNote}>
-            Ідентичності, які можуть входити в адмін-простір і керувати
-            захищеними сценаріями.
+            Ідентичності з доступом до адмін-простору.
           </p>
         </article>
         <article className={styles.metricCard}>
+          <span
+            className={styles.metricIconBadge}
+            style={{ background: "rgba(233,119,75,0.12)", color: "#ffb39b" }}
+          >
+            <UserX size={15} />
+          </span>
           <span className={styles.metricLabel}>Неактивні</span>
           <strong className={styles.metricValue}>
             {statusCounts.inactive}
           </strong>
           <p className={styles.metricNote}>
-            Акаунти, які зараз вимкнені у локальному сховищі автентифікації.
+            Акаунти, вимкнені у сховищі автентифікації.
           </p>
         </article>
       </section>
@@ -222,7 +244,7 @@ export function AdminUsersView() {
           <div className={styles.registryViewport}>
             <VirtualList
               items={filteredAccounts}
-              estimateSize={88}
+              estimateSize={52}
               maxHeight={520}
               emptyState={
                 <div className={styles.emptyState}>

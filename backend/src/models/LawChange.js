@@ -6,7 +6,6 @@ const lawChangeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'LawFork',
       required: true,
-      index: true,
     },
     elementId: {
       type: mongoose.Schema.Types.ObjectId,

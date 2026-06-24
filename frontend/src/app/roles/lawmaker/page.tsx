@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
 import { Layout } from "@/components/layout/Layout";
-import { ManagedPageView } from "@/features/page-builder/components/ManagedPageView";
-import { ROLES_LAWMAKER_FALLBACK } from "@/features/page-builder/lib/roleFallbacks";
+import { RoleDetailView } from "@/features/roles-detail/components/RoleDetailView";
+import { ROLE_DETAIL_CONFIGS } from "@/features/roles-detail/lib/roleDetailConfigs";
 
 export const metadata: Metadata = {
   title: "Законотворець · Law Analysis",
-  description: "Роль Законотворця: форки, поправки та подання законопроєктів.",
+  description:
+    "Роль законотворця: форки, поправки, diff і підготовка альтернативних редакцій законів.",
 };
 
 export default function RolesLawmakerPage() {
   return (
     <Layout>
-      <ManagedPageView
-        slug="roles-lawmaker"
-        fallback={ROLES_LAWMAKER_FALLBACK}
-        eyebrow="Ролі платформи"
-      />
+      <RoleDetailView config={ROLE_DETAIL_CONFIGS.lawmaker} />
     </Layout>
   );
 }

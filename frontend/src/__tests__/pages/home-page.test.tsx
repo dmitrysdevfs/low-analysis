@@ -30,11 +30,9 @@ describe("Home page", () => {
       "href",
       "/subjects",
     );
-    expect(screen.getByText(/Що зроблено і що далі/i)).toBeInTheDocument();
-    expect(screen.getByText(/254к\/96-вр/i)).toBeInTheDocument();
   });
 
-  it("shows loading copy in the CTA summary while laws are loading", () => {
+  it("renders hero even when laws are loading", () => {
     vi.mocked(useLaws).mockReturnValue({
       laws: [],
       error: null,
@@ -43,6 +41,6 @@ describe("Home page", () => {
 
     render(<HomePage />);
 
-    expect(screen.getByText("Завантаження…")).toBeInTheDocument();
+    expect(screen.getByText("Law Analysis")).toBeInTheDocument();
   });
 });

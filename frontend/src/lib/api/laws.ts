@@ -8,7 +8,7 @@ import type {
   PaginatedLawsResponse,
   TreeNode,
 } from "@/types";
-import { getJson, toSearchParams } from "./_client";
+import { getJson, requestJson, toSearchParams } from "./_client";
 export { getJson } from "./_client";
 
 export interface LawsSearchOptions {
@@ -19,6 +19,7 @@ export interface LawsSearchOptions {
   dateTo?: string;
   number?: string;
   numberType?: "starts" | "contains" | "exact";
+  subjectId?: string;
   sortBy?: "date" | "title";
   sortOrder?: "asc" | "desc";
 }
@@ -43,6 +44,7 @@ export async function getLaws(
     sortOrder: o?.sortOrder,
     number: o?.number,
     numberType: o?.number ? o?.numberType : undefined,
+    subjectId: o?.subjectId,
   });
 
   const res = await getJson<{ data: Law[] } | Law[]>(
@@ -103,6 +105,18 @@ export async function getLawStats(
   return getJson<LawStats>(`/laws/${id}/stats`, options);
 }
 
+export async function getStatsBulk(
+  ids: string[],
+  options?: RequestInit,
+): Promise<Record<string, LawStats>> {
+  return requestJson<Record<string, LawStats>>(
+    "/laws/stats-bulk",
+    "POST",
+    { ids },
+    options,
+  );
+}
+
 export async function getArticle(
   id: string,
   num: string,
@@ -115,4 +129,14 @@ export async function getLawSubjects(
   lawId: string,
 ): Promise<{ _id: string }[]> {
   return getJson<{ _id: string }[]>(`/laws/${lawId}/subjects`);
+}
+
+export interface LawStructure {
+  title: string;
+  code: string;
+  articles: Array<{ number: string; title: string; order: number }>;
+}
+
+export async function getLawArticles(lawId: string): Promise<LawStructure> {
+  return getJson<LawStructure>(`/laws/${lawId}/articles`);
 }

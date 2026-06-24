@@ -1,7 +1,10 @@
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import { getClientIp } from '../utils/getClientIp.js';
 import { getActiveCode } from '../services/admin/superCode.service.js';
+import { appendAuditEntry } from '../services/admin/audit.service.js';
 import { sendTransactionalEmail } from '../modules/email/email.service.js';
 import { renderEmailTemplate } from '../modules/email/email.renderer.js';
 
@@ -30,6 +33,31 @@ function setCookieToken(res, token) {
 
 function clearCookieToken(res) {
   res.clearCookie(COOKIE_NAME, { path: '/' });
+}
+
+function parseDevice(userAgent) {
+  if (!userAgent) return null;
+  const os = /Mac OS X/.test(userAgent)
+    ? 'macOS'
+    : /Windows NT/.test(userAgent)
+      ? 'Windows'
+      : /Linux/.test(userAgent)
+        ? 'Linux'
+        : /Android/.test(userAgent)
+          ? 'Android'
+          : /iPhone|iPad/.test(userAgent)
+            ? 'iOS'
+            : null;
+  const chromeVer = /Chrome\/(\d+)/.exec(userAgent);
+  const firefoxVer = /Firefox\/(\d+)/.exec(userAgent);
+  const browser = chromeVer
+    ? `Chrome ${chromeVer[1]}`
+    : firefoxVer
+      ? `Firefox ${firefoxVer[1]}`
+      : /Safari\//.test(userAgent)
+        ? 'Safari'
+        : null;
+  return [browser, os].filter(Boolean).join(' / ') || null;
 }
 
 function detectRegistrationSource(referrer) {
@@ -64,6 +92,13 @@ export const registerUser = async (req, res) => {
   if (accountType === 'admin') {
     const activeCode = await getActiveCode();
     if (!superCode || superCode !== activeCode) {
+      appendAuditEntry({
+        action: 'Спроба підключення з невалідним кодом',
+        detail: `Спроба реєстрації адміністратора з невалідним супер-кодом. Email: ${email}.`,
+        actor: email || 'Невідомо',
+        severity: 'security',
+        ipAddress: getClientIp(req),
+      }).catch(() => {});
       return res
         .status(400)
         .json({ message: 'Недійсний супер-код для реєстрації адміністратора' });
@@ -84,15 +119,22 @@ export const registerUser = async (req, res) => {
   });
 
   if (user) {
-    const token = generateToken(user._id);
+    if (role === 'admin') {
+      appendAuditEntry({
+        action: 'Успішне підключення адміністратора',
+        detail: `Новий адмін-акаунт зареєстровано: ${email}.`,
+        actor: email,
+        severity: 'security',
+        ipAddress: getClientIp(req),
+      }).catch(() => {});
+    }
+    const token = generateToken(user._id, user.tokenVersion ?? 0);
     setCookieToken(res, token);
     res.status(201).json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
       role: user.role,
-      // token still returned in body for backward compat with existing clients
-      token,
     });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
@@ -119,15 +161,18 @@ export const loginUser = async (req, res) => {
   }).select('+password');
 
   if (user && (await user.comparePassword(password))) {
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.tokenVersion ?? 0);
     setCookieToken(res, token);
+    User.findByIdAndUpdate(user._id, {
+      lastLoginAt: new Date(),
+      lastLoginIp: getClientIp(req),
+      lastLoginDevice: parseDevice(req.headers['user-agent']),
+    }).catch(() => {});
     res.json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
       role: user.role,
-      // token still returned in body for backward compat
-      token,
     });
   } else {
     res.status(401).json({ message: 'Invalid email or password' });
@@ -216,7 +261,11 @@ export const updateUserPassword = async (req, res) => {
     }
 
     user.password = nextPassword;
+    user.tokenVersion = (user.tokenVersion ?? 0) + 1;
     await user.save();
+
+    const newToken = generateToken(user._id, user.tokenVersion);
+    setCookieToken(res, newToken);
 
     res.json({ message: 'Password updated successfully' });
   } else {
@@ -229,7 +278,18 @@ export const updateUserPassword = async (req, res) => {
  * @route   POST /api/auth/logout
  * @access  Public
  */
-export const logoutUser = (req, res) => {
+export const logoutUser = async (req, res) => {
+  const token = req.cookies?.token;
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (decoded?.id) {
+        await User.findByIdAndUpdate(decoded.id, { $inc: { tokenVersion: 1 } });
+      }
+    } catch {
+      // token already invalid — nothing to revoke
+    }
+  }
   clearCookieToken(res);
   res.json({ message: 'Logged out successfully' });
 };
@@ -325,4 +385,64 @@ export const resetPassword = async (req, res) => {
   await user.save();
 
   res.json({ message: 'Password reset successfully' });
+};
+
+export const googleAuth = async (req, res) => {
+  const { accessToken } = req.body;
+  if (!accessToken)
+    return res.status(400).json({ message: 'Access token required' });
+
+  try {
+    const googleRes = await fetch(
+      'https://www.googleapis.com/oauth2/v3/userinfo',
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
+
+    if (!googleRes.ok)
+      return res.status(401).json({ message: 'Невалідний Google токен' });
+
+    const { sub: googleId, email, name } = await googleRes.json();
+
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+    let isNewUser = false;
+
+    if (user) {
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+        appendAuditEntry({
+          action: "Google акаунт прив'язано до існуючого профілю",
+          detail: `Google ID зв'язаний з існуючим акаунтом. Email: ${email}.`,
+          actor: email,
+          severity: 'info',
+          ipAddress: getClientIp(req),
+        }).catch(() => {});
+      }
+    } else {
+      user = await User.create({
+        googleId,
+        email,
+        fullName: name || email.split('@')[0],
+        role: 'user',
+        registrationSource: { source: 'google' },
+      });
+      isNewUser = true;
+    }
+
+    const token = generateToken(user._id, user.tokenVersion ?? 0);
+    setCookieToken(res, token);
+
+    res.json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      isNewUser,
+    });
+  } catch (err) {
+    console.error('Google auth error:', err.message);
+    res.status(500).json({ message: 'Помилка Google авторизації' });
+  }
 };

@@ -77,4 +77,10 @@ export const adminInboxApi = {
       method: "POST",
       body: JSON.stringify({ body }),
     }),
+
+  compose: (payload: { to: string; subject: string; body: string }) =>
+    inboxFetch<{ ok: boolean }>("/compose", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 };

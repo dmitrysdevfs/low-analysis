@@ -143,7 +143,11 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
   }, [refreshSnapshot, isGuest]);
 
   useEffect(() => {
-    if (!isGuest || pathname.startsWith(ROUTES.auth)) {
+    if (
+      !isGuest ||
+      pathname.startsWith(ROUTES.auth) ||
+      pathname.startsWith(ROUTES.help)
+    ) {
       setWelcomeOpen(false);
       setModal(null);
       return;

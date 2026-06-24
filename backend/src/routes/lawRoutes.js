@@ -3,6 +3,7 @@ import {
   getAllLaws,
   getLawTree,
   getLawStats,
+  getLawStatsBulk,
   getArticle,
   getLawArticles,
   parseLawFromUrl,
@@ -70,6 +71,13 @@ router.use(guestRateLimit);
  *           type: string
  *           enum: [starts, contains, exact]
  *           default: starts
+ *       - in: query
+ *         name: subjectId
+ *         required: false
+ *         description: Фільтр законів за суб'єктом регулювання (ObjectId суб'єкта з /api/subjects/search)
+ *         schema:
+ *           type: string
+ *           example: 507f1f77bcf86cd799439011
  *       - in: query
  *         name: dateFrom
  *         required: false
@@ -275,7 +283,7 @@ router.get('/:id/heatmap', getLawHeatmap);
 
 /**
  * @swagger
- * /api/elements/{id}:
+ * /api/laws/elements/{id}:
  *   get:
  *     tags: [Elements]
  *     summary: Отримати конкретний елемент за ID
@@ -290,6 +298,25 @@ router.get('/:id/heatmap', getLawHeatmap);
  *         description: Елемент знайдено
  */
 router.get('/elements/:id', getElement);
+
+/**
+ * @swagger
+ * /api/laws/{id}/subjects:
+ *   get:
+ *     tags: [Laws]
+ *     summary: Get subject distribution for a law
+ *     description: Returns regulatory subjects and per-subject counters scoped to the selected law.
+ *     parameters:
+ *       - $ref: '#/components/parameters/LawId'
+ *     responses:
+ *       200:
+ *         description: Subject statistics for the law
+ *       404:
+ *         description: Law not found
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.get('/:id/subjects', getLawSubjects);
 
 /**
  * @swagger
@@ -323,7 +350,6 @@ router.get('/elements/:id', getElement);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id/subjects', getLawSubjects);
 router.get('/:id/articles/:num', getArticle);
 
 /**
@@ -366,5 +392,39 @@ router.get('/:id/articles/:num', getArticle);
  *         description: Помилка сервера або парсингу
  */
 router.post('/parse', protect, authorize('admin'), parseLawFromUrl);
+
+/**
+ * @swagger
+ * /api/laws/stats-bulk:
+ *   post:
+ *     summary: Масова статистика законів (bulk)
+ *     description: >
+ *       Одним MongoDB aggregation-запитом повертає статистику для масиву lawId.
+ *       Замінює N окремих GET /api/laws/:id/stats викликів.
+ *     tags: [Laws]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [ids]
+ *             properties:
+ *               ids:
+ *                 type: array
+ *                 items: { type: string }
+ *     responses:
+ *       200:
+ *         description: Об'єкт з ключами lawId → LawStats
+ *       400:
+ *         description: ids array is required
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+router.post('/stats-bulk', protect, authorize('admin'), getLawStatsBulk);
 
 export default router;

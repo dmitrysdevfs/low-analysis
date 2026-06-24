@@ -62,14 +62,19 @@ export interface ApprovedChange {
   approved_at: string;
 }
 
+export type RequestedRole = "legislator" | "supervisor";
+
 export interface LegislatorAccessRequest {
   _id: string;
-  user_id: string | { _id: string; displayName: string; email: string };
+  userId: string | { _id: string; displayName: string; email: string };
+  requestedRole: RequestedRole;
   organization: string;
   reason: string;
   status: "pending" | "approved" | "rejected";
-  reviewed_by: string | null;
-  review_note: string;
+  adminNote: string;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  retryAfterMs?: number;
   createdAt: string;
   updatedAt: string;
 }

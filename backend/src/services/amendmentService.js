@@ -6,7 +6,8 @@ import { compareIds } from '../utils/id.js';
 
 /**
  * Create a new amendment.
- * Automatically populates original_text and context from the Element.
+ * If element_id is provided, auto-populates original_text and context from Element.
+ * If element_id is omitted (cabinet form), uses context/original_text from request directly.
  */
 export const createAmendment = async ({
   law_id,
@@ -14,59 +15,58 @@ export const createAmendment = async ({
   proposal_id,
   created_by,
   change_type,
+  original_text: originalTextInput,
   proposed_text,
   reason,
+  context: contextInput,
 }) => {
-  const matchId = mongoose.Types.ObjectId.isValid(element_id)
-    ? new mongoose.Types.ObjectId(element_id)
-    : element_id;
+  let context = contextInput || {};
+  let original_text = originalTextInput || null;
 
-  const results = await Element.aggregate([
-    { $match: { _id: matchId } },
-    {
-      $graphLookup: {
-        from: 'elements',
-        startWith: '$parentId',
-        connectFromField: 'parentId',
-        connectToField: '_id',
-        as: 'ancestors',
+  // Only look up Element if element_id is provided
+  if (element_id && mongoose.Types.ObjectId.isValid(element_id)) {
+    const matchId = new mongoose.Types.ObjectId(element_id);
+    const results = await Element.aggregate([
+      { $match: { _id: matchId } },
+      {
+        $graphLookup: {
+          from: 'elements',
+          startWith: '$parentId',
+          connectFromField: 'parentId',
+          connectToField: '_id',
+          as: 'ancestors',
+        },
       },
-    },
-  ]);
+    ]);
 
-  if (results.length === 0) {
-    throw new Error('Element not found');
-  }
+    if (results.length === 0) throw new Error('Element not found');
 
-  const element = results[0];
-  const ancestors = element.ancestors || [];
+    const element = results[0];
+    const ancestors = element.ancestors || [];
+    context = { element_code: element.code };
 
-  // Build context breadcrumb
-  const context = {
-    element_code: element.code,
-  };
+    const allElements = [element, ...ancestors];
+    for (const item of allElements) {
+      if (item.type === 'article') {
+        context.article_num = item.number;
+        context.article_title = item.title;
+      } else if (item.type === 'section') {
+        context.section_title = item.title;
+      }
+    }
 
-  // Find article and section parents from ancestors array and the element itself
-  const allElements = [element, ...ancestors];
-  for (const item of allElements) {
-    if (item.type === 'article') {
-      context.article_num = item.number;
-      context.article_title = item.title;
-    } else if (item.type === 'section') {
-      context.section_title = item.title;
+    if (change_type === 'edit' || change_type === 'delete') {
+      original_text = element.text || element.title;
     }
   }
 
   const amendment = await Amendment.create({
-    law_id,
-    element_id,
-    proposal_id,
+    law_id: law_id || null,
+    element_id: element_id || null,
+    proposal_id: proposal_id || null,
     created_by,
     change_type,
-    original_text:
-      change_type === 'edit' || change_type === 'delete'
-        ? element.text || element.title
-        : null,
+    original_text,
     proposed_text:
       change_type === 'edit' || change_type === 'add' ? proposed_text : null,
     reason,
@@ -135,6 +135,17 @@ export const updateAmendment = async (id, userId, data) => {
   }
 
   return await Amendment.findByIdAndUpdate(id, data, { new: true });
+};
+
+/**
+ * Get amendments by multiple user IDs (for supervisor group view).
+ */
+export const getAmendmentsByUserIds = async (userIds) => {
+  return Amendment.find({ created_by: { $in: userIds } })
+    .populate('law_id', 'title code')
+    .populate('created_by', 'fullName')
+    .sort({ createdAt: -1 })
+    .lean();
 };
 
 /**

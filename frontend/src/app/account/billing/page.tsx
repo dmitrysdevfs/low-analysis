@@ -1,10 +1,5 @@
-﻿import { Layout } from "@/components/layout/Layout";
-import { ClientBillingOverview } from "@/components/account/ClientBillingOverview";
+import { BillingDashboard } from "@/features/account1/BillingDashboard";
 
 export default function AccountBillingPage() {
-  return (
-    <Layout fullHeight>
-      <ClientBillingOverview />
-    </Layout>
-  );
+  return <BillingDashboard />;
 }

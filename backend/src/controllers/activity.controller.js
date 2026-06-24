@@ -1,4 +1,5 @@
 import * as activityService from '../services/activity.service.js';
+import { getClientIp } from '../utils/getClientIp.js';
 
 export const trackEvent = async (req, res, next) => {
   try {
@@ -10,6 +11,8 @@ export const trackEvent = async (req, res, next) => {
       query,
       lawId,
       meta,
+      ipAddress: getClientIp(req),
+      userAgent: req.headers['user-agent'] || null,
     });
     res.status(201).json({ ok: true, id: entry._id });
   } catch (err) {

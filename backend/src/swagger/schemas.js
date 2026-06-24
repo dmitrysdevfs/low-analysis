@@ -279,6 +279,24 @@ export const schemas = {
     },
   },
 
+  SubjectSearchResult: {
+    type: 'object',
+    description: "Результат автокомпліту суб'єктів (#182)",
+    properties: {
+      _id: { type: 'string', example: '507f1f77bcf86cd799439022' },
+      name: {
+        type: 'string',
+        example: 'Національний банк України',
+        description: "Канонічна назва суб'єкта (canonical_name)",
+      },
+      count: {
+        type: 'integer',
+        example: 152,
+        description: "Кількість елементів, де згадується суб'єкт",
+      },
+    },
+  },
+
   PaginatedLaws: {
     type: 'object',
     description: 'Пагінований список законів',
@@ -295,6 +313,66 @@ export const schemas = {
           limit: { type: 'integer', example: 20 },
           total: { type: 'integer', example: 150 },
           totalPages: { type: 'integer', example: 8 },
+          hasNextPage: { type: 'boolean', example: true },
+          hasPrevPage: { type: 'boolean', example: false },
+        },
+      },
+    },
+  },
+
+  SearchResult: {
+    type: 'object',
+    description: 'Один результат повнотекстового пошуку (Issue #111)',
+    properties: {
+      law_id: { type: 'string', example: '69f84aa7395f1789bc7b2b89' },
+      law_name: {
+        type: 'string',
+        nullable: true,
+        example: 'Податковий кодекс України',
+      },
+      article_number: {
+        type: 'string',
+        nullable: true,
+        example: '15',
+        description: 'Номер статті (null для збігу по назві закону)',
+      },
+      article_title: {
+        type: 'string',
+        nullable: true,
+        example: 'Платники податків',
+      },
+      snippet: {
+        type: 'string',
+        nullable: true,
+        example: '…платником податку є особа, на яку покладено обов’язок…',
+        description: 'Фрагмент тексту навколо знайденого збігу',
+      },
+      match_type: {
+        type: 'string',
+        enum: ['law', 'article', 'paragraph'],
+        example: 'article',
+        description: 'Де знайдено збіг: назва закону / стаття / абзац',
+      },
+    },
+  },
+
+  SearchResults: {
+    type: 'object',
+    description:
+      'Пагінований список результатів пошуку, відсортований за релевантністю',
+    required: ['data', 'pagination'],
+    properties: {
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/SearchResult' },
+      },
+      pagination: {
+        type: 'object',
+        properties: {
+          page: { type: 'integer', example: 1 },
+          limit: { type: 'integer', example: 20 },
+          total: { type: 'integer', example: 42 },
+          totalPages: { type: 'integer', example: 3 },
           hasNextPage: { type: 'boolean', example: true },
           hasPrevPage: { type: 'boolean', example: false },
         },
