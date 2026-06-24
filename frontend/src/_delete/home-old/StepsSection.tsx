@@ -15,9 +15,7 @@ export function StepsSection() {
         className={styles.stepsSectionHeader}
       >
         <div className={`mono ${styles.stepsSectionLabel}`}>Як це працює</div>
-        <h2 className="subtitle">
-          Від HTML до структури
-        </h2>
+        <h2 className="subtitle">Від HTML до структури</h2>
       </motion.div>
 
       <div className={styles.stepsGrid}>

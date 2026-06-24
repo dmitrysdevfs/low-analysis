@@ -37,11 +37,11 @@ export function PlatformStructureSection() {
   const HeroIcon = ICON_MAP[hero.iconId];
 
   return (
-    <section className={styles.section}>
+    <section className={`section ${styles.section}`}>
       {/* Section glow orb */}
       <div className={styles.sectionGlow} aria-hidden="true" />
 
-      <div className={styles.inner}>
+      <div className="container">
         {/* Header */}
         <motion.div
           className={styles.header}
@@ -51,7 +51,7 @@ export function PlatformStructureSection() {
           transition={{ duration: 0.45 }}
         >
           <div className={`mono ${styles.sectionNum}`}>01 —</div>
-          <h2 className={`display ${styles.h2}`}>Структура платформи</h2>
+          <h2 className={`titleH2 ${styles.h2}`}>Структура платформи</h2>
           <p className={styles.subtitle}>
             Модульна архітектура, що поєднує дані, аналітику та інструменти для
             ефективної правової роботи.

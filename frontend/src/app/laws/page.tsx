@@ -79,77 +79,76 @@ export default function LawsPage() {
         <div className={styles.blobGold} />
         <div className={styles.blobBlue} />
 
-        <div className={`container section ${styles.sectionInner}`}>
+        <div className={`container sectionLast ${styles.sectionInner}`}>
           <div className={styles.border}>
-                   <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            className={styles.heroMotion}
-          >
-            <h1 className={`title ${styles.heading}`}>
-              Закони
-          
-              <span className={styles.headingAccent}>України</span>
-            </h1>
-
-            <p className={styles.subtitle}>
-              Структуровані тексти законів України — від лінійного полотна до
-              ієрархічної бази атомарних елементів.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-            className={styles.searchWrapper}
-          >
-            <span className={styles.searchIcon}>⌕</span>
-            <input
-              ref={searchRef}
-              type="text"
-              value={query}
-              onChange={(event) => handleQueryChange(event.target.value)}
-              placeholder="Пошук за назвою закону…"
-              className={`form-control ${styles.searchInput}`}
-            />
-            {query ? (
-              <button
-                onClick={() => handleQueryChange("")}
-                className={styles.clearButton}
-              >
-                ✕
-              </button>
-            ) : null}
-          </motion.div>
-
-          {/* Status filter chips */}
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.35 }}
-            className={styles.chipsRow}
-          >
-            <button
-              className={`${styles.chip} ${activeStatus === null ? styles.chipActive : ""}`}
-              onClick={() => handleStatusChange(null)}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+              className={styles.heroMotion}
             >
-              Всі
-            </button>
-            {STATUS_OPTIONS.map((status) => (
+              <h1 className={`title ${styles.heading}`}>
+                Закони
+                <span className={styles.headingAccent}>України</span>
+              </h1>
+
+              <p className={styles.subtitle}>
+                Структуровані тексти законів України — від лінійного полотна до
+                ієрархічної бази атомарних елементів.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className={styles.searchWrapper}
+            >
+              <span className={styles.searchIcon}>⌕</span>
+              <input
+                ref={searchRef}
+                type="text"
+                value={query}
+                onChange={(event) => handleQueryChange(event.target.value)}
+                placeholder="Пошук за назвою закону…"
+                className={`form-control ${styles.searchInput}`}
+              />
+              {query ? (
+                <button
+                  onClick={() => handleQueryChange("")}
+                  className={styles.clearButton}
+                >
+                  ✕
+                </button>
+              ) : null}
+            </motion.div>
+
+            {/* Status filter chips */}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.35 }}
+              className={styles.chipsRow}
+            >
               <button
-                key={status}
-                className={`${styles.chip} ${activeStatus === status ? styles.chipActive : ""}`}
-                onClick={() =>
-                  handleStatusChange(activeStatus === status ? null : status)
-                }
+                className={`${styles.chip} ${activeStatus === null ? styles.chipActive : ""}`}
+                onClick={() => handleStatusChange(null)}
               >
-                {status}
+                Всі
               </button>
-            ))}
-          </motion.div>
-   </div>
+              {STATUS_OPTIONS.map((status) => (
+                <button
+                  key={status}
+                  className={`${styles.chip} ${activeStatus === status ? styles.chipActive : ""}`}
+                  onClick={() =>
+                    handleStatusChange(activeStatus === status ? null : status)
+                  }
+                >
+                  {status}
+                </button>
+              ))}
+            </motion.div>
+          </div>
 
           <LawParseForm onSuccess={() => setRefreshKey((prev) => prev + 1)} />
 
@@ -161,9 +160,7 @@ export default function LawsPage() {
               transition={{ delay: 0.3, duration: 0.4 }}
               className={styles.recentSection}
             >
-              <div className={styles.recentLabel}>
-                Нещодавно переглянуті
-              </div>
+              <div className={styles.recentLabel}>Нещодавно переглянуті</div>
               <div className={styles.recentList}>
                 {recentlyViewed.map((item) => (
                   <Link

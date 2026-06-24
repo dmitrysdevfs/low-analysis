@@ -50,8 +50,8 @@
   font-weight: 700;
   font-size: clamp(2.6rem, 5vw, 3.75rem);
   line-height: 45px;
-   margin: 0 0 8px;
-  }
+  margin: 0 0 8px;
+}
 
 .heroSubtitle {
   font-size: clamp(1.1rem, 2vw, 1.5rem);
@@ -303,7 +303,7 @@
 
 .stepCardDesc {
   font-size: 0.85rem;
-    margin: 0;
+  margin: 0;
   line-height: 1.65;
   color: var(--color-smoke);
 }
@@ -428,7 +428,6 @@
 }
 
 @media (max-width: 767px) {
- 
   .heroInner {
     align-items: stretch;
   }
@@ -467,7 +466,7 @@
   }
 
   .statsInner,
-    .roadmapInner {
+  .roadmapInner {
     padding-left: 16px;
     padding-right: 16px;
   }

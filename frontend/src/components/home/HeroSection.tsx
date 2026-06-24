@@ -26,17 +26,11 @@ export function HeroSection({ w }: { w: number }) {
           initial="initial"
           animate="animate"
         >
-          <motion.h1
-            variants={childFade}
-            className={styles.heroH1}
-          >
+          <motion.h1 variants={childFade} className={styles.heroH1}>
             Law Analysis
           </motion.h1>
 
-          <motion.p
-            variants={childFade}
-            className={styles.heroSubtitle}
-          >
+          <motion.p variants={childFade} className={styles.heroSubtitle}>
             Правова екосистема для громадян, юристів та законотворців
           </motion.p>
 

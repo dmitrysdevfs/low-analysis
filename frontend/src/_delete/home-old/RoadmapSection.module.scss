@@ -1,7 +1,7 @@
 .section {
   border-top: 1px solid #1c3260;
   background: #0d1c3a;
-  }
+}
 
 .header {
   margin-bottom: 40px;
@@ -9,14 +9,14 @@
 
 .label {
   font-size: 0.62rem;
-   color: #c8a843;
+  color: #c8a843;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
 
 .h2 {
-   margin: 0;
+  margin: 0;
 }
 
 // ─── Progress bar ─────────────────────────────────────────────────────────────
@@ -210,13 +210,12 @@
 
   &:hover {
     background: linear-gradient(135deg, #dabb55 0%, #f0d050 100%);
-  box-shadow: 0 4px 20px rgba(200, 168, 67, 0.35);
-  transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(200, 168, 67, 0.35);
+    transform: translateY(-1px);
   }
 }
 
 @media (max-width: 767px) {
- 
   .footer {
     align-items: flex-start;
   }

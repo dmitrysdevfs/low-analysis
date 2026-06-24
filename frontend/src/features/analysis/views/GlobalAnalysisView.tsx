@@ -44,7 +44,7 @@ export function GlobalAnalysisView() {
   };
 
   return (
-    <div className={`container ${styles.wrapper}`}>
+    <div className={`container sectionLast ${styles.wrapper}`}>
       <div className={styles.blobGold} />
       <div className={styles.blobBlue} />
 

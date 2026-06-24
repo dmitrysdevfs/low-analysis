@@ -118,7 +118,7 @@ export default function SubjectsPage() {
           >
             <h1 className={`title ${styles.heading}`}>
               Суб&apos;єкти
-                           <span className={styles.headingAccent}>регулювання</span>
+              <span className={styles.headingAccent}>регулювання</span>
             </h1>
             <p className={styles.subtitle}>
               Фізичні та юридичні особи, права та обов&apos;язки яких

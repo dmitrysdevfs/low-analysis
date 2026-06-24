@@ -1,12 +1,11 @@
 .wrapper {
   position: relative;
   isolation: isolate;
-  padding: 44px 16px 72px;
 }
 
 .inner {
   position: relative;
-    display: grid;
+  display: grid;
   gap: 18px;
 }
 
@@ -81,7 +80,6 @@
 
 .heroTitle {
   margin: 0;
- 
 }
 
 .heroAccent {
@@ -126,12 +124,12 @@
   gap: 10px;
 }
 
-.heroLink{
-    display: inline-flex;
+.heroLink {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-   padding: 0 14px;
-   font-weight: 700;
+  padding: 0 14px;
+  font-weight: 700;
   border-radius: 8px;
   text-decoration: none;
   border: 1px solid var(--color-gold);
@@ -704,16 +702,8 @@
 }
 
 @media (max-width: 640px) {
-  .wrapper {
-    padding: 28px 12px 56px;
-  }
-
   .inner {
     width: min(100%, calc(100% - 4px));
-  }
-
-  .heroTitle {
-    font-size: clamp(2rem, 12vw, 3rem);
   }
 
   .kpiGrid {

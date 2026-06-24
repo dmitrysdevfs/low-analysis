@@ -1,5 +1,5 @@
 .section {
-    position: relative;
+  position: relative;
   overflow: hidden;
 
   &::before {
@@ -20,7 +20,6 @@
   }
 }
 
-
 .header {
   margin-bottom: 56px;
   max-width: 560px;
@@ -35,12 +34,12 @@
 }
 
 .h2 {
-    margin: 0 0 14px;
-  }
+  margin: 0 0 14px;
+}
 
 .sub {
   font-size: 0.92rem;
-    line-height: 1.7;
+  line-height: 1.7;
   margin: 0;
   color: var(--color-smoke);
 }
@@ -49,7 +48,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-padding-bottom: 44px;
+  padding-bottom: 44px;
   @media (max-width: 900px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -116,7 +115,7 @@ padding-bottom: 44px;
 
 .desc {
   font-size: 0.85rem;
-    line-height: 1.7;
+  line-height: 1.7;
   margin: 0 0 24px;
   color: var(--color-smoke);
 }
@@ -136,4 +135,3 @@ padding-bottom: 44px;
     color: #c8a843;
   }
 }
-
