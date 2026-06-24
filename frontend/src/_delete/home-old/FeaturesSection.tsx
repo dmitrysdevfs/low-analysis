@@ -41,7 +41,7 @@ export function FeaturesSection() {
             >
               <div className={styles.cardGlow} />
               <div className={`mono ${styles.icon}`}>{feature.icon}</div>
-              <h3 className={`display ${styles.title}`}>{feature.title}</h3>
+              <h3 className={styles.title}>{feature.title}</h3>
               <p className={styles.desc}>{feature.desc}</p>
               <Link href={feature.href} className={styles.link}>
                 Відкрити{" "}

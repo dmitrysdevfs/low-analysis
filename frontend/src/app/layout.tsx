@@ -24,12 +24,6 @@ import { SidebarDataProvider } from "@/components/layout/SidebarDataContext";
 import { ApiMetricsTracker } from "@/components/layout/ApiMetricsTracker";
 import { UserActivityTracker } from "@/components/layout/UserActivityTracker";
 
-// const display = Cormorant_Garamond({
-//   subsets: ["latin", "cyrillic"],
-//   variable: "--font-display",
-//   weight: ["500", "600", "700"],
-// });
-
 const body = Inter({
   subsets: ["latin", "cyrillic"],
   variable: "--font-body",
