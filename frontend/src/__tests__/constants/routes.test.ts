@@ -25,6 +25,16 @@ describe("frontend route and config constants", () => {
     expect(ROUTES.accountCheckout).toBe("/account/billing/checkout");
     expect(ROUTES.accountSaved).toBe("/account/saved");
     expect(ROUTES.accountNotes).toBe("/account/notes");
+    expect(ROUTES.supervisorGroups).toBe("/supervisor/groups");
+    expect(ROUTES.supervisorHistory).toBe("/supervisor/history");
+    expect(ROUTES.supervisorTemplates).toBe("/supervisor/templates");
+    expect(ROUTES.supervisorChat).toBe("/supervisor/chat");
+    expect(ROUTES.legislatorCabinetGroups).toBe("/legislator-cabinet/groups");
+    expect(ROUTES.legislatorCabinetHistory).toBe("/legislator-cabinet/history");
+    expect(ROUTES.legislatorCabinetTemplates).toBe(
+      "/legislator-cabinet/templates",
+    );
+    expect(ROUTES.legislatorCabinetChat).toBe("/legislator-cabinet/chat");
     expect(ROUTES.law("law-42")).toBe("/laws/law-42");
     expect(ROUTES.analysisLaw("law-42")).toBe("/analysis/laws/law-42");
     expect(ROUTES.article("law-42", "12")).toBe("/laws/law-42/articles/12");

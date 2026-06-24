@@ -13,11 +13,13 @@ import {
   FolderKanban,
   GitBranch,
   History,
-  LayoutGrid,
+  MessageCircle,
   MessagesSquare,
+  GitGraph,
   Network,
   PenLine,
   Plus,
+  Radar,
   RefreshCcw,
   Scale,
   Settings,
@@ -26,6 +28,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useLaws } from "@/hooks/useLaws";
+import { useLawArticles, useLawArticleDetail } from "@/hooks/useLawElements";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { notify } from "@/lib/toast";
 import { LegislatorAccessRequestForm } from "@/features/law-change/components/LegislatorAccessRequestForm/LegislatorAccessRequestForm";
@@ -50,31 +53,68 @@ const SIDEBAR_NAV = [
     href: ROUTES.legislatorCabinet,
     active: true,
   },
-  { icon: <Users size={20} />, label: "Групи", href: "#" },
+  {
+    icon: <Users size={20} />,
+    label: "Групи",
+    href: ROUTES.legislatorCabinetGroups,
+  },
   {
     icon: <FileText size={20} />,
     label: "Пропозиції",
-    href: ROUTES.legislatorCabinet,
+    href: ROUTES.legislatorCabinetProposals,
   },
   {
     icon: <PenLine size={20} />,
     label: "Поправки",
-    href: ROUTES.legislatorCabinet,
+    href: ROUTES.legislatorCabinetAmendments,
   },
-  { icon: <Zap size={20} />, label: "Форки", href: ROUTES.legislatorCabinet },
+  {
+    icon: <Zap size={20} />,
+    label: "Форки",
+    href: ROUTES.legislatorCabinetForks,
+  },
   { icon: <Scale size={20} />, label: "Закони", href: ROUTES.laws },
   { icon: <Network size={20} />, label: "Граф", href: ROUTES.graph },
-  { icon: <RefreshCcw size={20} />, label: "Зміни", href: "#" },
-  { icon: <MessagesSquare size={20} />, label: "Коментарі", href: "#" },
+  {
+    icon: <GitGraph size={20} />,
+    label: "Пропоз. Граф",
+    href: ROUTES.graphProposals,
+  },
+  {
+    icon: <Radar size={20} />,
+    label: "Пропоз. Радіант",
+    href: ROUTES.radiantProposals,
+  },
+  {
+    icon: <RefreshCcw size={20} />,
+    label: "Зміни",
+    href: ROUTES.legislatorCabinetChanges,
+  },
+  {
+    icon: <MessagesSquare size={20} />,
+    label: "Коментарі",
+    href: ROUTES.legislatorCabinetComments,
+  },
   {
     icon: <Shield size={20} />,
     label: "Правила",
-    href: ROUTES.rolesSupervisor,
+    href: ROUTES.legislatorCabinetRules,
   },
-  { icon: <BarChart3 size={20} />, label: "Аналітика", href: "#" },
-  { icon: <History size={20} />, label: "Історія", href: "#" },
-  { icon: <LayoutGrid size={20} />, label: "Шаблони", href: "#" },
-  { icon: <Settings size={20} />, label: "Налаштування", href: ROUTES.account },
+  {
+    icon: <BarChart3 size={20} />,
+    label: "Аналітика",
+    href: ROUTES.legislatorCabinetAnalytics,
+  },
+  {
+    icon: <History size={20} />,
+    label: "Історія",
+    href: ROUTES.legislatorCabinetHistory,
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    label: "Чат",
+    href: ROUTES.legislatorCabinetChat,
+  },
 ];
 
 function LegislatorSidebar({
@@ -212,10 +252,28 @@ function LegislatorDashboardView({ isSupervisor }: { isSupervisor: boolean }) {
   const [diffForkId, setDiffForkId] = useState<string | null>(null);
   const [addChangeForkId, setAddChangeForkId] = useState<string | null>(null);
   const [changeOp, setChangeOp] = useState<"edit" | "add" | "delete">("edit");
-  const [changeCode, setChangeCode] = useState("");
-  const [changeOriginal, setChangeOriginal] = useState("");
+  const [selectedArticleNum, setSelectedArticleNum] = useState("");
+  const [selectedElementId, setSelectedElementId] = useState("");
+  const [selectedElementCode, setSelectedElementCode] = useState("");
+  const [selectedElementText, setSelectedElementText] = useState("");
   const [changeProposed, setChangeProposed] = useState("");
   const [changeRationale, setChangeRationale] = useState("");
+
+  const forkLawIdForPicker = useMemo(() => {
+    if (!addChangeForkId) return null;
+    const fork = forks.find((f) => f._id === addChangeForkId);
+    if (!fork) return null;
+    const lawRef = fork.lawId;
+    return typeof lawRef === "object" && lawRef !== null
+      ? (lawRef as { _id: string })._id
+      : null;
+  }, [addChangeForkId, forks]);
+
+  const { data: lawStructure } = useLawArticles(forkLawIdForPicker);
+  const { data: articleDetail } = useLawArticleDetail(
+    forkLawIdForPicker,
+    selectedArticleNum || null,
+  );
 
   const draftForks = forks.filter((f) => f.status === "draft");
   const submittedForks = forks.filter((f) => f.status === "review");
@@ -280,25 +338,27 @@ function LegislatorDashboardView({ isSupervisor }: { isSupervisor: boolean }) {
 
   const handleAddChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addChangeForkId || !changeCode.trim()) {
-      notify.warning("Вкажіть код елемента");
+    if (!addChangeForkId || !selectedElementId) {
+      notify.warning("Оберіть елемент закону");
       return;
     }
     try {
       await addChangeMutation.mutateAsync({
         forkId: addChangeForkId,
         change: {
-          elementId: changeCode,
-          elementCode: changeCode,
+          elementId: selectedElementId,
+          elementCode: selectedElementCode,
           operation: changeOp,
-          originalText: changeOriginal,
+          originalText: selectedElementText,
           proposedText: changeProposed,
           rationale: changeRationale,
         },
       });
       notify.success("Зміну додано");
-      setChangeCode("");
-      setChangeOriginal("");
+      setSelectedArticleNum("");
+      setSelectedElementId("");
+      setSelectedElementCode("");
+      setSelectedElementText("");
       setChangeProposed("");
       setChangeRationale("");
       setAddChangeForkId(null);
@@ -633,28 +693,106 @@ function LegislatorDashboardView({ isSupervisor }: { isSupervisor: boolean }) {
                             <option value="add">Додати</option>
                             <option value="delete">Видалити</option>
                           </select>
-                          <input
-                            className="form-control"
-                            type="text"
-                            placeholder="Код елементу (ст.1, ч.1)"
-                            value={changeCode}
-                            onChange={(e) => setChangeCode(e.target.value)}
-                            required
-                          />
+                          <select
+                            className="form-control form-select"
+                            value={selectedArticleNum}
+                            onChange={(e) => {
+                              setSelectedArticleNum(e.target.value);
+                              setSelectedElementId("");
+                              setSelectedElementCode("");
+                              setSelectedElementText("");
+                              setChangeProposed("");
+                            }}
+                          >
+                            <option value="">Оберіть статтю</option>
+                            {lawStructure?.articles.map((a) => (
+                              <option key={a.number} value={a.number}>
+                                Ст. {a.number}
+                                {a.title ? ` — ${a.title.slice(0, 50)}` : ""}
+                              </option>
+                            ))}
+                          </select>
                         </div>
-                        {changeOp !== "add" && (
+                        {selectedArticleNum && (
                           <label className={styles.field}>
-                            <span>Оригінальний текст</span>
-                            <textarea
-                              className="form-control"
-                              value={changeOriginal}
-                              onChange={(e) =>
-                                setChangeOriginal(e.target.value)
-                              }
-                              rows={2}
-                            />
+                            <span>Елемент (частина / пункт / абзац)</span>
+                            <select
+                              className="form-control form-select"
+                              value={selectedElementId}
+                              onChange={(e) => {
+                                const elId = e.target.value;
+                                let found: import("@/types").TreeNode | null =
+                                  null;
+                                if (articleDetail) {
+                                  if (
+                                    String(articleDetail.article._id) === elId
+                                  ) {
+                                    found = articleDetail.article;
+                                  } else {
+                                    found =
+                                      articleDetail.children.find(
+                                        (c) => String(c._id) === elId,
+                                      ) ?? null;
+                                  }
+                                }
+                                if (found) {
+                                  setSelectedElementId(elId);
+                                  setSelectedElementCode(
+                                    found.code ?? found.number ?? "",
+                                  );
+                                  setSelectedElementText(found.text ?? "");
+                                  if (changeOp !== "delete")
+                                    setChangeProposed(found.text ?? "");
+                                }
+                              }}
+                            >
+                              <option value="">Оберіть елемент</option>
+                              {articleDetail && (
+                                <option
+                                  value={String(articleDetail.article._id)}
+                                >
+                                  Стаття цілком (ст.{" "}
+                                  {articleDetail.article.number ?? ""})
+                                </option>
+                              )}
+                              {articleDetail?.children.map((child) => {
+                                const label =
+                                  child.type === "part"
+                                    ? "ч."
+                                    : child.type === "point"
+                                      ? "п."
+                                      : child.type === "paragraph"
+                                        ? "абз."
+                                        : (child.type ?? "");
+                                return (
+                                  <option
+                                    key={String(child._id)}
+                                    value={String(child._id)}
+                                  >
+                                    {label} {child.number ?? ""}
+                                    {child.title
+                                      ? ` — ${child.title.slice(0, 40)}`
+                                      : ""}
+                                  </option>
+                                );
+                              })}
+                            </select>
                           </label>
                         )}
+                        {selectedElementId &&
+                          selectedElementText &&
+                          changeOp !== "add" && (
+                            <label className={styles.field}>
+                              <span>Оригінальний текст (авто)</span>
+                              <textarea
+                                className="form-control"
+                                value={selectedElementText}
+                                readOnly
+                                rows={3}
+                                style={{ opacity: 0.65 }}
+                              />
+                            </label>
+                          )}
                         {changeOp !== "delete" && (
                           <label className={styles.field}>
                             <span>Пропонований текст</span>
@@ -664,7 +802,7 @@ function LegislatorDashboardView({ isSupervisor }: { isSupervisor: boolean }) {
                               onChange={(e) =>
                                 setChangeProposed(e.target.value)
                               }
-                              rows={2}
+                              rows={3}
                             />
                           </label>
                         )}
@@ -688,7 +826,9 @@ function LegislatorDashboardView({ isSupervisor }: { isSupervisor: boolean }) {
                           <button
                             type="submit"
                             className="btn btn-primary"
-                            disabled={addChangeMutation.isPending}
+                            disabled={
+                              addChangeMutation.isPending || !selectedElementId
+                            }
                           >
                             {addChangeMutation.isPending
                               ? "Збереження..."

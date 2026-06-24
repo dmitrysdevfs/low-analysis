@@ -44,6 +44,7 @@ export function buildNavItems(opts: {
           href: ROUTES.supervisorDashboard,
         });
       }
+      result.push({ label: "Пропозиції до Законів", href: ROUTES.proposals });
     }
     if (item.href === ROUTES.assistant) {
       result.push({ label: "Граф", href: ROUTES.graph });

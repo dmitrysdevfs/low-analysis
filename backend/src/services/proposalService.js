@@ -63,6 +63,18 @@ export const getProposalsByUser = async (userId) => {
 };
 
 /**
+ * Get proposals by multiple user IDs (for supervisor group view).
+ */
+export const getProposalsByUserIds = async (userIds) => {
+  const proposals = await Proposal.find({ created_by: { $in: userIds } })
+    .populate('law_id', 'title')
+    .populate('created_by', 'fullName')
+    .sort({ createdAt: -1 });
+
+  return await syncProposalsAmendmentsCount(proposals);
+};
+
+/**
  * Get proposals by law ID.
  */
 export const getProposalsByLaw = async (lawId) => {
@@ -167,6 +179,25 @@ export const submitProposal = async (id, userId) => {
 
   proposal.status = 'review';
   return await proposal.save();
+};
+
+/**
+ * Review proposal - supervisor or admin approves/rejects.
+ */
+export const reviewProposal = async (id, action) => {
+  const proposal = await Proposal.findById(id);
+  if (!proposal)
+    throw Object.assign(new Error('Proposal not found'), { statusCode: 404 });
+
+  if (proposal.status !== 'review') {
+    throw Object.assign(
+      new Error('Only proposals in review status can be reviewed'),
+      { statusCode: 400 },
+    );
+  }
+
+  proposal.status = action === 'approve' ? 'approved' : 'rejected';
+  return proposal.save();
 };
 
 /**

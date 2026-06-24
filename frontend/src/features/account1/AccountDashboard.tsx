@@ -146,24 +146,9 @@ interface GeoInfo {
 
 async function fetchGeoInfo(): Promise<GeoInfo | null> {
   try {
-    const res = await fetch("https://ipapi.co/json/", {
-      signal: AbortSignal.timeout(4000),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return {
-      country: data.country_name ?? "",
-      city: data.city ?? "",
-      timezone: data.timezone ?? "",
-      flag: data.country_code
-        ? String.fromCodePoint(
-            ...data.country_code
-              .toUpperCase()
-              .split("")
-              .map((c: string) => 0x1f1e6 + c.charCodeAt(0) - 65),
-          )
-        : "",
-    };
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!timezone) return null;
+    return { country: "", city: "", timezone, flag: "" };
   } catch {
     return null;
   }

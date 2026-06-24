@@ -170,6 +170,46 @@ router.post('/threads/:id/read', ctrl.markRead);
  *         description: Відповідь надіслано
  */
 router.post('/threads/:id/reply', ctrl.reply);
+
+/**
+ * @swagger
+ * /api/admin/inbox/compose:
+ *   post:
+ *     summary: Compose and send a brand new email
+ *     description: Sends a standalone outbound email outside an existing Gmail thread.
+ *     tags: [AdminInbox]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [to, subject, body]
+ *             properties:
+ *               to:
+ *                 type: string
+ *                 format: email
+ *                 example: vitaliybelevcov@gmail.com
+ *               subject:
+ *                 type: string
+ *                 example: Test message
+ *               body:
+ *                 type: string
+ *                 description: HTML or plain-text email body
+ *     responses:
+ *       200:
+ *         description: Email sent successfully
+ *       400:
+ *         description: Invalid compose payload
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post('/compose', ctrl.compose);
 
 export default router;

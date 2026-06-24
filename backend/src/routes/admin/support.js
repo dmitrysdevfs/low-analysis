@@ -43,7 +43,38 @@ router.get('/status', ctrl.getStatus);
  *                 webhookStatus: { type: string, enum: [ok, degraded, down] }
  */
 router.post('/sync-check', ctrl.syncCheck);
+
+/**
+ * @swagger
+ * /api/admin/support/webhook/register:
+ *   post:
+ *     summary: Register or refresh Telegram webhook
+ *     description: Configures the support bot webhook using the current backend environment settings.
+ *     tags: [AdminSupport]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Webhook registered or already valid
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.post('/webhook/register', ctrl.registerWebhook);
+
+/**
+ * @swagger
+ * /api/admin/support/webhook/info:
+ *   get:
+ *     summary: Get Telegram webhook status
+ *     tags: [AdminSupport]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current webhook metadata
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
 router.get('/webhook/info', ctrl.getWebhookInfo);
 
 /**

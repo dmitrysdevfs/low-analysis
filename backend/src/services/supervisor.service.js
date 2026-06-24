@@ -352,6 +352,7 @@ function buildDashboardSummary(groups, items) {
     const groupNames = matchingGroups.map((group) => group.name);
 
     return {
+      id: item.id,
       type: item.type,
       title: item.title,
       author: item.authorName,

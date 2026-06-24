@@ -42,6 +42,17 @@ router.use('/legislator-requests', legislatorRequestRoutes);
  *             required: [role]
  *             properties:
  *               role: { type: string, enum: [user, paid_user, legislator, admin] }
+ *     responses:
+ *       200:
+ *         description: User role updated
+ *       400:
+ *         description: Invalid role payload
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       404:
+ *         description: User not found
  */
 router.patch(
   '/admin/users/:id/role',

@@ -31,11 +31,12 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clarity.ms https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: https:",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https://www.clarity.ms https://www.google-analytics.com https://region1.google-analytics.com https://*.ingest.de.sentry.io https://accounts.google.com wss: ws:",
+      "connect-src 'self' https://*.clarity.ms https://www.google-analytics.com https://region1.google-analytics.com https://*.ingest.de.sentry.io https://accounts.google.com wss: ws:",
+      "worker-src 'self' blob:",
       "frame-src 'self' https://accounts.google.com",
       "object-src 'none'",
       "base-uri 'self'",
@@ -44,6 +45,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["force-graph"],
   turbopack: {
     root: path.resolve(__dirname, ".."),
   },
@@ -93,7 +95,6 @@ export default withSentryConfig(nextConfig, {
   org: "law-analysis",
   project: "javascript-nextjs",
   silent: true,
-  disableLogger: true,
   sourcemaps: {
     disable: true,
   },

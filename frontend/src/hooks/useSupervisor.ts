@@ -7,6 +7,11 @@ import {
   getSupervisorGroups,
   createSupervisorGroup,
   updateSupervisorGroup,
+  getGroupProposals,
+  getGroupAmendments,
+  getGroupForks,
+  reviewGroupFork,
+  reviewProposal,
 } from "@/lib/api/supervisor";
 
 const KEYS = {
@@ -65,6 +70,67 @@ export function useUpdateSupervisorGroup() {
       qc.invalidateQueries({ queryKey: KEYS.groups });
       qc.invalidateQueries({ queryKey: KEYS.dashboard });
       qc.invalidateQueries({ queryKey: ["supervisor", "group"] });
+    },
+  });
+}
+
+export function useSupervisorGroupProposals() {
+  return useQuery({
+    queryKey: ["supervisor", "group-proposals"] as const,
+    queryFn: getGroupProposals,
+    retry: false,
+  });
+}
+
+export function useSupervisorGroupAmendments() {
+  return useQuery({
+    queryKey: ["supervisor", "group-amendments"] as const,
+    queryFn: getGroupAmendments,
+    retry: false,
+  });
+}
+
+export function useSupervisorGroupForks() {
+  return useQuery({
+    queryKey: ["supervisor", "group-forks"] as const,
+    queryFn: getGroupForks,
+    retry: false,
+  });
+}
+
+export function useReviewGroupFork() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      forkId,
+      action,
+      reviewNote,
+    }: {
+      forkId: string;
+      action: "approve" | "reject";
+      reviewNote?: string;
+    }) => reviewGroupFork(forkId, action, reviewNote),
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["supervisor", "group-forks"] });
+      qc.invalidateQueries({ queryKey: ["forks", "diff", variables.forkId] });
+      qc.invalidateQueries({ queryKey: ["changes"] });
+    },
+  });
+}
+
+export function useReviewProposal() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      action,
+    }: {
+      id: string;
+      action: "approve" | "reject";
+    }) => reviewProposal(id, action),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["changes"] });
+      qc.invalidateQueries({ queryKey: ["proposals"] });
     },
   });
 }

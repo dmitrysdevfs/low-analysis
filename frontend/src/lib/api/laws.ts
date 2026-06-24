@@ -128,3 +128,13 @@ export async function getLawSubjects(
 ): Promise<{ _id: string }[]> {
   return getJson<{ _id: string }[]>(`/laws/${lawId}/subjects`);
 }
+
+export interface LawStructure {
+  title: string;
+  code: string;
+  articles: Array<{ number: string; title: string; order: number }>;
+}
+
+export async function getLawArticles(lawId: string): Promise<LawStructure> {
+  return getJson<LawStructure>(`/laws/${lawId}/articles`);
+}

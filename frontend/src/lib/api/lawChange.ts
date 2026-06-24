@@ -72,6 +72,31 @@ export const getChangeFeed = (params?: { page?: number; limit?: number }) => {
   return getJson<ApprovedChange[]>(`/law-change/approved/feed?${q}`);
 };
 
+export const getAllProposals = (params?: {
+  status?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const q = new URLSearchParams();
+  if (params?.status) q.set("status", params.status);
+  if (params?.page) q.set("page", String(params.page));
+  if (params?.limit) q.set("limit", String(params.limit));
+  return getJson<
+    | LawChangeProposal[]
+    | {
+        proposals: LawChangeProposal[];
+        total: number;
+        page: number;
+        pages: number;
+      }
+  >(`/law-change/proposals?${q}`);
+};
+
+export const reviewProposal = (id: string, action: "approve" | "reject") =>
+  requestJson<LawChangeProposal>(`/law-change/proposals/${id}/review`, "POST", {
+    action,
+  });
+
 // Admin
 export const rollbackChange = (changeId: string) =>
   requestJson<ApprovedChange>(

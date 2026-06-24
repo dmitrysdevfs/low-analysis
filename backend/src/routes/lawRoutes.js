@@ -276,7 +276,7 @@ router.get('/:id/heatmap', getLawHeatmap);
 
 /**
  * @swagger
- * /api/elements/{id}:
+ * /api/laws/elements/{id}:
  *   get:
  *     tags: [Elements]
  *     summary: Отримати конкретний елемент за ID
@@ -291,6 +291,25 @@ router.get('/:id/heatmap', getLawHeatmap);
  *         description: Елемент знайдено
  */
 router.get('/elements/:id', getElement);
+
+/**
+ * @swagger
+ * /api/laws/{id}/subjects:
+ *   get:
+ *     tags: [Laws]
+ *     summary: Get subject distribution for a law
+ *     description: Returns regulatory subjects and per-subject counters scoped to the selected law.
+ *     parameters:
+ *       - $ref: '#/components/parameters/LawId'
+ *     responses:
+ *       200:
+ *         description: Subject statistics for the law
+ *       404:
+ *         description: Law not found
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.get('/:id/subjects', getLawSubjects);
 
 /**
  * @swagger
@@ -324,7 +343,6 @@ router.get('/elements/:id', getElement);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id/subjects', getLawSubjects);
 router.get('/:id/articles/:num', getArticle);
 
 /**

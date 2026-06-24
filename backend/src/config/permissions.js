@@ -1,11 +1,20 @@
 export const ROLE_PERMISSIONS = {
-  user: ['laws:read', 'comments:read', 'law_changes:read', 'law_changes:vote'],
+  user: [
+    'laws:read',
+    'comments:read',
+    'law_changes:read',
+    'law_changes:vote',
+    'graph_proposals:vote',
+    'radiant_proposals:vote',
+  ],
   paid_user: [
     'laws:read',
     'comments:read',
     'comments:create',
     'law_changes:read',
     'law_changes:vote',
+    'graph_proposals:vote',
+    'radiant_proposals:vote',
   ],
   legislator: [
     'laws:read',
@@ -21,6 +30,10 @@ export const ROLE_PERMISSIONS = {
     'law_changes:read',
     'law_changes:vote',
     'law_changes:propose',
+    'graph_proposals:create',
+    'graph_proposals:vote',
+    'radiant_proposals:create',
+    'radiant_proposals:vote',
   ],
   supervisor: [
     'laws:read',
@@ -31,6 +44,11 @@ export const ROLE_PERMISSIONS = {
     'comments:read',
     'law_changes:read',
     'law_changes:vote',
+    'law_changes:propose',
+    'graph_proposals:create',
+    'graph_proposals:vote',
+    'radiant_proposals:create',
+    'radiant_proposals:vote',
   ],
   admin: ['*'],
 };

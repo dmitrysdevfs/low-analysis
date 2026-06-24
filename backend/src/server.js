@@ -12,10 +12,14 @@ const startServer = async () => {
   await connectDB();
   await ensureLocalDevAdmin();
 
-  app.listen(PORT, () => {
+  const httpServer = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
   });
+
+  const { attachGroupChatWS } =
+    await import('./modules/group-chat/groupChat.ws.js');
+  attachGroupChatWS(httpServer);
 
   if (
     process.env.TELEGRAM_WEBHOOK_AUTO_REGISTER === 'true' &&

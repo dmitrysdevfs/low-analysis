@@ -1,4 +1,7 @@
 import { getJson, requestJson } from "./_client";
+import type { Proposal } from "@/types/legislator";
+import type { Amendment } from "@/types/legislator";
+import type { LawFork } from "@/lib/api/forks";
 
 export interface SupervisorGroupMember {
   _id: string;
@@ -86,6 +89,7 @@ export interface SupervisorStudentActivity {
 }
 
 export interface SupervisorRecentActivityItem {
+  id: string;
   type: "fork" | "proposal";
   title: string;
   author: string;
@@ -151,4 +155,43 @@ export async function updateSupervisorGroup(
   },
 ): Promise<SupervisorGroup> {
   return requestJson<SupervisorGroup>(`/supervisor/groups/${id}`, "PUT", data);
+}
+
+// Group-scoped proposals (supervisor + all group members)
+export async function getGroupProposals(): Promise<Proposal[]> {
+  return getJson<Proposal[]>("/supervisor/proposals");
+}
+
+// Group-scoped amendments (supervisor + all group members)
+export async function getGroupAmendments(): Promise<Amendment[]> {
+  return getJson<Amendment[]>("/supervisor/amendments");
+}
+
+// Group-scoped forks (supervisor + all group members)
+export async function getGroupForks(): Promise<LawFork[]> {
+  return getJson<LawFork[]>("/supervisor/forks");
+}
+
+// Approve or reject a fork submitted for review
+export async function reviewGroupFork(
+  forkId: string,
+  action: "approve" | "reject",
+  reviewNote?: string,
+): Promise<LawFork> {
+  return requestJson<LawFork>(`/supervisor/forks/${forkId}/review`, "PATCH", {
+    action,
+    reviewNote,
+  });
+}
+
+// Approve or reject a proposal submitted for review
+export async function reviewProposal(
+  id: string,
+  action: "approve" | "reject",
+): Promise<import("@/types/legislator").Proposal> {
+  return requestJson<import("@/types/legislator").Proposal>(
+    `/proposals/${id}/review`,
+    "POST",
+    { action },
+  );
 }

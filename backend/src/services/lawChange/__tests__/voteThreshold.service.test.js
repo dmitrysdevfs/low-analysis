@@ -18,6 +18,10 @@ describe('calculateVoteWeight', () => {
     expect(calculateVoteWeight('paid_user')).toBe(1);
   });
 
+  it('returns 5 for supervisor', () => {
+    expect(calculateVoteWeight('supervisor')).toBe(5);
+  });
+
   it('returns 3 for legislator', () => {
     expect(calculateVoteWeight('legislator')).toBe(3);
   });

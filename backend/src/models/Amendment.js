@@ -5,13 +5,15 @@ const amendmentSchema = new mongoose.Schema(
     law_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Law',
-      required: true,
+      required: false,
+      default: null,
       index: true,
     },
     element_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Element',
-      required: true,
+      required: false,
+      default: null,
       index: true,
     },
     proposal_id: {

@@ -6,7 +6,18 @@ import User from '../models/User.js';
 const router = Router();
 router.use(protect);
 
-// User: get own request status
+/**
+ * @swagger
+ * /api/legislator-requests/me:
+ *   get:
+ *     summary: Get latest access request for current user
+ *     tags: [LegislatorRequests]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Latest request or null
+ */
 router.get('/me', async (req, res, next) => {
   try {
     const request = await LegislatorAccessRequest.findOne({
@@ -20,7 +31,38 @@ router.get('/me', async (req, res, next) => {
   }
 });
 
-// User: submit request
+/**
+ * @swagger
+ * /api/legislator-requests:
+ *   post:
+ *     summary: Submit legislator access request
+ *     tags: [LegislatorRequests]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               message: { type: string }
+ *     responses:
+ *       201:
+ *         description: Request submitted
+ *       409:
+ *         description: Request already pending
+ *   get:
+ *     summary: List pending access requests as admin
+ *     tags: [LegislatorRequests]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Pending requests
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
 router.post('/', async (req, res, next) => {
   try {
     const existing = await LegislatorAccessRequest.findOne({
@@ -39,7 +81,6 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// Admin: list all pending requests
 router.get('/', authorize('admin'), async (req, res, next) => {
   try {
     const requests = await LegislatorAccessRequest.find({ status: 'pending' })
@@ -52,7 +93,40 @@ router.get('/', authorize('admin'), async (req, res, next) => {
   }
 });
 
-// Admin: approve or reject
+/**
+ * @swagger
+ * /api/legislator-requests/{id}:
+ *   patch:
+ *     summary: Approve or reject legislator access request as admin
+ *     tags: [LegislatorRequests]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [action]
+ *             properties:
+ *               action:
+ *                 type: string
+ *                 enum: [approve, reject]
+ *               adminNote:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Reviewed request
+ *       400:
+ *         description: Invalid action
+ *       404:
+ *         description: Request not found
+ */
 router.patch('/:id', authorize('admin'), async (req, res, next) => {
   try {
     const { action, adminNote } = req.body ?? {};
