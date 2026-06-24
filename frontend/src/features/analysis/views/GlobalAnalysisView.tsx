@@ -44,7 +44,7 @@ export function GlobalAnalysisView() {
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`container sectionLast ${styles.wrapper}`}>
       <div className={styles.blobGold} />
       <div className={styles.blobBlue} />
 
@@ -57,7 +57,7 @@ export function GlobalAnalysisView() {
         >
           <div className={styles.heroCopy}>
             <span className={styles.heroEyebrow}>Аналізатор законодавства</span>
-            <h1 className={`display ${styles.heroTitle}`}>
+            <h1 className={`title ${styles.heroTitle}`}>
               Бачимо всю
               <br />
               <span className={styles.heroAccent}>нормативну систему.</span>

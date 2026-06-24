@@ -1,6 +1,5 @@
 .section {
   position: relative;
-  padding: 88px 0;
   overflow: hidden;
 }
 
@@ -18,12 +17,6 @@
     transparent 65%
   );
   pointer-events: none;
-}
-
-.inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 48px;
 }
 
 .header {
@@ -51,15 +44,12 @@
 }
 
 .h2 {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
   margin: 0 0 14px;
-  line-height: 1.08;
-  color: #f7f2e8;
 }
 
 .subtitle {
   font-size: 0.95rem;
-  color: #9fb2c7;
+  color: var(--color-smoke);
   line-height: 1.7;
   margin: 0;
 }
@@ -173,14 +163,4 @@
 
 .arrowIcon {
   transition: transform 0.2s ease;
-}
-
-@media (max-width: 767px) {
-  .inner {
-    padding: 0 20px;
-  }
-
-  .section {
-    padding: 60px 0;
-  }
 }

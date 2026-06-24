@@ -3,10 +3,6 @@
 .heroSection {
   position: relative;
   overflow: hidden;
-  padding: clamp(40px, 8vw, 80px) clamp(16px, 5vw, 48px) clamp(64px, 8vw, 80px);
-  max-width: 1100px;
-  margin: 0 auto;
-  width: 100%;
 }
 
 .blobTopRight {
@@ -50,13 +46,16 @@
 }
 
 .heroH1 {
-  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 5vw, 3.75rem);
+  line-height: 45px;
   margin: 0 0 8px;
-  line-height: 1.05;
 }
 
 .heroSubtitle {
   font-size: clamp(1.1rem, 2vw, 1.5rem);
+  max-width: 460px;
   font-style: italic;
   color: #c8a843;
   margin: 0 0 24px;
@@ -64,8 +63,8 @@
 }
 
 .heroDesc {
+  color: var(--color-smoke);
   font-size: 0.95rem;
-  color: #7a98c0;
   line-height: 1.75;
   max-width: 460px;
   margin: 0 0 36px;
@@ -252,12 +251,6 @@
 
 // ─── Steps Section ───────────────────────────────────────────────────────────
 
-.stepsSection {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 80px 48px;
-}
-
 .stepsSectionHeader {
   margin-bottom: 48px;
 }
@@ -270,15 +263,9 @@
   margin-bottom: 12px;
 }
 
-.stepsSectionH2 {
-  font-size: 2.2rem;
-  margin: 0;
-  line-height: 1.1;
-}
-
 .stepsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   gap: 20px;
 }
 
@@ -316,9 +303,9 @@
 
 .stepCardDesc {
   font-size: 0.85rem;
-  color: #7a98c0;
   margin: 0;
   line-height: 1.65;
+  color: var(--color-smoke);
 }
 
 // ─── Roadmap Section ─────────────────────────────────────────────────────────
@@ -441,10 +428,6 @@
 }
 
 @media (max-width: 767px) {
-  .heroSection {
-    padding: 32px 16px 56px;
-  }
-
   .heroInner {
     align-items: stretch;
   }
@@ -483,7 +466,6 @@
   }
 
   .statsInner,
-  .stepsSection,
   .roadmapInner {
     padding-left: 16px;
     padding-right: 16px;

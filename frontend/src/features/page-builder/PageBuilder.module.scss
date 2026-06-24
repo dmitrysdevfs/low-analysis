@@ -1247,10 +1247,6 @@
   gap: 16px;
 }
 
-.publicPage {
-  padding: 28px;
-}
-
 .publicPageEmbedded {
   padding: 16px;
   background: transparent;
@@ -1265,10 +1261,20 @@
   margin-bottom: 22px;
 }
 
-.publicPageHeader h1 {
-  margin: 0;
-  font-size: clamp(2rem, 3vw, 3.1rem);
-  line-height: 1.05;
+.publicPageEyebrow {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #c8a843;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--color-smoke);
+  line-height: 1.7;
+  margin-top: 14px;
 }
 
 .publicBlocks {
@@ -1300,7 +1306,6 @@
 }
 
 .heroEyebrow {
-  color: #f2d06c;
   font-size: 0.84rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -1647,7 +1652,6 @@
     gap: 14px;
   }
 
-  .publicPage,
   .heroBlock,
   .textBlock,
   .panelBlock,

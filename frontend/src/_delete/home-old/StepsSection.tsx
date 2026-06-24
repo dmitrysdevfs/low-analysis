@@ -6,7 +6,7 @@ import styles from "@/app/page.module.scss";
 
 export function StepsSection() {
   return (
-    <section className={styles.stepsSection}>
+    <section className={`container section ${styles.stepsSection}`}>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -15,9 +15,7 @@ export function StepsSection() {
         className={styles.stepsSectionHeader}
       >
         <div className={`mono ${styles.stepsSectionLabel}`}>Як це працює</div>
-        <h2 className={`display ${styles.stepsSectionH2}`}>
-          Від HTML до структури
-        </h2>
+        <h2 className="subtitle">Від HTML до структури</h2>
       </motion.div>
 
       <div className={styles.stepsGrid}>

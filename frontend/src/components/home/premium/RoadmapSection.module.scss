@@ -1,5 +1,4 @@
 .section {
-  padding: 88px 0 72px;
   position: relative;
 
   &::before {
@@ -16,12 +15,6 @@
       transparent 90%
     );
   }
-}
-
-.inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 48px;
 }
 
 .header {
@@ -48,10 +41,7 @@
 }
 
 .h2 {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
   margin: 0;
-  line-height: 1.08;
-  color: #f7f2e8;
 }
 
 /* Three columns */
@@ -226,14 +216,5 @@
   .orbCol {
     padding-top: 0;
     display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .inner {
-    padding: 0 20px;
-  }
-  .section {
-    padding: 60px 0;
   }
 }

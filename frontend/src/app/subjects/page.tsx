@@ -109,16 +109,15 @@ export default function SubjectsPage() {
         <div className={styles.blobGold} />
         <div className={styles.blobBlue} />
 
-        <div className={styles.inner}>
+        <div className={`container section ${styles.inner}`}>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             className={styles.heroMotion}
           >
-            <h1 className={`display ${styles.heading}`}>
+            <h1 className={`title ${styles.heading}`}>
               Суб&apos;єкти
-              <br />
               <span className={styles.headingAccent}>регулювання</span>
             </h1>
             <p className={styles.subtitle}>
@@ -135,7 +134,7 @@ export default function SubjectsPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className={`mono ${styles.countLine}`}
+                className={styles.countLine}
               >
                 {countLabel}
               </motion.div>

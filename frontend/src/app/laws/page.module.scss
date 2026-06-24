@@ -34,10 +34,22 @@
   pointer-events: none;
 }
 
-.sectionInner {
-  max-width: 860px;
-  width: 100%;
-  margin: 0 auto;
+.border {
+  padding: 20px 18px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 26px;
+  backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 1px rgba(255, 255, 255, 0.08),
+    0 24px 40px 0 rgba(0, 0, 0, 0.24);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    ),
+    rgba(9, 18, 38, 0.86);
 }
 
 .heroMotion {
@@ -45,19 +57,17 @@
 }
 
 .heading {
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
   margin: 0 0 14px;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
 }
 
 .headingAccent {
   color: #c8a843;
+  margin-left: 12px;
 }
 
 .subtitle {
   font-size: 0.95rem;
-  color: #7a98c0;
+  color: var(--color-smoke);
   margin: 0;
   max-width: 460px;
   line-height: 1.65;
@@ -99,7 +109,7 @@
 
 .countLine {
   font-size: 0.68rem;
-  color: #7a98c0;
+  color: var(--color-azure);
   margin-bottom: 16px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -146,16 +156,15 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
 }
 
 .chip {
   padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(200, 168, 67, 0.24);
+  border-radius: 8px;
+  border: 1px solid #c8a843;
   background: rgba(9, 20, 44, 0.26);
-  color: #eef3fb;
-  font-family: var(--font-mono);
+  color: #c8a843;
+  font-weight: 700;
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -173,8 +182,8 @@
 
 .chipActive {
   border-color: #c8a843;
-  background: rgba(200, 168, 67, 0.18);
-  color: #fff4cf;
+  background: #c8a843;
+  color: black;
 }
 
 /* ── Recently Viewed ── */
