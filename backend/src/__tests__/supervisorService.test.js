@@ -228,10 +228,10 @@ describe('supervisorService', () => {
       });
       // The find calls should not contain lawIds filters when they are empty
       expect(LawFork.find).toHaveBeenCalledWith({
-        authorId: { $in: ['u2'] }
+        authorId: { $in: ['u2'] },
       });
       expect(Proposal.find).toHaveBeenCalledWith({
-        created_by: { $in: ['u2'] }
+        created_by: { $in: ['u2'] },
       });
 
       expect(summary.totalMembers).toBe(1);
