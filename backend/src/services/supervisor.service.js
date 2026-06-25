@@ -223,7 +223,9 @@ function buildDashboardSummary(groups, items) {
   ).size;
 
   const totalTrackedLaws = new Set(
-    groups.flatMap((group) => getLawsToMonitor(group, items).map((law) => toId(law))),
+    groups.flatMap((group) =>
+      getLawsToMonitor(group, items).map((law) => toId(law)),
+    ),
   ).size;
 
   const statusBreakdown = {
