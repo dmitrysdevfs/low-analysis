@@ -1,6 +1,6 @@
 import LawFork from '../models/LawFork.js';
-import LawChangeProposal from '../models/LawChangeProposal.js';
-import SupervisorGroup from '../models/SupervisorGroup.js';
+import Proposal from '../models/Proposal.js';
+import Group from '../models/Group.js';
 
 function toId(value) {
   if (!value) return null;
@@ -54,7 +54,7 @@ function workflowBucket(type, status) {
   if (['rejected', 'withdrawn', 'archived', 'superseded'].includes(status)) {
     return 'rejected';
   }
-  if (status === 'active') return 'review';
+  if (status === 'active' || status === 'review') return 'review';
   return 'draft';
 }
 
@@ -107,11 +107,28 @@ function createNormalizedItem({
   };
 }
 
+function normalizeGroupToSupervisorSchema(group) {
+  if (!group) return null;
+  const groupObj =
+    typeof group.toObject === 'function' ? group.toObject() : group;
+
+  const memberIds = (groupObj.members || [])
+    .filter((m) => m.status === 'active' && m.userId)
+    .map((m) => m.userId); // populated User object or string ID
+
+  return {
+    ...groupObj,
+    memberIds,
+    trackedLawIds: groupObj.trackedLaws || [],
+  };
+}
+
 async function loadSupervisorGroups(supervisorId) {
-  return SupervisorGroup.find({ supervisorId, status: 'active' })
-    .populate('trackedLawIds', 'title code')
-    .populate('memberIds', 'fullName email role')
+  const groups = await Group.find({ supervisorId, status: 'active' })
+    .populate('trackedLaws', 'title code')
+    .populate('members.userId', 'fullName email role')
     .lean();
+  return groups.map(normalizeGroupToSupervisorSchema);
 }
 
 async function loadActivityItems(groups) {
@@ -126,24 +143,26 @@ async function loadActivityItems(groups) {
     ),
   ];
 
-  if (!memberIds.length || !lawIds.length) {
+  if (!memberIds.length) {
     return [];
   }
 
+  const forkQuery = { authorId: { $in: memberIds } };
+  const proposalQuery = { created_by: { $in: memberIds } };
+
+  if (lawIds.length > 0) {
+    forkQuery.lawId = { $in: lawIds };
+    proposalQuery.law_id = { $in: lawIds };
+  }
+
   const [forks, proposals] = await Promise.all([
-    LawFork.find({
-      authorId: { $in: memberIds },
-      lawId: { $in: lawIds },
-    })
+    LawFork.find(forkQuery)
       .select('lawId authorId title status updatedAt')
       .populate('lawId', 'title code')
       .populate('authorId', 'fullName email')
       .lean(),
-    LawChangeProposal.find({
-      created_by: { $in: memberIds },
-      law_id: { $in: lawIds },
-    })
-      .select('law_id created_by reason status updatedAt')
+    Proposal.find(proposalQuery)
+      .select('law_id created_by title status updatedAt')
       .populate('law_id', 'title code')
       .populate('created_by', 'fullName email')
       .lean(),
@@ -168,7 +187,7 @@ async function loadActivityItems(groups) {
         id: proposal._id,
         type: 'proposal',
         title:
-          proposal.reason || `Зміна до ${proposal.law_id?.title || 'закону'}`,
+          proposal.title || `Зміна до ${proposal.law_id?.title || 'закону'}`,
         status: proposal.status,
         updatedAt: proposal.updatedAt,
         law: proposal.law_id,
@@ -184,12 +203,29 @@ async function loadActivityItems(groups) {
   });
 }
 
+function getLawsToMonitor(group, items) {
+  if (group.trackedLawIds && group.trackedLawIds.length > 0) {
+    return group.trackedLawIds;
+  }
+  const memberIdSet = new Set(group.memberIds.map((m) => toId(m)));
+  const lawMap = new Map();
+  for (const item of items) {
+    if (memberIdSet.has(item.authorId) && item.lawId && item.law) {
+      lawMap.set(item.lawId, item.law);
+    }
+  }
+  return Array.from(lawMap.values());
+}
+
 function buildDashboardSummary(groups, items) {
   const totalMembers = new Set(
     groups.flatMap((group) => group.memberIds.map((member) => toId(member))),
   ).size;
+
   const totalTrackedLaws = new Set(
-    groups.flatMap((group) => group.trackedLawIds.map((law) => toId(law))),
+    groups.flatMap((group) =>
+      getLawsToMonitor(group, items).map((law) => toId(law)),
+    ),
   ).size;
 
   const statusBreakdown = {
@@ -210,7 +246,9 @@ function buildDashboardSummary(groups, items) {
     let activeLawsCount = 0;
     const groupStats = initWorkflowStats();
 
-    for (const law of group.trackedLawIds) {
+    const lawsToMonitor = getLawsToMonitor(group, items);
+
+    for (const law of lawsToMonitor) {
       const lawId = toId(law);
       const matchingItems = items.filter(
         (item) => item.lawId === lawId && memberIdSet.has(item.authorId),
@@ -255,7 +293,7 @@ function buildDashboardSummary(groups, items) {
       groupName: group.name,
       course: group.course || '',
       memberCount: group.memberIds.length,
-      trackedLawsCount: group.trackedLawIds.length,
+      trackedLawsCount: lawsToMonitor.length,
       activeLawsCount,
       changeCount: groupChangeCount,
       lastActivityAt: groupLastActivity?.toISOString() || null,
@@ -275,7 +313,9 @@ function buildDashboardSummary(groups, items) {
     );
 
     for (const item of items) {
-      if (!trackedLawIdSet.has(item.lawId) || !memberById.has(item.authorId)) {
+      const isLawTracked =
+        group.trackedLawIds.length === 0 || trackedLawIdSet.has(item.lawId);
+      if (!isLawTracked || !memberById.has(item.authorId)) {
         continue;
       }
 
@@ -347,7 +387,8 @@ function buildDashboardSummary(groups, items) {
     const matchingGroups = groups.filter(
       (group) =>
         group.memberIds.some((member) => toId(member) === item.authorId) &&
-        group.trackedLawIds.some((law) => toId(law) === item.lawId),
+        (group.trackedLawIds.length === 0 ||
+          group.trackedLawIds.some((law) => toId(law) === item.lawId)),
     );
     const groupNames = matchingGroups.map((group) => group.name);
 
@@ -402,17 +443,26 @@ export async function createGroup(
   supervisorId,
   { name, course, memberIds = [], trackedLawIds = [] },
 ) {
-  return SupervisorGroup.create({
+  const members = memberIds.map((userId) => ({
+    userId,
+    status: 'active',
+    joinedAt: new Date(),
+  }));
+
+  const group = await Group.create({
     supervisorId,
     name,
     course,
-    memberIds,
-    trackedLawIds,
+    members,
+    trackedLaws: trackedLawIds,
+    status: 'active',
   });
+
+  return normalizeGroupToSupervisorSchema(group);
 }
 
 export async function updateGroup(groupId, supervisorId, data) {
-  const group = await SupervisorGroup.findOne({ _id: groupId, supervisorId });
+  const group = await Group.findOne({ _id: groupId, supervisorId });
   if (!group)
     throw Object.assign(new Error('Group not found or not authorized'), {
       statusCode: 404,
@@ -421,11 +471,18 @@ export async function updateGroup(groupId, supervisorId, data) {
   const { name, course, memberIds, trackedLawIds, status } = data;
   if (name !== undefined) group.name = name;
   if (course !== undefined) group.course = course;
-  if (memberIds !== undefined) group.memberIds = memberIds;
-  if (trackedLawIds !== undefined) group.trackedLawIds = trackedLawIds;
   if (status !== undefined) group.status = status;
+  if (memberIds !== undefined) {
+    group.members = memberIds.map((userId) => ({
+      userId,
+      status: 'active',
+      joinedAt: new Date(),
+    }));
+  }
+  if (trackedLawIds !== undefined) group.trackedLaws = trackedLawIds;
 
-  return group.save();
+  const saved = await group.save();
+  return normalizeGroupToSupervisorSchema(saved);
 }
 
 export async function getGroupById(groupId, supervisorId) {

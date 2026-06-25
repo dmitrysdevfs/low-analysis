@@ -7,8 +7,8 @@ import styles from "./FeaturesSection.module.scss";
 
 export function FeaturesSection() {
   return (
-    <section className={styles.section}>
-      <div className={styles.inner}>
+    <section className={`container section ${styles.section}`}>
+      <div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -16,8 +16,8 @@ export function FeaturesSection() {
           transition={{ duration: 0.45 }}
           className={styles.header}
         >
-          <div className={styles.label}>Можливості</div>
-          <h2 className={`display ${styles.h2}`}>Що вміє платформа</h2>
+          <div className={`mono ${styles.label}`}>Можливості</div>
+          <h2 className={`subtitle ${styles.h2}`}>Що вміє платформа</h2>
           <p className={styles.sub}>
             Від сирого HTML до структурованих даних — з аналітикою, пошуком і AI
             прямо в інтерфейсі.
@@ -41,7 +41,7 @@ export function FeaturesSection() {
             >
               <div className={styles.cardGlow} />
               <div className={`mono ${styles.icon}`}>{feature.icon}</div>
-              <h3 className={`display ${styles.title}`}>{feature.title}</h3>
+              <h3 className={styles.title}>{feature.title}</h3>
               <p className={styles.desc}>{feature.desc}</p>
               <Link href={feature.href} className={styles.link}>
                 Відкрити{" "}

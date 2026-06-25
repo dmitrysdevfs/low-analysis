@@ -28,8 +28,8 @@ export function PremiumRoadmapSection() {
   const pending = premiumRoadmap.filter((i) => !i.done);
 
   return (
-    <section className={styles.section}>
-      <div className={styles.inner}>
+    <section className={`section ${styles.section}`}>
+      <div className="container">
         {/* Header */}
         <motion.div
           className={styles.header}
@@ -39,7 +39,7 @@ export function PremiumRoadmapSection() {
           transition={{ duration: 0.45 }}
         >
           <div className={`mono ${styles.sectionNum}`}>03 —</div>
-          <h2 className={`display ${styles.h2}`}>Що зроблено і що далі</h2>
+          <h2 className={`titleH2 ${styles.h2}`}>Що зроблено і що далі</h2>
         </motion.div>
 
         {/* Three-column layout: done | orb | pending */}

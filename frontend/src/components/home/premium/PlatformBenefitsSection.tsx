@@ -37,10 +37,10 @@ const fadeUp: Variants = {
 
 export function PlatformBenefitsSection() {
   return (
-    <section className={styles.section}>
+    <section className={`sectionLast ${styles.section}`}>
       <div className={styles.sectionGlow} aria-hidden="true" />
 
-      <div className={styles.inner}>
+      <div className="container">
         <motion.div
           className={styles.header}
           initial={{ opacity: 0, y: 20 }}
@@ -49,7 +49,7 @@ export function PlatformBenefitsSection() {
           transition={{ duration: 0.45 }}
         >
           <div className={`mono ${styles.sectionNum}`}>02 —</div>
-          <h2 className={`display ${styles.h2}`}>Що дає платформа</h2>
+          <h2 className={`titleH2 ${styles.h2}`}>Що дає платформа</h2>
           <p className={styles.subtitle}>
             Інтелектуальні можливості для кращих рішень та економії вашого часу.
           </p>

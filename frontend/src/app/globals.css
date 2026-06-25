@@ -12,7 +12,7 @@
   --color-azure: #4a80d4;
   --color-ink: #ffffff;
   --color-ink-soft: #d6e0f0;
-  --color-smoke: #7a98c0;
+  --color-smoke: #c7d5ea;
   --color-smoke-light: #a8bedd;
 
   /* ── Theme variables (default: Navy + Gold) ───────────────────────── */
@@ -199,8 +199,21 @@ input {
 .mono {
   font-family: var(--font-mono);
 }
-.display {
+/* .display {
   font-family: var(--font-display);
+} */
+
+.title {
+  font-weight: 700;
+  font-size: clamp(2.6rem, 5vw, 3.75rem);
+  line-height: 45px;
+  overflow-wrap: break-word;
+}
+
+.titleH2 {
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.1875rem);
+  line-height: 38px;
 }
 
 /* ─── Form controls ─────────────────────────────────────────────────────── */
@@ -254,7 +267,7 @@ input {
   border-radius: 8px;
   font-size: 0.88rem;
   font-weight: 600;
-  font-family: var(--font-mono);
+  /* font-family: var(--font-mono); */
   letter-spacing: 0.04em;
   text-decoration: none;
   cursor: pointer;
@@ -392,19 +405,45 @@ input {
 
 /* ─── Responsive: desktop nav / mobile burger ────────────────────────────── */
 
-@media (max-width: 639px) {
-  .nav-desktop {
-    display: none;
-  }
-}
-
-@media (min-width: 640px) {
+@media (min-width: 1281px) {
   .nav-mobile-btn {
     display: none !important;
   }
 }
 
 /* ─── Responsive utilities ───────────────────────────────────────────────── */
+
+.container {
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.section {
+  padding: 56px 16px 0;
+}
+
+.sectionLast {
+  padding: 56px 16px;
+}
+
+@media (min-width: 640px) {
+  .section {
+    padding: 64px 32px 0;
+  }
+  .sectionLast {
+    padding: 64px 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding: 80px 48px 0;
+  }
+  .sectionLast {
+    padding: 80px 48px;
+  }
+}
 
 .section-pad {
   padding: 40px 16px 64px;

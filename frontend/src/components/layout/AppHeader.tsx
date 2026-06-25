@@ -227,13 +227,13 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
           </div>
         </div>
 
+
       <nav className={`nav-desktop ${styles.desktopNav}`}>
   {visibleNavItems.map((item) => {
     
     const isActive = item.href 
       ? pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
       : item.subItems?.some(sub => sub.href && pathname.startsWith(sub.href));
-
   
     if (item.subItems && item.subItems.length > 0) {
       const isOpen = openDropdown === item.label;

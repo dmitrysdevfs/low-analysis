@@ -1,13 +1,6 @@
 .section {
   border-top: 1px solid #1c3260;
   background: #0d1c3a;
-  padding: 80px 0 0;
-}
-
-.inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 48px 72px;
 }
 
 .header {
@@ -16,7 +9,6 @@
 
 .label {
   font-size: 0.62rem;
-  font-family: var(--font-mono);
   color: #c8a843;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -24,7 +16,6 @@
 }
 
 .h2 {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
   margin: 0;
 }
 
@@ -181,6 +172,7 @@
 .footer {
   margin-top: 56px;
   padding-top: 32px;
+  padding-bottom: 32px;
   border-top: 1px solid #1c3260;
   display: flex;
   align-items: center;
@@ -205,9 +197,9 @@
 .footerLink {
   font-weight: 600;
   font-size: 0.85rem;
-  color: #c8a843;
-  background: transparent;
-  border: 1px solid #c8a843;
+  color: black;
+  background: #c8a843;
+  border: 1px solid #050505;
   border-radius: 6px;
   padding: 10px 22px;
   text-decoration: none;
@@ -217,16 +209,13 @@
     color 0.15s ease;
 
   &:hover {
-    background: rgba(200, 168, 67, 0.08);
+    background: linear-gradient(135deg, #dabb55 0%, #f0d050 100%);
+    box-shadow: 0 4px 20px rgba(200, 168, 67, 0.35);
+    transform: translateY(-1px);
   }
 }
 
 @media (max-width: 767px) {
-  .inner {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
   .footer {
     align-items: flex-start;
   }
