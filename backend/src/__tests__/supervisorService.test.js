@@ -161,5 +161,89 @@ describe('supervisorService', () => {
       expect(summary.recentActivity[0].title).toBe('My Proposal');
       expect(summary.recentActivity[1].title).toBe('My Fork');
     });
+
+    it('should work with empty tracked laws list and dynamically track edited laws', async () => {
+      const mockGroups = [
+        {
+          _id: 'g2',
+          name: 'Group 2',
+          course: 'Course 2',
+          supervisorId: 's1',
+          members: [
+            {
+              userId: { _id: 'u2', fullName: 'User 2', email: 'u2@test.com' },
+              status: 'active',
+            },
+          ],
+          trackedLaws: [], // Empty tracked laws list
+          status: 'active',
+        },
+      ];
+
+      const mockFindChain = {
+        populate: vi.fn().mockReturnThis(),
+        lean: vi.fn().mockResolvedValue(mockGroups),
+      };
+      Group.find.mockReturnValue(mockFindChain);
+
+      const mockForks = [
+        {
+          _id: 'f2',
+          lawId: { _id: 'l2', title: 'Law 2', code: 'L2' },
+          authorId: { _id: 'u2', fullName: 'User 2', email: 'u2@test.com' },
+          title: 'User 2 Fork',
+          status: 'review',
+          updatedAt: new Date(Date.now() - 10000),
+        },
+      ];
+      const mockForkChain = {
+        select: vi.fn().mockReturnThis(),
+        populate: vi.fn().mockReturnThis(),
+        lean: vi.fn().mockResolvedValue(mockForks),
+      };
+      LawFork.find.mockReturnValue(mockForkChain);
+
+      const mockProposals = [
+        {
+          _id: 'p2',
+          law_id: { _id: 'l2', title: 'Law 2', code: 'L2' },
+          created_by: { _id: 'u2', fullName: 'User 2', email: 'u2@test.com' },
+          title: 'User 2 Proposal',
+          status: 'review',
+          updatedAt: new Date(),
+        },
+      ];
+      const mockProposalChain = {
+        select: vi.fn().mockReturnThis(),
+        populate: vi.fn().mockReturnThis(),
+        lean: vi.fn().mockResolvedValue(mockProposals),
+      };
+      Proposal.find.mockReturnValue(mockProposalChain);
+
+      const summary = await supervisorService.getDashboardSummary('s1');
+
+      expect(Group.find).toHaveBeenCalledWith({
+        supervisorId: 's1',
+        status: 'active',
+      });
+      // The find calls should not contain lawIds filters when they are empty
+      expect(LawFork.find).toHaveBeenCalledWith({
+        authorId: { $in: ['u2'] }
+      });
+      expect(Proposal.find).toHaveBeenCalledWith({
+        created_by: { $in: ['u2'] }
+      });
+
+      expect(summary.totalMembers).toBe(1);
+      expect(summary.totalTrackedLaws).toBe(1); // dynamically found Law 2
+      expect(summary.statusBreakdown.totalChanges).toBe(2);
+      expect(summary.statusBreakdown.reviewCount).toBe(2);
+
+      expect(summary.groupHighlights[0].changeCount).toBe(2);
+      expect(summary.groupHighlights[0].trackedLawsCount).toBe(1); // dynamically tracked Law 2
+      expect(summary.recentActivity).toHaveLength(2);
+      expect(summary.recentActivity[0].title).toBe('User 2 Proposal');
+      expect(summary.recentActivity[1].title).toBe('User 2 Fork');
+    });
   });
 });

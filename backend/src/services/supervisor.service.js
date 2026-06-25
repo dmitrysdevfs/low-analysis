@@ -143,23 +143,25 @@ async function loadActivityItems(groups) {
     ),
   ];
 
-  if (!memberIds.length || !lawIds.length) {
+  if (!memberIds.length) {
     return [];
   }
 
+  const forkQuery = { authorId: { $in: memberIds } };
+  const proposalQuery = { created_by: { $in: memberIds } };
+
+  if (lawIds.length > 0) {
+    forkQuery.lawId = { $in: lawIds };
+    proposalQuery.law_id = { $in: lawIds };
+  }
+
   const [forks, proposals] = await Promise.all([
-    LawFork.find({
-      authorId: { $in: memberIds },
-      lawId: { $in: lawIds },
-    })
+    LawFork.find(forkQuery)
       .select('lawId authorId title status updatedAt')
       .populate('lawId', 'title code')
       .populate('authorId', 'fullName email')
       .lean(),
-    Proposal.find({
-      created_by: { $in: memberIds },
-      law_id: { $in: lawIds },
-    })
+    Proposal.find(proposalQuery)
       .select('law_id created_by title status updatedAt')
       .populate('law_id', 'title code')
       .populate('created_by', 'fullName email')
@@ -205,8 +207,17 @@ function buildDashboardSummary(groups, items) {
   const totalMembers = new Set(
     groups.flatMap((group) => group.memberIds.map((member) => toId(member))),
   ).size;
+  
   const totalTrackedLaws = new Set(
-    groups.flatMap((group) => group.trackedLawIds.map((law) => toId(law))),
+    groups.flatMap((group) => {
+      if (group.trackedLawIds && group.trackedLawIds.length > 0) {
+        return group.trackedLawIds.map((law) => toId(law));
+      }
+      const memberIdSet = new Set(group.memberIds.map((m) => toId(m)));
+      return items
+        .filter((item) => memberIdSet.has(item.authorId) && item.lawId)
+        .map((item) => item.lawId);
+    }),
   ).size;
 
   const statusBreakdown = {
@@ -227,7 +238,20 @@ function buildDashboardSummary(groups, items) {
     let activeLawsCount = 0;
     const groupStats = initWorkflowStats();
 
-    for (const law of group.trackedLawIds) {
+    let lawsToMonitor = [];
+    if (group.trackedLawIds && group.trackedLawIds.length > 0) {
+      lawsToMonitor = group.trackedLawIds;
+    } else {
+      const lawMap = new Map();
+      for (const item of items) {
+        if (memberIdSet.has(item.authorId) && item.lawId && item.law) {
+          lawMap.set(item.lawId, item.law);
+        }
+      }
+      lawsToMonitor = Array.from(lawMap.values());
+    }
+
+    for (const law of lawsToMonitor) {
       const lawId = toId(law);
       const matchingItems = items.filter(
         (item) => item.lawId === lawId && memberIdSet.has(item.authorId),
@@ -272,7 +296,7 @@ function buildDashboardSummary(groups, items) {
       groupName: group.name,
       course: group.course || '',
       memberCount: group.memberIds.length,
-      trackedLawsCount: group.trackedLawIds.length,
+      trackedLawsCount: lawsToMonitor.length,
       activeLawsCount,
       changeCount: groupChangeCount,
       lastActivityAt: groupLastActivity?.toISOString() || null,
@@ -292,7 +316,8 @@ function buildDashboardSummary(groups, items) {
     );
 
     for (const item of items) {
-      if (!trackedLawIdSet.has(item.lawId) || !memberById.has(item.authorId)) {
+      const isLawTracked = group.trackedLawIds.length === 0 || trackedLawIdSet.has(item.lawId);
+      if (!isLawTracked || !memberById.has(item.authorId)) {
         continue;
       }
 
@@ -364,7 +389,7 @@ function buildDashboardSummary(groups, items) {
     const matchingGroups = groups.filter(
       (group) =>
         group.memberIds.some((member) => toId(member) === item.authorId) &&
-        group.trackedLawIds.some((law) => toId(law) === item.lawId),
+        (group.trackedLawIds.length === 0 || group.trackedLawIds.some((law) => toId(law) === item.lawId)),
     );
     const groupNames = matchingGroups.map((group) => group.name);
 
