@@ -220,45 +220,46 @@ export function AppSidebar({
 
             {/* Nav links */}
             <nav className={styles.nav}>
-  {navItems.map((item) => {
-    if (item.subItems && item.subItems.length > 0) {
-      return (
-        <div key={item.label}>
-          <div className={styles.navGroupLabel}>{item.label}</div>
-          {item.subItems.map((sub) => {
-            const isActive = sub.href && (
-              pathname === sub.href ||
-              (sub.href !== "/" && pathname.startsWith(sub.href))
-            );
-            return (
-              <Link
-                key={sub.label}
-                href={sub.href || "#"}
-                                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
-              >
-                {sub.label}
-              </Link>
-            );
-          })}
-        </div>
-      );
-    }
+              {navItems.map((item) => {
+                if (item.subItems && item.subItems.length > 0) {
+                  return (
+                    <div key={item.label}>
+                      <div className={styles.navGroupLabel}>{item.label}</div>
+                      {item.subItems.map((sub) => {
+                        const isActive =
+                          sub.href &&
+                          (pathname === sub.href ||
+                            (sub.href !== "/" &&
+                              pathname.startsWith(sub.href)));
+                        return (
+                          <Link
+                            key={sub.label}
+                            href={sub.href || "#"}
+                            className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
+                          >
+                            {sub.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  );
+                }
 
-    const isActive =
-      pathname === item.href ||
-      (item.href !== "/" && pathname.startsWith(item.href ?? ""));
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/" && pathname.startsWith(item.href ?? ""));
 
-    return (
-      <Link
-        key={item.label}
-        href={item.href || "#"}
-                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
-      >
-        {item.label}
-      </Link>
-    );
-  })}
-</nav>
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href || "#"}
+                    className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
 
             {/* Subjects section */}
             {subjects.length > 0 && (
