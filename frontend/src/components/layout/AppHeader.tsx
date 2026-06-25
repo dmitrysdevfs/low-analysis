@@ -31,11 +31,13 @@ export function AppHeader() {
 function PublicAppHeader({ pathname }: { pathname: string }) {
   const router = useRouter();
   const headerRef = useRef<HTMLElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [headerScrolledAway, setHeaderScrolledAway] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } =
     useAuth();
   const activeProposalsCount = useActiveProposalsCount();
@@ -129,6 +131,19 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
     };
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpenDropdown(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   function handleLogout() {
     if (!mounted) return;
     logout();
@@ -215,16 +230,69 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
           </div>
         </div>
 
-        <nav className={styles.desktopNav}>
+        <nav className={`nav-desktop ${styles.desktopNav}`}>
           {visibleNavItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
+            const isActive = item.href
+              ? pathname === item.href ||
+                (item.href !== "/" && pathname.startsWith(item.href))
+              : item.subItems?.some(
+                  (sub) => sub.href && pathname.startsWith(sub.href),
+                );
+
+            if (item.subItems && item.subItems.length > 0) {
+              const isOpen = openDropdown === item.label;
+              return (
+                <div
+                  key={item.label}
+                  ref={dropdownRef}
+                  className={styles.navDropdownWrap}
+                  onMouseEnter={() => setOpenDropdown(item.label)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <button
+                    type="button"
+                    className={`nav-link ${styles.navDropdownTrigger} ${isActive ? "active" : ""}`}
+                  >
+                    {item.label}
+                    <svg
+                      className={styles.navDropdownChevron}
+                      width="10"
+                      height="6"
+                      viewBox="0 0 10 6"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 1L5 5L9 1"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                  {isOpen && (
+                    <div className={styles.navDropdown}>
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.label}
+                          href={subItem.href || "#"}
+                          className={styles.navDropdownItem}
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
 
             return (
               <Link
-                key={item.href}
-                href={item.href}
+                key={item.label}
+                href={item.href || "#"}
                 className={`nav-link${isActive ? " active" : ""}`}
               >
                 {item.label}
@@ -264,14 +332,42 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
               transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
             >
               {mobileNavItems.map((item) => {
+                if (item.subItems && item.subItems.length > 0) {
+                  return (
+                    <div key={item.label} className={styles.mobileNavGroup}>
+                      <div className={styles.mobileNavGroupLabel}>
+                        {item.label}
+                      </div>
+                      {item.subItems.map((subItem) => {
+                        const isSubActive =
+                          subItem.href &&
+                          (pathname === subItem.href ||
+                            (subItem.href !== "/" &&
+                              pathname.startsWith(subItem.href)));
+                        return (
+                          <Link
+                            key={subItem.label}
+                            href={subItem.href || "#"}
+                            onClick={() => setMobileOpen(false)}
+                            className={`${styles.mobileNavLink} ${styles.mobileNavSubLink} ${isSubActive ? styles.mobileNavLinkActive : ""}`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
                 const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/" && pathname.startsWith(item.href));
+                  item.href &&
+                  (pathname === item.href ||
+                    (item.href !== "/" && pathname.startsWith(item.href)));
 
                 return (
                   <Link
-                    key={item.href}
-                    href={item.href}
+                    key={item.label}
+                    href={item.href || "#"}
                     onClick={() => setMobileOpen(false)}
                     className={`${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ""}`}
                   >

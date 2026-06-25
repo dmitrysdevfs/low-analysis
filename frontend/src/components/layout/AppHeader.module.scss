@@ -584,12 +584,11 @@
 
 .navDropdownChevron {
   flex-shrink: 0;
-  opacity: 0.6;
+
   transition: transform 0.18s ease;
 
   .navDropdownWrap:hover & {
     transform: rotate(180deg);
-    opacity: 1;
   }
 }
 
@@ -788,4 +787,32 @@
   .mobileNavLink {
     padding: 14px 16px;
   }
+}
+
+.mobileNavGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileNavGroupLabel {
+  padding: 14px 24px 4px;
+  font-size: 0.65rem;
+  color: var(--color-smoke);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+}
+
+.mobileNavSubLink {
+  padding-left: 36px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(28, 50, 96, 0.4);
+
+  &:last-child {
+    border-bottom: 1px solid #1c3260;
+  }
+}
+
+.mobileNavLinkActive.mobileNavSubLink {
+  padding-left: 33px;
 }
