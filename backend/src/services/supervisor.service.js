@@ -203,21 +203,27 @@ async function loadActivityItems(groups) {
   });
 }
 
+function getLawsToMonitor(group, items) {
+  if (group.trackedLawIds && group.trackedLawIds.length > 0) {
+    return group.trackedLawIds;
+  }
+  const memberIdSet = new Set(group.memberIds.map((m) => toId(m)));
+  const lawMap = new Map();
+  for (const item of items) {
+    if (memberIdSet.has(item.authorId) && item.lawId && item.law) {
+      lawMap.set(item.lawId, item.law);
+    }
+  }
+  return Array.from(lawMap.values());
+}
+
 function buildDashboardSummary(groups, items) {
   const totalMembers = new Set(
     groups.flatMap((group) => group.memberIds.map((member) => toId(member))),
   ).size;
 
   const totalTrackedLaws = new Set(
-    groups.flatMap((group) => {
-      if (group.trackedLawIds && group.trackedLawIds.length > 0) {
-        return group.trackedLawIds.map((law) => toId(law));
-      }
-      const memberIdSet = new Set(group.memberIds.map((m) => toId(m)));
-      return items
-        .filter((item) => memberIdSet.has(item.authorId) && item.lawId)
-        .map((item) => item.lawId);
-    }),
+    groups.flatMap((group) => getLawsToMonitor(group, items).map((law) => toId(law))),
   ).size;
 
   const statusBreakdown = {
@@ -238,18 +244,7 @@ function buildDashboardSummary(groups, items) {
     let activeLawsCount = 0;
     const groupStats = initWorkflowStats();
 
-    let lawsToMonitor = [];
-    if (group.trackedLawIds && group.trackedLawIds.length > 0) {
-      lawsToMonitor = group.trackedLawIds;
-    } else {
-      const lawMap = new Map();
-      for (const item of items) {
-        if (memberIdSet.has(item.authorId) && item.lawId && item.law) {
-          lawMap.set(item.lawId, item.law);
-        }
-      }
-      lawsToMonitor = Array.from(lawMap.values());
-    }
+    const lawsToMonitor = getLawsToMonitor(group, items);
 
     for (const law of lawsToMonitor) {
       const lawId = toId(law);
