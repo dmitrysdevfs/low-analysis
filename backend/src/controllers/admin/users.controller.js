@@ -2,8 +2,13 @@ import * as usersService from '../../services/admin/users.service.js';
 
 export const listUsers = async (req, res, next) => {
   try {
-    const users = await usersService.listUsers();
-    res.json(users);
+    const { q = '', page = '1', limit = '50' } = req.query;
+    const result = await usersService.listUsers({
+      q: String(q),
+      page: Math.max(1, Number(page)),
+      limit: Math.min(200, Math.max(1, Number(limit))),
+    });
+    res.json(result);
   } catch (err) {
     next(err);
   }

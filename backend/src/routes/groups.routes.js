@@ -1,6 +1,6 @@
 import express from 'express';
 import * as groupsController from '../controllers/groups.controller.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -57,7 +57,12 @@ const router = express.Router();
 router.get('/', groupsController.listPublicGroups);
 
 // Authenticated; static paths must come before parameterised /:id
-router.post('/', protect, groupsController.createGroup);
+router.post(
+  '/',
+  protect,
+  authorize('supervisor', 'admin'),
+  groupsController.createGroup,
+);
 
 /**
  * @swagger

@@ -67,3 +67,19 @@ export const deleteAmendment = async (req, res, next) => {
     next(error);
   }
 };
+
+export const reviewAmendment = async (req, res, next) => {
+  try {
+    const { action } = req.body;
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ message: 'Invalid action' });
+    }
+    const amendment = await amendmentService.reviewAmendment(
+      req.params.id,
+      action,
+    );
+    res.json(amendment);
+  } catch (error) {
+    next(error);
+  }
+};

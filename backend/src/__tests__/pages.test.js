@@ -17,6 +17,10 @@ vi.mock('../middleware/authMiddleware.js', () => ({
     req.user = { _id: 'admin-user-id', role: 'admin' };
     next();
   },
+  optionalProtect: (req, _res, next) => {
+    req.user = { _id: 'admin-user-id', role: 'admin' };
+    next();
+  },
   authorize: () => (_req, _res, next) => next(),
   hasPermission: () => (_req, _res, next) => next(),
 }));

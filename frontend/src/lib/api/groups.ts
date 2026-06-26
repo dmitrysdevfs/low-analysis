@@ -50,6 +50,7 @@ export const createGroup = (data: {
   course?: string;
   maxMembers?: number;
   visibility?: string;
+  trackedLaws?: string[];
 }) => requestJson<Group>("/groups", "POST", data);
 export const updateGroup = (id: string, data: Partial<Group>) =>
   requestJson<Group>(`/groups/${id}`, "PATCH", data);

@@ -278,11 +278,14 @@ function AccessGate() {
           законах та контроль змін.
         </p>
         <div className={styles.gateActions}>
-          <Link href={ROUTES.rolesSupervisor} className="btn btn-primary">
-            Про роль Supervisor
+          <Link
+            href={ROUTES.rolesSupervisorRequest}
+            className="btn btn-primary"
+          >
+            Подати запит на роль Супервізора
           </Link>
-          <Link href={ROUTES.help} className="btn btn-outline">
-            Як отримати доступ
+          <Link href={ROUTES.rolesSupervisor} className="btn btn-outline">
+            Про роль Supervisor
           </Link>
         </div>
       </div>

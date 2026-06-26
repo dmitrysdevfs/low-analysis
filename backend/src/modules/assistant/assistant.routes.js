@@ -9,7 +9,7 @@ import {
   deleteSession,
   getQuotaStatus,
 } from './assistant.controller.js';
-import { protect } from '../../middleware/authMiddleware.js';
+import { protect, optionalProtect } from '../../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -132,17 +132,7 @@ router.get('/suggestions', getSuggestions);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post(
-  '/chat/stream',
-  (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      return protect(req, res, () => next());
-    }
-    next();
-  },
-  streamChat,
-);
+router.post('/chat/stream', optionalProtect, streamChat);
 
 /**
  * @swagger
@@ -202,17 +192,7 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post(
-  '/feedback',
-  (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      return protect(req, res, () => next());
-    }
-    next();
-  },
-  submitFeedback,
-);
+router.post('/feedback', optionalProtect, submitFeedback);
 
 /**
  * @swagger
@@ -255,17 +235,7 @@ router.post(
  *                   description: Unix timestamp скидання лічильника
  *                   example: 1716854400000
  */
-router.get(
-  '/quota',
-  (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      return protect(req, res, () => next());
-    }
-    next();
-  },
-  getQuotaStatus,
-);
+router.get('/quota', optionalProtect, getQuotaStatus);
 
 /**
  * @swagger

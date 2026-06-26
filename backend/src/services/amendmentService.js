@@ -148,6 +148,14 @@ export const getAmendmentsByUserIds = async (userIds) => {
     .lean();
 };
 
+export const reviewAmendment = async (id, action) => {
+  const amendment = await Amendment.findById(id);
+  if (!amendment)
+    throw Object.assign(new Error('Amendment not found'), { statusCode: 404 });
+  amendment.status = action === 'approve' ? 'approved' : 'rejected';
+  return amendment.save();
+};
+
 /**
  * Delete amendment - only author and only if proposal is in draft.
  */

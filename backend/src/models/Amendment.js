@@ -46,6 +46,11 @@ const amendmentSchema = new mongoose.Schema(
       neutral: { type: Number, default: 0 },
       negative: { type: Number, default: 0 },
     },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending',
+    },
   },
   { timestamps: true },
 );

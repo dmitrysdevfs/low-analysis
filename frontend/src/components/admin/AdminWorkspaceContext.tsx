@@ -17,7 +17,12 @@ import type { AdminDashboardSnapshot } from "@/lib/auth/mockAuth";
 import type { LegislatorAccessRequest } from "@/types/law-change.types";
 import { buildBillingEntry, mapApiToSnapshot } from "./mapAdminData";
 
-type AccountAction = "deactivate" | "promote" | "setLegislator" | "forceLogout";
+type AccountAction =
+  | "deactivate"
+  | "promote"
+  | "setLegislator"
+  | "setSupervisor"
+  | "forceLogout";
 
 async function writeClipboard(value: string) {
   if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {
@@ -175,6 +180,18 @@ function useAdminWorkspaceCore() {
             isLegislator
               ? "Роль законотворця знято."
               : "Роль законотворця призначено.",
+          );
+        } else if (action === "setSupervisor") {
+          const curr = snapshot?.registryAccounts.find(
+            (a) => a.id === accountId,
+          );
+          const isSupervisor = curr?.roles?.includes("supervisor") ?? false;
+          const nextRole = isSupervisor ? "user" : "supervisor";
+          await adminApi.setUserRole(accountId, nextRole);
+          notify.success(
+            isSupervisor
+              ? "Роль супервайзера знято."
+              : "Роль супервайзера призначено.",
           );
         } else {
           await adminApi.forceLogout(accountId);

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { protect } from '../../middleware/authMiddleware.js';
+import { protect, authorize } from '../../middleware/authMiddleware.js';
 import {
   enqueueParseLaw,
   enqueueAnalyzeSubjects,
@@ -60,7 +60,7 @@ router.use(protect);
  *       400:
  *         description: Не передано url
  */
-router.post('/parse-law', enqueueParseLaw);
+router.post('/parse-law', authorize('admin'), enqueueParseLaw);
 
 /**
  * @swagger
@@ -110,7 +110,7 @@ router.post('/parse-law', enqueueParseLaw);
  *       400:
  *         description: Не передано lawId
  */
-router.post('/analyze-subjects', enqueueAnalyzeSubjects);
+router.post('/analyze-subjects', authorize('admin'), enqueueAnalyzeSubjects);
 
 /**
  * @swagger
@@ -159,7 +159,11 @@ router.post('/analyze-subjects', enqueueAnalyzeSubjects);
  *       400:
  *         description: codes не передано або порожній/не масив
  */
-router.post('/batch-update-law-tree', enqueueBatchUpdateLawTree);
+router.post(
+  '/batch-update-law-tree',
+  authorize('admin'),
+  enqueueBatchUpdateLawTree,
+);
 
 /**
  * @swagger
@@ -212,6 +216,6 @@ router.post('/batch-update-law-tree', enqueueBatchUpdateLawTree);
  *       404:
  *         description: Job не знайдено
  */
-router.get('/status/:jobId', getJobStatus);
+router.get('/status/:jobId', authorize('admin'), getJobStatus);
 
 export default router;

@@ -119,12 +119,19 @@ function normalizeGroupToSupervisorSchema(group) {
   return {
     ...groupObj,
     memberIds,
-    trackedLawIds: groupObj.trackedLaws || [],
+    trackedLawIds: (groupObj.trackedLaws || []).map((law) =>
+      typeof law === 'object' && law !== null && law._id
+        ? { _id: String(law._id), title: law.title ?? '', code: law.code ?? '' }
+        : { _id: String(law), title: '', code: '' },
+    ),
   };
 }
 
 async function loadSupervisorGroups(supervisorId) {
-  const groups = await Group.find({ supervisorId, status: 'active' })
+  const filter = supervisorId
+    ? { supervisorId, status: 'active' }
+    : { status: 'active' };
+  const groups = await Group.find(filter)
     .populate('trackedLaws', 'title code')
     .populate('members.userId', 'fullName email role')
     .lean();

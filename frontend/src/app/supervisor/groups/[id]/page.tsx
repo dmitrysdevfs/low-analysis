@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   ArrowLeft,
@@ -28,6 +28,8 @@ import {
   useUpdateSupervisorGroup,
 } from "@/hooks/useSupervisor";
 import { useGroupRequests, useReviewRequest } from "@/hooks/useGroups";
+import { getLaws } from "@/lib/api/laws";
+import type { SupervisorLawRef } from "@/lib/api/supervisor";
 import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
 
@@ -223,13 +225,36 @@ function SupervisorGroupView() {
 
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
+  const [trackedLaws, setTrackedLaws] = useState<SupervisorLawRef[]>([]);
   const [lawSearch, setLawSearch] = useState("");
+
+  // Law combobox state for tracked laws editing
+  const [lawAddQuery, setLawAddQuery] = useState("");
+  const [lawSuggestions, setLawSuggestions] = useState<SupervisorLawRef[]>([]);
+  const lawDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!data?.group) return;
     setName(data.group.name || "");
     setCourse(data.group.course || "");
+    setTrackedLaws(data.group.trackedLawIds ?? []);
   }, [data?.group]);
+
+  useEffect(() => {
+    if (!lawAddQuery.trim()) {
+      setLawSuggestions([]);
+      return;
+    }
+    if (lawDebounceRef.current) clearTimeout(lawDebounceRef.current);
+    lawDebounceRef.current = setTimeout(async () => {
+      const results = await getLaws(lawAddQuery).catch(() => []);
+      setLawSuggestions(
+        results
+          .slice(0, 8)
+          .map((l) => ({ _id: l._id, title: l.title, code: l.code ?? "" })),
+      );
+    }, 300);
+  }, [lawAddQuery]);
 
   const highlight = data?.highlight;
   const latestActivity =
@@ -278,7 +303,11 @@ function SupervisorGroupView() {
   const isDirty =
     Boolean(data?.group) &&
     (name.trim() !== (data?.group.name || "").trim() ||
-      course.trim() !== (data?.group.course || "").trim());
+      course.trim() !== (data?.group.course || "").trim() ||
+      JSON.stringify(trackedLaws.map((l) => l._id).sort()) !==
+        JSON.stringify(
+          (data?.group.trackedLawIds ?? []).map((l) => l._id).sort(),
+        ));
 
   const memberCount = data?.group?.memberIds.length ?? 0;
   const engagementRate = memberCount
@@ -295,6 +324,7 @@ function SupervisorGroupView() {
         data: {
           name: name.trim(),
           course: course.trim(),
+          trackedLawIds: trackedLaws.map((l) => l._id),
         },
       });
       notify.success("Параметри групи оновлено");
@@ -445,6 +475,42 @@ function SupervisorGroupView() {
           </div>
         </aside>
       </section>
+
+      <nav
+        style={{
+          display: "flex",
+          gap: 8,
+          padding: "16px 32px",
+          borderBottom: "1px solid var(--color-border)",
+          background: "var(--bg-panel, #0d0d1a)",
+          flexWrap: "wrap",
+        }}
+      >
+        {[
+          { label: "👥 Учасники", href: "#members" },
+          { label: "📄 Пропозиції", href: ROUTES.supervisorProposals },
+          { label: "✏️ Правки", href: ROUTES.supervisorAmendments },
+          { label: "🔀 Форки", href: ROUTES.supervisorForks },
+          { label: "⚖️ Закони", href: ROUTES.laws },
+          { label: "📊 Аналітика", href: ROUTES.supervisorAnalytics },
+        ].map((item) => (
+          <Link
+            key={item.label}
+            href={item.href}
+            style={{
+              padding: "6px 14px",
+              borderRadius: 6,
+              border: "1px solid var(--color-border)",
+              fontSize: "0.85rem",
+              color: "var(--color-text)",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
 
       <section className={styles.statsGrid}>
         {[
@@ -866,7 +932,40 @@ function SupervisorGroupView() {
               </div>
             </div>
 
-            {!data.group.trackedLawIds.length ? (
+            {/* Law add combobox */}
+            <div className={styles.field} style={{ marginBottom: 16 }}>
+              <input
+                className="form-control"
+                type="text"
+                value={lawAddQuery}
+                onChange={(e) => setLawAddQuery(e.target.value)}
+                placeholder="Додати закон — почніть вводити назву або номер..."
+                autoComplete="off"
+              />
+              {lawSuggestions.length > 0 && (
+                <div className={styles.lawDropdown}>
+                  {lawSuggestions.map((law) => (
+                    <button
+                      key={law._id}
+                      type="button"
+                      className={styles.lawDropdownItem}
+                      onClick={() => {
+                        if (!trackedLaws.find((l) => l._id === law._id)) {
+                          setTrackedLaws((prev) => [...prev, law]);
+                        }
+                        setLawAddQuery("");
+                        setLawSuggestions([]);
+                      }}
+                    >
+                      <span className={styles.lawCode}>{law.code}</span>{" "}
+                      {law.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {!trackedLaws.length ? (
               <div className={styles.emptyState}>
                 <BookOpen size={18} />
                 <p>
@@ -876,7 +975,7 @@ function SupervisorGroupView() {
               </div>
             ) : (
               <div className={styles.lawList}>
-                {data.group.trackedLawIds.map((law) => {
+                {trackedLaws.map((law) => {
                   const lawRow =
                     data.monitoring.find((row) => row.law?._id === law._id) ??
                     null;
@@ -892,13 +991,40 @@ function SupervisorGroupView() {
                             ? `${lawRow.changeCount} змін у потоці`
                             : "Ще без змін"}
                         </span>
-                        <Link
-                          href={ROUTES.law(law._id)}
-                          className={styles.inlineLink}
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: 8,
+                            alignItems: "center",
+                          }}
                         >
-                          До закону
-                          <ArrowUpRight size={14} />
-                        </Link>
+                          <Link
+                            href={ROUTES.law(law._id)}
+                            className={styles.inlineLink}
+                          >
+                            До закону
+                            <ArrowUpRight size={14} />
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setTrackedLaws((prev) =>
+                                prev.filter((l) => l._id !== law._id),
+                              )
+                            }
+                            style={{
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              color: "var(--color-danger, #f39b9b)",
+                              fontSize: "0.75rem",
+                              padding: "2px 4px",
+                            }}
+                            title="Видалити закон"
+                          >
+                            ✕
+                          </button>
+                        </div>
                       </div>
                     </article>
                   );

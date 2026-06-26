@@ -243,6 +243,74 @@ function ForksPageContent() {
   const [changeForm, setChangeForm] =
     useState<AddChangeForm>(EMPTY_CHANGE_FORM);
 
+  const [forkLawSearch, setForkLawSearch] = useState("");
+  const [forkLawOptions, setForkLawOptions] = useState<
+    Array<{ _id: string; title: string; code: string }>
+  >([]);
+  const [forkSelectedLaw, setForkSelectedLaw] = useState<{
+    _id: string;
+    title: string;
+    code: string;
+  } | null>(null);
+  const [forkShowLawDropdown, setForkShowLawDropdown] = useState(false);
+  const [forkTreeItems, setForkTreeItems] = useState<
+    Array<{
+      _id: string;
+      number: string;
+      title: string;
+      type: string;
+      text?: string;
+    }>
+  >([]);
+
+  const searchForkLaws = async (q: string) => {
+    if (q.length < 2) {
+      setForkLawOptions([]);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/laws?q=${encodeURIComponent(q)}&limit=10`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setForkLawOptions(
+        Array.isArray(data) ? data : data.data || data.laws || [],
+      );
+    } catch {
+      setForkLawOptions([]);
+    }
+  };
+
+  const loadForkLawTree = async (lawId: string) => {
+    try {
+      const res = await fetch(`/api/laws/${lawId}/tree`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      type TreeNode = {
+        _id: string;
+        number: string;
+        title: string;
+        type: string;
+        text?: string;
+        children?: TreeNode[];
+      };
+      const flat: TreeNode[] = [];
+      function flatten(nodes: TreeNode[]) {
+        for (const n of nodes || []) {
+          flat.push(n);
+          if (n.children?.length) flatten(n.children);
+        }
+      }
+      flatten(data.tree || data.elements || data || []);
+      setForkTreeItems(
+        flat.filter((n) => n.type === "article" || n.type === "chapter"),
+      );
+    } catch {
+      setForkTreeItems([]);
+    }
+  };
+
   const allForks = forks ?? [];
   const draftCount = allForks.filter((f) => f.status === "draft").length;
   const reviewCount = allForks.filter((f) => f.status === "review").length;
@@ -255,15 +323,18 @@ function ForksPageContent() {
 
   const handleCreateFork = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!createForm.lawId.trim() || !createForm.title.trim()) return;
+    if (!forkSelectedLaw || !createForm.title.trim()) return;
     try {
       await createFork.mutateAsync({
-        lawId: createForm.lawId.trim(),
+        lawId: forkSelectedLaw._id,
         title: createForm.title.trim(),
         description: createForm.description.trim() || undefined,
       });
       notify.success("Форк створено");
       setCreateForm(EMPTY_CREATE_FORM);
+      setForkSelectedLaw(null);
+      setForkLawSearch("");
+      setForkTreeItems([]);
       setShowCreateModal(false);
     } catch (err) {
       notify.error(
@@ -463,23 +534,70 @@ function ForksPageContent() {
               onSubmit={handleCreateFork}
               style={{ display: "flex", flexDirection: "column", gap: 16 }}
             >
-              <label className={styles.field}>
-                <span>Закон (ID або назва) *</span>
-                <input
-                  className="form-control"
-                  type="text"
-                  value={createForm.lawId}
-                  onChange={(e) =>
-                    setCreateForm((prev) => ({
-                      ...prev,
-                      lawId: e.target.value,
-                    }))
-                  }
-                  placeholder="ID або назва закону"
-                  required
-                  autoFocus
-                />
-              </label>
+              <div className={styles.field}>
+                <span>Закон *</span>
+                <div style={{ position: "relative" }}>
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Пошук закону за назвою..."
+                    value={
+                      forkSelectedLaw
+                        ? `${forkSelectedLaw.code} — ${forkSelectedLaw.title}`
+                        : forkLawSearch
+                    }
+                    onChange={(e) => {
+                      setForkSelectedLaw(null);
+                      setForkTreeItems([]);
+                      setForkLawSearch(e.target.value);
+                      setForkShowLawDropdown(true);
+                      searchForkLaws(e.target.value);
+                    }}
+                    onFocus={() => {
+                      if (!forkSelectedLaw) setForkShowLawDropdown(true);
+                    }}
+                    onBlur={() =>
+                      setTimeout(() => setForkShowLawDropdown(false), 150)
+                    }
+                    autoFocus
+                  />
+                  {forkShowLawDropdown && forkLawOptions.length > 0 && (
+                    <ul
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        right: 0,
+                        background: "var(--bg-secondary, #1a1a2e)",
+                        border: "1px solid var(--border, #333)",
+                        zIndex: 100,
+                        listStyle: "none",
+                        margin: 0,
+                        padding: 0,
+                        maxHeight: 200,
+                        overflowY: "auto",
+                        borderRadius: 4,
+                      }}
+                    >
+                      {forkLawOptions.map((law) => (
+                        <li
+                          key={law._id}
+                          style={{ padding: "8px 12px", cursor: "pointer" }}
+                          onMouseDown={() => {
+                            setForkSelectedLaw(law);
+                            setForkLawSearch("");
+                            setForkShowLawDropdown(false);
+                            setForkLawOptions([]);
+                            loadForkLawTree(law._id);
+                          }}
+                        >
+                          <strong>{law.code}</strong> — {law.title}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
               <label className={styles.field}>
                 <span>Назва форку *</span>
                 <input
@@ -547,37 +665,71 @@ function ForksPageContent() {
               onSubmit={handleAddChange}
               style={{ display: "flex", flexDirection: "column", gap: 14 }}
             >
-              <label className={styles.field}>
-                <span>ID елементу</span>
-                <input
-                  className="form-control"
-                  type="text"
-                  value={changeForm.elementId}
-                  onChange={(e) =>
-                    setChangeForm((prev) => ({
-                      ...prev,
-                      elementId: e.target.value,
-                    }))
-                  }
-                  placeholder="element-id"
-                  autoFocus
-                />
-              </label>
-              <label className={styles.field}>
-                <span>Код елементу</span>
-                <input
-                  className="form-control"
-                  type="text"
-                  value={changeForm.elementCode}
-                  onChange={(e) =>
-                    setChangeForm((prev) => ({
-                      ...prev,
-                      elementCode: e.target.value,
-                    }))
-                  }
-                  placeholder="art.1.p.2"
-                />
-              </label>
+              {forkTreeItems.length > 0 ? (
+                <div className={styles.field}>
+                  <span>Елемент закону</span>
+                  <select
+                    className="form-control form-select"
+                    value={changeForm.elementId}
+                    onChange={(e) => {
+                      const el = forkTreeItems.find(
+                        (n) => n._id === e.target.value,
+                      );
+                      setChangeForm((prev) => ({
+                        ...prev,
+                        elementId: e.target.value,
+                        elementCode: el?.number ?? "",
+                        originalText: el?.text ?? prev.originalText,
+                      }));
+                    }}
+                    autoFocus
+                  >
+                    <option value="">— Оберіть елемент —</option>
+                    {forkTreeItems.map((el) => (
+                      <option key={el._id} value={el._id}>
+                        {el.type === "article"
+                          ? `Ст. ${el.number}`
+                          : `${el.type} ${el.number}`}
+                        {el.title ? ` — ${el.title}` : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <>
+                  <label className={styles.field}>
+                    <span>ID елементу</span>
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={changeForm.elementId}
+                      onChange={(e) =>
+                        setChangeForm((prev) => ({
+                          ...prev,
+                          elementId: e.target.value,
+                        }))
+                      }
+                      placeholder="element-id"
+                      autoFocus
+                    />
+                  </label>
+                  <label className={styles.field}>
+                    <span>Код елементу</span>
+                    <input
+                      className="form-control"
+                      type="text"
+                      value={changeForm.elementCode}
+                      onChange={(e) =>
+                        setChangeForm((prev) => ({
+                          ...prev,
+                          elementCode: e.target.value,
+                        }))
+                      }
+                      placeholder="art.1.p.2"
+                    />
+                  </label>
+                </>
+              )}
               <label className={styles.field}>
                 <span>Операція</span>
                 <select

@@ -88,11 +88,28 @@ export const getMyGroups = async (userId, role) => {
 /**
  * Get a single group by ID with full population.
  */
-export const getGroupById = async (groupId) => {
-  return Group.findById(groupId)
+export const getGroupById = async (groupId, requestingUserId = null) => {
+  const group = await Group.findById(groupId)
     .populate('supervisorId', 'fullName email')
     .populate('members.userId', 'fullName email')
     .populate('trackedLaws', 'title code');
+
+  if (!group) return null;
+
+  if (group.visibility === 'invite_only' && requestingUserId) {
+    const isMember = group.members.some(
+      (m) => String(m.userId?._id || m.userId) === String(requestingUserId),
+    );
+    const isSupervisor =
+      String(group.supervisorId) === String(requestingUserId);
+    if (!isMember && !isSupervisor) {
+      const err = new Error('Access denied: group is invite only');
+      err.statusCode = 403;
+      throw err;
+    }
+  }
+
+  return group;
 };
 
 /**
@@ -151,7 +168,12 @@ export const getMyRequests = async (userId) => {
 /**
  * Submit a join request for a group.
  */
-export const createRequest = async (groupId, userId, message) => {
+export const createRequest = async (
+  groupId,
+  userId,
+  message,
+  role = 'user',
+) => {
   const group = await Group.findById(groupId);
   if (!group) {
     const err = new Error('Group not found');
@@ -164,7 +186,7 @@ export const createRequest = async (groupId, userId, message) => {
     throw err;
   }
 
-  if (String(group.supervisorId) === String(userId)) {
+  if (String(group.supervisorId) === String(userId) && role !== 'admin') {
     const err = new Error('Supervisor cannot join their own group');
     err.statusCode = 403;
     throw err;
@@ -351,11 +373,24 @@ export const removeMember = async (groupId, memberId, callerId) => {
 /**
  * Get recent activity for a group (stub — returns empty arrays).
  */
-export const getGroupActivity = async (groupId, _userId) => {
+export const getGroupActivity = async (groupId, userId) => {
   const group = await Group.findById(groupId);
   if (!group) {
     const err = new Error('Group not found');
     err.statusCode = 404;
+    throw err;
+  }
+
+  const isSupervisor = userId && String(group.supervisorId) === String(userId);
+  const isMember =
+    userId &&
+    group.members.some(
+      (m) => String(m.userId?._id || m.userId) === String(userId),
+    );
+
+  if (userId && !isSupervisor && !isMember) {
+    const err = new Error('Access denied');
+    err.statusCode = 403;
     throw err;
   }
 

@@ -140,10 +140,10 @@ export default function SupervisorChatPage() {
         eyebrow="SUPERVISOR ACCESS"
         title="Чати груп доступні лише для ролі Supervisor"
         text="Цей канал потрібен для координації груп, коментарів до правок і швидких рішень по поточних законопроєктах."
-        primaryHref={ROUTES.rolesSupervisor}
-        primaryLabel="Про роль Supervisor"
-        secondaryHref={ROUTES.help}
-        secondaryLabel="Як отримати доступ"
+        primaryHref={ROUTES.rolesSupervisorRequest}
+        primaryLabel="Подати запит на роль Супервізора"
+        secondaryHref={ROUTES.rolesSupervisor}
+        secondaryLabel="Про роль Supervisor"
       />
     );
   }

@@ -51,6 +51,17 @@ describe("frontend route and config constants", () => {
       { label: "Пошук", href: ROUTES.search },
       { label: "Lex AI", href: ROUTES.assistant },
       { label: "Roadmap", href: ROUTES.roadmap },
+      {
+        label: "Можливості користувача",
+        subItems: [
+          { label: "Ролі", href: ROUTES.rolesDashboard },
+          { label: "Гість", href: ROUTES.rolesGuest },
+          { label: "Користувач", href: ROUTES.rolesUser },
+          { label: "Законотворець", href: ROUTES.rolesLawmaker },
+          { label: "Супервайзер", href: ROUTES.rolesSupervisor },
+          { label: "Адміністратор", href: ROUTES.rolesAdmin },
+        ],
+      },
       { label: "Довідка", href: ROUTES.help },
     ]);
   });

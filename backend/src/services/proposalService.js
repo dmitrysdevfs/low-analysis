@@ -8,11 +8,18 @@ import { compareIds } from '../utils/id.js';
  */
 export const createProposal = async ({
   law_id,
+  element_id = null,
   created_by,
   title,
   description,
 }) => {
-  return await Proposal.create({ law_id, created_by, title, description });
+  return await Proposal.create({
+    law_id,
+    element_id,
+    created_by,
+    title,
+    description,
+  });
 };
 
 // Helper to sync amendments count for a list of proposals in a single batch aggregation (resolves N+1 query issue)

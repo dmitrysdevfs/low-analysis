@@ -43,4 +43,16 @@ const groupSchema = new mongoose.Schema(
 groupSchema.index({ supervisorId: 1, status: 1 });
 groupSchema.index({ status: 1, visibility: 1 });
 
+groupSchema.pre('save', function () {
+  if (this.isModified('trackedLaws')) {
+    const seen = new Set();
+    this.trackedLaws = this.trackedLaws.filter((id) => {
+      const key = String(id);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+});
+
 export default mongoose.model('Group', groupSchema);
