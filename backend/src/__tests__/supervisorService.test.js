@@ -36,7 +36,7 @@ describe('supervisorService', () => {
       expect(Group.create).toHaveBeenCalled();
       expect(result._id).toBe('g1');
       expect(result.memberIds).toEqual(['u1']);
-      expect(result.trackedLawIds).toEqual(['l1']);
+      expect(result.trackedLawIds).toEqual([{ _id: 'l1', title: '', code: '' }]);
     });
   });
 
@@ -72,7 +72,7 @@ describe('supervisorService', () => {
       expect(save).toHaveBeenCalled();
       expect(result.name).toBe('Updated Group');
       expect(result.memberIds).toEqual(['u2']);
-      expect(result.trackedLawIds).toEqual(['l2']);
+      expect(result.trackedLawIds).toEqual([{ _id: 'l2', title: '', code: '' }]);
     });
 
     it('should throw error if group not found', async () => {
