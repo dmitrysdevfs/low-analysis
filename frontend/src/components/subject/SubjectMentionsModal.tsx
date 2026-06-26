@@ -9,6 +9,7 @@ import { getNodeBadge, sanitizeAnchor } from "@/lib/tree";
 import {
   buildMentions,
   buildArticlePartsMap,
+  resolveCurrentMentionIndex,
   type ArticleMention,
 } from "@/lib/subject/mentionHelpers";
 import { ROUTES } from "@/constants/routes";
@@ -73,9 +74,22 @@ export function SubjectMentionsModal() {
       ? Math.min(Math.max(partIdx!, 0), partMentions.length - 1)
       : 0;
 
-  // Auto-navigate to article at safeIdx (articles mode only)
+  const currentIdx = useMemo(
+    () =>
+      resolveCurrentMentionIndex(
+        articleMentions,
+        currentLawId,
+        currentArticleNum,
+      ),
+    [articleMentions, currentLawId, currentArticleNum],
+  );
+
+  const activeIdx = currentIdx >= 0 ? currentIdx : safeIdx;
+
+  // Auto-navigate to article at safeIdx (articles mode only).
   useEffect(() => {
     if (!subjectId || !articleMentions.length || isPartsMode) return;
+    if (currentIdx >= 0) return;
     const mention = articleMentions[safeIdx];
     if (!mention) return;
     const targetPath = ROUTES.article(mention.lawId, mention.articleNum);
@@ -85,7 +99,7 @@ export function SubjectMentionsModal() {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [articleMentions.length, safeIdx, subjectId, isPartsMode]);
+  }, [articleMentions.length, safeIdx, subjectId, isPartsMode, currentIdx]);
 
   // Scroll list active item into view
   useEffect(() => {
@@ -94,7 +108,7 @@ export function SubjectMentionsModal() {
       `[data-active="true"]`,
     ) as HTMLElement | null;
     active?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  }, [safeIdx, safePartIdx, isPartsMode]);
+  }, [activeIdx, safePartIdx, isPartsMode]);
 
   // Scroll page to active part element in parts mode
   useEffect(() => {
@@ -284,9 +298,9 @@ export function SubjectMentionsModal() {
                         <button
                           type="button"
                           data-active={
-                            mention.globalIdx === safeIdx ? "true" : undefined
+                            mention.globalIdx === activeIdx ? "true" : undefined
                           }
-                          className={`${styles.mentionItem} ${styles.mentionItemRow} ${mention.globalIdx === safeIdx ? styles.mentionItemActive : ""}`}
+                          className={`${styles.mentionItem} ${styles.mentionItemRow} ${mention.globalIdx === activeIdx ? styles.mentionItemActive : ""}`}
                           onClick={() => handleNav(mention.globalIdx)}
                         >
                           <span className={`mono ${styles.mentionArticle}`}>
@@ -348,9 +362,9 @@ export function SubjectMentionsModal() {
               onClick={() =>
                 isPartsMode
                   ? handleNavPart(safePartIdx - 1)
-                  : handleNav(safeIdx - 1)
+                  : handleNav(activeIdx - 1)
               }
-              disabled={isPartsMode ? safePartIdx <= 0 : safeIdx <= 0}
+              disabled={isPartsMode ? safePartIdx <= 0 : activeIdx <= 0}
             >
               ← Попередня
             </button>
@@ -360,7 +374,7 @@ export function SubjectMentionsModal() {
                   ? `${safePartIdx + 1} / ${partMentions.length}`
                   : "—"
                 : articleMentions.length > 0
-                  ? `${safeIdx + 1} / ${articleMentions.length}`
+                  ? `${activeIdx + 1} / ${articleMentions.length}`
                   : "—"}
             </span>
             <button
@@ -369,12 +383,12 @@ export function SubjectMentionsModal() {
               onClick={() =>
                 isPartsMode
                   ? handleNavPart(safePartIdx + 1)
-                  : handleNav(safeIdx + 1)
+                  : handleNav(activeIdx + 1)
               }
               disabled={
                 isPartsMode
                   ? safePartIdx >= partMentions.length - 1
-                  : safeIdx >= articleMentions.length - 1
+                  : activeIdx >= articleMentions.length - 1
               }
             >
               Наступна →
