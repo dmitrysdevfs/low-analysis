@@ -189,7 +189,9 @@ export async function reviewAmendment(
   id: string,
   action: "approve" | "reject",
 ): Promise<Amendment> {
-  return requestJson<Amendment>(`/amendments/${id}/review`, "PATCH", { action });
+  return requestJson<Amendment>(`/amendments/${id}/review`, "PATCH", {
+    action,
+  });
 }
 
 // Approve or reject a proposal submitted for review

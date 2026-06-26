@@ -390,7 +390,9 @@ function GroupsView() {
                       <Clock3 size={12} />
                       {new Date(group.updatedAt).toLocaleDateString("uk-UA")}
                     </span>
-                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <div
+                      style={{ display: "flex", gap: 8, alignItems: "center" }}
+                    >
                       {confirmDeleteId === group._id ? (
                         <>
                           <button
@@ -404,7 +406,12 @@ function GroupsView() {
                           <button
                             type="button"
                             className="btn btn-primary"
-                            style={{ fontSize: "0.75rem", padding: "3px 8px", background: "#c0392b", borderColor: "#c0392b" }}
+                            style={{
+                              fontSize: "0.75rem",
+                              padding: "3px 8px",
+                              background: "#c0392b",
+                              borderColor: "#c0392b",
+                            }}
                             disabled={archiveGroup.isPending}
                             onClick={async () => {
                               try {
@@ -424,7 +431,13 @@ function GroupsView() {
                         <button
                           type="button"
                           title="Видалити групу"
-                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-smoke)", padding: "2px 4px" }}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "var(--color-smoke)",
+                            padding: "2px 4px",
+                          }}
                           onClick={() => setConfirmDeleteId(group._id)}
                         >
                           <Trash2 size={14} />

@@ -57,7 +57,12 @@ const router = express.Router();
 router.get('/', groupsController.listPublicGroups);
 
 // Authenticated; static paths must come before parameterised /:id
-router.post('/', protect, authorize('supervisor', 'admin'), groupsController.createGroup);
+router.post(
+  '/',
+  protect,
+  authorize('supervisor', 'admin'),
+  groupsController.createGroup,
+);
 
 /**
  * @swagger

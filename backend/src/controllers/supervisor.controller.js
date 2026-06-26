@@ -73,7 +73,10 @@ const getSupervisorMemberIds = async (supervisorId, isAdmin = false) => {
 
 export const getGroupProposals = async (req, res, next) => {
   try {
-    const memberIds = await getSupervisorMemberIds(req.user._id, req.user.role === 'admin');
+    const memberIds = await getSupervisorMemberIds(
+      req.user._id,
+      req.user.role === 'admin',
+    );
     const proposals = await proposalService.getProposalsByUserIds(memberIds);
     res.json(proposals);
   } catch (err) {
@@ -83,7 +86,10 @@ export const getGroupProposals = async (req, res, next) => {
 
 export const getGroupAmendments = async (req, res, next) => {
   try {
-    const memberIds = await getSupervisorMemberIds(req.user._id, req.user.role === 'admin');
+    const memberIds = await getSupervisorMemberIds(
+      req.user._id,
+      req.user.role === 'admin',
+    );
     const amendments = await amendmentService.getAmendmentsByUserIds(memberIds);
     res.json(amendments);
   } catch (err) {

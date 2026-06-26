@@ -17,7 +17,12 @@ import type { AdminDashboardSnapshot } from "@/lib/auth/mockAuth";
 import type { LegislatorAccessRequest } from "@/types/law-change.types";
 import { buildBillingEntry, mapApiToSnapshot } from "./mapAdminData";
 
-type AccountAction = "deactivate" | "promote" | "setLegislator" | "setSupervisor" | "forceLogout";
+type AccountAction =
+  | "deactivate"
+  | "promote"
+  | "setLegislator"
+  | "setSupervisor"
+  | "forceLogout";
 
 async function writeClipboard(value: string) {
   if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) {

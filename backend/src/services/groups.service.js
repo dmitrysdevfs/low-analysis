@@ -98,9 +98,10 @@ export const getGroupById = async (groupId, requestingUserId = null) => {
 
   if (group.visibility === 'invite_only' && requestingUserId) {
     const isMember = group.members.some(
-      (m) => String(m.userId?._id || m.userId) === String(requestingUserId)
+      (m) => String(m.userId?._id || m.userId) === String(requestingUserId),
     );
-    const isSupervisor = String(group.supervisorId) === String(requestingUserId);
+    const isSupervisor =
+      String(group.supervisorId) === String(requestingUserId);
     if (!isMember && !isSupervisor) {
       const err = new Error('Access denied: group is invite only');
       err.statusCode = 403;
@@ -167,7 +168,12 @@ export const getMyRequests = async (userId) => {
 /**
  * Submit a join request for a group.
  */
-export const createRequest = async (groupId, userId, message, role = 'user') => {
+export const createRequest = async (
+  groupId,
+  userId,
+  message,
+  role = 'user',
+) => {
   const group = await Group.findById(groupId);
   if (!group) {
     const err = new Error('Group not found');
@@ -376,9 +382,11 @@ export const getGroupActivity = async (groupId, userId) => {
   }
 
   const isSupervisor = userId && String(group.supervisorId) === String(userId);
-  const isMember = userId && group.members.some(
-    (m) => String(m.userId?._id || m.userId) === String(userId)
-  );
+  const isMember =
+    userId &&
+    group.members.some(
+      (m) => String(m.userId?._id || m.userId) === String(userId),
+    );
 
   if (userId && !isSupervisor && !isMember) {
     const err = new Error('Access denied');

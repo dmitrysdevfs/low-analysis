@@ -99,7 +99,10 @@ export function LegislatorAccessRequestForm({
       <div className={styles.roleCard}>
         <div className={styles.roleActive}>
           <span className={styles.checkIcon}>✓</span>
-          <span>Ви адміністратор — маєте повний доступ до всіх ролей без подачі заявки.</span>
+          <span>
+            Ви адміністратор — маєте повний доступ до всіх ролей без подачі
+            заявки.
+          </span>
         </div>
       </div>
     );
@@ -252,21 +255,23 @@ function RequestForm({
       </h3>
 
       {!lockRole && (
-      <div className={styles.roleToggle}>
-        {(["legislator", "supervisor"] as RequestedRole[]).map((role) => (
-          <button
-            key={role}
-            type="button"
-            className={`${styles.roleOption} ${selectedRole === role ? styles.roleOptionActive : ""}`}
-            onClick={() => setSelectedRole(role)}
-          >
-            <span className={styles.roleOptionLabel}>{ROLE_LABELS[role]}</span>
-            <span className={styles.roleOptionDesc}>
-              {ROLE_DESCRIPTIONS[role]}
-            </span>
-          </button>
-        ))}
-      </div>
+        <div className={styles.roleToggle}>
+          {(["legislator", "supervisor"] as RequestedRole[]).map((role) => (
+            <button
+              key={role}
+              type="button"
+              className={`${styles.roleOption} ${selectedRole === role ? styles.roleOptionActive : ""}`}
+              onClick={() => setSelectedRole(role)}
+            >
+              <span className={styles.roleOptionLabel}>
+                {ROLE_LABELS[role]}
+              </span>
+              <span className={styles.roleOptionDesc}>
+                {ROLE_DESCRIPTIONS[role]}
+              </span>
+            </button>
+          ))}
+        </div>
       )}
 
       <div className={styles.field}>

@@ -244,35 +244,71 @@ function ForksPageContent() {
     useState<AddChangeForm>(EMPTY_CHANGE_FORM);
 
   const [forkLawSearch, setForkLawSearch] = useState("");
-  const [forkLawOptions, setForkLawOptions] = useState<Array<{_id: string; title: string; code: string}>>([]);
-  const [forkSelectedLaw, setForkSelectedLaw] = useState<{_id: string; title: string; code: string} | null>(null);
+  const [forkLawOptions, setForkLawOptions] = useState<
+    Array<{ _id: string; title: string; code: string }>
+  >([]);
+  const [forkSelectedLaw, setForkSelectedLaw] = useState<{
+    _id: string;
+    title: string;
+    code: string;
+  } | null>(null);
   const [forkShowLawDropdown, setForkShowLawDropdown] = useState(false);
-  const [forkTreeItems, setForkTreeItems] = useState<Array<{_id: string; number: string; title: string; type: string; text?: string}>>([]);
+  const [forkTreeItems, setForkTreeItems] = useState<
+    Array<{
+      _id: string;
+      number: string;
+      title: string;
+      type: string;
+      text?: string;
+    }>
+  >([]);
 
   const searchForkLaws = async (q: string) => {
-    if (q.length < 2) { setForkLawOptions([]); return; }
+    if (q.length < 2) {
+      setForkLawOptions([]);
+      return;
+    }
     try {
-      const res = await fetch(`/api/laws?q=${encodeURIComponent(q)}&limit=10`, { credentials: 'include' });
+      const res = await fetch(`/api/laws?q=${encodeURIComponent(q)}&limit=10`, {
+        credentials: "include",
+      });
       const data = await res.json();
-      setForkLawOptions(Array.isArray(data) ? data : (data.data || data.laws || []));
-    } catch { setForkLawOptions([]); }
+      setForkLawOptions(
+        Array.isArray(data) ? data : data.data || data.laws || [],
+      );
+    } catch {
+      setForkLawOptions([]);
+    }
   };
 
   const loadForkLawTree = async (lawId: string) => {
     try {
-      const res = await fetch(`/api/laws/${lawId}/tree`, { credentials: 'include' });
+      const res = await fetch(`/api/laws/${lawId}/tree`, {
+        credentials: "include",
+      });
       const data = await res.json();
-      type TreeNode = { _id: string; number: string; title: string; type: string; text?: string; children?: TreeNode[] };
+      type TreeNode = {
+        _id: string;
+        number: string;
+        title: string;
+        type: string;
+        text?: string;
+        children?: TreeNode[];
+      };
       const flat: TreeNode[] = [];
       function flatten(nodes: TreeNode[]) {
-        for (const n of (nodes || [])) {
+        for (const n of nodes || []) {
           flat.push(n);
           if (n.children?.length) flatten(n.children);
         }
       }
       flatten(data.tree || data.elements || data || []);
-      setForkTreeItems(flat.filter(n => n.type === 'article' || n.type === 'chapter'));
-    } catch { setForkTreeItems([]); }
+      setForkTreeItems(
+        flat.filter((n) => n.type === "article" || n.type === "chapter"),
+      );
+    } catch {
+      setForkTreeItems([]);
+    }
   };
 
   const allForks = forks ?? [];
@@ -500,12 +536,16 @@ function ForksPageContent() {
             >
               <div className={styles.field}>
                 <span>Закон *</span>
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: "relative" }}>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="Пошук закону за назвою..."
-                    value={forkSelectedLaw ? `${forkSelectedLaw.code} — ${forkSelectedLaw.title}` : forkLawSearch}
+                    value={
+                      forkSelectedLaw
+                        ? `${forkSelectedLaw.code} — ${forkSelectedLaw.title}`
+                        : forkLawSearch
+                    }
                     onChange={(e) => {
                       setForkSelectedLaw(null);
                       setForkTreeItems([]);
@@ -513,16 +553,36 @@ function ForksPageContent() {
                       setForkShowLawDropdown(true);
                       searchForkLaws(e.target.value);
                     }}
-                    onFocus={() => { if (!forkSelectedLaw) setForkShowLawDropdown(true); }}
-                    onBlur={() => setTimeout(() => setForkShowLawDropdown(false), 150)}
+                    onFocus={() => {
+                      if (!forkSelectedLaw) setForkShowLawDropdown(true);
+                    }}
+                    onBlur={() =>
+                      setTimeout(() => setForkShowLawDropdown(false), 150)
+                    }
                     autoFocus
                   />
                   {forkShowLawDropdown && forkLawOptions.length > 0 && (
-                    <ul style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--bg-secondary, #1a1a2e)', border: '1px solid var(--border, #333)', zIndex: 100, listStyle: 'none', margin: 0, padding: 0, maxHeight: 200, overflowY: 'auto', borderRadius: 4 }}>
+                    <ul
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        right: 0,
+                        background: "var(--bg-secondary, #1a1a2e)",
+                        border: "1px solid var(--border, #333)",
+                        zIndex: 100,
+                        listStyle: "none",
+                        margin: 0,
+                        padding: 0,
+                        maxHeight: 200,
+                        overflowY: "auto",
+                        borderRadius: 4,
+                      }}
+                    >
                       {forkLawOptions.map((law) => (
                         <li
                           key={law._id}
-                          style={{ padding: '8px 12px', cursor: 'pointer' }}
+                          style={{ padding: "8px 12px", cursor: "pointer" }}
                           onMouseDown={() => {
                             setForkSelectedLaw(law);
                             setForkLawSearch("");
@@ -612,7 +672,9 @@ function ForksPageContent() {
                     className="form-control form-select"
                     value={changeForm.elementId}
                     onChange={(e) => {
-                      const el = forkTreeItems.find(n => n._id === e.target.value);
+                      const el = forkTreeItems.find(
+                        (n) => n._id === e.target.value,
+                      );
                       setChangeForm((prev) => ({
                         ...prev,
                         elementId: e.target.value,
@@ -625,7 +687,10 @@ function ForksPageContent() {
                     <option value="">— Оберіть елемент —</option>
                     {forkTreeItems.map((el) => (
                       <option key={el._id} value={el._id}>
-                        {el.type === 'article' ? `Ст. ${el.number}` : `${el.type} ${el.number}`}{el.title ? ` — ${el.title}` : ''}
+                        {el.type === "article"
+                          ? `Ст. ${el.number}`
+                          : `${el.type} ${el.number}`}
+                        {el.title ? ` — ${el.title}` : ""}
                       </option>
                     ))}
                   </select>

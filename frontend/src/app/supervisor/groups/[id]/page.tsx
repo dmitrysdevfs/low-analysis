@@ -249,7 +249,9 @@ function SupervisorGroupView() {
     lawDebounceRef.current = setTimeout(async () => {
       const results = await getLaws(lawAddQuery).catch(() => []);
       setLawSuggestions(
-        results.slice(0, 8).map((l) => ({ _id: l._id, title: l.title, code: l.code ?? "" })),
+        results
+          .slice(0, 8)
+          .map((l) => ({ _id: l._id, title: l.title, code: l.code ?? "" })),
       );
     }, 300);
   }, [lawAddQuery]);
@@ -474,26 +476,35 @@ function SupervisorGroupView() {
         </aside>
       </section>
 
-      <nav style={{ display: 'flex', gap: 8, padding: '16px 32px', borderBottom: '1px solid var(--color-border)', background: 'var(--bg-panel, #0d0d1a)', flexWrap: 'wrap' }}>
+      <nav
+        style={{
+          display: "flex",
+          gap: 8,
+          padding: "16px 32px",
+          borderBottom: "1px solid var(--color-border)",
+          background: "var(--bg-panel, #0d0d1a)",
+          flexWrap: "wrap",
+        }}
+      >
         {[
-          { label: '👥 Учасники', href: '#members' },
-          { label: '📄 Пропозиції', href: ROUTES.supervisorProposals },
-          { label: '✏️ Правки', href: ROUTES.supervisorAmendments },
-          { label: '🔀 Форки', href: ROUTES.supervisorForks },
-          { label: '⚖️ Закони', href: ROUTES.laws },
-          { label: '📊 Аналітика', href: ROUTES.supervisorAnalytics },
+          { label: "👥 Учасники", href: "#members" },
+          { label: "📄 Пропозиції", href: ROUTES.supervisorProposals },
+          { label: "✏️ Правки", href: ROUTES.supervisorAmendments },
+          { label: "🔀 Форки", href: ROUTES.supervisorForks },
+          { label: "⚖️ Закони", href: ROUTES.laws },
+          { label: "📊 Аналітика", href: ROUTES.supervisorAnalytics },
         ].map((item) => (
           <Link
             key={item.label}
             href={item.href}
             style={{
-              padding: '6px 14px',
+              padding: "6px 14px",
               borderRadius: 6,
-              border: '1px solid var(--color-border)',
-              fontSize: '0.85rem',
-              color: 'var(--color-text)',
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
+              border: "1px solid var(--color-border)",
+              fontSize: "0.85rem",
+              color: "var(--color-text)",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
             }}
           >
             {item.label}
@@ -980,7 +991,13 @@ function SupervisorGroupView() {
                             ? `${lawRow.changeCount} змін у потоці`
                             : "Ще без змін"}
                         </span>
-                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: 8,
+                            alignItems: "center",
+                          }}
+                        >
                           <Link
                             href={ROUTES.law(law._id)}
                             className={styles.inlineLink}

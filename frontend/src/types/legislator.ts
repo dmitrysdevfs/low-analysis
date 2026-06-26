@@ -23,7 +23,7 @@ export interface Amendment {
     neutral: number;
     negative: number;
   };
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
   createdAt: string;
   updatedAt: string;
 }

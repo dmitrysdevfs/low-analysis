@@ -188,36 +188,63 @@ function CreateProposalModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [lawSearch, setLawSearch] = useState("");
-  const [lawOptions, setLawOptions] = useState<Array<{_id: string; title: string; code: string}>>([]);
-  const [selectedLaw, setSelectedLaw] = useState<{_id: string; title: string; code: string} | null>(null);
+  const [lawOptions, setLawOptions] = useState<
+    Array<{ _id: string; title: string; code: string }>
+  >([]);
+  const [selectedLaw, setSelectedLaw] = useState<{
+    _id: string;
+    title: string;
+    code: string;
+  } | null>(null);
   const [showLawDropdown, setShowLawDropdown] = useState(false);
-  const [treeItems, setTreeItems] = useState<Array<{_id: string; number: string; title: string; type: string}>>([]);
+  const [treeItems, setTreeItems] = useState<
+    Array<{ _id: string; number: string; title: string; type: string }>
+  >([]);
   const [selectedElementId, setSelectedElementId] = useState("");
 
   const searchLaws = async (q: string) => {
-    if (q.length < 2) { setLawOptions([]); return; }
+    if (q.length < 2) {
+      setLawOptions([]);
+      return;
+    }
     try {
-      const res = await fetch(`/api/laws?q=${encodeURIComponent(q)}&limit=10`, { credentials: 'include' });
+      const res = await fetch(`/api/laws?q=${encodeURIComponent(q)}&limit=10`, {
+        credentials: "include",
+      });
       const data = await res.json();
-      setLawOptions(Array.isArray(data) ? data : (data.data || data.laws || []));
-    } catch { setLawOptions([]); }
+      setLawOptions(Array.isArray(data) ? data : data.data || data.laws || []);
+    } catch {
+      setLawOptions([]);
+    }
   };
 
   const loadLawTree = async (lawId: string) => {
     try {
-      const res = await fetch(`/api/laws/${lawId}/tree`, { credentials: 'include' });
+      const res = await fetch(`/api/laws/${lawId}/tree`, {
+        credentials: "include",
+      });
       const data = await res.json();
-      type TreeNode = { _id: string; number: string; title: string; type: string; children?: TreeNode[] };
+      type TreeNode = {
+        _id: string;
+        number: string;
+        title: string;
+        type: string;
+        children?: TreeNode[];
+      };
       const flat: TreeNode[] = [];
       function flatten(nodes: TreeNode[]) {
-        for (const n of (nodes || [])) {
+        for (const n of nodes || []) {
           flat.push(n);
           if (n.children?.length) flatten(n.children);
         }
       }
       flatten(data.tree || data.elements || data || []);
-      setTreeItems(flat.filter(n => n.type === 'article' || n.type === 'chapter'));
-    } catch { setTreeItems([]); }
+      setTreeItems(
+        flat.filter((n) => n.type === "article" || n.type === "chapter"),
+      );
+    } catch {
+      setTreeItems([]);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -266,12 +293,16 @@ function CreateProposalModal({
           </label>
           <div className={styles.field}>
             <span>Закон</span>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: "relative" }}>
               <input
                 className="form-control"
                 type="text"
                 placeholder="Пошук закону за назвою..."
-                value={selectedLaw ? `${selectedLaw.code} — ${selectedLaw.title}` : lawSearch}
+                value={
+                  selectedLaw
+                    ? `${selectedLaw.code} — ${selectedLaw.title}`
+                    : lawSearch
+                }
                 onChange={(e) => {
                   setSelectedLaw(null);
                   setSelectedElementId("");
@@ -280,15 +311,33 @@ function CreateProposalModal({
                   setShowLawDropdown(true);
                   searchLaws(e.target.value);
                 }}
-                onFocus={() => { if (!selectedLaw) setShowLawDropdown(true); }}
+                onFocus={() => {
+                  if (!selectedLaw) setShowLawDropdown(true);
+                }}
                 onBlur={() => setTimeout(() => setShowLawDropdown(false), 150)}
               />
               {showLawDropdown && lawOptions.length > 0 && (
-                <ul style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--bg-secondary, #1a1a2e)', border: '1px solid var(--border, #333)', zIndex: 100, listStyle: 'none', margin: 0, padding: 0, maxHeight: 200, overflowY: 'auto', borderRadius: 4 }}>
+                <ul
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    background: "var(--bg-secondary, #1a1a2e)",
+                    border: "1px solid var(--border, #333)",
+                    zIndex: 100,
+                    listStyle: "none",
+                    margin: 0,
+                    padding: 0,
+                    maxHeight: 200,
+                    overflowY: "auto",
+                    borderRadius: 4,
+                  }}
+                >
                   {lawOptions.map((law) => (
                     <li
                       key={law._id}
-                      style={{ padding: '8px 12px', cursor: 'pointer' }}
+                      style={{ padding: "8px 12px", cursor: "pointer" }}
                       onMouseDown={() => {
                         setSelectedLaw(law);
                         setLawSearch("");
@@ -310,10 +359,15 @@ function CreateProposalModal({
                 value={selectedElementId}
                 onChange={(e) => setSelectedElementId(e.target.value)}
               >
-                <option value="">— Весь закон (без прив&apos;язки до статті) —</option>
+                <option value="">
+                  — Весь закон (без прив&apos;язки до статті) —
+                </option>
                 {treeItems.map((el) => (
                   <option key={el._id} value={el._id}>
-                    {el.type === 'article' ? `Ст. ${el.number}` : `${el.type} ${el.number}`}{el.title ? ` — ${el.title}` : ''}
+                    {el.type === "article"
+                      ? `Ст. ${el.number}`
+                      : `${el.type} ${el.number}`}
+                    {el.title ? ` — ${el.title}` : ""}
                   </option>
                 ))}
               </select>

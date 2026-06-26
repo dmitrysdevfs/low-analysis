@@ -23,7 +23,10 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import { useSupervisorGroupAmendments, useReviewAmendment } from "@/hooks/useSupervisor";
+import {
+  useSupervisorGroupAmendments,
+  useReviewAmendment,
+} from "@/hooks/useSupervisor";
 import type { Amendment, AmendmentChangeType } from "@/types/legislator";
 import styles from "./page.module.scss";
 
@@ -186,9 +189,9 @@ function ChangeBadge({ type }: { type: AmendmentChangeType }) {
 }
 
 function getAmendmentStatus(a: Amendment): FilterStatus {
-  if (a.status === 'approved') return 'approved';
-  if (a.status === 'rejected') return 'rejected';
-  return 'pending';
+  if (a.status === "approved") return "approved";
+  if (a.status === "rejected") return "rejected";
+  return "pending";
 }
 
 function getAuthorName(created_by: Amendment["created_by"]): string {
@@ -205,7 +208,14 @@ interface AmendmentRowProps {
   isReviewing: boolean;
 }
 
-function AmendmentRow({ amendment: a, isOpen, onToggle, onApprove, onReject, isReviewing }: AmendmentRowProps) {
+function AmendmentRow({
+  amendment: a,
+  isOpen,
+  onToggle,
+  onApprove,
+  onReject,
+  isReviewing,
+}: AmendmentRowProps) {
   const articleNum = a.context.article_num ?? "—";
   const articleTitle = a.context.article_title ?? "";
   const date = new Date(a.createdAt).toLocaleDateString("uk-UA");
@@ -281,13 +291,19 @@ function AmendmentsView() {
 
   const handleApprove = async (id: string) => {
     setReviewingId(id);
-    try { await reviewMutation.mutateAsync({ id, action: 'approve' }); }
-    finally { setReviewingId(null); }
+    try {
+      await reviewMutation.mutateAsync({ id, action: "approve" });
+    } finally {
+      setReviewingId(null);
+    }
   };
   const handleReject = async (id: string) => {
     setReviewingId(id);
-    try { await reviewMutation.mutateAsync({ id, action: 'reject' }); }
-    finally { setReviewingId(null); }
+    try {
+      await reviewMutation.mutateAsync({ id, action: "reject" });
+    } finally {
+      setReviewingId(null);
+    }
   };
 
   const [filterType, setFilterType] = useState<FilterType>("all");

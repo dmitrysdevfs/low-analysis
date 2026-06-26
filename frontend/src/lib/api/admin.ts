@@ -228,9 +228,12 @@ export const adminApi = {
       limit: String(opts?.limit ?? 50),
     });
     if (opts?.q) params.set("q", opts.q);
-    return adminFetch<{ users: AdminUserRecord[]; total: number; page: number; limit: number }>(
-      `/users?${params}`,
-    );
+    return adminFetch<{
+      users: AdminUserRecord[];
+      total: number;
+      page: number;
+      limit: number;
+    }>(`/users?${params}`);
   },
 
   setUserStatus: (id: string, status: "active" | "inactive") =>

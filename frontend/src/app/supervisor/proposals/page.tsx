@@ -22,7 +22,10 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import { useSupervisorGroupProposals, useReviewProposal } from "@/hooks/useSupervisor";
+import {
+  useSupervisorGroupProposals,
+  useReviewProposal,
+} from "@/hooks/useSupervisor";
 import type { Proposal, ProposalStatus } from "@/types/legislator";
 import styles from "./page.module.scss";
 
@@ -317,7 +320,10 @@ function ProposalsView() {
                   <td className={styles.td}>
                     {new Date(p.createdAt).toLocaleDateString("uk-UA")}
                   </td>
-                  <td className={styles.td} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  <td
+                    className={styles.td}
+                    style={{ display: "flex", gap: 6, alignItems: "center" }}
+                  >
                     <Link
                       href={`/laws/${getLawId(p.law_id)}`}
                       className={styles.btnSm}
@@ -329,7 +335,11 @@ function ProposalsView() {
                         <button
                           type="button"
                           className={styles.btnSm}
-                          style={{ background: "rgba(82,183,136,0.15)", color: "#52b788", border: "1px solid rgba(82,183,136,0.3)" }}
+                          style={{
+                            background: "rgba(82,183,136,0.15)",
+                            color: "#52b788",
+                            border: "1px solid rgba(82,183,136,0.3)",
+                          }}
                           disabled={reviewingId === p._id}
                           onClick={() => handleReview(p._id, "approve")}
                         >
@@ -338,7 +348,11 @@ function ProposalsView() {
                         <button
                           type="button"
                           className={styles.btnSm}
-                          style={{ background: "rgba(233,119,75,0.15)", color: "#e9774b", border: "1px solid rgba(233,119,75,0.3)" }}
+                          style={{
+                            background: "rgba(233,119,75,0.15)",
+                            color: "#e9774b",
+                            border: "1px solid rgba(233,119,75,0.3)",
+                          }}
                           disabled={reviewingId === p._id}
                           onClick={() => handleReview(p._id, "reject")}
                         >

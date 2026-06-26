@@ -11,7 +11,12 @@ import {
 import type { AdminAccountSummary } from "@/lib/auth/mockAuth";
 import styles from "./AdminWorkspace.module.scss";
 
-type AccountAction = "deactivate" | "promote" | "setLegislator" | "setSupervisor" | "forceLogout";
+type AccountAction =
+  | "deactivate"
+  | "promote"
+  | "setLegislator"
+  | "setSupervisor"
+  | "forceLogout";
 
 export interface AdminUserRowProps {
   account: AdminAccountSummary;

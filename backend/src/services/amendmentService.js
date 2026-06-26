@@ -150,7 +150,8 @@ export const getAmendmentsByUserIds = async (userIds) => {
 
 export const reviewAmendment = async (id, action) => {
   const amendment = await Amendment.findById(id);
-  if (!amendment) throw Object.assign(new Error('Amendment not found'), { statusCode: 404 });
+  if (!amendment)
+    throw Object.assign(new Error('Amendment not found'), { statusCode: 404 });
   amendment.status = action === 'approve' ? 'approved' : 'rejected';
   return amendment.save();
 };

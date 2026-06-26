@@ -128,7 +128,9 @@ function normalizeGroupToSupervisorSchema(group) {
 }
 
 async function loadSupervisorGroups(supervisorId) {
-  const filter = supervisorId ? { supervisorId, status: 'active' } : { status: 'active' };
+  const filter = supervisorId
+    ? { supervisorId, status: 'active' }
+    : { status: 'active' };
   const groups = await Group.find(filter)
     .populate('trackedLaws', 'title code')
     .populate('members.userId', 'fullName email role')

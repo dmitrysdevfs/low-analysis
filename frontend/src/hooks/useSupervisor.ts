@@ -139,8 +139,13 @@ export function useReviewProposal() {
 export function useReviewAmendment() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, action }: { id: string; action: "approve" | "reject" }) =>
-      reviewAmendment(id, action),
+    mutationFn: ({
+      id,
+      action,
+    }: {
+      id: string;
+      action: "approve" | "reject";
+    }) => reviewAmendment(id, action),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["supervisor", "group-amendments"] });
     },

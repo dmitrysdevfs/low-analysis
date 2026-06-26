@@ -132,11 +132,7 @@ router.get('/suggestions', getSuggestions);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post(
-  '/chat/stream',
-  optionalProtect,
-  streamChat,
-);
+router.post('/chat/stream', optionalProtect, streamChat);
 
 /**
  * @swagger
@@ -196,11 +192,7 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post(
-  '/feedback',
-  optionalProtect,
-  submitFeedback,
-);
+router.post('/feedback', optionalProtect, submitFeedback);
 
 /**
  * @swagger
@@ -243,11 +235,7 @@ router.post(
  *                   description: Unix timestamp скидання лічильника
  *                   example: 1716854400000
  */
-router.get(
-  '/quota',
-  optionalProtect,
-  getQuotaStatus,
-);
+router.get('/quota', optionalProtect, getQuotaStatus);
 
 /**
  * @swagger

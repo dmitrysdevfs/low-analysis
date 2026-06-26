@@ -159,7 +159,11 @@ router.post('/analyze-subjects', authorize('admin'), enqueueAnalyzeSubjects);
  *       400:
  *         description: codes не передано або порожній/не масив
  */
-router.post('/batch-update-law-tree', authorize('admin'), enqueueBatchUpdateLawTree);
+router.post(
+  '/batch-update-law-tree',
+  authorize('admin'),
+  enqueueBatchUpdateLawTree,
+);
 
 /**
  * @swagger
