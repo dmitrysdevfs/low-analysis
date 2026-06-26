@@ -34,7 +34,7 @@ import {
 } from "@/hooks/useGroups";
 import { notify } from "@/lib/toast";
 import { getLaws } from "@/lib/api/laws";
-import type { Law } from "@/lib/api/laws";
+import type { Law } from "@/types";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
