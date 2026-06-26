@@ -32,6 +32,21 @@ export function buildMentions(
   return Array.from(map.values()).map((m, i) => ({ ...m, globalIdx: i }));
 }
 
+export function resolveCurrentMentionIndex(
+  mentions: ArticleMention[],
+  currentLawId: string | null,
+  currentArticleNum: string | null,
+): number {
+  if (!currentLawId || mentions.length === 0) return -1;
+  if (currentArticleNum) {
+    const exact = mentions.findIndex(
+      (m) => m.lawId === currentLawId && m.articleNum === currentArticleNum,
+    );
+    if (exact !== -1) return exact;
+  }
+  return mentions.findIndex((m) => m.lawId === currentLawId);
+}
+
 export function buildArticlePartsMap(
   elements: TreeNode[],
 ): Map<string, TreeNode[]> {
