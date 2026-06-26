@@ -51,6 +51,18 @@ export const protect = async (req, res, next) => {
   }
 };
 
+export const optionalProtect = async (req, res, next) => {
+  const token = extractToken(req);
+  if (!token) return next();
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id).select('-password');
+  } catch {
+    // invalid token — continue as guest
+  }
+  next();
+};
+
 /**
  * Authorize roles - checks if the user has required permissions.
  * @param {string[]} roles - Allowed roles

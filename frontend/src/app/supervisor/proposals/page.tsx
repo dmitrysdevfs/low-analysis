@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import { useSupervisorGroupProposals } from "@/hooks/useSupervisor";
+import { useSupervisorGroupProposals, useReviewProposal } from "@/hooks/useSupervisor";
 import type { Proposal, ProposalStatus } from "@/types/legislator";
 import styles from "./page.module.scss";
 
@@ -195,6 +195,17 @@ const STATUS_BADGE_CLASS: Record<ProposalStatus, string> = {
 
 function ProposalsView() {
   const { data: proposals, isLoading } = useSupervisorGroupProposals();
+  const reviewMutation = useReviewProposal();
+  const [reviewingId, setReviewingId] = useState<string | null>(null);
+
+  const handleReview = async (id: string, action: "approve" | "reject") => {
+    setReviewingId(id);
+    try {
+      await reviewMutation.mutateAsync({ id, action });
+    } finally {
+      setReviewingId(null);
+    }
+  };
 
   const [statusFilter, setStatusFilter] = useState<ProposalStatus | "all">(
     "all",
@@ -306,13 +317,35 @@ function ProposalsView() {
                   <td className={styles.td}>
                     {new Date(p.createdAt).toLocaleDateString("uk-UA")}
                   </td>
-                  <td className={styles.td}>
+                  <td className={styles.td} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     <Link
                       href={`/laws/${getLawId(p.law_id)}`}
                       className={styles.btnSm}
                     >
                       Переглянути
                     </Link>
+                    {p.status === "review" && (
+                      <>
+                        <button
+                          type="button"
+                          className={styles.btnSm}
+                          style={{ background: "rgba(82,183,136,0.15)", color: "#52b788", border: "1px solid rgba(82,183,136,0.3)" }}
+                          disabled={reviewingId === p._id}
+                          onClick={() => handleReview(p._id, "approve")}
+                        >
+                          ✓ Схвалити
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.btnSm}
+                          style={{ background: "rgba(233,119,75,0.15)", color: "#e9774b", border: "1px solid rgba(233,119,75,0.3)" }}
+                          disabled={reviewingId === p._id}
+                          onClick={() => handleReview(p._id, "reject")}
+                        >
+                          ✕ Відхилити
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

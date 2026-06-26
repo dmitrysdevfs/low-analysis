@@ -33,7 +33,9 @@ export function mapUserToAccount(user: AdminUserRecord): AdminAccountSummary {
         ? ["admin", "client"]
         : user.role === "legislator"
           ? ["client", "legislator"]
-          : ["client"],
+          : user.role === "supervisor"
+            ? ["client", "supervisor"]
+            : ["client"],
     createdAt: user.createdAt,
     lastLoginAt: user.lastLoginAt ?? user.updatedAt,
     superCodeProtected: user.role === "admin",

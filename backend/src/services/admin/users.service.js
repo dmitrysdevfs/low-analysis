@@ -4,8 +4,26 @@ import UserActivity from '../../models/UserActivity.js';
 import AuditLog from '../../models/AuditLog.js';
 import { appendAuditEntry } from './audit.service.js';
 
-export const listUsers = async () => {
-  return await User.find().select('-password').sort({ createdAt: -1 }).lean();
+export const listUsers = async ({ q = '', page = 1, limit = 50 } = {}) => {
+  const filter = q
+    ? {
+        $or: [
+          { fullName: { $regex: q, $options: 'i' } },
+          { email: { $regex: q, $options: 'i' } },
+        ],
+      }
+    : {};
+  const skip = (page - 1) * limit;
+  const [users, total] = await Promise.all([
+    User.find(filter)
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    User.countDocuments(filter),
+  ]);
+  return { users, total, page, limit };
 };
 
 export const setUserStatus = async (id, status, actor) => {

@@ -53,13 +53,19 @@ function formatDuration(ms: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-export function LegislatorAccessRequestForm() {
-  const { isLegislator, isSupervisor } = useAuth();
+export function LegislatorAccessRequestForm({
+  defaultRole = "legislator",
+  lockRole = false,
+}: {
+  defaultRole?: RequestedRole;
+  lockRole?: boolean;
+}) {
+  const { isLegislator, isSupervisor, isAdmin } = useAuth();
   const { data: request, isLoading } = useMyAccessRequest();
   const submit = useSubmitAccessRequest();
   const revoke = useRevokeRole();
 
-  const [selectedRole, setSelectedRole] = useState<RequestedRole>("legislator");
+  const [selectedRole, setSelectedRole] = useState<RequestedRole>(defaultRole);
   const [organization, setOrganization] = useState("");
   const [reason, setReason] = useState("");
 
@@ -86,6 +92,17 @@ export function LegislatorAccessRequestForm() {
 
   if (isLoading) {
     return <div className={styles.loading}>Завантаження...</div>;
+  }
+
+  if (isAdmin) {
+    return (
+      <div className={styles.roleCard}>
+        <div className={styles.roleActive}>
+          <span className={styles.checkIcon}>✓</span>
+          <span>Ви адміністратор — маєте повний доступ до всіх ролей без подачі заявки.</span>
+        </div>
+      </div>
+    );
   }
 
   // User already has a special role — offer to revoke it
@@ -172,6 +189,7 @@ export function LegislatorAccessRequestForm() {
           <RequestForm
             selectedRole={selectedRole}
             setSelectedRole={setSelectedRole}
+            lockRole={lockRole}
             organization={organization}
             setOrganization={setOrganization}
             reason={reason}
@@ -190,6 +208,7 @@ export function LegislatorAccessRequestForm() {
     <RequestForm
       selectedRole={selectedRole}
       setSelectedRole={setSelectedRole}
+      lockRole={lockRole}
       organization={organization}
       setOrganization={setOrganization}
       reason={reason}
@@ -204,6 +223,7 @@ export function LegislatorAccessRequestForm() {
 interface RequestFormProps {
   selectedRole: RequestedRole;
   setSelectedRole: (r: RequestedRole) => void;
+  lockRole?: boolean;
   organization: string;
   setOrganization: (v: string) => void;
   reason: string;
@@ -216,6 +236,7 @@ interface RequestFormProps {
 function RequestForm({
   selectedRole,
   setSelectedRole,
+  lockRole = false,
   organization,
   setOrganization,
   reason,
@@ -226,8 +247,11 @@ function RequestForm({
 }: RequestFormProps) {
   return (
     <form className={styles.form} onSubmit={onSubmit}>
-      <h3 className={styles.title}>Запит на роль</h3>
+      <h3 className={styles.title}>
+        Запит на роль {lockRole ? ROLE_LABELS[selectedRole] : ""}
+      </h3>
 
+      {!lockRole && (
       <div className={styles.roleToggle}>
         {(["legislator", "supervisor"] as RequestedRole[]).map((role) => (
           <button
@@ -243,6 +267,7 @@ function RequestForm({
           </button>
         ))}
       </div>
+      )}
 
       <div className={styles.field}>
         <label className={styles.label}>Організація</label>

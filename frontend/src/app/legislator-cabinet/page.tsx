@@ -172,7 +172,7 @@ function AccessGate() {
           Цей workspace призначений для законотворців. Тут ви можете керувати
           пропозиціями, поправками та форками законопроектів.
         </p>
-        <LegislatorAccessRequestForm />
+        <LegislatorAccessRequestForm defaultRole="legislator" lockRole />
       </div>
     </div>
   );

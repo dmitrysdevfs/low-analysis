@@ -12,6 +12,7 @@ import {
   getGroupForks,
   reviewGroupFork,
   reviewProposal,
+  reviewAmendment,
 } from "@/lib/api/supervisor";
 
 const KEYS = {
@@ -131,6 +132,17 @@ export function useReviewProposal() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["changes"] });
       qc.invalidateQueries({ queryKey: ["proposals"] });
+    },
+  });
+}
+
+export function useReviewAmendment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, action }: { id: string; action: "approve" | "reject" }) =>
+      reviewAmendment(id, action),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["supervisor", "group-amendments"] });
     },
   });
 }

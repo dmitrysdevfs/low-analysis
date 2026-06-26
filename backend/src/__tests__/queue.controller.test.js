@@ -10,7 +10,7 @@ vi.mock('../modules/queue/queue.client.js', () => ({
 
 vi.mock('../middleware/authMiddleware.js', () => ({
   protect: (req, _res, next) => {
-    req.user = { _id: 'test-user-id', role: 'user' };
+    req.user = { _id: 'test-user-id', role: 'admin' };
     next();
   },
   authorize: () => (_req, _res, next) => next(),

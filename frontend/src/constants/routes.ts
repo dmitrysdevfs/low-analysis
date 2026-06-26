@@ -70,6 +70,7 @@ export const ROUTES = {
   rolesUser: "/roles/user",
   rolesLawmaker: "/roles/lawmaker",
   rolesSupervisor: "/roles/supervisor",
+  rolesSupervisorRequest: "/roles/supervisor/request",
   rolesAdmin: "/roles/admin",
   supervisorDashboard: "/supervisor/dashboard",
   supervisorGroups: "/supervisor/groups",

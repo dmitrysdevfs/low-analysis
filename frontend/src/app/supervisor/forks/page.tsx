@@ -28,9 +28,7 @@ import {
   useSupervisorGroupForks,
   useReviewGroupFork,
 } from "@/hooks/useSupervisor";
-import { useMyGraphForks } from "@/hooks/useGraphForks";
 import type { LawFork } from "@/lib/api/forks";
-import type { GraphFork } from "@/lib/api/graphForks";
 import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
 
@@ -239,7 +237,6 @@ function getAuthorName(authorId: LawFork["authorId"]): string {
 }
 
 type StatusFilter = "all" | LawFork["status"];
-type SectionTab = "law-forks" | "graph-forks";
 
 function LawForksSection() {
   const { data: forks, isLoading, error } = useSupervisorGroupForks();
@@ -563,172 +560,8 @@ function LawForksSection() {
   );
 }
 
-function GraphForksSection() {
-  const { data: graphForks, isLoading, error } = useMyGraphForks();
-
-  if (isLoading) {
-    return (
-      <p style={{ color: "var(--color-smoke)", padding: "40px 0" }}>
-        Завантаження...
-      </p>
-    );
-  }
-  if (error) {
-    return (
-      <p style={{ color: "#f39b9b", padding: "40px 0" }}>
-        Помилка завантаження
-      </p>
-    );
-  }
-
-  const list = graphForks ?? [];
-
-  return (
-    <div className={styles.page}>
-      <section className={`${styles.sectionPanel} panel`}>
-        <div className={styles.sectionHeader}>
-          <div>
-            <span className={styles.sectionEyebrow}>
-              SUPERVISOR · ЗБЕРЕЖЕНІ ГРАФИ
-            </span>
-            <h1
-              className={styles.sectionTitle}
-              style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)" }}
-            >
-              Мої збережені графи
-            </h1>
-          </div>
-        </div>
-      </section>
-
-      <section className={`${styles.sectionPanel} panel`}>
-        {list.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p className={styles.emptyTitle}>Збережених графів поки немає</p>
-            <p style={{ fontSize: "0.85rem", color: "var(--color-smoke)" }}>
-              Збережіть стан графу на сторінці{" "}
-              <Link
-                href={ROUTES.graph}
-                style={{ color: "var(--color-accent)" }}
-              >
-                Граф
-              </Link>
-            </p>
-          </div>
-        ) : (
-          <div className={styles.forkList}>
-            {list.map((gf: GraphFork) => {
-              const notesCount = gf.viewState?.notes?.length ?? 0;
-              const nodesCount = gf.viewState?.nodePositions?.length ?? 0;
-
-              return (
-                <article key={gf._id} className={styles.forkCard}>
-                  <div
-                    className={styles.forkCardHeader}
-                    style={{ cursor: "default" }}
-                  >
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p className={styles.forkTitle}>{gf.name}</p>
-                      {gf.description && (
-                        <p className={styles.forkLaw}>{gf.description}</p>
-                      )}
-                      <div className={styles.forkMeta}>
-                        <span
-                          style={{
-                            fontSize: "0.8rem",
-                            color: "var(--color-smoke)",
-                          }}
-                        >
-                          {nodesCount} вузлів
-                        </span>
-                        {notesCount > 0 && (
-                          <span
-                            style={{
-                              fontSize: "0.8rem",
-                              color: "var(--color-smoke)",
-                            }}
-                          >
-                            {notesCount} нотаток
-                          </span>
-                        )}
-                        <span
-                          style={{
-                            fontSize: "0.8rem",
-                            color: "var(--color-smoke)",
-                          }}
-                        >
-                          {new Date(gf.updatedAt).toLocaleDateString("uk-UA")}
-                        </span>
-                      </div>
-                    </div>
-                    <Link
-                      href={`${ROUTES.graph}?forkId=${gf._id}`}
-                      className={styles.btnSm}
-                    >
-                      Відкрити в графі →
-                    </Link>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </section>
-    </div>
-  );
-}
-
 function ForksView() {
-  const [activeSection, setActiveSection] = useState<SectionTab>("law-forks");
-
-  return (
-    <div>
-      {/* Section tabs */}
-      <div style={{ display: "flex", gap: 8, padding: "24px 32px 0" }}>
-        <button
-          type="button"
-          className={`${styles.filterSelect} ${activeSection === "law-forks" ? (styles.tabActive ?? "") : ""}`}
-          style={{
-            background:
-              activeSection === "law-forks" ? "var(--color-accent)" : undefined,
-            color: activeSection === "law-forks" ? "#fff" : undefined,
-            border: "1px solid var(--color-border)",
-            borderRadius: 6,
-            padding: "6px 18px",
-            cursor: "pointer",
-            fontWeight: activeSection === "law-forks" ? 600 : 400,
-          }}
-          onClick={() => setActiveSection("law-forks")}
-        >
-          Форки законів
-        </button>
-        <button
-          type="button"
-          style={{
-            background:
-              activeSection === "graph-forks"
-                ? "var(--color-accent)"
-                : undefined,
-            color: activeSection === "graph-forks" ? "#fff" : undefined,
-            border: "1px solid var(--color-border)",
-            borderRadius: 6,
-            padding: "6px 18px",
-            cursor: "pointer",
-            fontWeight: activeSection === "graph-forks" ? 600 : 400,
-          }}
-          onClick={() => setActiveSection("graph-forks")}
-        >
-          Збережені графи
-        </button>
-      </div>
-
-      {activeSection === "law-forks" ? (
-        <LawForksSection />
-      ) : (
-        <GraphForksSection />
-      )}
-    </div>
-  );
+  return <LawForksSection />;
 }
 
 export default function SupervisorForksPage() {

@@ -317,7 +317,7 @@ export const ROLE_DETAIL_CONFIGS: Record<RoleDetailKey, RoleDetailConfig> = {
       "Для студентів права, аналітиків і фахівців, які працюють з повноцінними правками, порівняннями редакцій та змінами на рівні проєкту закону.",
     Icon: Scale,
     primaryAction: {
-      label: "Відкрити кабінет",
+      label: "Подати запит на роль Законотворця",
       href: ROUTES.legislatorCabinet,
     },
     secondaryAction: {
@@ -427,8 +427,8 @@ export const ROLE_DETAIL_CONFIGS: Record<RoleDetailKey, RoleDetailConfig> = {
       "Для тих, хто організовує командну роботу над законами: бачить групи, контролює динаміку змін і порівнює результати роботи законотворців.",
     Icon: Users,
     primaryAction: {
-      label: "Відкрити dashboard",
-      href: ROUTES.supervisorDashboard,
+      label: "Подати запит на роль Супервізора",
+      href: ROUTES.rolesSupervisorRequest,
     },
     secondaryAction: {
       label: "Усі ролі",

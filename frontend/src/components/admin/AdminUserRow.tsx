@@ -11,7 +11,7 @@ import {
 import type { AdminAccountSummary } from "@/lib/auth/mockAuth";
 import styles from "./AdminWorkspace.module.scss";
 
-type AccountAction = "deactivate" | "promote" | "setLegislator" | "forceLogout";
+type AccountAction = "deactivate" | "promote" | "setLegislator" | "setSupervisor" | "forceLogout";
 
 export interface AdminUserRowProps {
   account: AdminAccountSummary;
@@ -102,6 +102,7 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
   const isInactive = account.status === "inactive";
   const isDev = account.source === "dev";
   const isLegislator = account.roles?.includes("legislator") ?? false;
+  const isSupervisor = account.roles?.includes("supervisor") ?? false;
   const avatarColor = hashColor(account.displayName);
 
   const [activePanel, setActivePanel] = useState<null | "info" | "actions">(
@@ -315,6 +316,17 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
               onClick={() => handleAction("setLegislator")}
             >
               {isLegislator ? "Зняти законотворця" : "Призначити законотворця"}
+            </button>
+          )}
+
+          {account.accountType !== "admin" && (
+            <button
+              type="button"
+              className={styles.rowActionItem}
+              disabled={isDev}
+              onClick={() => handleAction("setSupervisor")}
+            >
+              {isSupervisor ? "Зняти супервайзера" : "Призначити супервайзером"}
             </button>
           )}
 

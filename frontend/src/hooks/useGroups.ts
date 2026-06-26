@@ -103,6 +103,7 @@ export function useCreateGroup() {
     mutationFn: createGroup,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.invalidateQueries({ queryKey: ["supervisor"] });
     },
   });
 }
@@ -113,6 +114,7 @@ export function useArchiveGroup() {
     mutationFn: archiveGroup,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.invalidateQueries({ queryKey: ["supervisor"] });
     },
   });
 }

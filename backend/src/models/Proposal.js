@@ -8,6 +8,7 @@ const proposalSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    element_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Element', default: null },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

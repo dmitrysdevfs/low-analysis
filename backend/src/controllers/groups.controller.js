@@ -47,7 +47,7 @@ export const getMyRequests = async (req, res, next) => {
 
 export const getGroupById = async (req, res, next) => {
   try {
-    const group = await groupsService.getGroupById(req.params.id);
+    const group = await groupsService.getGroupById(req.params.id, req.user._id);
     if (!group) {
       const err = new Error('Group not found');
       err.statusCode = 404;
@@ -87,6 +87,7 @@ export const createRequest = async (req, res, next) => {
       req.params.id,
       req.user._id,
       req.body.message,
+      req.user.role,
     );
     res.status(201).json(request);
   } catch (error) {

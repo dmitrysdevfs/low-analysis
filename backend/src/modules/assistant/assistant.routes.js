@@ -9,7 +9,7 @@ import {
   deleteSession,
   getQuotaStatus,
 } from './assistant.controller.js';
-import { protect } from '../../middleware/authMiddleware.js';
+import { protect, optionalProtect } from '../../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -134,13 +134,7 @@ router.get('/suggestions', getSuggestions);
  */
 router.post(
   '/chat/stream',
-  (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      return protect(req, res, () => next());
-    }
-    next();
-  },
+  optionalProtect,
   streamChat,
 );
 
@@ -204,13 +198,7 @@ router.post(
  */
 router.post(
   '/feedback',
-  (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      return protect(req, res, () => next());
-    }
-    next();
-  },
+  optionalProtect,
   submitFeedback,
 );
 
@@ -257,13 +245,7 @@ router.post(
  */
 router.get(
   '/quota',
-  (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      return protect(req, res, () => next());
-    }
-    next();
-  },
+  optionalProtect,
   getQuotaStatus,
 );
 

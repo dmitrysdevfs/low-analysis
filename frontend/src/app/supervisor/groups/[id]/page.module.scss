@@ -357,6 +357,32 @@
   gap: 8px;
 }
 
+.lawDropdown {
+  background: #0d1f3c;
+  border: 1px solid rgba(28, 50, 96, 0.86);
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.lawDropdownItem {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #c8d6f0;
+  font-size: 0.84rem;
+  cursor: pointer;
+  line-height: 1.4;
+
+  &:hover {
+    background: rgba(28, 50, 96, 0.5);
+  }
+}
+
 .tableLawLink,
 .inlineLink {
   display: inline-flex;

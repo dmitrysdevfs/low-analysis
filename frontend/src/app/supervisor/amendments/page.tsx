@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import { useSupervisorGroupAmendments } from "@/hooks/useSupervisor";
+import { useSupervisorGroupAmendments, useReviewAmendment } from "@/hooks/useSupervisor";
 import type { Amendment, AmendmentChangeType } from "@/types/legislator";
 import styles from "./page.module.scss";
 
@@ -186,10 +186,9 @@ function ChangeBadge({ type }: { type: AmendmentChangeType }) {
 }
 
 function getAmendmentStatus(a: Amendment): FilterStatus {
-  const { positive, negative } = a.votes_summary;
-  if (positive === 0 && negative === 0) return "pending";
-  if (positive > negative) return "approved";
-  return "rejected";
+  if (a.status === 'approved') return 'approved';
+  if (a.status === 'rejected') return 'rejected';
+  return 'pending';
 }
 
 function getAuthorName(created_by: Amendment["created_by"]): string {
@@ -201,9 +200,12 @@ interface AmendmentRowProps {
   amendment: Amendment;
   isOpen: boolean;
   onToggle: () => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+  isReviewing: boolean;
 }
 
-function AmendmentRow({ amendment: a, isOpen, onToggle }: AmendmentRowProps) {
+function AmendmentRow({ amendment: a, isOpen, onToggle, onApprove, onReject, isReviewing }: AmendmentRowProps) {
   const articleNum = a.context.article_num ?? "—";
   const articleTitle = a.context.article_title ?? "";
   const date = new Date(a.createdAt).toLocaleDateString("uk-UA");
@@ -252,14 +254,16 @@ function AmendmentRow({ amendment: a, isOpen, onToggle }: AmendmentRowProps) {
             <button
               type="button"
               className={styles.btnReject}
-              onClick={() => console.log("reject", a._id)}
+              disabled={isReviewing}
+              onClick={() => onReject(a._id)}
             >
               Відхилити
             </button>
             <button
               type="button"
               className={styles.btnApprove}
-              onClick={() => console.log("approve", a._id)}
+              disabled={isReviewing}
+              onClick={() => onApprove(a._id)}
             >
               Затвердити ✓
             </button>
@@ -272,6 +276,19 @@ function AmendmentRow({ amendment: a, isOpen, onToggle }: AmendmentRowProps) {
 
 function AmendmentsView() {
   const { data: amendments, isLoading, error } = useSupervisorGroupAmendments();
+  const reviewMutation = useReviewAmendment();
+  const [reviewingId, setReviewingId] = useState<string | null>(null);
+
+  const handleApprove = async (id: string) => {
+    setReviewingId(id);
+    try { await reviewMutation.mutateAsync({ id, action: 'approve' }); }
+    finally { setReviewingId(null); }
+  };
+  const handleReject = async (id: string) => {
+    setReviewingId(id);
+    try { await reviewMutation.mutateAsync({ id, action: 'reject' }); }
+    finally { setReviewingId(null); }
+  };
 
   const [filterType, setFilterType] = useState<FilterType>("all");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
@@ -406,6 +423,9 @@ function AmendmentsView() {
                 amendment={a}
                 isOpen={openId === a._id}
                 onToggle={() => setOpenId(openId === a._id ? null : a._id)}
+                onApprove={handleApprove}
+                onReject={handleReject}
+                isReviewing={reviewingId === a._id}
               />
             ))}
           </div>

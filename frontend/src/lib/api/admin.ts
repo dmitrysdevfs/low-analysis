@@ -222,6 +222,17 @@ export const adminApi = {
 
   getUsers: () => adminFetch<AdminUserRecord[]>("/users"),
 
+  listUsers: (opts?: { q?: string; page?: number; limit?: number }) => {
+    const params = new URLSearchParams({
+      page: String(opts?.page ?? 1),
+      limit: String(opts?.limit ?? 50),
+    });
+    if (opts?.q) params.set("q", opts.q);
+    return adminFetch<{ users: AdminUserRecord[]; total: number; page: number; limit: number }>(
+      `/users?${params}`,
+    );
+  },
+
   setUserStatus: (id: string, status: "active" | "inactive") =>
     adminFetch<AdminUserRecord>(`/users/${id}/status`, {
       method: "PATCH",

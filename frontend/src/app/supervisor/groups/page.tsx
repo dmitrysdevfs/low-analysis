@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
@@ -20,6 +20,7 @@ import {
   RefreshCcw,
   Scale,
   Shield,
+  Trash2,
   Users,
   Zap,
 } from "lucide-react";
@@ -28,9 +29,12 @@ import { ROUTES } from "@/constants/routes";
 import {
   useMyGroups,
   useCreateGroup,
+  useArchiveGroup,
   useSupervisorPendingCount,
 } from "@/hooks/useGroups";
 import { notify } from "@/lib/toast";
+import { getLaws } from "@/lib/api/laws";
+import type { Law } from "@/lib/api/laws";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
@@ -173,14 +177,34 @@ function AccessGate() {
 function GroupsView() {
   const { data: groups, isLoading, error } = useMyGroups();
   const createGroup = useCreateGroup();
+  const archiveGroup = useArchiveGroup();
 
   const [showModal, setShowModal] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [maxMembers, setMaxMembers] = useState(20);
   const [visibility, setVisibility] = useState<"public" | "invite_only">(
     "public",
   );
+
+  // Law combobox state for create modal
+  const [lawQuery, setLawQuery] = useState("");
+  const [lawSuggestions, setLawSuggestions] = useState<Law[]>([]);
+  const [selectedLaws, setSelectedLaws] = useState<Law[]>([]);
+  const lawDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!lawQuery.trim()) {
+      setLawSuggestions([]);
+      return;
+    }
+    if (lawDebounceRef.current) clearTimeout(lawDebounceRef.current);
+    lawDebounceRef.current = setTimeout(async () => {
+      const results = await getLaws(lawQuery).catch(() => []);
+      setLawSuggestions(results.slice(0, 8));
+    }, 300);
+  }, [lawQuery]);
 
   const activeGroups = groups?.filter((g) => g.status === "active") ?? [];
   const totalMembers =
@@ -202,12 +226,15 @@ function GroupsView() {
         course: course.trim() || undefined,
         maxMembers,
         visibility,
+        trackedLaws: selectedLaws.map((l) => l._id),
       });
       notify.success("Групу створено");
       setName("");
       setCourse("");
       setMaxMembers(20);
       setVisibility("public");
+      setSelectedLaws([]);
+      setLawQuery("");
       setShowModal(false);
     } catch (err) {
       notify.error(
@@ -363,12 +390,53 @@ function GroupsView() {
                       <Clock3 size={12} />
                       {new Date(group.updatedAt).toLocaleDateString("uk-UA")}
                     </span>
-                    <Link
-                      href={ROUTES.supervisorGroup(group._id)}
-                      className={styles.inlineLink}
-                    >
-                      Відкрити групу <ChevronRight size={14} />
-                    </Link>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                      {confirmDeleteId === group._id ? (
+                        <>
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            style={{ fontSize: "0.75rem", padding: "3px 8px" }}
+                            onClick={() => setConfirmDeleteId(null)}
+                          >
+                            Скасувати
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            style={{ fontSize: "0.75rem", padding: "3px 8px", background: "#c0392b", borderColor: "#c0392b" }}
+                            disabled={archiveGroup.isPending}
+                            onClick={async () => {
+                              try {
+                                await archiveGroup.mutateAsync(group._id);
+                                notify.success("Групу видалено");
+                              } catch {
+                                notify.error("Не вдалося видалити групу");
+                              } finally {
+                                setConfirmDeleteId(null);
+                              }
+                            }}
+                          >
+                            Так, видалити
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          title="Видалити групу"
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-smoke)", padding: "2px 4px" }}
+                          onClick={() => setConfirmDeleteId(group._id)}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                      <Link
+                        href={ROUTES.supervisorGroup(group._id)}
+                        className={styles.inlineLink}
+                      >
+                        Відкрити групу <ChevronRight size={14} />
+                      </Link>
+                    </div>
                   </div>
                 </article>
               );
@@ -435,6 +503,58 @@ function GroupsView() {
                   <option value="invite_only">Тільки за запрошенням</option>
                 </select>
               </label>
+              <div className={styles.field}>
+                <span>Закони під наглядом</span>
+                <input
+                  className="form-control"
+                  type="text"
+                  value={lawQuery}
+                  onChange={(e) => setLawQuery(e.target.value)}
+                  placeholder="Пошук закону..."
+                  autoComplete="off"
+                />
+                {lawSuggestions.length > 0 && (
+                  <div className={styles.lawDropdown}>
+                    {lawSuggestions.map((law) => (
+                      <button
+                        key={law._id}
+                        type="button"
+                        className={styles.lawDropdownItem}
+                        onClick={() => {
+                          if (!selectedLaws.find((l) => l._id === law._id)) {
+                            setSelectedLaws((prev) => [...prev, law]);
+                          }
+                          setLawQuery("");
+                          setLawSuggestions([]);
+                        }}
+                      >
+                        <span className={styles.lawCode}>{law.code}</span>{" "}
+                        {law.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {selectedLaws.length > 0 && (
+                  <div className={styles.selectedLaws}>
+                    {selectedLaws.map((law) => (
+                      <span key={law._id} className={styles.lawTag}>
+                        {law.code}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedLaws((prev) =>
+                              prev.filter((l) => l._id !== law._id),
+                            )
+                          }
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className={styles.formActions}>
                 <button
                   type="button"

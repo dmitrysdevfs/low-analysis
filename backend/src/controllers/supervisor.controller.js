@@ -8,7 +8,8 @@ import Group from '../models/Group.js';
 
 export const getDashboard = async (req, res, next) => {
   try {
-    const summary = await supervisorService.getDashboardSummary(req.user._id);
+    const supervisorId = req.user.role === 'admin' ? null : req.user._id;
+    const summary = await supervisorService.getDashboardSummary(supervisorId);
     res.json(summary);
   } catch (err) {
     next(err);
@@ -17,7 +18,8 @@ export const getDashboard = async (req, res, next) => {
 
 export const getGroups = async (req, res, next) => {
   try {
-    const groups = await supervisorService.getGroupsBySupervisor(req.user._id);
+    const supervisorId = req.user.role === 'admin' ? null : req.user._id;
+    const groups = await supervisorService.getGroupsBySupervisor(supervisorId);
     res.json(groups);
   } catch (err) {
     next(err);
@@ -59,18 +61,19 @@ export const updateGroup = async (req, res, next) => {
 };
 
 // Helper: collect supervisor + all active member IDs from all groups
-const getSupervisorMemberIds = async (supervisorId) => {
-  const groups = await Group.find({ supervisorId });
+const getSupervisorMemberIds = async (supervisorId, isAdmin = false) => {
+  const filter = isAdmin ? {} : { supervisorId };
+  const groups = await Group.find(filter);
   const memberIds = groups.flatMap((g) =>
     g.members.filter((m) => m.status === 'active').map((m) => m.userId),
   );
-  memberIds.push(supervisorId);
+  if (!isAdmin) memberIds.push(supervisorId);
   return memberIds;
 };
 
 export const getGroupProposals = async (req, res, next) => {
   try {
-    const memberIds = await getSupervisorMemberIds(req.user._id);
+    const memberIds = await getSupervisorMemberIds(req.user._id, req.user.role === 'admin');
     const proposals = await proposalService.getProposalsByUserIds(memberIds);
     res.json(proposals);
   } catch (err) {
@@ -80,7 +83,7 @@ export const getGroupProposals = async (req, res, next) => {
 
 export const getGroupAmendments = async (req, res, next) => {
   try {
-    const memberIds = await getSupervisorMemberIds(req.user._id);
+    const memberIds = await getSupervisorMemberIds(req.user._id, req.user.role === 'admin');
     const amendments = await amendmentService.getAmendmentsByUserIds(memberIds);
     res.json(amendments);
   } catch (err) {

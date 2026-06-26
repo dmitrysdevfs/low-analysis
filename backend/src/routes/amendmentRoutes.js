@@ -1,6 +1,6 @@
 import express from 'express';
 import * as amendmentController from '../controllers/amendmentController.js';
-import { protect, hasPermission } from '../middleware/authMiddleware.js';
+import { protect, hasPermission, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -192,5 +192,12 @@ router
     hasPermission('amendments:delete'),
     amendmentController.deleteAmendment,
   );
+
+router.patch(
+  '/:id/review',
+  protect,
+  authorize('supervisor', 'admin'),
+  amendmentController.reviewAmendment,
+);
 
 export default router;
