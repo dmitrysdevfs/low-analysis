@@ -221,8 +221,10 @@ describe("ProposalsPage — authenticated", () => {
     });
     renderPage();
 
+    // Wait until voteStats resolves and myVote==="for" is reflected (voteBtnActive class)
     await waitFor(() => {
-      expect(screen.getByText("✓ За")).toBeInTheDocument();
+      const btn = screen.getByText("✓ За").closest("button");
+      expect(btn?.className).toMatch(/voteBtnActive/);
     });
 
     fireEvent.click(screen.getByText("✓ За"));
