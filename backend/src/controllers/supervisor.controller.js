@@ -38,7 +38,10 @@ export const createGroup = async (req, res, next) => {
 export const getGroup = async (req, res, next) => {
   try {
     const supervisorId = req.user.role === 'admin' ? null : req.user._id;
-    const group = await supervisorService.getGroupById(req.params.id, supervisorId);
+    const group = await supervisorService.getGroupById(
+      req.params.id,
+      supervisorId,
+    );
     res.json(group);
   } catch (err) {
     next(err);
@@ -89,7 +92,10 @@ export const getGroupAmendments = async (req, res, next) => {
       req.user.role === 'admin',
     );
     const { search } = req.query;
-    const amendments = await amendmentService.getAmendmentsByUserIds(memberIds, { search });
+    const amendments = await amendmentService.getAmendmentsByUserIds(
+      memberIds,
+      { search },
+    );
     res.json(amendments);
   } catch (err) {
     next(err);

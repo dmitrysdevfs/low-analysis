@@ -286,11 +286,18 @@ describe('amendmentService', () => {
 
     it('should query amendments by userIds without Law lookup when no search', async () => {
       const mockAmendments = [
-        { _id: 'am1', law_id: { _id: LAW_ID, title: 'Закон 1' }, created_by: { fullName: 'User A' } },
+        {
+          _id: 'am1',
+          law_id: { _id: LAW_ID, title: 'Закон 1' },
+          created_by: { fullName: 'User A' },
+        },
       ];
       mockAmendmentChain(mockAmendments);
 
-      const result = await amendmentService.getAmendmentsByUserIds([USER_ID_1, USER_ID_2]);
+      const result = await amendmentService.getAmendmentsByUserIds([
+        USER_ID_1,
+        USER_ID_2,
+      ]);
 
       expect(Law.find).not.toHaveBeenCalled();
       expect(Amendment.find).toHaveBeenCalledWith({
@@ -304,7 +311,11 @@ describe('amendmentService', () => {
         lean: vi.fn().mockResolvedValue([{ _id: LAW_ID }]),
       });
       const mockAmendments = [
-        { _id: 'am2', law_id: { _id: LAW_ID, title: 'Кодекс праці' }, created_by: { fullName: 'User B' } },
+        {
+          _id: 'am2',
+          law_id: { _id: LAW_ID, title: 'Кодекс праці' },
+          created_by: { fullName: 'User B' },
+        },
       ];
       mockAmendmentChain(mockAmendments);
 
@@ -328,7 +339,9 @@ describe('amendmentService', () => {
     it('should skip Law lookup when search is empty string', async () => {
       mockAmendmentChain([]);
 
-      await amendmentService.getAmendmentsByUserIds([USER_ID_1], { search: '' });
+      await amendmentService.getAmendmentsByUserIds([USER_ID_1], {
+        search: '',
+      });
 
       expect(Law.find).not.toHaveBeenCalled();
       expect(Amendment.find).toHaveBeenCalledWith({
@@ -339,7 +352,9 @@ describe('amendmentService', () => {
     it('should skip Law lookup when search is whitespace only', async () => {
       mockAmendmentChain([]);
 
-      await amendmentService.getAmendmentsByUserIds([USER_ID_1], { search: '   ' });
+      await amendmentService.getAmendmentsByUserIds([USER_ID_1], {
+        search: '   ',
+      });
 
       expect(Law.find).not.toHaveBeenCalled();
       expect(Amendment.find).toHaveBeenCalledWith({
@@ -369,7 +384,11 @@ describe('amendmentService', () => {
     it('should handle amendments with null law_id without crashing', async () => {
       const mockAmendments = [
         { _id: 'am3', law_id: null, created_by: { fullName: 'User C' } },
-        { _id: 'am4', law_id: { _id: LAW_ID, title: 'Кодекс' }, created_by: { fullName: 'User D' } },
+        {
+          _id: 'am4',
+          law_id: { _id: LAW_ID, title: 'Кодекс' },
+          created_by: { fullName: 'User D' },
+        },
       ];
       mockAmendmentChain(mockAmendments);
 

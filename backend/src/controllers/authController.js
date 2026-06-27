@@ -130,7 +130,10 @@ export const registerUser = async (req, res) => {
     }
 
     const rawToken = crypto.randomBytes(32).toString('hex');
-    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
     user.verificationToken = hashedToken;
     user.verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await user.save({ validateBeforeSave: false });
@@ -157,7 +160,9 @@ export const registerUser = async (req, res) => {
       }).catch(() => {});
     }
 
-    res.status(201).json({ message: 'Перевірте email для підтвердження акаунта' });
+    res
+      .status(201)
+      .json({ message: 'Перевірте email для підтвердження акаунта' });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
   }
@@ -470,7 +475,9 @@ export const resendVerification = async (req, res) => {
     return res.status(400).json({ message: 'Email required' });
   }
 
-  const GENERIC = { message: 'Якщо акаунт існує і не підтверджений, листа надіслано' };
+  const GENERIC = {
+    message: 'Якщо акаунт існує і не підтверджений, листа надіслано',
+  };
 
   const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
     '+verificationToken +verificationExpiry',
@@ -485,11 +492,16 @@ export const resendVerification = async (req, res) => {
     ? 24 * 60 * 60 * 1000 - (user.verificationExpiry.getTime() - Date.now())
     : Infinity;
   if (tokenAge < COOLDOWN_MS) {
-    return res.status(429).json({ message: 'Зачекайте перед повторною відправкою' });
+    return res
+      .status(429)
+      .json({ message: 'Зачекайте перед повторною відправкою' });
   }
 
   const rawToken = crypto.randomBytes(32).toString('hex');
-  const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(rawToken)
+    .digest('hex');
   user.verificationToken = hashedToken;
   user.verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
   await user.save({ validateBeforeSave: false });

@@ -306,7 +306,11 @@ function AmendmentsView() {
   const [search, setSearch] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
 
-  const { data: amendments, isLoading, error } = useSupervisorGroupAmendments(search);
+  const {
+    data: amendments,
+    isLoading,
+    error,
+  } = useSupervisorGroupAmendments(search);
   const reviewMutation = useReviewAmendment();
   const [reviewingId, setReviewingId] = useState<string | null>(null);
 

@@ -6,7 +6,14 @@ export type RoadmapTask = {
 export type RoadmapPhase = {
   id: string;
   label: string;
-  status: "done" | "in_progress" | "pending" | "current_focus" | "planned" | "research" | "vision";
+  status:
+    | "done"
+    | "in_progress"
+    | "pending"
+    | "current_focus"
+    | "planned"
+    | "research"
+    | "vision";
   tasks: RoadmapTask[];
   description?: string;
   businessValue?: string;

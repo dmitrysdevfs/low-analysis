@@ -551,7 +551,10 @@ export function ArticlePageClient() {
                                 document.body.removeChild(el);
                               }
                               setArticleTextCopied(true);
-                              setTimeout(() => setArticleTextCopied(false), 2000);
+                              setTimeout(
+                                () => setArticleTextCopied(false),
+                                2000,
+                              );
                             }}
                           >
                             {articleTextCopied ? "✔" : "⧉"}

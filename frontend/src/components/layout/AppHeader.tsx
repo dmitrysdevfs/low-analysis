@@ -296,23 +296,24 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
                   className={`nav-link${isActive ? " active" : ""}`}
                 >
                   {item.label}
-                  {item.href === ROUTES.proposals && activeProposalsCount > 0 && (
-                    <span
-                      style={{
-                        marginLeft: 4,
-                        background: "var(--color-danger, #e53e3e)",
-                        color: "#fff",
-                        borderRadius: "10px",
-                        padding: "0 5px",
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        lineHeight: "16px",
-                        display: "inline-block",
-                      }}
-                    >
-                      {activeProposalsCount}
-                    </span>
-                  )}
+                  {item.href === ROUTES.proposals &&
+                    activeProposalsCount > 0 && (
+                      <span
+                        style={{
+                          marginLeft: 4,
+                          background: "var(--color-danger, #e53e3e)",
+                          color: "#fff",
+                          borderRadius: "10px",
+                          padding: "0 5px",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          lineHeight: "16px",
+                          display: "inline-block",
+                        }}
+                      >
+                        {activeProposalsCount}
+                      </span>
+                    )}
                 </Link>
               );
             })}
@@ -322,32 +323,33 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
           </ScrollContainer>
 
           {/* Dropdown panel rendered outside ScrollContainer so overflow:hidden doesn't clip it */}
-          {openDropdown && (() => {
-            const activeItem = visibleNavItems.find(
-              (i) => i.label === openDropdown,
-            );
-            if (!activeItem?.subItems) return null;
-            return (
-              <div
-                ref={dropdownRef}
-                className={styles.navDropdown}
-                style={{ left: dropdownLeft }}
-                onMouseEnter={() => setOpenDropdown(openDropdown)}
-                onMouseLeave={() => setOpenDropdown(null)}
-              >
-                {activeItem.subItems.map((subItem) => (
-                  <Link
-                    key={subItem.label}
-                    href={subItem.href || "#"}
-                    className={styles.navDropdownItem}
-                    onClick={() => setOpenDropdown(null)}
-                  >
-                    {subItem.label}
-                  </Link>
-                ))}
-              </div>
-            );
-          })()}
+          {openDropdown &&
+            (() => {
+              const activeItem = visibleNavItems.find(
+                (i) => i.label === openDropdown,
+              );
+              if (!activeItem?.subItems) return null;
+              return (
+                <div
+                  ref={dropdownRef}
+                  className={styles.navDropdown}
+                  style={{ left: dropdownLeft }}
+                  onMouseEnter={() => setOpenDropdown(openDropdown)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  {activeItem.subItems.map((subItem) => (
+                    <Link
+                      key={subItem.label}
+                      href={subItem.href || "#"}
+                      className={styles.navDropdownItem}
+                      onClick={() => setOpenDropdown(null)}
+                    >
+                      {subItem.label}
+                    </Link>
+                  ))}
+                </div>
+              );
+            })()}
         </nav>
 
         <AnimatePresence>

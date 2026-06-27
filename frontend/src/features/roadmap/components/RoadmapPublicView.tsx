@@ -113,12 +113,16 @@ export function RoadmapPublicView() {
           <div className={styles.phaseMeta}>
             <span className={styles.phaseMetaItem}>
               <span className={styles.phaseMetaValue}>{donePhases}</span>
-              <span className={styles.phaseMetaLabel}>з {totalPhases} фаз завершено</span>
+              <span className={styles.phaseMetaLabel}>
+                з {totalPhases} фаз завершено
+              </span>
             </span>
             {currentPhase && (
               <span className={styles.phaseMetaItem}>
                 <span className={styles.phaseMetaLabel}>Поточний етап:</span>
-                <span className={styles.phaseMetaCurrent}>{currentPhase.label}</span>
+                <span className={styles.phaseMetaCurrent}>
+                  {currentPhase.label}
+                </span>
               </span>
             )}
           </div>
@@ -131,8 +135,8 @@ export function RoadmapPublicView() {
           <div className={styles.inner}>
             <h2 className={styles.sectionTitle}>Що ми будуємо</h2>
             <p className={styles.sectionSub}>
-              Law Analysis — це не просто система аналізу законів.
-              Ми створюємо платформу для:
+              Law Analysis — це не просто система аналізу законів. Ми створюємо
+              платформу для:
             </p>
             <ul className={styles.itemList}>
               {content.whatWeBuilding.map((item) => (
@@ -143,7 +147,9 @@ export function RoadmapPublicView() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                 >
-                  <span className={styles.checkDone} aria-hidden="true">•</span>
+                  <span className={styles.checkDone} aria-hidden="true">
+                    •
+                  </span>
                   <span>{item}</span>
                 </motion.li>
               ))}
@@ -325,10 +331,12 @@ export function RoadmapPublicView() {
       {/* CTA */}
       <section className={styles.section}>
         <div className={styles.inner}>
-          <h2 className={styles.sectionTitle}>Хочете долучитися до розвитку Law Analysis?</h2>
+          <h2 className={styles.sectionTitle}>
+            Хочете долучитися до розвитку Law Analysis?
+          </h2>
           <p className={styles.sectionSub}>
-            Платформа будується відкрито. Якщо вам близька ідея прозорого законодавства —
-            ми раді кожному, хто хоче долучитись.
+            Платформа будується відкрито. Якщо вам близька ідея прозорого
+            законодавства — ми раді кожному, хто хоче долучитись.
           </p>
           <div className={styles.ctaGrid}>
             <a
@@ -339,10 +347,16 @@ export function RoadmapPublicView() {
             >
               Стати контриб'ютором
             </a>
-            <a href="/contacts" className={`${styles.ctaBtn} ${styles.ctaBtnSecondary}`}>
+            <a
+              href="/contacts"
+              className={`${styles.ctaBtn} ${styles.ctaBtnSecondary}`}
+            >
               Стати ментором
             </a>
-            <a href="/contacts" className={`${styles.ctaBtn} ${styles.ctaBtnSecondary}`}>
+            <a
+              href="/contacts"
+              className={`${styles.ctaBtn} ${styles.ctaBtnSecondary}`}
+            >
               Підтримати проєкт
             </a>
             <a

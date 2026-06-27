@@ -163,7 +163,9 @@ export async function getGroupProposals(): Promise<Proposal[]> {
 }
 
 // Group-scoped amendments (supervisor + all group members)
-export async function getGroupAmendments(search?: string): Promise<Amendment[]> {
+export async function getGroupAmendments(
+  search?: string,
+): Promise<Amendment[]> {
   const params = search?.trim()
     ? `?search=${encodeURIComponent(search.trim())}`
     : "";

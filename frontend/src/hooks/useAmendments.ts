@@ -22,7 +22,9 @@ export function useCreateAmendment() {
     mutationFn: legislatorApi.createAmendment,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["amendments"] });
-      queryClient.invalidateQueries({ queryKey: ["supervisor", "group-amendments"] });
+      queryClient.invalidateQueries({
+        queryKey: ["supervisor", "group-amendments"],
+      });
       if (variables.proposal_id) {
         queryClient.invalidateQueries({
           queryKey: ["proposal", variables.proposal_id],

@@ -151,7 +151,8 @@ export async function verifyEmailToken(
 
     return {
       ok: true,
-      redirectTo: session.accountType === "admin" ? ROUTES.admin : ROUTES.account,
+      redirectTo:
+        session.accountType === "admin" ? ROUTES.admin : ROUTES.account,
       session,
     };
   } catch {

@@ -80,8 +80,8 @@ export function BillingDashboard() {
           </h1>
           <p className={styles.heroDesc}>
             Оберіть тариф, що підходить вам. Активуйте пробний тиждень або
-            перейдіть на повний план, щоб отримати доступ до аналітики,
-            пошуку та збереження статей без обмежень.
+            перейдіть на повний план, щоб отримати доступ до аналітики, пошуку
+            та збереження статей без обмежень.
           </p>
           <div className={styles.heroActions}>
             <Link href={ROUTES.accountCheckout} className={styles.btnPrimary}>

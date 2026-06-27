@@ -90,7 +90,9 @@ export function buildSessionMenuItems(opts: {
         : "Подайте запит на роль законотворця",
     },
     {
-      href: opts.isSupervisor ? ROUTES.supervisorDashboard : ROUTES.rolesSupervisorRequest,
+      href: opts.isSupervisor
+        ? ROUTES.supervisorDashboard
+        : ROUTES.rolesSupervisorRequest,
       label: "Супервізор",
       caption: opts.isSupervisor
         ? "Панель нагляду та моніторингу платформи"

@@ -14,7 +14,15 @@ const roadmapPhaseSchema = new mongoose.Schema(
     label: { type: String, required: true },
     status: {
       type: String,
-      enum: ['done', 'in_progress', 'pending', 'current_focus', 'planned', 'research', 'vision'],
+      enum: [
+        'done',
+        'in_progress',
+        'pending',
+        'current_focus',
+        'planned',
+        'research',
+        'vision',
+      ],
       default: 'pending',
     },
     tasks: { type: [roadmapTaskSchema], default: [] },

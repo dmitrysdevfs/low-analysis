@@ -44,7 +44,9 @@ export const submitRequest = async (
     const cooldownMs = COOLDOWN_HOURS * 3_600_000;
     if (msSinceRevocation < cooldownMs) {
       throw Object.assign(
-        new Error('Повторний запит можливий через 24 години після відкликання ролі'),
+        new Error(
+          'Повторний запит можливий через 24 години після відкликання ролі',
+        ),
         { status: 429, retryAfterMs: cooldownMs - msSinceRevocation },
       );
     }

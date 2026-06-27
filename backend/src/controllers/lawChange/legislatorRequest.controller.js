@@ -65,4 +65,3 @@ export const revokeRole = async (req, res, next) => {
     next(err);
   }
 };
-

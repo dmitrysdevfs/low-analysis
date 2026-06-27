@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  getNodeBadge,
-  getRoleColor,
-  sanitizeAnchor,
-} from "@/lib/tree";
+import { getNodeBadge, getRoleColor, sanitizeAnchor } from "@/lib/tree";
 import type { TreeBranch, RiskLevel } from "@/lib/tree";
 
 const RISK_DOT_COLOR: Record<RiskLevel, string> = {

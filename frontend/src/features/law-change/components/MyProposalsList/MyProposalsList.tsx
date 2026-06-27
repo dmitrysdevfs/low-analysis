@@ -39,7 +39,10 @@ function ProposalCard({ proposal }: { proposal: LawChangeProposal }) {
         </span>
       </div>
       {proposal.element_type && (
-        <span className={styles.changeType} style={{ marginBottom: 4, opacity: 0.7 }}>
+        <span
+          className={styles.changeType}
+          style={{ marginBottom: 4, opacity: 0.7 }}
+        >
           {proposal.element_type}
         </span>
       )}
