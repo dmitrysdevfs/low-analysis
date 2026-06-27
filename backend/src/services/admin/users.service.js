@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+﻿import mongoose from 'mongoose';
 import User from '../../models/User.js';
 import UserActivity from '../../models/UserActivity.js';
 import AuditLog from '../../models/AuditLog.js';
@@ -68,7 +68,7 @@ export const setUserRole = async (id, role, actor) => {
     role === 'admin'
       ? 'Акаунт підвищено до адміна'
       : role === 'supervisor'
-        ? 'Призначено супервайзером'
+        ? 'Призначено супервізером'
         : role === 'legislator'
           ? 'Призначено законотворцем'
           : 'Роль змінено';

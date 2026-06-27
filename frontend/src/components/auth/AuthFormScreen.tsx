@@ -206,11 +206,7 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
         return;
       }
 
-      notify.success(
-        isAdminAccount
-          ? "Акаунт адміна створено. Продовжіть зі входом адміна."
-          : "Клієнтський акаунт створено. Продовжіть зі входом.",
-      );
+      notify.success("Перевірте email для підтвердження акаунта.");
       router.push(ROUTES.authLogin);
       setForm((current) => ({
         ...current,

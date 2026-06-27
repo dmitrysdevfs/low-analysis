@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -236,7 +236,7 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
               {isLegislator
                 ? "Законотворець"
                 : isSupervisor
-                  ? "Супервайзер"
+                  ? "Супервізер"
                   : account.accountType === "admin"
                     ? "Адміністратор"
                     : "Клієнт"}
@@ -335,7 +335,7 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
               disabled={isDev}
               onClick={() => handleAction("setSupervisor")}
             >
-              {isSupervisor ? "Зняти супервайзера" : "Призначити супервайзером"}
+              {isSupervisor ? "Зняти супервізера" : "Призначити супервізером"}
             </button>
           )}
 

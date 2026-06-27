@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -57,7 +57,7 @@ const ROLE_LABELS: Record<string, string> = {
   user: "Клієнт",
   paid_user: "Платний клієнт",
   legislator: "Законотворець",
-  supervisor: "Супервайзер",
+  supervisor: "Супервізер",
   admin: "Адмін",
 };
 
@@ -568,15 +568,15 @@ export function AdminUserProfileView({ userId }: { userId: string }) {
                             isSupervisor ? "user" : "supervisor",
                           ),
                         isSupervisor
-                          ? "Роль супервайзера знято."
-                          : "Призначено супервайзером.",
+                          ? "Роль супервізера знято."
+                          : "Призначено супервізером.",
                       )
                     }
                   >
                     <Crown size={14} />
                     {isSupervisor
-                      ? "Зняти роль супервайзера"
-                      : "Призначити супервайзером"}
+                      ? "Зняти роль супервізера"
+                      : "Призначити супервізером"}
                   </button>
                 )}
                 <button

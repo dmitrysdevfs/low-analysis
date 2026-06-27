@@ -8,6 +8,9 @@ vi.mock('../models/User.js');
 vi.mock('../services/admin/superCode.service.js', () => ({
   getActiveCode: vi.fn().mockResolvedValue('SUPER-001'),
 }));
+vi.mock('../modules/email/email.service.js', () => ({
+  sendTransactionalEmail: vi.fn().mockResolvedValue({ messageId: 'mock-id' }),
+}));
 
 describe('Auth API', () => {
   beforeEach(() => {
@@ -15,7 +18,7 @@ describe('Auth API', () => {
   });
 
   describe('POST /api/auth/register', () => {
-    it('should register a new user and return a token', async () => {
+    it('should register a new user and send verification email', async () => {
       const userData = {
         email: 'test@example.com',
         password: 'password123',
@@ -28,16 +31,15 @@ describe('Auth API', () => {
         ...userData,
         role: 'user',
         tokenVersion: 0,
+        save: vi.fn().mockResolvedValue(true),
       });
 
       const res = await request(app).post('/api/auth/register').send(userData);
 
       expect(res.status).toBe(201);
-      expect(res.body.email).toBe(userData.email);
+      expect(res.body.message).toMatch(/email/i);
       expect(User.create).toHaveBeenCalled();
-      expect(res.headers['set-cookie']).toEqual(
-        expect.arrayContaining([expect.stringContaining('token=')]),
-      );
+      expect(res.headers['set-cookie']).toBeUndefined();
     });
 
     it('should return 400 if user already exists', async () => {
@@ -67,6 +69,7 @@ describe('Auth API', () => {
         fullName: 'Test User',
         role: 'user',
         tokenVersion: 0,
+        isVerified: true,
         comparePassword: vi.fn().mockResolvedValue(true),
       };
 
@@ -154,12 +157,14 @@ describe('Auth API', () => {
         email: userData.email,
         fullName: userData.displayName,
         role: 'admin',
+        tokenVersion: 0,
+        save: vi.fn().mockResolvedValue(true),
       });
 
       const res = await request(app).post('/api/auth/register').send(userData);
 
       expect(res.status).toBe(201);
-      expect(res.body.role).toBe('admin');
+      expect(res.body.message).toMatch(/email/i);
       expect(User.create).toHaveBeenCalledWith(
         expect.objectContaining({
           role: 'admin',

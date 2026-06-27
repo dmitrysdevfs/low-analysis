@@ -134,8 +134,10 @@ export function useReviewRequest(groupId: string) {
       action: "approve" | "reject";
     }) => reviewRequest(groupId, reqId, action),
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["groups", groupId, "requests"] });
       qc.invalidateQueries({ queryKey: ["groups", groupId] });
       qc.invalidateQueries({ queryKey: ["supervisor", "group", groupId] });
+      qc.invalidateQueries({ queryKey: ["supervisor", "groups"] });
     },
   });
 }

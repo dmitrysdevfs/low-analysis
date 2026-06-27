@@ -3,14 +3,19 @@ import * as amendmentService from '../services/amendmentService.js';
 import Amendment from '../models/Amendment.js';
 import ApprovedChange from '../models/ApprovedChange.js';
 import Element from '../models/Element.js';
+import Law from '../models/Law.js';
 import Proposal from '../models/Proposal.js';
 
 const ELEMENT_ID = '507f1f77bcf86cd799439011';
 const SECTION_ID = '507f1f77bcf86cd799439012';
+const LAW_ID = '507f1f77bcf86cd799439013';
+const USER_ID_1 = '507f1f77bcf86cd799439021';
+const USER_ID_2 = '507f1f77bcf86cd799439022';
 
 vi.mock('../models/Amendment.js');
 vi.mock('../models/ApprovedChange.js');
 vi.mock('../models/Element.js');
+vi.mock('../models/Law.js');
 vi.mock('../models/Proposal.js');
 
 describe('amendmentService', () => {
@@ -266,6 +271,113 @@ describe('amendmentService', () => {
       expect(mockAmendment.status).toBe('approved');
       expect(ApprovedChange.updateMany).not.toHaveBeenCalled();
       expect(ApprovedChange.create).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getAmendmentsByUserIds', () => {
+    function mockAmendmentChain(resolved) {
+      const lean = vi.fn().mockResolvedValue(resolved);
+      const sort = vi.fn().mockReturnValue({ lean });
+      const populate2 = vi.fn().mockReturnValue({ sort });
+      const populate1 = vi.fn().mockReturnValue({ populate: populate2 });
+      Amendment.find.mockReturnValue({ populate: populate1 });
+      return { populate1, populate2, sort, lean };
+    }
+
+    it('should query amendments by userIds without Law lookup when no search', async () => {
+      const mockAmendments = [
+        { _id: 'am1', law_id: { _id: LAW_ID, title: 'Закон 1' }, created_by: { fullName: 'User A' } },
+      ];
+      mockAmendmentChain(mockAmendments);
+
+      const result = await amendmentService.getAmendmentsByUserIds([USER_ID_1, USER_ID_2]);
+
+      expect(Law.find).not.toHaveBeenCalled();
+      expect(Amendment.find).toHaveBeenCalledWith({
+        created_by: { $in: [USER_ID_1, USER_ID_2] },
+      });
+      expect(result).toEqual(mockAmendments);
+    });
+
+    it('should do two-step search: Law $regex lookup then Amendment $in filter', async () => {
+      Law.find.mockReturnValue({
+        lean: vi.fn().mockResolvedValue([{ _id: LAW_ID }]),
+      });
+      const mockAmendments = [
+        { _id: 'am2', law_id: { _id: LAW_ID, title: 'Кодекс праці' }, created_by: { fullName: 'User B' } },
+      ];
+      mockAmendmentChain(mockAmendments);
+
+      const result = await amendmentService.getAmendmentsByUserIds(
+        [USER_ID_1],
+        { search: 'праці' },
+      );
+
+      expect(Law.find).toHaveBeenCalledWith(
+        { title: { $regex: 'праці', $options: 'i' } },
+        '_id',
+      );
+      expect(Amendment.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          law_id: { $in: [LAW_ID] },
+        }),
+      );
+      expect(result).toEqual(mockAmendments);
+    });
+
+    it('should skip Law lookup when search is empty string', async () => {
+      mockAmendmentChain([]);
+
+      await amendmentService.getAmendmentsByUserIds([USER_ID_1], { search: '' });
+
+      expect(Law.find).not.toHaveBeenCalled();
+      expect(Amendment.find).toHaveBeenCalledWith({
+        created_by: { $in: [USER_ID_1] },
+      });
+    });
+
+    it('should skip Law lookup when search is whitespace only', async () => {
+      mockAmendmentChain([]);
+
+      await amendmentService.getAmendmentsByUserIds([USER_ID_1], { search: '   ' });
+
+      expect(Law.find).not.toHaveBeenCalled();
+      expect(Amendment.find).toHaveBeenCalledWith({
+        created_by: { $in: [USER_ID_1] },
+      });
+    });
+
+    it('should return empty list when search matches no laws', async () => {
+      Law.find.mockReturnValue({
+        lean: vi.fn().mockResolvedValue([]),
+      });
+      mockAmendmentChain([]);
+
+      const result = await amendmentService.getAmendmentsByUserIds(
+        [USER_ID_1],
+        { search: 'неіснуючий закон' },
+      );
+
+      expect(Amendment.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          law_id: { $in: [] },
+        }),
+      );
+      expect(result).toEqual([]);
+    });
+
+    it('should handle amendments with null law_id without crashing', async () => {
+      const mockAmendments = [
+        { _id: 'am3', law_id: null, created_by: { fullName: 'User C' } },
+        { _id: 'am4', law_id: { _id: LAW_ID, title: 'Кодекс' }, created_by: { fullName: 'User D' } },
+      ];
+      mockAmendmentChain(mockAmendments);
+
+      const result = await amendmentService.getAmendmentsByUserIds([USER_ID_1]);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].law_id).toBeNull();
+      expect(result[1].law_id).toMatchObject({ title: 'Кодекс' });
     });
   });
 });

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   createContext,
@@ -190,8 +190,8 @@ function useAdminWorkspaceCore() {
           await adminApi.setUserRole(accountId, nextRole);
           notify.success(
             isSupervisor
-              ? "Роль супервайзера знято."
-              : "Роль супервайзера призначено.",
+              ? "Роль супервізера знято."
+              : "Роль супервізера призначено.",
           );
         } else {
           await adminApi.forceLogout(accountId);

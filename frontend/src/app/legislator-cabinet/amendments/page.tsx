@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -204,9 +204,12 @@ function AmendmentCard({
         <span className={styles.amendmentMeta}>
           Стаття {articleNum}
           {articleTitle ? ` · ${articleTitle}` : ""}
+          {a.context.element_code ? ` · ${a.context.element_code}` : ""}
         </span>
         {typeof a.law_id === "object" && a.law_id !== null && (
-          <span className={styles.amendmentLaw}>{a.law_id.title}</span>
+          <Link href={ROUTES.law(a.law_id._id)} className={styles.amendmentLaw}>
+            {a.law_id.title}
+          </Link>
         )}
         <ChangeBadge type={a.change_type} />
         {a.status === "approved" && (
@@ -666,7 +669,7 @@ export default function LegislatorAmendmentsPage() {
   const roleLabel = isAdmin
     ? "Адміністратор"
     : isSupervisor
-      ? "Супервайзер"
+      ? "Супервізер"
       : "Законотворець";
 
   return (

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -114,7 +114,7 @@ function severityMeta(severity: NotificationSeverity) {
 }
 
 function requestedRoleLabel(value: "legislator" | "supervisor") {
-  return value === "supervisor" ? "супервайзера" : "законотворця";
+  return value === "supervisor" ? "супервізера" : "законотворця";
 }
 
 export function AdminNotificationsView() {
@@ -153,7 +153,7 @@ export function AdminNotificationsView() {
       const roleLabel = requestedRoleLabel(request.requestedRole);
       const title =
         request.requestedRole === "supervisor"
-          ? "Заявка на роль супервайзера"
+          ? "Заявка на роль супервізера"
           : "Заявка на роль законотворця";
 
       return {

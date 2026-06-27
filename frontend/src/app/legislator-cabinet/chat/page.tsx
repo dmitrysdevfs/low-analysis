@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   useCallback,
@@ -139,7 +139,7 @@ export default function LegislatorChatPage() {
       <RoleAccessGate
         eyebrow="LAWMAKER ACCESS"
         title="Чат доступний лише для ролі Lawmaker"
-        text="Це місце для комунікації із супервайзером та своєю групою під час роботи над форками, поправками й пропозиціями."
+        text="Це місце для комунікації із супервізером та своєю групою під час роботи над форками, поправками й пропозиціями."
         primaryHref={ROUTES.rolesLawmaker}
         primaryLabel="Про роль Lawmaker"
         secondaryHref={ROUTES.help}
@@ -152,7 +152,7 @@ export default function LegislatorChatPage() {
   const roleLabel = isAdmin
     ? "Адміністратор"
     : isSupervisor && !isLegislator
-      ? "Супервайзер"
+      ? "Супервізер"
       : "Законотворець";
 
   const activeRoom = rooms.find((r) => r.groupId === selectedGroupId) ?? null;
@@ -227,7 +227,7 @@ export default function LegislatorChatPage() {
                 </p>
                 <p className={shellStyles.emptyText}>
                   Подайте заявку на сторінці Груп, щоб отримати доступ до
-                  командного чату й координації з супервайзером.
+                  командного чату й координації з супервізером.
                 </p>
               </div>
             ) : !activeRoom ? (

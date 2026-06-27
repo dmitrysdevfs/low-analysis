@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -238,7 +238,7 @@ export default function SupervisorCommentsPage() {
   if (!isSupervisor && !isAdmin) return <AccessGate />;
 
   const initials = (user?.displayName ?? "СВ").slice(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Адміністратор" : "Супервайзер";
+  const roleLabel = isAdmin ? "Адміністратор" : "Супервізер";
 
   return (
     <div className={styles.workspace}>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -43,7 +43,7 @@ export default function LegislatorHistoryPage() {
       <RoleAccessGate
         eyebrow="LAWMAKER ACCESS"
         title="Моя історія доступна лише для ролі Lawmaker"
-        text="Тут зібрані ваші форки, поправки, пропозиції та події групової роботи. Для доступу потрібна роль законотворця, супервайзера або адміністратора."
+        text="Тут зібрані ваші форки, поправки, пропозиції та події групової роботи. Для доступу потрібна роль законотворця, супервізера або адміністратора."
         primaryHref={ROUTES.rolesLawmaker}
         primaryLabel="Про роль Lawmaker"
         secondaryHref={ROUTES.help}
@@ -56,7 +56,7 @@ export default function LegislatorHistoryPage() {
   const roleLabel = isAdmin
     ? "Адміністратор"
     : isSupervisor && !isLegislator
-      ? "Супервайзер"
+      ? "Супервізер"
       : "Законотворець";
 
   return (

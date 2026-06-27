@@ -153,7 +153,7 @@ export function LawMetaPanel({
             className={styles.riskFilterReset}
             onClick={() => onRiskLevelClick?.(activeRiskLevel)}
           >
-            ✕
+            ✕ Скинути
           </button>
         </div>
       )}

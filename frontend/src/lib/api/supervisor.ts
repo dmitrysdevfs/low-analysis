@@ -163,8 +163,11 @@ export async function getGroupProposals(): Promise<Proposal[]> {
 }
 
 // Group-scoped amendments (supervisor + all group members)
-export async function getGroupAmendments(): Promise<Amendment[]> {
-  return getJson<Amendment[]>("/supervisor/amendments");
+export async function getGroupAmendments(search?: string): Promise<Amendment[]> {
+  const params = search?.trim()
+    ? `?search=${encodeURIComponent(search.trim())}`
+    : "";
+  return getJson<Amendment[]>(`/supervisor/amendments${params}`);
 }
 
 // Group-scoped forks (supervisor + all group members)

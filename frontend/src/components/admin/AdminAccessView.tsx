@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useMemo } from "react";
 import {
@@ -36,7 +36,7 @@ const ROLE_META = {
     desc: "Розширений доступ до законодавчого кабінету",
   },
   supervisor: {
-    label: "Супервайзер",
+    label: "Супервізер",
     Icon: Eye,
     color: "#9b5de5",
     desc: "Наглядовий доступ до активності платформи",

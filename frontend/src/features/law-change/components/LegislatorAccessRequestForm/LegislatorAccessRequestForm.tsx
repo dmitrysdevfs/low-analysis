@@ -70,7 +70,9 @@ export function LegislatorAccessRequestForm({
   const [reason, setReason] = useState("");
 
   const cooldownMs = useCooldownTimer(
-    request?.status === "rejected" ? request.updatedAt : null,
+    request?.status === "rejected" || request?.status === "revoked"
+      ? request.updatedAt
+      : null,
   );
   const isCoolingDown = cooldownMs > 0;
 
@@ -166,7 +168,7 @@ export function LegislatorAccessRequestForm({
     );
   }
 
-  // Revoked by admin — allow re-submission
+  // Revoked by admin — show cooldown or allow re-submission
   if (request?.status === "revoked") {
     return (
       <div className={styles.roleCard}>
@@ -177,22 +179,34 @@ export function LegislatorAccessRequestForm({
               Вашу роль було відкликано адміністратором.
             </p>
             <p className={styles.statusHint}>
-              Ви можете подати новий запит на отримання ролі.
+              {isCoolingDown
+                ? "Повторний запит можливий після закінчення очікування."
+                : "Ви можете подати новий запит на отримання ролі."}
             </p>
           </div>
         </div>
-        <RequestForm
-          selectedRole={selectedRole}
-          setSelectedRole={setSelectedRole}
-          lockRole={lockRole}
-          organization={organization}
-          setOrganization={setOrganization}
-          reason={reason}
-          setReason={setReason}
-          onSubmit={handleSubmit}
-          isPending={submit.isPending}
-          error={submit.isError ? (submit.error as Error).message : null}
-        />
+        {isCoolingDown ? (
+          <div className={styles.cooldown}>
+            <span className={styles.cooldownIcon}>⏱</span>
+            <span>Повторний запит через:</span>
+            <span className={styles.cooldownTimer}>
+              {formatDuration(cooldownMs)}
+            </span>
+          </div>
+        ) : (
+          <RequestForm
+            selectedRole={selectedRole}
+            setSelectedRole={setSelectedRole}
+            lockRole={lockRole}
+            organization={organization}
+            setOrganization={setOrganization}
+            reason={reason}
+            setReason={setReason}
+            onSubmit={handleSubmit}
+            isPending={submit.isPending}
+            error={submit.isError ? (submit.error as Error).message : null}
+          />
+        )}
       </div>
     );
   }

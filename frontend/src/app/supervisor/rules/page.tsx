@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import {
@@ -114,7 +114,7 @@ const QUALITY_RULES = [
   "Правка має чітко показувати, що саме додається, змінюється або вилучається.",
   "Формулювання не повинно суперечити іншим нормам або створювати очевидну колізію.",
   "До зміни має бути зрозуміле юридичне або практичне обґрунтування.",
-  "Supervisor перевіряє не політичну позицію, а якість логіки, структури та прозорість редакції.",
+  "Супервізор перевіряє не політичну позицію, а якість логіки, структури та прозорість редакції.",
   "Дублікати та сирі чернетки мають повертатися на доопрацювання до етапу review.",
   "Пріоритет віддається юридичній визначеності, відтворюваності та пояснюваності зміни.",
 ] as const;
@@ -203,7 +203,7 @@ export default function SupervisorRulesPage() {
     return (
       <RoleAccessGate
         eyebrow="SUPERVISOR ACCESS"
-        title="Правила та повноваження доступні лише для ролі Supervisor"
+        title="Правила та повноваження доступні лише для ролі Супервізор"
         text="Ця сторінка пояснює робочі межі, стандарти оцінки та сценарії нагляду для викладачів, менторів і керівників груп у Law Analysis."
         primaryHref={ROUTES.rolesSupervisor}
         primaryLabel="Публічна сторінка ролі"
@@ -214,7 +214,7 @@ export default function SupervisorRulesPage() {
   }
 
   const initials = (user?.displayName ?? "SV").slice(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Адміністратор" : "Супервайзер";
+  const roleLabel = isAdmin ? "Адміністратор" : "Супервізер";
 
   return (
     <RoleWorkspace
@@ -234,7 +234,7 @@ export default function SupervisorRulesPage() {
                 Роль нагляду, координації та перевірки якості.
               </h1>
               <p className={shellStyles.pageSubtitle}>
-                Супервайзер у Law Analysis керує групою, контролює прозорість
+                Супервізер у Law Analysis керує групою, контролює прозорість
                 змін, перевіряє якість напрацювань і підтримує навчальний або
                 експертний процес без підміни автора законодавчої правки.
               </p>
@@ -243,7 +243,7 @@ export default function SupervisorRulesPage() {
             <aside className={styles.summaryCard}>
               <div className={styles.summaryHeader}>
                 <Shield size={18} />
-                <span>Supervisor frame</span>
+                <span>Супервізор-фрейм</span>
               </div>
               <strong>
                 Керує процесом, а не приховано переписує результат.

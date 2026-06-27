@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { GitFork, Save, Upload, Trash2, Globe, Lock } from "lucide-react";
@@ -41,7 +41,7 @@ export function ForkSavePanel({
         <div className={styles.locked}>
           <Lock size={20} className={styles.lockedIcon} />
           <p className={styles.lockedText}>
-            Збереження форків доступне для Законотворця та Супервайзера
+            Збереження форків доступне для Законотворця та Супервізера
           </p>
         </div>
       </aside>

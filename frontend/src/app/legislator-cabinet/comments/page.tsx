@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -465,7 +465,7 @@ export default function LegislatorCommentsPage() {
   const roleLabel = isAdmin
     ? "Адміністратор"
     : isSupervisor
-      ? "Супервайзер"
+      ? "Супервізер"
       : "Законотворець";
 
   return (

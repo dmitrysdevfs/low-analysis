@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -655,7 +655,7 @@ export default function SupervisorAnalyticsPage() {
   if (!isSupervisor && !isAdmin) return <AccessGate />;
 
   const initials = (user?.displayName ?? "СВ").slice(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Адміністратор" : "Супервайзер";
+  const roleLabel = isAdmin ? "Адміністратор" : "Супервізер";
 
   return (
     <div className={styles.workspace}>

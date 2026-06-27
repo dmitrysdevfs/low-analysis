@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -74,7 +74,7 @@ export default function SupervisorHistoryPage() {
       <RoleAccessGate
         eyebrow="SUPERVISOR ACCESS"
         title="Журнал подій доступний лише для ролі Supervisor"
-        text="У цьому просторі зібрано історію приєднань, погоджень, відхилень і дій по групах. Для доступу потрібна роль супервайзера або адміністратора."
+        text="У цьому просторі зібрано історію приєднань, погоджень, відхилень і дій по групах. Для доступу потрібна роль супервізера або адміністратора."
         primaryHref={ROUTES.rolesSupervisor}
         primaryLabel="Про роль Supervisor"
         secondaryHref={ROUTES.help}
@@ -84,7 +84,7 @@ export default function SupervisorHistoryPage() {
   }
 
   const initials = (user?.displayName ?? "SV").slice(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Адміністратор" : "Супервайзер";
+  const roleLabel = isAdmin ? "Адміністратор" : "Супервізер";
 
   return (
     <RoleWorkspace

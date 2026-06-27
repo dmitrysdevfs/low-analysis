@@ -66,15 +66,3 @@ export const revokeRole = async (req, res, next) => {
   }
 };
 
-export const setUserRole = async (req, res, next) => {
-  try {
-    const { role } = req.body;
-    const user = await legislatorRequestService.setUserRole(
-      req.params.id,
-      role,
-    );
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-};

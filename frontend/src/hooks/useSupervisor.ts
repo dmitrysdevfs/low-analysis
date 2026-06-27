@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getSupervisorDashboard,
@@ -84,10 +85,20 @@ export function useSupervisorGroupProposals() {
   });
 }
 
-export function useSupervisorGroupAmendments() {
+export function useSupervisorGroupAmendments(search = "") {
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setDebouncedSearch(search),
+      search.trim() ? 250 : 0,
+    );
+    return () => clearTimeout(timer);
+  }, [search]);
+
   return useQuery({
-    queryKey: ["supervisor", "group-amendments"] as const,
-    queryFn: getGroupAmendments,
+    queryKey: ["supervisor", "group-amendments", debouncedSearch] as const,
+    queryFn: () => getGroupAmendments(debouncedSearch),
     retry: false,
   });
 }

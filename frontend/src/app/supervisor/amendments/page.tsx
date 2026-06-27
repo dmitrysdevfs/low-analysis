@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -29,6 +29,7 @@ import {
 } from "@/hooks/useSupervisor";
 import type { Amendment, AmendmentChangeType } from "@/types/legislator";
 import { notify } from "@/lib/toast";
+import { DiffViewer } from "@/components/ui";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
@@ -235,11 +236,15 @@ function AmendmentRow({
         <span className={styles.amendmentMeta}>
           Стаття {articleNum}
           {articleTitle ? ` · ${articleTitle}` : ""}
+          {a.context.element_code ? ` · ${a.context.element_code}` : ""}
         </span>
         {typeof a.law_id === "object" && a.law_id !== null && (
-          <span className={styles.amendmentLaw}>
+          <Link
+            href={ROUTES.law((a.law_id as { _id: string; title: string })._id)}
+            className={styles.amendmentLaw}
+          >
             {(a.law_id as { title: string }).title}
-          </span>
+          </Link>
         )}
         <ChangeBadge type={a.change_type} />
         <span className={styles.amendmentAuthor}>{author}</span>
@@ -251,16 +256,7 @@ function AmendmentRow({
 
       {isOpen && (
         <div className={styles.amendmentBody}>
-          <div className={styles.diffGrid}>
-            <div className={styles.diffOriginal}>
-              <div className={styles.diffLabel}>Оригінальний текст</div>
-              <div className={styles.diffText}>{a.original_text || "—"}</div>
-            </div>
-            <div className={styles.diffProposed}>
-              <div className={styles.diffLabel}>Запропонований текст</div>
-              <div className={styles.diffText}>{a.proposed_text || "—"}</div>
-            </div>
-          </div>
+          <DiffViewer original={a.original_text} proposed={a.proposed_text} />
           {a.reason && (
             <p className={styles.reason}>
               <strong>Причина:</strong> {a.reason}
@@ -305,7 +301,12 @@ function AmendmentRow({
 }
 
 function AmendmentsView() {
-  const { data: amendments, isLoading, error } = useSupervisorGroupAmendments();
+  const [filterType, setFilterType] = useState<FilterType>("all");
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
+  const [search, setSearch] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const { data: amendments, isLoading, error } = useSupervisorGroupAmendments(search);
   const reviewMutation = useReviewAmendment();
   const [reviewingId, setReviewingId] = useState<string | null>(null);
 
@@ -336,31 +337,12 @@ function AmendmentsView() {
     }
   };
 
-  const [filterType, setFilterType] = useState<FilterType>("all");
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
-  const [search, setSearch] = useState("");
-  const [openId, setOpenId] = useState<string | null>(null);
-
   const list = amendments ?? [];
 
   const filtered = list.filter((a) => {
     if (filterType !== "all" && a.change_type !== filterType) return false;
     if (filterStatus !== "all" && getAmendmentStatus(a) !== filterStatus)
       return false;
-    if (search) {
-      const q = search.toLowerCase();
-      const lawTitle =
-        typeof a.law_id === "object" ? a.law_id.title.toLowerCase() : "";
-      const article = (a.context.article_num ?? "").toLowerCase();
-      const articleTitle = (a.context.article_title ?? "").toLowerCase();
-      if (
-        !lawTitle.includes(q) &&
-        !article.includes(q) &&
-        !articleTitle.includes(q)
-      ) {
-        return false;
-      }
-    }
     return true;
   });
 
@@ -496,7 +478,7 @@ export default function SupervisorAmendmentsPage() {
   if (!isSupervisor && !isAdmin) return <AccessGate />;
 
   const initials = (user?.displayName ?? "СВ").slice(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Адміністратор" : "Супервайзер";
+  const roleLabel = isAdmin ? "Адміністратор" : "Супервізер";
 
   return (
     <div className={styles.workspace}>

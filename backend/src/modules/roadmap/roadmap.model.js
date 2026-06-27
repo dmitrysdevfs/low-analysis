@@ -14,10 +14,12 @@ const roadmapPhaseSchema = new mongoose.Schema(
     label: { type: String, required: true },
     status: {
       type: String,
-      enum: ['done', 'in_progress', 'pending'],
+      enum: ['done', 'in_progress', 'pending', 'current_focus', 'planned', 'research', 'vision'],
       default: 'pending',
     },
     tasks: { type: [roadmapTaskSchema], default: [] },
+    description: { type: String, default: '' },
+    businessValue: { type: String, default: '' },
   },
   { _id: false },
 );
@@ -55,6 +57,8 @@ const roadmapDocSchema = new mongoose.Schema(
     roadmapItems: { type: [roadmapItemSchema], default: [] },
     deferredItems: { type: [deferredItemSchema], default: [] },
     decisions: { type: [decisionSchema], default: [] },
+    visionStatement: { type: String, default: '' },
+    whatWeBuilding: { type: [String], default: [] },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

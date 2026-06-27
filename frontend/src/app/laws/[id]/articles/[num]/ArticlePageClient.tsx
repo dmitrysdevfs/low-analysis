@@ -72,6 +72,7 @@ export function ArticlePageClient() {
   const [activeRiskLevel, setActiveRiskLevel] = useState<RiskLevel | null>(
     null,
   );
+  const [articleTextCopied, setArticleTextCopied] = useState(false);
 
   const { filteredChildren, semanticCount } = useMemo(() => {
     if (!activeRiskLevel)
@@ -529,9 +530,33 @@ export function ArticlePageClient() {
                     {article.text ? (
                       <div className={styles.articleBodyWrap}>
                         <p className={styles.articleBody}>{article.text}</p>
-                        <span className={`mono ${styles.articleBodyCount}`}>
-                          {article.text.length}
-                        </span>
+                        <div className={styles.articleBodyMeta}>
+                          <span className={`mono ${styles.articleBodyCount}`}>
+                            {article.text.length}
+                          </span>
+                          <button
+                            type="button"
+                            className={`${styles.copyBtn} ${articleTextCopied ? styles.copyBtnCopied : ""}`}
+                            aria-label="Копіювати текст статті"
+                            onClick={async () => {
+                              const text = article.text ?? "";
+                              try {
+                                await navigator.clipboard.writeText(text);
+                              } catch {
+                                const el = document.createElement("textarea");
+                                el.value = text;
+                                document.body.appendChild(el);
+                                el.select();
+                                document.execCommand("copy");
+                                document.body.removeChild(el);
+                              }
+                              setArticleTextCopied(true);
+                              setTimeout(() => setArticleTextCopied(false), 2000);
+                            }}
+                          >
+                            {articleTextCopied ? "✔" : "⧉"}
+                          </button>
+                        </div>
                       </div>
                     ) : null}
 
@@ -545,12 +570,10 @@ export function ArticlePageClient() {
                         transition={{ delay: 0.15, duration: 0.3 }}
                       >
                         <div className={`mono ${styles.childrenHeading}`}>
-                          Вміст статті · {children.length}{" "}
-                          {children.length === 1
-                            ? "елемент"
-                            : children.length < 5
-                              ? "елементи"
-                              : "елементів"}
+                          Вміст статті ·{" "}
+                          {activeRiskLevel
+                            ? `показано ${filteredChildren.length} з ${children.length}`
+                            : `${children.length} ${children.length === 1 ? "елемент" : children.length < 5 ? "елементи" : "елементів"}`}
                         </div>
 
                         <NestedNodeList

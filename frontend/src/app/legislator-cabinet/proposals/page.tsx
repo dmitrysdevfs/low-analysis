@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -150,7 +150,7 @@ function LegislatorSidebar({
 
 function getLawTitle(law_id: Proposal["law_id"]): string {
   if (typeof law_id === "object" && law_id !== null) return law_id.title;
-  return law_id;
+  return law_id ?? "";
 }
 
 const STATUS_LABELS: Record<ProposalStatus, string> = {
@@ -590,7 +590,7 @@ export default function LegislatorProposalsPage() {
   const roleLabel = isAdmin
     ? "Адміністратор"
     : isSupervisor
-      ? "Супервайзер"
+      ? "Супервізер"
       : "Законотворець";
 
   return (

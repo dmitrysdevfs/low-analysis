@@ -33,6 +33,23 @@ export const submitRequest = async (
     }
   }
 
+  const lastRevoked = await LegislatorAccessRequest.findOne({
+    userId,
+    status: 'revoked',
+  }).sort({ updatedAt: -1 });
+
+  if (lastRevoked?.updatedAt) {
+    const msSinceRevocation =
+      Date.now() - new Date(lastRevoked.updatedAt).getTime();
+    const cooldownMs = COOLDOWN_HOURS * 3_600_000;
+    if (msSinceRevocation < cooldownMs) {
+      throw Object.assign(
+        new Error('Повторний запит можливий через 24 години після відкликання ролі'),
+        { status: 429, retryAfterMs: cooldownMs - msSinceRevocation },
+      );
+    }
+  }
+
   return await LegislatorAccessRequest.create({
     userId,
     requestedRole,
@@ -92,19 +109,11 @@ export const revokeRole = async (userId) => {
     { new: true },
   ).select('-password');
   if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
-  return user;
-};
 
-export const setUserRole = async (userId, role) => {
-  const allowed = ['user', 'paid_user', 'legislator', 'supervisor', 'admin'];
-  if (!allowed.includes(role))
-    throw Object.assign(new Error(`Invalid role: ${role}`), { status: 400 });
+  await LegislatorAccessRequest.updateMany(
+    { userId, status: 'approved' },
+    { status: 'revoked' },
+  );
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { role },
-    { new: true },
-  ).select('-password');
-  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
   return user;
 };

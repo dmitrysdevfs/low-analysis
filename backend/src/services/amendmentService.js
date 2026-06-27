@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Amendment from '../models/Amendment.js';
 import ApprovedChange from '../models/ApprovedChange.js';
 import Element from '../models/Element.js';
+import Law from '../models/Law.js';
 import Proposal from '../models/Proposal.js';
 import { compareIds } from '../utils/id.js';
 
@@ -141,8 +142,18 @@ export const updateAmendment = async (id, userId, data) => {
 /**
  * Get amendments by multiple user IDs (for supervisor group view).
  */
-export const getAmendmentsByUserIds = async (userIds) => {
-  return Amendment.find({ created_by: { $in: userIds } })
+export const getAmendmentsByUserIds = async (userIds, { search } = {}) => {
+  const query = { created_by: { $in: userIds } };
+
+  if (search?.trim()) {
+    const matchedLaws = await Law.find(
+      { title: { $regex: search.trim(), $options: 'i' } },
+      '_id',
+    ).lean();
+    query.law_id = { $in: matchedLaws.map((l) => l._id) };
+  }
+
+  return Amendment.find(query)
     .populate('law_id', 'title code')
     .populate('created_by', 'fullName')
     .sort({ createdAt: -1 })

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Layout } from "@/components/layout/Layout";
 import { RoleDetailView } from "@/features/roles-detail/components/RoleDetailView";
 import { ROLE_DETAIL_CONFIGS } from "@/features/roles-detail/lib/roleDetailConfigs";
@@ -6,7 +6,7 @@ import { ROLE_DETAIL_CONFIGS } from "@/features/roles-detail/lib/roleDetailConfi
 export const metadata: Metadata = {
   title: "Супервайзер · Law Analysis",
   description:
-    "Роль супервайзера: групи, моніторинг активності студентів та перевірка fork/diff.",
+    "Роль супервізера: групи, моніторинг активності студентів та перевірка fork/diff.",
 };
 
 export default function RolesSupervisorPage() {

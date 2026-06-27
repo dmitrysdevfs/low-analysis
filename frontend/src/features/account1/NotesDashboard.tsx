@@ -49,11 +49,11 @@ const QUOTE_LIMIT = 120;
 const NAV_ITEMS = [
   { href: ROUTES.account, label: "Особистий кабінет", Icon: User },
   { href: ROUTES.search, label: "Пошук документів", Icon: Search },
-  { href: ROUTES.accountSaved, label: "Збережені документи", Icon: Bookmark },
+  { href: ROUTES.accountSaved, label: "Збережені статті", Icon: Bookmark },
   { href: ROUTES.accountNotes, label: "Нотатки", Icon: Bell },
   {
     href: ROUTES.accountBilling,
-    label: "Підписка та billing",
+    label: "План та оплата",
     Icon: CreditCard,
   },
   { href: ROUTES.account, label: "Налаштування", Icon: Settings },

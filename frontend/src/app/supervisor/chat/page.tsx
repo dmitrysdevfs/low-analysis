@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   useCallback,
@@ -149,7 +149,7 @@ export default function SupervisorChatPage() {
   }
 
   const initials = (user?.displayName ?? "SV").slice(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Адміністратор" : "Супервайзер";
+  const roleLabel = isAdmin ? "Адміністратор" : "Супервізер";
   const activeRoom = rooms.find((r) => r.groupId === selectedGroupId) ?? null;
 
   return (

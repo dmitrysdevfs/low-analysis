@@ -85,11 +85,11 @@ const PREFS_CONFIG: Array<{
 const NAV_ITEMS = [
   { href: ROUTES.account, label: "Особистий кабінет", Icon: User },
   { href: ROUTES.search, label: "Пошук документів", Icon: Search },
-  { href: ROUTES.accountSaved, label: "Збережені документи", Icon: Bookmark },
-  { href: ROUTES.accountNotes, label: "Сповіщення", Icon: Bell },
+  { href: ROUTES.accountSaved, label: "Збережені статті", Icon: Bookmark },
+  { href: ROUTES.accountNotes, label: "Нотатки", Icon: Bell },
   {
     href: ROUTES.accountBilling,
-    label: "Підписка та billing",
+    label: "План та оплата",
     Icon: CreditCard,
   },
   { href: ROUTES.account, label: "Налаштування", Icon: Settings },
@@ -593,7 +593,7 @@ export function AccountDashboard() {
                 <div className={styles.cardIconWrap}>
                   <Eye size={18} />
                 </div>
-                <h3 className={styles.cardTitle}>Preview</h3>
+                <h3 className={styles.cardTitle}>Перегляд</h3>
               </div>
               <p className={styles.cardSub}>Ваш поточний вигляд</p>
               <p className={styles.cardText}>

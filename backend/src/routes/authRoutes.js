@@ -9,11 +9,36 @@ import {
   forgotPassword,
   resetPassword,
   googleAuth,
+  verifyEmail,
+  resendVerification,
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { guestRateLimit } from '../middleware/guestRateLimit.js';
 
 const router = express.Router();
+
+// 1 resend per 60 seconds per IP
+const _resendStore = new Map();
+function resendRateLimit(req, res, next) {
+  if (process.env.NODE_ENV === 'test') return next();
+  const ip =
+    (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    req.socket?.remoteAddress ||
+    'unknown';
+  const now = Date.now();
+  const WINDOW = 60 * 1000;
+  const entry = _resendStore.get(ip) ?? { ts: 0 };
+  if (now - entry.ts < WINDOW) {
+    const retryAfter = Math.ceil((entry.ts + WINDOW - now) / 1000);
+    res.set('Retry-After', String(retryAfter));
+    return res.status(429).json({
+      message: 'Зачекайте перед повторною відправкою',
+      retryAfterSeconds: retryAfter,
+    });
+  }
+  _resendStore.set(ip, { ts: now });
+  return next();
+}
 
 // 5 attempts per 15 minutes per IP for password-reset endpoints
 const _pwdResetStore = new Map();
@@ -368,5 +393,8 @@ router.post('/reset-password', passwordResetRateLimit, resetPassword);
  *         $ref: '#/components/responses/ServerError'
  */
 router.post('/google', guestRateLimit, googleAuth);
+
+router.get('/verify-email', verifyEmail);
+router.post('/resend-verification', resendRateLimit, resendVerification);
 
 export default router;

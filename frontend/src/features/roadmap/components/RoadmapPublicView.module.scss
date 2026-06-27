@@ -272,6 +272,16 @@
   border-color: rgba(28, 50, 96, 0.4);
 }
 
+.phaseResearch {
+  background: rgba(139, 92, 246, 0.06);
+  border-color: rgba(139, 92, 246, 0.2);
+
+  .phaseBadge {
+    background: rgba(139, 92, 246, 0.12);
+    color: #a78bfa;
+  }
+}
+
 .phaseHeader {
   display: flex;
   align-items: flex-start;
@@ -415,6 +425,118 @@
 .decisionSummary {
   font-size: 0.78rem;
   color: #7a98c0;
+}
+
+// ─── Phase description & business value ──────────────────────────────────────
+
+.phaseDescription {
+  font-size: 0.82rem;
+  color: #7a98c0;
+  margin: 6px 0 10px;
+  line-height: 1.5;
+}
+
+.phaseBusinessValue {
+  font-size: 0.8rem;
+  color: #5a8ab0;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  line-height: 1.5;
+}
+
+// ─── Phase metrics ───────────────────────────────────────────────────────────
+
+.phaseMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.phaseMetaItem {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.phaseMetaValue {
+  font-size: 1.4rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #c8a843;
+}
+
+.phaseMetaLabel {
+  font-size: 0.78rem;
+  color: #7a98c0;
+  font-family: var(--font-mono);
+}
+
+.phaseMetaCurrent {
+  font-size: 0.82rem;
+  color: #7ab3f8;
+}
+
+// ─── CTA ─────────────────────────────────────────────────────────────────────
+
+.ctaGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: #c8a843;
+  color: #060e1f;
+  border: 1px solid transparent;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.ctaBtnSecondary {
+  background: transparent;
+  color: #c8a843;
+  border-color: rgba(200, 168, 67, 0.35);
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.06);
+    opacity: 1;
+  }
+}
+
+.ctaBtnGhost {
+  background: transparent;
+  color: #7a98c0;
+  border-color: rgba(28, 50, 96, 0.6);
+
+  &:hover {
+    background: rgba(28, 50, 96, 0.2);
+    opacity: 1;
+  }
+}
+
+// ─── Vision statement ────────────────────────────────────────────────────────
+
+.visionStatement {
+  font-size: 1.05rem;
+  color: #c7d5ea;
+  line-height: 1.75;
+  max-width: 720px;
+  border-left: 3px solid #3b82f6;
+  padding-left: 20px;
+  margin: 0;
 }
 
 // ─── Responsive ───────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+﻿import type { LucideIcon } from "lucide-react";
 import {
   BadgeCheck,
   BarChart3,
@@ -366,7 +366,7 @@ export const ROLE_DETAIL_CONFIGS: Record<RoleDetailKey, RoleDetailConfig> = {
       },
       {
         title: "3. Передати на review",
-        body: "Після завершення роботи підготуйте diff і передайте результат супервайзеру або спільноті.",
+        body: "Після завершення роботи підготуйте diff і передайте результат супервізеру або спільноті.",
       },
     ],
     modulesTitle: "Робочі модулі ролі",
@@ -408,10 +408,10 @@ export const ROLE_DETAIL_CONFIGS: Record<RoleDetailKey, RoleDetailConfig> = {
       "Системна модерація та адміністрування платформи",
     ],
     nextStep: {
-      title: "Наступний крок: Супервайзер",
-      body: "Якщо потрібно не лише створювати правки, а й перевіряти роботу групи та відстежувати активність, переходьте до ролі супервайзера.",
+      title: "Наступний крок: Супервізер",
+      body: "Якщо потрібно не лише створювати правки, а й перевіряти роботу групи та відстежувати активність, переходьте до ролі супервізера.",
       href: ROUTES.rolesSupervisor,
-      buttonLabel: "Перейти до ролі супервайзера",
+      buttonLabel: "Перейти до ролі супервізера",
     },
     footerTitle: "Робота зі змінами на професійному рівні",
     footerBody:
@@ -419,8 +419,8 @@ export const ROLE_DETAIL_CONFIGS: Record<RoleDetailKey, RoleDetailConfig> = {
   },
   supervisor: {
     key: "supervisor",
-    badge: "Супервайзер",
-    title: "Супервайзер",
+    badge: "Супервізер",
+    title: "Супервізер",
     description:
       "Наглядова роль для викладача, ментора або керівника групи, який відстежує активність студентів і перевіряє якість правок.",
     audience:
@@ -462,7 +462,7 @@ export const ROLE_DETAIL_CONFIGS: Record<RoleDetailKey, RoleDetailConfig> = {
         Icon: GitFork,
       },
     ],
-    workflowTitle: "Як працює супервайзер",
+    workflowTitle: "Як працює супервізер",
     workflowDescription: "Роль для контролю процесу, а не лише створення змін.",
     workflowSteps: [
       {
@@ -524,7 +524,7 @@ export const ROLE_DETAIL_CONFIGS: Record<RoleDetailKey, RoleDetailConfig> = {
     },
     footerTitle: "Контроль якості та навчального процесу",
     footerBody:
-      "Супервайзер перетворює платформу на керований освітній або робочий процес, де видно не тільки результат, а й хід роботи.",
+      "Супервізер перетворює платформу на керований освітній або робочий процес, де видно не тільки результат, а й хід роботи.",
   },
   admin: {
     key: "admin",
