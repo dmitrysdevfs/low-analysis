@@ -155,7 +155,10 @@ function AccessGate() {
           робочих груп.
         </p>
         <div className={styles.gateActions}>
-          <Link href={ROUTES.rolesSupervisorRequest} className="btn btn-primary">
+          <Link
+            href={ROUTES.rolesSupervisorRequest}
+            className="btn btn-primary"
+          >
             Подати заявку
           </Link>
           <Link href={ROUTES.rolesSupervisor} className="btn btn-outline">
@@ -206,7 +209,9 @@ function ProposalsView() {
     setReviewingId(id);
     try {
       await reviewMutation.mutateAsync({ id, action });
-      notify.success(action === "approve" ? "Пропозицію схвалено" : "Пропозицію відхилено");
+      notify.success(
+        action === "approve" ? "Пропозицію схвалено" : "Пропозицію відхилено",
+      );
     } catch (err) {
       notify.error(
         err instanceof Error ? err.message : "Не вдалося виконати дію",

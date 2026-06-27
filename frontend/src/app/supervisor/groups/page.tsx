@@ -162,7 +162,10 @@ function AccessGate() {
           робочих груп.
         </p>
         <div className={styles.gateActions}>
-          <Link href={ROUTES.rolesSupervisorRequest} className="btn btn-primary">
+          <Link
+            href={ROUTES.rolesSupervisorRequest}
+            className="btn btn-primary"
+          >
             Подати заявку
           </Link>
           <Link href={ROUTES.rolesSupervisor} className="btn btn-outline">
@@ -213,7 +216,8 @@ function GroupsView() {
       0,
     ) ?? 0;
   const activeGroupIds = activeGroups.map((g) => g._id);
-  const { total: pendingCount, perGroup: pendingPerGroup } = useSupervisorPendingCount(activeGroupIds);
+  const { total: pendingCount, perGroup: pendingPerGroup } =
+    useSupervisorPendingCount(activeGroupIds);
 
   const canCreate = activeGroups.length < 3;
 
@@ -447,7 +451,10 @@ function GroupsView() {
                         <Link
                           href={ROUTES.supervisorGroup(group._id)}
                           className={`${styles.statBadge} ${styles.statBadgeOrange}`}
-                          style={{ textDecoration: "none", fontSize: "0.72rem" }}
+                          style={{
+                            textDecoration: "none",
+                            fontSize: "0.72rem",
+                          }}
                         >
                           {pendingPerGroup[group._id]} заявок
                         </Link>

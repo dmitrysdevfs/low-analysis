@@ -154,7 +154,9 @@ export const reviewAmendment = async (id, action) => {
   if (!amendment)
     throw Object.assign(new Error('Amendment not found'), { statusCode: 404 });
   if (amendment.status !== 'pending')
-    throw Object.assign(new Error('Amendment already reviewed'), { statusCode: 409 });
+    throw Object.assign(new Error('Amendment already reviewed'), {
+      statusCode: 409,
+    });
 
   amendment.status = action === 'approve' ? 'approved' : 'rejected';
   await amendment.save();

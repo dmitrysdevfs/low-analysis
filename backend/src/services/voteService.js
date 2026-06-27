@@ -18,7 +18,9 @@ const VALID_VOTE_VALUES = ['positive', 'neutral', 'negative'];
 export const castVote = async ({ amendment_id, user_id, value }) => {
   if (!VALID_VOTE_VALUES.includes(value)) {
     throw Object.assign(
-      new Error(`Invalid vote value: "${value}". Allowed: ${VALID_VOTE_VALUES.join(', ')}`),
+      new Error(
+        `Invalid vote value: "${value}". Allowed: ${VALID_VOTE_VALUES.join(', ')}`,
+      ),
       { status: 400 },
     );
   }

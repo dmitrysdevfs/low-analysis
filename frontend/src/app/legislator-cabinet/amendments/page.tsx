@@ -250,13 +250,17 @@ function CreateModal({ onClose }: CreateModalProps) {
   const createAmendment = useCreateAmendment();
 
   const [lawSearch, setLawSearch] = useState("");
-  const [lawOptions, setLawOptions] = useState<{ _id: string; title: string }[]>([]);
+  const [lawOptions, setLawOptions] = useState<
+    { _id: string; title: string }[]
+  >([]);
   const [lawsLoading, setLawsLoading] = useState(false);
   const [selectedLawId, setSelectedLawId] = useState("");
   const [selectedLawTitle, setSelectedLawTitle] = useState("");
   const [showLawDropdown, setShowLawDropdown] = useState(false);
 
-  const [articleOptions, setArticleOptions] = useState<LawStructure["articles"]>([]);
+  const [articleOptions, setArticleOptions] = useState<
+    LawStructure["articles"]
+  >([]);
   const [articlesLoading, setArticlesLoading] = useState(false);
   const [selectedElementId, setSelectedElementId] = useState("");
   const [selectedArticleNum, setSelectedArticleNum] = useState("");
@@ -280,7 +284,9 @@ function CreateModal({ onClose }: CreateModalProps) {
     setLawsLoading(true);
     try {
       const laws = await getLaws(q);
-      setLawOptions(laws.slice(0, 10).map((l) => ({ _id: l._id, title: l.title })));
+      setLawOptions(
+        laws.slice(0, 10).map((l) => ({ _id: l._id, title: l.title })),
+      );
       setShowLawDropdown(true);
     } finally {
       setLawsLoading(false);
@@ -303,7 +309,9 @@ function CreateModal({ onClose }: CreateModalProps) {
     }
   };
 
-  const handleSelectArticle = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectArticle = async (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const article = articleOptions.find((a) => a._id === e.target.value);
     if (article) {
       setSelectedElementId(article._id);
@@ -356,7 +364,6 @@ function CreateModal({ onClose }: CreateModalProps) {
       <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
         <h2 className={styles.modalTitle}>Нова поправка</h2>
         <form onSubmit={handleSubmit} className={styles.createForm}>
-
           <div className={styles.field}>
             <span className={styles.label}>Закон *</span>
             <div style={{ position: "relative" }}>
@@ -369,7 +376,15 @@ function CreateModal({ onClose }: CreateModalProps) {
                 autoComplete="off"
               />
               {lawsLoading && (
-                <span style={{ position: "absolute", right: 10, top: 8, fontSize: "0.75rem", opacity: 0.5 }}>
+                <span
+                  style={{
+                    position: "absolute",
+                    right: 10,
+                    top: 8,
+                    fontSize: "0.75rem",
+                    opacity: 0.5,
+                  }}
+                >
                   ...
                 </span>
               )}
@@ -406,7 +421,8 @@ function CreateModal({ onClose }: CreateModalProps) {
               </option>
               {articleOptions.map((a) => (
                 <option key={a._id} value={a._id}>
-                  Стаття {a.number}{a.title ? ` — ${a.title}` : ""}
+                  Стаття {a.number}
+                  {a.title ? ` — ${a.title}` : ""}
                 </option>
               ))}
             </select>
@@ -430,7 +446,9 @@ function CreateModal({ onClose }: CreateModalProps) {
           <div className={styles.field}>
             <span className={styles.label}>
               Оригінальний текст{" "}
-              <em style={{ fontWeight: 400, fontStyle: "normal", opacity: 0.7 }}>
+              <em
+                style={{ fontWeight: 400, fontStyle: "normal", opacity: 0.7 }}
+              >
                 (підтягується автоматично після вибору статті)
               </em>
             </span>
@@ -438,7 +456,11 @@ function CreateModal({ onClose }: CreateModalProps) {
               className={`${styles.textarea} ${selectedElementId ? styles.textareaReadonly : ""}`}
               value={originalText}
               readOnly={!!selectedElementId}
-              onChange={!selectedElementId ? (e) => setOriginalText(e.target.value) : undefined}
+              onChange={
+                !selectedElementId
+                  ? (e) => setOriginalText(e.target.value)
+                  : undefined
+              }
               placeholder="Оберіть статтю — текст підтягнеться автоматично"
             />
           </div>
@@ -475,9 +497,15 @@ function CreateModal({ onClose }: CreateModalProps) {
             <button
               type="submit"
               className={styles.btnPrimary}
-              disabled={createAmendment.isPending || !selectedLawId || !selectedElementId}
+              disabled={
+                createAmendment.isPending ||
+                !selectedLawId ||
+                !selectedElementId
+              }
             >
-              {createAmendment.isPending ? "Збереження..." : "Створити поправку"}
+              {createAmendment.isPending
+                ? "Збереження..."
+                : "Створити поправку"}
             </button>
           </div>
         </form>

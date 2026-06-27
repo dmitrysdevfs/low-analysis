@@ -29,7 +29,9 @@ vi.mock('mongoose', async () => {
 vi.mock('../models/Proposal.js');
 vi.mock('../models/Amendment.js');
 vi.mock('../models/Law.js');
-vi.mock('../services/amendmentService.js', () => ({ reviewAmendment: vi.fn() }));
+vi.mock('../services/amendmentService.js', () => ({
+  reviewAmendment: vi.fn(),
+}));
 
 describe('proposalService', () => {
   beforeEach(() => {
@@ -171,11 +173,18 @@ describe('proposalService', () => {
 
       await expect(
         proposalService.reviewProposal('missing', 'approve'),
-      ).rejects.toMatchObject({ statusCode: 404, message: 'Proposal not found' });
+      ).rejects.toMatchObject({
+        statusCode: 404,
+        message: 'Proposal not found',
+      });
     });
 
     it('should throw 400 if proposal status is not review', async () => {
-      Proposal.findById.mockResolvedValue({ _id: 'p1', status: 'draft', save: vi.fn() });
+      Proposal.findById.mockResolvedValue({
+        _id: 'p1',
+        status: 'draft',
+        save: vi.fn(),
+      });
 
       await expect(
         proposalService.reviewProposal('p1', 'approve'),

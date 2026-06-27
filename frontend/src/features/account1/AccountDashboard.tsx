@@ -724,7 +724,9 @@ export function AccountDashboard() {
                       type="button"
                       className={styles.cardEyeBtn}
                       onClick={() => setShowPasswords((v) => !v)}
-                      aria-label={showPasswords ? "Приховати паролі" : "Показати паролі"}
+                      aria-label={
+                        showPasswords ? "Приховати паролі" : "Показати паролі"
+                      }
                     >
                       {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -744,7 +746,9 @@ export function AccountDashboard() {
                       type="button"
                       className={styles.cardEyeBtn}
                       onClick={() => setShowPasswords((v) => !v)}
-                      aria-label={showPasswords ? "Приховати паролі" : "Показати паролі"}
+                      aria-label={
+                        showPasswords ? "Приховати паролі" : "Показати паролі"
+                      }
                     >
                       {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -766,7 +770,9 @@ export function AccountDashboard() {
                       type="button"
                       className={styles.cardEyeBtn}
                       onClick={() => setShowPasswords((v) => !v)}
-                      aria-label={showPasswords ? "Приховати паролі" : "Показати паролі"}
+                      aria-label={
+                        showPasswords ? "Приховати паролі" : "Показати паролі"
+                      }
                     >
                       {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>

@@ -237,7 +237,9 @@ function AmendmentRow({
           {articleTitle ? ` · ${articleTitle}` : ""}
         </span>
         {typeof a.law_id === "object" && a.law_id !== null && (
-          <span className={styles.amendmentLaw}>{(a.law_id as { title: string }).title}</span>
+          <span className={styles.amendmentLaw}>
+            {(a.law_id as { title: string }).title}
+          </span>
         )}
         <ChangeBadge type={a.change_type} />
         <span className={styles.amendmentAuthor}>{author}</span>
@@ -287,7 +289,9 @@ function AmendmentRow({
             <div className={styles.amendActions}>
               <span
                 className={
-                  a.status === "approved" ? styles.statusApproved : styles.statusRejected
+                  a.status === "approved"
+                    ? styles.statusApproved
+                    : styles.statusRejected
                 }
               >
                 {a.status === "approved" ? "✓ Затверджено" : "✗ Відхилено"}

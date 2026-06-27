@@ -31,7 +31,10 @@ vi.mock('../voteThreshold.service.js', () => ({
 import LawChangeVote from '../../../models/LawChangeVote.js';
 import LawChangeProposal from '../../../models/LawChangeProposal.js';
 import ApprovedChange from '../../../models/ApprovedChange.js';
-import { calculateVoteWeight, checkApprovalThreshold } from '../voteThreshold.service.js';
+import {
+  calculateVoteWeight,
+  checkApprovalThreshold,
+} from '../voteThreshold.service.js';
 import { castVote, removeVote, getVoteStats } from '../vote.service.js';
 
 const PROPOSAL_ID = 'prop-111';
@@ -60,7 +63,10 @@ function makeProposal(overrides = {}) {
 beforeEach(() => {
   vi.clearAllMocks();
   LawChangeVote.find.mockResolvedValue([]);
-  LawChangeVote.findOneAndUpdate.mockResolvedValue({ vote: 'for', vote_weight: 3 });
+  LawChangeVote.findOneAndUpdate.mockResolvedValue({
+    vote: 'for',
+    vote_weight: 3,
+  });
   LawChangeVote.findOneAndDelete.mockResolvedValue({});
   LawChangeProposal.findByIdAndUpdate.mockResolvedValue(makeProposal());
   ApprovedChange.updateMany.mockResolvedValue({});
@@ -83,15 +89,22 @@ describe('castVote', () => {
   });
 
   it('throws 403 when user votes on own proposal', async () => {
-    LawChangeProposal.findById.mockResolvedValue(makeProposal({ created_by: USER_ID }));
+    LawChangeProposal.findById.mockResolvedValue(
+      makeProposal({ created_by: USER_ID }),
+    );
 
     await expect(
       castVote(PROPOSAL_ID, { _id: USER_ID, role: 'legislator' }, 'for'),
-    ).rejects.toMatchObject({ status: 403, message: 'Cannot vote on your own proposal' });
+    ).rejects.toMatchObject({
+      status: 403,
+      message: 'Cannot vote on your own proposal',
+    });
   });
 
   it('throws 400 when proposal is not active', async () => {
-    LawChangeProposal.findById.mockResolvedValue(makeProposal({ status: 'draft' }));
+    LawChangeProposal.findById.mockResolvedValue(
+      makeProposal({ status: 'draft' }),
+    );
 
     await expect(
       castVote(PROPOSAL_ID, { _id: USER_ID, role: 'legislator' }, 'for'),
@@ -101,7 +114,9 @@ describe('castVote', () => {
   it('upserts vote and recalculates totals', async () => {
     LawChangeProposal.findById
       .mockResolvedValueOnce(makeProposal())
-      .mockResolvedValue(makeProposal({ votes_for_weighted: 3, votes_for_count: 1 }));
+      .mockResolvedValue(
+        makeProposal({ votes_for_weighted: 3, votes_for_count: 1 }),
+      );
     calculateVoteWeight.mockReturnValue(3);
     checkApprovalThreshold.mockReturnValue(false);
 
@@ -159,13 +174,19 @@ describe('removeVote', () => {
   it('throws 404 when proposal not found', async () => {
     LawChangeProposal.findById.mockResolvedValue(null);
 
-    await expect(removeVote(PROPOSAL_ID, USER_ID)).rejects.toMatchObject({ status: 404 });
+    await expect(removeVote(PROPOSAL_ID, USER_ID)).rejects.toMatchObject({
+      status: 404,
+    });
   });
 
   it('throws 400 when proposal is not active', async () => {
-    LawChangeProposal.findById.mockResolvedValue(makeProposal({ status: 'approved' }));
+    LawChangeProposal.findById.mockResolvedValue(
+      makeProposal({ status: 'approved' }),
+    );
 
-    await expect(removeVote(PROPOSAL_ID, USER_ID)).rejects.toMatchObject({ status: 400 });
+    await expect(removeVote(PROPOSAL_ID, USER_ID)).rejects.toMatchObject({
+      status: 400,
+    });
   });
 
   it('deletes vote and recalculates totals', async () => {
@@ -184,9 +205,13 @@ describe('removeVote', () => {
 
 describe('getVoteStats', () => {
   it('throws 404 when proposal not found', async () => {
-    LawChangeProposal.findById.mockReturnValue({ lean: () => Promise.resolve(null) });
+    LawChangeProposal.findById.mockReturnValue({
+      lean: () => Promise.resolve(null),
+    });
 
-    await expect(getVoteStats(PROPOSAL_ID, USER_ID)).rejects.toMatchObject({ status: 404 });
+    await expect(getVoteStats(PROPOSAL_ID, USER_ID)).rejects.toMatchObject({
+      status: 404,
+    });
   });
 
   it('returns vote stats with my_vote null when not authenticated', async () => {
@@ -209,7 +234,9 @@ describe('getVoteStats', () => {
     LawChangeProposal.findById.mockReturnValue({
       lean: () => Promise.resolve(makeProposal()),
     });
-    LawChangeVote.findOne.mockReturnValue({ lean: () => Promise.resolve({ vote: 'for' }) });
+    LawChangeVote.findOne.mockReturnValue({
+      lean: () => Promise.resolve({ vote: 'for' }),
+    });
 
     const result = await getVoteStats(PROPOSAL_ID, USER_ID);
 

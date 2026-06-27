@@ -181,15 +181,23 @@ describe('amendmentService', () => {
     it('should throw 404 if amendment not found', async () => {
       Amendment.findById.mockResolvedValue(null);
 
-      await expect(amendmentService.reviewAmendment('missing', 'approve')).rejects.toMatchObject({
+      await expect(
+        amendmentService.reviewAmendment('missing', 'approve'),
+      ).rejects.toMatchObject({
         statusCode: 404,
       });
     });
 
     it('should throw 409 if amendment already reviewed', async () => {
-      Amendment.findById.mockResolvedValue({ _id: 'a1', status: 'approved', save: vi.fn() });
+      Amendment.findById.mockResolvedValue({
+        _id: 'a1',
+        status: 'approved',
+        save: vi.fn(),
+      });
 
-      await expect(amendmentService.reviewAmendment('a1', 'approve')).rejects.toMatchObject({
+      await expect(
+        amendmentService.reviewAmendment('a1', 'approve'),
+      ).rejects.toMatchObject({
         statusCode: 409,
       });
     });
