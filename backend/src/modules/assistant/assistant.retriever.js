@@ -59,14 +59,15 @@ export async function retrieveRelevantArticles(query, contextLawId = null) {
     const top = scored.sort((a, b) => b._hits - a._hits).slice(0, TOP_K);
 
     const lawIds = [...new Set(top.map((e) => e.lawId))];
-    const laws = await Law.find({ code: { $in: lawIds } })
+    const laws = await Law.find({ _id: { $in: lawIds } })
       .select('code title source')
       .lean();
-    const lawMap = Object.fromEntries(laws.map((l) => [l.code, l]));
+    const lawMap = Object.fromEntries(laws.map((l) => [l._id.toString(), l]));
 
     return top.map((el, idx) => {
-      const law = lawMap[el.lawId] || {};
-      const lawTitle = law.title || el.lawId;
+      const lawKey = el.lawId ? el.lawId.toString() : '';
+      const law = lawMap[lawKey] || {};
+      const lawTitle = law.title || lawKey;
       const articleNum = el.number || '';
       const articleTitle = el.title || '';
       return {
