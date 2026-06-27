@@ -8,5 +8,17 @@ export default defineConfig({
       FRONTEND_URL: 'http://localhost:3001',
       NODE_ENV: 'test',
     },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      reportsDirectory: './coverage',
+      exclude: ['node_modules/**', 'src/__tests__/**', '**/*.config.js'],
+      thresholds: {
+        lines: 60,
+        functions: 60,
+        branches: 50,
+        statements: 60,
+      },
+    },
   },
 });

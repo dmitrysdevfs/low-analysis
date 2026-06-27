@@ -89,12 +89,16 @@ export function useSupervisorPendingCount(groupIds: string[]) {
       retry: false,
     })),
   });
-  return results.reduce((sum, r) => {
-    const pending = (r.data ?? []).filter(
+  const perGroup: Record<string, number> = {};
+  let total = 0;
+  groupIds.forEach((id, i) => {
+    const count = (results[i]?.data ?? []).filter(
       (req) => req.status === "pending",
     ).length;
-    return sum + pending;
-  }, 0);
+    perGroup[id] = count;
+    total += count;
+  });
+  return { total, perGroup };
 }
 
 export function useCreateGroup() {
@@ -131,6 +135,7 @@ export function useReviewRequest(groupId: string) {
     }) => reviewRequest(groupId, reqId, action),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["groups", groupId] });
+      qc.invalidateQueries({ queryKey: ["supervisor", "group", groupId] });
     },
   });
 }

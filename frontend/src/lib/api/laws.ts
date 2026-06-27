@@ -65,6 +65,7 @@ export interface LawsQuery {
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
+  subjectId?: string;
 }
 
 export async function getLawsPaginated(
@@ -81,7 +82,23 @@ export async function getLawsPaginated(
   if (query.sortOrder) params.set("sortOrder", query.sortOrder);
   if (query.page != null) params.set("page", String(query.page));
   if (query.limit != null) params.set("limit", String(query.limit));
+  if (query.subjectId) params.set("subjectId", query.subjectId);
   return getJson<PaginatedLawsResponse>(`/laws?${params}`, options);
+}
+
+export interface LawElement {
+  _id: string;
+  text?: string | null;
+  title?: string | null;
+  number?: string | null;
+  type?: string;
+}
+
+export async function getLawElement(
+  id: string,
+  options?: RequestInit,
+): Promise<LawElement> {
+  return getJson<LawElement>(`/laws/elements/${id}`, options);
 }
 
 export async function getLawHeatmap(
@@ -134,7 +151,7 @@ export async function getLawSubjects(
 export interface LawStructure {
   title: string;
   code: string;
-  articles: Array<{ number: string; title: string; order: number }>;
+  articles: Array<{ _id: string; number: string; title: string | null }>;
 }
 
 export async function getLawArticles(lawId: string): Promise<LawStructure> {

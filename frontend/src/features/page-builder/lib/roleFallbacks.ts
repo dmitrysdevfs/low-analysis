@@ -322,10 +322,10 @@ export const ROLES_SUPERVISOR_FALLBACK = makeFallback(
         title: "Контролюйте роботу вашої групи",
         subtitle:
           "Супервайзер — це викладач або керівник робочої групи, який бачить активність своїх студентів-законотворців та може моніторити роботу над конкретними законами.",
-        primaryButtonLabel: "Дашборд супервайзера",
-        primaryButtonHref: "/supervisor/dashboard",
-        secondaryButtonLabel: "Зв'язатися з адміном",
-        secondaryButtonHref: "/help",
+        primaryButtonLabel: "Подати заявку",
+        primaryButtonHref: "/roles/supervisor/request",
+        secondaryButtonLabel: "Про роль Supervisor",
+        secondaryButtonHref: "/roles/supervisor",
       },
       style: {
         theme: "navy-gold",

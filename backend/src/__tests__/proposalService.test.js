@@ -29,6 +29,7 @@ vi.mock('mongoose', async () => {
 vi.mock('../models/Proposal.js');
 vi.mock('../models/Amendment.js');
 vi.mock('../models/Law.js');
+vi.mock('../services/amendmentService.js', () => ({ reviewAmendment: vi.fn() }));
 
 describe('proposalService', () => {
   beforeEach(() => {
@@ -161,6 +162,52 @@ describe('proposalService', () => {
       ).rejects.toMatchObject({ statusCode: 400 });
       expect(Amendment.deleteMany).not.toHaveBeenCalled();
       expect(mockProposal.deleteOne).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('reviewProposal', () => {
+    it('should throw 404 if proposal not found', async () => {
+      Proposal.findById.mockResolvedValue(null);
+
+      await expect(
+        proposalService.reviewProposal('missing', 'approve'),
+      ).rejects.toMatchObject({ statusCode: 404, message: 'Proposal not found' });
+    });
+
+    it('should throw 400 if proposal status is not review', async () => {
+      Proposal.findById.mockResolvedValue({ _id: 'p1', status: 'draft', save: vi.fn() });
+
+      await expect(
+        proposalService.reviewProposal('p1', 'approve'),
+      ).rejects.toMatchObject({ statusCode: 400 });
+    });
+
+    it('should set status to approved when action is approve', async () => {
+      const mockProposal = {
+        _id: 'p1',
+        status: 'review',
+        save: vi.fn().mockResolvedValue(true),
+      };
+      Proposal.findById.mockResolvedValue(mockProposal);
+
+      await proposalService.reviewProposal('p1', 'approve');
+
+      expect(mockProposal.status).toBe('approved');
+      expect(mockProposal.save).toHaveBeenCalled();
+    });
+
+    it('should set status to rejected when action is reject', async () => {
+      const mockProposal = {
+        _id: 'p1',
+        status: 'review',
+        save: vi.fn().mockResolvedValue(true),
+      };
+      Proposal.findById.mockResolvedValue(mockProposal);
+
+      await proposalService.reviewProposal('p1', 'reject');
+
+      expect(mockProposal.status).toBe('rejected');
+      expect(mockProposal.save).toHaveBeenCalled();
     });
   });
 });

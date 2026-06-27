@@ -10,18 +10,27 @@ const castToObjectId = (id) => {
   return id;
 };
 
+const VALID_VOTE_VALUES = ['positive', 'neutral', 'negative'];
+
 /**
  * Cast or update a vote on an amendment.
  */
 export const castVote = async ({ amendment_id, user_id, value }) => {
+  if (!VALID_VOTE_VALUES.includes(value)) {
+    throw Object.assign(
+      new Error(`Invalid vote value: "${value}". Allowed: ${VALID_VOTE_VALUES.join(', ')}`),
+      { status: 400 },
+    );
+  }
+
   const amendmentObjectId = castToObjectId(amendment_id);
   const userObjectId = castToObjectId(user_id);
 
-  // Upsert the vote
+  // Upsert the vote — runValidators ensures schema enum is enforced
   await Vote.findOneAndUpdate(
     { amendment_id: amendmentObjectId, user_id: userObjectId },
     { value },
-    { upsert: true, new: true },
+    { upsert: true, new: true, runValidators: true },
   );
 
   // Recalculate Amendment votes_summary

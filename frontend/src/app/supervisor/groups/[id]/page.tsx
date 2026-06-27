@@ -218,8 +218,9 @@ function SupervisorGroupView() {
   const handleReview = async (reqId: string, action: "approve" | "reject") => {
     try {
       await reviewRequest.mutateAsync({ reqId, action });
-    } catch {
-      // error handled via mutation state
+      notify.success(action === "approve" ? "Заявку прийнято" : "Заявку відхилено");
+    } catch (err) {
+      notify.error(err instanceof Error ? err.message : "Не вдалося обробити заявку");
     }
   };
 

@@ -31,6 +31,9 @@ import {
 } from "@/hooks/useAmendments";
 import type { Amendment, AmendmentChangeType } from "@/types/legislator";
 import { notify } from "@/lib/toast";
+import { DiffViewer } from "@/components/ui";
+import { getLaws, getLawArticles, getLawElement } from "@/lib/api/laws";
+import type { LawStructure } from "@/lib/api/laws";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
@@ -202,22 +205,22 @@ function AmendmentCard({
           Стаття {articleNum}
           {articleTitle ? ` · ${articleTitle}` : ""}
         </span>
+        {typeof a.law_id === "object" && a.law_id !== null && (
+          <span className={styles.amendmentLaw}>{a.law_id.title}</span>
+        )}
         <ChangeBadge type={a.change_type} />
+        {a.status === "approved" && (
+          <span className={styles.statusApproved}>Затверджено</span>
+        )}
+        {a.status === "rejected" && (
+          <span className={styles.statusRejected}>Відхилено</span>
+        )}
         <span className={styles.amendmentDate}>{date}</span>
       </div>
 
       {isOpen && (
         <div className={styles.amendmentBody}>
-          <div className={styles.diffGrid}>
-            <div className={styles.diffOriginal}>
-              <div className={styles.diffLabel}>Оригінальний текст</div>
-              <div className={styles.diffText}>{a.original_text || "—"}</div>
-            </div>
-            <div className={styles.diffProposed}>
-              <div className={styles.diffLabel}>Запропонований текст</div>
-              <div className={styles.diffText}>{a.proposed_text || "—"}</div>
-            </div>
-          </div>
+          <DiffViewer original={a.original_text} proposed={a.proposed_text} />
           {a.reason && (
             <p className={styles.reason}>
               <strong>Причина:</strong> {a.reason}
@@ -246,26 +249,97 @@ interface CreateModalProps {
 function CreateModal({ onClose }: CreateModalProps) {
   const createAmendment = useCreateAmendment();
 
-  const [lawTitle, setLawTitle] = useState("");
-  const [articleNum, setArticleNum] = useState("");
+  const [lawSearch, setLawSearch] = useState("");
+  const [lawOptions, setLawOptions] = useState<{ _id: string; title: string }[]>([]);
+  const [lawsLoading, setLawsLoading] = useState(false);
+  const [selectedLawId, setSelectedLawId] = useState("");
+  const [selectedLawTitle, setSelectedLawTitle] = useState("");
+  const [showLawDropdown, setShowLawDropdown] = useState(false);
+
+  const [articleOptions, setArticleOptions] = useState<LawStructure["articles"]>([]);
+  const [articlesLoading, setArticlesLoading] = useState(false);
+  const [selectedElementId, setSelectedElementId] = useState("");
+  const [selectedArticleNum, setSelectedArticleNum] = useState("");
+
   const [changeType, setChangeType] = useState<AmendmentChangeType>("edit");
   const [originalText, setOriginalText] = useState("");
   const [proposedText, setProposedText] = useState("");
   const [reason, setReason] = useState("");
 
+  const handleLawSearch = async (q: string) => {
+    setLawSearch(q);
+    setSelectedLawId("");
+    setSelectedLawTitle("");
+    setSelectedElementId("");
+    setArticleOptions([]);
+    if (q.trim().length < 2) {
+      setLawOptions([]);
+      setShowLawDropdown(false);
+      return;
+    }
+    setLawsLoading(true);
+    try {
+      const laws = await getLaws(q);
+      setLawOptions(laws.slice(0, 10).map((l) => ({ _id: l._id, title: l.title })));
+      setShowLawDropdown(true);
+    } finally {
+      setLawsLoading(false);
+    }
+  };
+
+  const handleSelectLaw = async (id: string, title: string) => {
+    setSelectedLawId(id);
+    setSelectedLawTitle(title);
+    setLawSearch(title);
+    setShowLawDropdown(false);
+    setSelectedElementId("");
+    setArticleOptions([]);
+    setArticlesLoading(true);
+    try {
+      const structure = await getLawArticles(id);
+      setArticleOptions(structure.articles);
+    } finally {
+      setArticlesLoading(false);
+    }
+  };
+
+  const handleSelectArticle = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const article = articleOptions.find((a) => a._id === e.target.value);
+    if (article) {
+      setSelectedElementId(article._id);
+      setSelectedArticleNum(article.number ?? "");
+      try {
+        const el = await getLawElement(article._id);
+        setOriginalText(el.text ?? "");
+      } catch {
+        setOriginalText("");
+      }
+    } else {
+      setSelectedElementId("");
+      setSelectedArticleNum("");
+      setOriginalText("");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!proposedText.trim()) return;
+    if (!selectedLawId || !selectedElementId) {
+      notify.error("Оберіть закон та статтю");
+      return;
+    }
     try {
       await createAmendment.mutateAsync({
+        law_id: selectedLawId,
+        element_id: selectedElementId,
         change_type: changeType,
         original_text: originalText || undefined,
         proposed_text: proposedText,
         reason: reason || undefined,
         context: {
-          article_num: articleNum || undefined,
-          element_code: articleNum || "",
-          section_title: lawTitle || undefined,
+          article_num: selectedArticleNum || undefined,
+          element_code: selectedElementId,
+          section_title: selectedLawTitle || undefined,
         },
       });
       notify.success("Поправку створено");
@@ -282,27 +356,60 @@ function CreateModal({ onClose }: CreateModalProps) {
       <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
         <h2 className={styles.modalTitle}>Нова поправка</h2>
         <form onSubmit={handleSubmit} className={styles.createForm}>
-          <div className={styles.formRow}>
-            <div className={styles.field}>
-              <span className={styles.label}>Закон</span>
+
+          <div className={styles.field}>
+            <span className={styles.label}>Закон *</span>
+            <div style={{ position: "relative" }}>
               <input
                 className={styles.input}
                 type="text"
-                value={lawTitle}
-                onChange={(e) => setLawTitle(e.target.value)}
-                placeholder="Назва або номер закону"
+                value={lawSearch}
+                onChange={(e) => handleLawSearch(e.target.value)}
+                placeholder="Почніть вводити назву закону..."
+                autoComplete="off"
               />
+              {lawsLoading && (
+                <span style={{ position: "absolute", right: 10, top: 8, fontSize: "0.75rem", opacity: 0.5 }}>
+                  ...
+                </span>
+              )}
+              {showLawDropdown && lawOptions.length > 0 && (
+                <ul className={styles.lawDropdown}>
+                  {lawOptions.map((l) => (
+                    <li
+                      key={l._id}
+                      className={styles.lawDropdownItem}
+                      onClick={() => handleSelectLaw(l._id, l.title)}
+                    >
+                      {l.title}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-            <div className={styles.field}>
-              <span className={styles.label}>Номер статті</span>
-              <input
-                className={styles.input}
-                type="text"
-                value={articleNum}
-                onChange={(e) => setArticleNum(e.target.value)}
-                placeholder="Наприклад: 25"
-              />
-            </div>
+          </div>
+
+          <div className={styles.field}>
+            <span className={styles.label}>Стаття *</span>
+            <select
+              className={styles.select}
+              value={selectedElementId}
+              onChange={handleSelectArticle}
+              disabled={!selectedLawId || articlesLoading}
+            >
+              <option value="">
+                {!selectedLawId
+                  ? "Спочатку оберіть закон"
+                  : articlesLoading
+                    ? "Завантаження..."
+                    : "Оберіть статтю"}
+              </option>
+              {articleOptions.map((a) => (
+                <option key={a._id} value={a._id}>
+                  Стаття {a.number}{a.title ? ` — ${a.title}` : ""}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.field}>
@@ -323,17 +430,16 @@ function CreateModal({ onClose }: CreateModalProps) {
           <div className={styles.field}>
             <span className={styles.label}>
               Оригінальний текст{" "}
-              <em
-                style={{ fontWeight: 400, fontStyle: "normal", opacity: 0.7 }}
-              >
-                (скопіюйте з тексту закону)
+              <em style={{ fontWeight: 400, fontStyle: "normal", opacity: 0.7 }}>
+                (підтягується автоматично після вибору статті)
               </em>
             </span>
             <textarea
-              className={styles.textarea}
+              className={`${styles.textarea} ${selectedElementId ? styles.textareaReadonly : ""}`}
               value={originalText}
-              onChange={(e) => setOriginalText(e.target.value)}
-              placeholder="Вставте оригінальний текст статті..."
+              readOnly={!!selectedElementId}
+              onChange={!selectedElementId ? (e) => setOriginalText(e.target.value) : undefined}
+              placeholder="Оберіть статтю — текст підтягнеться автоматично"
             />
           </div>
 
@@ -369,11 +475,9 @@ function CreateModal({ onClose }: CreateModalProps) {
             <button
               type="submit"
               className={styles.btnPrimary}
-              disabled={createAmendment.isPending}
+              disabled={createAmendment.isPending || !selectedLawId || !selectedElementId}
             >
-              {createAmendment.isPending
-                ? "Збереження..."
-                : "Створити поправку"}
+              {createAmendment.isPending ? "Збереження..." : "Створити поправку"}
             </button>
           </div>
         </form>
@@ -391,19 +495,17 @@ function AmendmentsContent({ userId }: { userId: string | undefined }) {
   const [showModal, setShowModal] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const list = amendments ?? [];
+  const list = [...(amendments ?? [])].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
 
   const filtered =
     filterTab === "all"
       ? list
       : list.filter((a) => a.change_type === filterTab);
 
-  const approvedCount = list.filter(
-    (a) => a.votes_summary.positive > a.votes_summary.negative,
-  ).length;
-  const draftCount = list.filter(
-    (a) => a.votes_summary.positive === 0 && a.votes_summary.negative === 0,
-  ).length;
+  const approvedCount = list.filter((a) => a.status === "approved").length;
+  const draftCount = list.filter((a) => a.status === "pending").length;
 
   const handleDelete = async (id: string) => {
     setDeletingId(id);

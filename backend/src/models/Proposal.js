@@ -35,5 +35,8 @@ const proposalSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+proposalSchema.index({ law_id: 1, status: 1 });
+proposalSchema.index({ created_by: 1, createdAt: -1 });
+
 const Proposal = mongoose.model('Proposal', proposalSchema);
 export default Proposal;

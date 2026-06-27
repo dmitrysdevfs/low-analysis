@@ -39,8 +39,12 @@ export function AdminUsersView() {
   const { snapshot, handleAccountAction } = useAdminWorkspace();
   const [registryFilter, setRegistryFilter] = useState<RegistryFilter>("all");
   const [registryQuery, setRegistryQuery] = useState("");
+  const [page, setPage] = useState(1);
 
-  const { users: adapterUsers } = useAdminUsers({ query: registryQuery });
+  const { users: adapterUsers, total } = useAdminUsers({
+    query: registryQuery,
+    page,
+  });
   const filteredAccounts = useMemo(() => {
     if (registryFilter === "all") return adapterUsers;
     return adapterUsers.filter((u) => u.accountType === registryFilter);
@@ -223,7 +227,10 @@ export function AdminUsersView() {
           <div className={styles.toolbar}>
             <input
               value={registryQuery}
-              onChange={(event) => setRegistryQuery(event.target.value)}
+              onChange={(event) => {
+                setRegistryQuery(event.target.value);
+                setPage(1);
+              }}
               className={styles.toolbarInput}
               placeholder="Пошук за ім'ям або email"
             />
@@ -260,6 +267,33 @@ export function AdminUsersView() {
               )}
             />
           </div>
+
+          {total > 0 && (
+            <div className={styles.pagination}>
+              <span className={styles.paginationMeta}>
+                Показано {filteredAccounts.length} з {total}
+              </span>
+              <div className={styles.paginationControls}>
+                <button
+                  type="button"
+                  className={styles.pageBtn}
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => p - 1)}
+                >
+                  ←
+                </button>
+                <span className={styles.pageIndicator}>Стор. {page}</span>
+                <button
+                  type="button"
+                  className={styles.pageBtn}
+                  disabled={filteredAccounts.length < 50}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  →
+                </button>
+              </div>
+            </div>
+          )}
         </article>
       </section>
     </section>

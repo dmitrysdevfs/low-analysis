@@ -28,6 +28,7 @@ import {
   useReviewAmendment,
 } from "@/hooks/useSupervisor";
 import type { Amendment, AmendmentChangeType } from "@/types/legislator";
+import { notify } from "@/lib/toast";
 import styles from "./page.module.scss";
 
 const SIDEBAR_NAV = [
@@ -235,6 +236,9 @@ function AmendmentRow({
           Стаття {articleNum}
           {articleTitle ? ` · ${articleTitle}` : ""}
         </span>
+        {typeof a.law_id === "object" && a.law_id !== null && (
+          <span className={styles.amendmentLaw}>{(a.law_id as { title: string }).title}</span>
+        )}
         <ChangeBadge type={a.change_type} />
         <span className={styles.amendmentAuthor}>{author}</span>
         <span className={styles.amendmentDate}>{date}</span>
@@ -260,24 +264,36 @@ function AmendmentRow({
               <strong>Причина:</strong> {a.reason}
             </p>
           )}
-          <div className={styles.amendActions}>
-            <button
-              type="button"
-              className={styles.btnReject}
-              disabled={isReviewing}
-              onClick={() => onReject(a._id)}
-            >
-              Відхилити
-            </button>
-            <button
-              type="button"
-              className={styles.btnApprove}
-              disabled={isReviewing}
-              onClick={() => onApprove(a._id)}
-            >
-              Затвердити ✓
-            </button>
-          </div>
+          {a.status === "pending" ? (
+            <div className={styles.amendActions}>
+              <button
+                type="button"
+                className={styles.btnReject}
+                disabled={isReviewing}
+                onClick={() => onReject(a._id)}
+              >
+                {isReviewing ? "..." : "Відхилити"}
+              </button>
+              <button
+                type="button"
+                className={styles.btnApprove}
+                disabled={isReviewing}
+                onClick={() => onApprove(a._id)}
+              >
+                {isReviewing ? "..." : "Затвердити ✓"}
+              </button>
+            </div>
+          ) : (
+            <div className={styles.amendActions}>
+              <span
+                className={
+                  a.status === "approved" ? styles.statusApproved : styles.statusRejected
+                }
+              >
+                {a.status === "approved" ? "✓ Затверджено" : "✗ Відхилено"}
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -293,6 +309,11 @@ function AmendmentsView() {
     setReviewingId(id);
     try {
       await reviewMutation.mutateAsync({ id, action: "approve" });
+      notify.success("Поправку затверджено");
+    } catch (err) {
+      notify.error(
+        err instanceof Error ? err.message : "Не вдалося затвердити поправку",
+      );
     } finally {
       setReviewingId(null);
     }
@@ -301,6 +322,11 @@ function AmendmentsView() {
     setReviewingId(id);
     try {
       await reviewMutation.mutateAsync({ id, action: "reject" });
+      notify.success("Поправку відхилено");
+    } catch (err) {
+      notify.error(
+        err instanceof Error ? err.message : "Не вдалося відхилити поправку",
+      );
     } finally {
       setReviewingId(null);
     }

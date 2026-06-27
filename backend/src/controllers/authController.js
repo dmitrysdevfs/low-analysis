@@ -133,6 +133,7 @@ export const registerUser = async (req, res) => {
     res.status(201).json({
       _id: user._id,
       fullName: user.fullName,
+      displayName: user.fullName,
       email: user.email,
       role: user.role,
     });
@@ -171,6 +172,7 @@ export const loginUser = async (req, res) => {
     res.json({
       _id: user._id,
       fullName: user.fullName,
+      displayName: user.fullName,
       email: user.email,
       role: user.role,
     });
@@ -191,6 +193,7 @@ export const getUserProfile = async (req, res) => {
     res.json({
       _id: user._id,
       fullName: user.fullName,
+      displayName: user.fullName,
       email: user.email,
       role: user.role,
     });

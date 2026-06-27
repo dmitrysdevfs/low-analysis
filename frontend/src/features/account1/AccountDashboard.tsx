@@ -12,6 +12,7 @@ import {
   HelpCircle,
   LogOut,
   Eye,
+  EyeOff,
   Lock,
   Send,
   Target,
@@ -176,6 +177,7 @@ export function AccountDashboard() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [nextPassword, setNextPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswords, setShowPasswords] = useState(false);
 
   useEffect(() => {
     if (user) setDisplayName(user.displayName);
@@ -710,35 +712,65 @@ export function AccountDashboard() {
               <form onSubmit={handlePasswordSubmit} className={styles.cardForm}>
                 <div className={styles.cardFieldRow}>
                   <span className={styles.cardFieldLabel}>Поточний пароль</span>
-                  <input
-                    className={styles.cardInput}
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
+                  <div className={styles.cardInputWrap}>
+                    <input
+                      className={styles.cardInput}
+                      type={showPasswords ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      className={styles.cardEyeBtn}
+                      onClick={() => setShowPasswords((v) => !v)}
+                      aria-label={showPasswords ? "Приховати паролі" : "Показати паролі"}
+                    >
+                      {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
                 <div className={styles.cardFieldRow}>
                   <span className={styles.cardFieldLabel}>Новий пароль</span>
-                  <input
-                    className={styles.cardInput}
-                    type="password"
-                    value={nextPassword}
-                    onChange={(e) => setNextPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
+                  <div className={styles.cardInputWrap}>
+                    <input
+                      className={styles.cardInput}
+                      type={showPasswords ? "text" : "password"}
+                      value={nextPassword}
+                      onChange={(e) => setNextPassword(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      className={styles.cardEyeBtn}
+                      onClick={() => setShowPasswords((v) => !v)}
+                      aria-label={showPasswords ? "Приховати паролі" : "Показати паролі"}
+                    >
+                      {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
                 <div className={styles.cardFieldRow}>
                   <span className={styles.cardFieldLabel}>
                     Підтвердження нового пароля
                   </span>
-                  <input
-                    className={styles.cardInput}
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
+                  <div className={styles.cardInputWrap}>
+                    <input
+                      className={styles.cardInput}
+                      type={showPasswords ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      className={styles.cardEyeBtn}
+                      onClick={() => setShowPasswords((v) => !v)}
+                      aria-label={showPasswords ? "Приховати паролі" : "Показати паролі"}
+                    >
+                      {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
                 <button type="submit" className={styles.cardBtnPrimary}>
                   Оновити пароль

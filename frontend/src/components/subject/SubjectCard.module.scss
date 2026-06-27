@@ -164,9 +164,18 @@
   -webkit-box-orient: vertical;
 }
 
+/* Back links row */
+.backLinks {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 /* Detail link */
 .detailLink {
-  margin-top: auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -179,5 +188,22 @@
 
   &:hover {
     color: var(--color-gold);
+  }
+}
+
+/* Laws link */
+.lawsLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-gold);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--color-azure);
   }
 }

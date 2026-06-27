@@ -53,6 +53,7 @@ export function useCreateSupervisorGroup() {
       qc.invalidateQueries({ queryKey: KEYS.groups });
       qc.invalidateQueries({ queryKey: KEYS.dashboard });
       qc.invalidateQueries({ queryKey: ["supervisor", "group"] });
+      qc.invalidateQueries({ queryKey: ["groups"] });
     },
   });
 }
@@ -132,6 +133,7 @@ export function useReviewProposal() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["changes"] });
       qc.invalidateQueries({ queryKey: ["proposals"] });
+      qc.invalidateQueries({ queryKey: ["supervisor", "group-proposals"] });
     },
   });
 }
@@ -148,6 +150,7 @@ export function useReviewAmendment() {
     }) => reviewAmendment(id, action),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["supervisor", "group-amendments"] });
+      qc.invalidateQueries({ queryKey: ["amendments"] });
     },
   });
 }

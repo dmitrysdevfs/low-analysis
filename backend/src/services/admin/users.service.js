@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import User from '../../models/User.js';
 import UserActivity from '../../models/UserActivity.js';
 import AuditLog from '../../models/AuditLog.js';
+import LegislatorAccessRequest from '../../models/LegislatorAccessRequest.js';
 import { appendAuditEntry } from './audit.service.js';
 
 export const listUsers = async ({ q = '', page = 1, limit = 50 } = {}) => {
@@ -53,6 +54,16 @@ export const setUserRole = async (id, role, actor) => {
     '-password',
   );
   if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+
+  // When downgrading to plain user, revoke any approved access request
+  // so the frontend form doesn't stay stuck on "Запит схвалено"
+  if (role === 'user' || role === 'paid_user') {
+    await LegislatorAccessRequest.updateMany(
+      { userId: id, status: 'approved' },
+      { status: 'revoked' },
+    );
+  }
+
   const actionLabel =
     role === 'admin'
       ? 'Акаунт підвищено до адміна'

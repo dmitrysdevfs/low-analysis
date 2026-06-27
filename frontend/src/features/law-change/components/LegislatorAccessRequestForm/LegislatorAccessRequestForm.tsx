@@ -156,12 +156,43 @@ export function LegislatorAccessRequestForm({
     );
   }
 
-  // Approved (but auth not refreshed yet)
-  if (request?.status === "approved") {
+  // Approved (but auth not refreshed yet) — only show if user still has the role
+  if (request?.status === "approved" && (isLegislator || isSupervisor)) {
     return (
       <div className={`${styles.statusBox} ${styles.statusApproved}`}>
         <span className={styles.statusIcon}>✓</span>
         <p className={styles.statusText}>Запит схвалено! Оновіть сторінку.</p>
+      </div>
+    );
+  }
+
+  // Revoked by admin — allow re-submission
+  if (request?.status === "revoked") {
+    return (
+      <div className={styles.roleCard}>
+        <div className={`${styles.statusBox} ${styles.statusRejected}`}>
+          <span className={styles.statusIcon}>✕</span>
+          <div>
+            <p className={styles.statusText}>
+              Вашу роль було відкликано адміністратором.
+            </p>
+            <p className={styles.statusHint}>
+              Ви можете подати новий запит на отримання ролі.
+            </p>
+          </div>
+        </div>
+        <RequestForm
+          selectedRole={selectedRole}
+          setSelectedRole={setSelectedRole}
+          lockRole={lockRole}
+          organization={organization}
+          setOrganization={setOrganization}
+          reason={reason}
+          setReason={setReason}
+          onSubmit={handleSubmit}
+          isPending={submit.isPending}
+          error={submit.isError ? (submit.error as Error).message : null}
+        />
       </div>
     );
   }

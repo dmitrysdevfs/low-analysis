@@ -119,4 +119,11 @@ router.post(
   proposalController.withdrawProposal,
 );
 
+router.post(
+  '/:id/review',
+  protect,
+  hasPermission('law_changes:read'),
+  proposalController.reviewProposal,
+);
+
 export default router;

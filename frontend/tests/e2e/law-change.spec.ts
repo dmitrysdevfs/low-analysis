@@ -132,10 +132,8 @@ test.describe("Living Law System — law-change API route smoke", () => {
   test("GET /api/law-change/proposals/my returns 401 without auth", async ({
     page,
   }) => {
-    // Direct API call — no mock, hitting real backend (or proxy)
     const response = await page.request.get("/api/law-change/proposals/my");
-    // Should be 401 (protected) or 404 (route not registered yet)
-    expect([401, 404, 500]).toContain(response.status());
+    expect(response.status()).toBe(401);
   });
 
   test("GET /api/law-change/approved/feed returns something", async ({
@@ -143,5 +141,140 @@ test.describe("Living Law System — law-change API route smoke", () => {
   }) => {
     const response = await page.request.get("/api/law-change/approved/feed");
     expect([200, 401, 404, 500]).toContain(response.status());
+  });
+});
+
+test.describe("Living Law System — proposals page (vote flow)", () => {
+  test.beforeEach(async ({ page }) => {
+    await seedLegislatorSession(page);
+    await suppressWelcome(page);
+    await installCoreApiMocks(
+      page,
+      "legislator",
+      "legislator-voter-id",
+      "Test Legislator",
+    );
+
+    // Proposals list
+    await page.route("**/api/law-change/proposals**", async (route) => {
+      const url = new URL(route.request().url());
+      const path = url.pathname;
+      if (path === "/api/law-change/proposals/my") {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify([]),
+        });
+      }
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          proposals: [
+            {
+              _id: "prop-e2e-1",
+              law_id: { _id: "law-1", title: "Закон про тест" },
+              status: "active",
+              change_type: "edit",
+              created_by: "other-author-id",
+              author_display_name: "Автор Тест",
+              original_text: "Старий текст статті",
+              proposed_text: "Новий текст статті",
+              votes_for_weighted: 0,
+              votes_against_weighted: 0,
+              votes_for_count: 0,
+              votes_against_count: 0,
+              voting_deadline: null,
+            },
+          ],
+          total: 1,
+          page: 1,
+          pages: 1,
+        }),
+      });
+    });
+
+    // Vote stats
+    await page.route(
+      "**/api/law-change/proposals/*/votes",
+      async (route) => {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            votes_for_weighted: 0,
+            votes_against_weighted: 0,
+            votes_for_count: 0,
+            votes_against_count: 0,
+            total_weight: 0,
+            my_vote: null,
+          }),
+        });
+      },
+    );
+
+    // Cast vote
+    await page.route(
+      "**/api/law-change/proposals/*/vote",
+      async (route) => {
+        if (route.request().method() === "POST") {
+          return route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify({
+              votes_for_weighted: 3,
+              votes_against_weighted: 0,
+              votes_for_count: 1,
+              votes_against_count: 0,
+              total_weight: 3,
+              my_vote: "for",
+            }),
+          });
+        }
+        // DELETE — remove vote
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            votes_for_weighted: 0,
+            votes_against_weighted: 0,
+            votes_for_count: 0,
+            votes_against_count: 0,
+            total_weight: 0,
+            my_vote: null,
+          }),
+        });
+      },
+    );
+  });
+
+  test("proposals page renders cards with vote buttons", async ({ page }) => {
+    await page.goto("/proposals", { waitUntil: "domcontentloaded" });
+
+    await expect(page.getByText("Закон про тест")).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByText("✓ За")).toBeVisible();
+    await expect(page.getByText("✗ Проти")).toBeVisible();
+  });
+
+  test("clicking За button triggers vote API call", async ({ page }) => {
+    const voteCalls: string[] = [];
+    page.on("request", (req) => {
+      if (
+        req.url().includes("/vote") &&
+        req.method() === "POST"
+      ) {
+        voteCalls.push(req.url());
+      }
+    });
+
+    await page.goto("/proposals", { waitUntil: "domcontentloaded" });
+    await page.waitForSelector("text=✓ За");
+
+    await page.getByText("✓ За").click();
+
+    await page.waitForTimeout(500);
+    expect(voteCalls.length).toBeGreaterThan(0);
   });
 });

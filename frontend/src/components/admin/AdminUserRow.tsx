@@ -231,12 +231,16 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
             <dt>Тип</dt>
             <dd>{formatAccountTypeLabel(account.accountType)}</dd>
 
-            {isLegislator && (
-              <>
-                <dt>Роль</dt>
-                <dd className={styles.rowPopoverAccent}>Законотворець</dd>
-              </>
-            )}
+            <dt>Роль</dt>
+            <dd className={styles.rowPopoverAccent}>
+              {isLegislator
+                ? "Законотворець"
+                : isSupervisor
+                  ? "Супервайзер"
+                  : account.accountType === "admin"
+                    ? "Адміністратор"
+                    : "Клієнт"}
+            </dd>
 
             <dt>Джерело</dt>
             <dd>{formatAccountSourceLabel(account.source)}</dd>

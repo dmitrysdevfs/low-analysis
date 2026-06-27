@@ -11,6 +11,7 @@ import {
   getLawHeatmap,
   getLawSubjects,
 } from '../controllers/lawController.js';
+import { createFork } from '../controllers/forkController.js';
 import { guestRateLimit } from '../middleware/guestRateLimit.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
@@ -426,5 +427,44 @@ router.post('/parse', protect, authorize('admin'), parseLawFromUrl);
  *         $ref: '#/components/responses/Forbidden'
  */
 router.post('/stats-bulk', protect, authorize('admin'), getLawStatsBulk);
+
+/**
+ * @swagger
+ * /api/laws/{id}/fork:
+ *   post:
+ *     summary: Create a fork of a law (alias for POST /api/forks)
+ *     tags: [Laws]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/LawId'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title]
+ *             properties:
+ *               title: { type: string }
+ *               description: { type: string }
+ *     responses:
+ *       201:
+ *         description: Fork created
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+router.post(
+  '/:id/fork',
+  protect,
+  authorize('legislator', 'supervisor', 'admin'),
+  (req, res, next) => {
+    // Normalise: inject lawId from path into body so createFork service gets it
+    req.body = { ...req.body, lawId: req.params.id };
+    return createFork(req, res, next);
+  },
+);
 
 export default router;
