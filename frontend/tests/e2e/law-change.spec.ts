@@ -195,57 +195,51 @@ test.describe("Living Law System — proposals page (vote flow)", () => {
     });
 
     // Vote stats
-    await page.route(
-      "**/api/law-change/proposals/*/votes",
-      async (route) => {
-        return route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            votes_for_weighted: 0,
-            votes_against_weighted: 0,
-            votes_for_count: 0,
-            votes_against_count: 0,
-            total_weight: 0,
-            my_vote: null,
-          }),
-        });
-      },
-    );
+    await page.route("**/api/law-change/proposals/*/votes", async (route) => {
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          votes_for_weighted: 0,
+          votes_against_weighted: 0,
+          votes_for_count: 0,
+          votes_against_count: 0,
+          total_weight: 0,
+          my_vote: null,
+        }),
+      });
+    });
 
     // Cast vote
-    await page.route(
-      "**/api/law-change/proposals/*/vote",
-      async (route) => {
-        if (route.request().method() === "POST") {
-          return route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify({
-              votes_for_weighted: 3,
-              votes_against_weighted: 0,
-              votes_for_count: 1,
-              votes_against_count: 0,
-              total_weight: 3,
-              my_vote: "for",
-            }),
-          });
-        }
-        // DELETE — remove vote
+    await page.route("**/api/law-change/proposals/*/vote", async (route) => {
+      if (route.request().method() === "POST") {
         return route.fulfill({
           status: 200,
           contentType: "application/json",
           body: JSON.stringify({
-            votes_for_weighted: 0,
+            votes_for_weighted: 3,
             votes_against_weighted: 0,
-            votes_for_count: 0,
+            votes_for_count: 1,
             votes_against_count: 0,
-            total_weight: 0,
-            my_vote: null,
+            total_weight: 3,
+            my_vote: "for",
           }),
         });
-      },
-    );
+      }
+      // DELETE — remove vote
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          votes_for_weighted: 0,
+          votes_against_weighted: 0,
+          votes_for_count: 0,
+          votes_against_count: 0,
+          total_weight: 0,
+          my_vote: null,
+        }),
+      });
+    });
   });
 
   test("proposals page renders cards with vote buttons", async ({ page }) => {
@@ -261,10 +255,7 @@ test.describe("Living Law System — proposals page (vote flow)", () => {
   test("clicking За button triggers vote API call", async ({ page }) => {
     const voteCalls: string[] = [];
     page.on("request", (req) => {
-      if (
-        req.url().includes("/vote") &&
-        req.method() === "POST"
-      ) {
+      if (req.url().includes("/vote") && req.method() === "POST") {
         voteCalls.push(req.url());
       }
     });

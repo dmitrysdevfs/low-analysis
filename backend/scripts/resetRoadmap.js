@@ -113,7 +113,8 @@ const CORRECT_ROADMAP_CONTENT = {
       label: 'Фаза 6 — Collaborative Lawmaking',
       status: 'in_progress',
       description: 'Створення середовища спільної роботи над законодавством.',
-      businessValue: 'Перехід від читання законів до створення законодавчих змін.',
+      businessValue:
+        'Перехід від читання законів до створення законодавчих змін.',
       tasks: [
         { text: 'Fork законів', done: true },
         { text: 'Diff Viewer', done: true },
@@ -129,7 +130,8 @@ const CORRECT_ROADMAP_CONTENT = {
       id: 'phase-7',
       label: 'Фаза 7 — Educational Platform',
       status: 'current_focus',
-      description: 'Платформа стає навчальним середовищем для студентів та інтернів.',
+      description:
+        'Платформа стає навчальним середовищем для студентів та інтернів.',
       businessValue: 'Практичне навчання роботі із законодавством.',
       tasks: [
         { text: 'Supervisor Role', done: true },
@@ -179,7 +181,8 @@ const CORRECT_ROADMAP_CONTENT = {
       id: 'phase-10',
       label: 'Фаза 10 — Legal Research Platform',
       status: 'research',
-      description: 'Наукова та дослідницька інфраструктура для юридичних досліджень.',
+      description:
+        'Наукова та дослідницька інфраструктура для юридичних досліджень.',
       businessValue: 'Law Analysis як база для юридичних досліджень.',
       tasks: [
         { text: 'Наукові дослідження', done: false },
@@ -210,7 +213,8 @@ const CORRECT_ROADMAP_CONTENT = {
       id: 'phase-12',
       label: 'Фаза 12 — International Legal Platform',
       status: 'vision',
-      description: 'Розширення на міжнародне право та порівняльне законодавство.',
+      description:
+        'Розширення на міжнародне право та порівняльне законодавство.',
       businessValue: 'Міжнародна платформа аналізу права.',
       tasks: [
         { text: 'Законодавство ЄС', done: false },
