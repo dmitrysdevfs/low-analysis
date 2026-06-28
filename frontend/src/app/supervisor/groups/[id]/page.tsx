@@ -28,7 +28,11 @@ import {
   useSupervisorGroupDetail,
   useUpdateSupervisorGroup,
 } from "@/hooks/useSupervisor";
-import { useGroupRequests, useReviewRequest, useCreateInvite } from "@/hooks/useGroups";
+import {
+  useGroupRequests,
+  useReviewRequest,
+  useCreateInvite,
+} from "@/hooks/useGroups";
 import { getLaws } from "@/lib/api/laws";
 import type { SupervisorLawRef } from "@/lib/api/supervisor";
 import { notify } from "@/lib/toast";
@@ -784,10 +788,7 @@ function SupervisorGroupView() {
             ) : (
               <div className={styles.activityFeed}>
                 {data.recentActivity.map((item) => (
-                  <article
-                    key={item.id}
-                    className={styles.feedItem}
-                  >
+                  <article key={item.id} className={styles.feedItem}>
                     <span
                       className={`${styles.feedIcon} ${
                         item.type === "fork"
@@ -1109,10 +1110,22 @@ function SupervisorGroupView() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ margin: 0, fontSize: "1.2rem", color: "var(--color-text)" }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: "1.2rem",
+                color: "var(--color-text)",
+              }}
+            >
               Запрошення до групи
             </h2>
-            <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--color-smoke)" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.85rem",
+                color: "var(--color-smoke)",
+              }}
+            >
               Скопіюйте посилання та надішліть законотворцям. Діє 7 днів.
             </p>
 

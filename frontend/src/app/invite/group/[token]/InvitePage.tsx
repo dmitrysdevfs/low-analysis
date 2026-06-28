@@ -69,9 +69,7 @@ export function InvitePage() {
       notify.success(`Акаунт створено! Ви приєдналися до «${data.groupName}»`);
       window.location.replace(ROUTES.legislatorCabinetGroups);
     } catch (err) {
-      notify.error(
-        err instanceof Error ? err.message : "Помилка реєстрації",
-      );
+      notify.error(err instanceof Error ? err.message : "Помилка реєстрації");
     }
   };
 
@@ -152,14 +150,21 @@ export function InvitePage() {
                   disabled={joinMutation.isPending}
                   onClick={handleJoin}
                 >
-                  {joinMutation.isPending ? "Приєднання..." : "Приєднатися до групи"}
+                  {joinMutation.isPending
+                    ? "Приєднання..."
+                    : "Приєднатися до групи"}
                 </button>
               </div>
             ) : isHydrated ? (
               /* ── Неавторизований ── */
               <form
                 onSubmit={handleRegister}
-                style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 20 }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+                  marginTop: 20,
+                }}
               >
                 <p
                   style={{
