@@ -7,7 +7,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import { MessageCircle, SendHorizontal, Users } from "lucide-react";
+import { MessageCircle, Menu, SendHorizontal, Users, X } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
 import {
@@ -17,14 +17,27 @@ import {
   formatUkDate,
   formatUkTime,
 } from "@/features/role-workspace/roleWorkspace";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   useGroupChatRooms,
   useInvalidateRooms,
+  ROOMS_KEY,
 } from "@/features/group-chat/hooks/useGroupChatRooms";
 import { useGroupChatMessages } from "@/features/group-chat/hooks/useGroupChatMessages";
 import { useGroupChatSocket } from "@/features/group-chat/hooks/useGroupChatSocket";
 import { sendWsMessage } from "@/features/group-chat/lib/chatSocket";
+import {
+  applyIncomingMessage,
+  markRoomRead,
+  hasRoom,
+  formatUnreadCount,
+} from "@/features/group-chat/lib/unread";
+import {
+  broadcastRoomRead,
+  onRoomRead,
+} from "@/features/group-chat/lib/readBroadcast";
 import { markRead } from "@/features/group-chat/api/groupChatApi";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import type {
   ChatRoom,
   ChatMessage,
@@ -42,10 +55,40 @@ export default function SupervisorChatPage() {
   const { user, isSupervisor, isAdmin, isHydrated } = useAuth();
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
+  const [roomsDrawerOpen, setRoomsDrawerOpen] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const isMobile = useWindowWidth() <= 980;
 
   const { data: rooms = [], isLoading: roomsLoading } = useGroupChatRooms();
   const invalidateRooms = useInvalidateRooms();
+  const qc = useQueryClient();
+
+  const patchRooms = useCallback(
+    (updater: (rooms: ChatRoom[]) => ChatRoom[]) => {
+      qc.setQueryData<ChatRoom[]>(ROOMS_KEY, (prev) =>
+        prev ? updater(prev) : prev,
+      );
+    },
+    [qc],
+  );
+
+  const markRoomReadEverywhere = useCallback(
+    (groupId: string) => {
+      patchRooms((prev) => markRoomRead(prev, groupId));
+      markRead(groupId).catch(() => {});
+      broadcastRoomRead(groupId);
+    },
+    [patchRooms],
+  );
+
+  // Another tab marked a group read — clear its badge here too.
+  useEffect(
+    () =>
+      onRoomRead((groupId) =>
+        patchRooms((prev) => markRoomRead(prev, groupId)),
+      ),
+    [patchRooms],
+  );
 
   const {
     messages,
@@ -73,31 +116,58 @@ export default function SupervisorChatPage() {
   const handleWsEvent = useCallback(
     (event: WsEvent) => {
       if (event.type === "message.new" && event.groupId && event.message) {
-        if (event.groupId === selectedGroupId) {
-          appendMessage(event.message);
-          markRead(event.groupId).catch(() => {});
+        const { groupId, message } = event;
+        const isActive = groupId === selectedGroupId;
+        if (isActive) {
+          appendMessage(message);
+          markRoomReadEverywhere(groupId);
         }
-        invalidateRooms();
+        // Flicker-free optimistic update; refetch only for an unknown room.
+        if (hasRoom(rooms, groupId)) {
+          patchRooms((prev) =>
+            applyIncomingMessage(prev, groupId, message, {
+              isActiveRoom: isActive,
+            }),
+          );
+        } else {
+          invalidateRooms();
+        }
       }
       if (event.type === "message.ack" && event.groupId && event.message) {
-        const optimisticId = event.optimisticId;
-        if (optimisticId) {
-          confirmOptimistic(optimisticId, event.message);
-        } else if (event.groupId === selectedGroupId) {
-          appendMessage(event.message);
+        const { groupId, message } = event;
+        if (event.optimisticId) {
+          confirmOptimistic(event.optimisticId, message);
+        } else if (groupId === selectedGroupId) {
+          appendMessage(message);
         }
-        invalidateRooms();
+        if (hasRoom(rooms, groupId)) {
+          patchRooms((prev) =>
+            applyIncomingMessage(prev, groupId, message, {
+              isActiveRoom: true,
+            }),
+          );
+        } else {
+          invalidateRooms();
+        }
       }
     },
-    [selectedGroupId, appendMessage, confirmOptimistic, invalidateRooms],
+    [
+      selectedGroupId,
+      rooms,
+      appendMessage,
+      confirmOptimistic,
+      invalidateRooms,
+      patchRooms,
+      markRoomReadEverywhere,
+    ],
   );
 
   useGroupChatSocket(handleWsEvent);
 
   function selectGroup(groupId: string) {
     setSelectedGroupId(groupId);
-    markRead(groupId).catch(() => {});
-    invalidateRooms();
+    markRoomReadEverywhere(groupId);
+    setRoomsDrawerOpen(false);
   }
 
   function handleSendMessage() {
@@ -159,7 +229,7 @@ export default function SupervisorChatPage() {
       name={user?.displayName ?? "Supervisor"}
       roleLabel={roleLabel}
     >
-      <div className={shellStyles.page}>
+      <div className={`${shellStyles.page} ${styles.chatPage}`}>
         <section className={`${shellStyles.panel} ${styles.heroPanel}`}>
           <div className={shellStyles.pageHeaderLeft}>
             <span className={shellStyles.eyebrow}>SUPERVISOR · ЧАТ</span>
@@ -172,10 +242,30 @@ export default function SupervisorChatPage() {
         </section>
 
         <section className={`${shellStyles.panel} ${styles.chatShell}`}>
-          <aside className={styles.threadColumn}>
+          {roomsDrawerOpen && (
+            <button
+              type="button"
+              aria-label="Закрити список чатів"
+              className={styles.drawerBackdrop}
+              onClick={() => setRoomsDrawerOpen(false)}
+            />
+          )}
+          <aside
+            className={`${styles.threadColumn} ${roomsDrawerOpen ? styles.threadColumnOpen : ""}`}
+          >
             <div className={styles.columnHeader}>
               <h2>Чати груп</h2>
-              <span>{rooms.length}</span>
+              <div className={styles.columnHeaderRight}>
+                <span>{rooms.length}</span>
+                <button
+                  type="button"
+                  className={styles.drawerClose}
+                  aria-label="Закрити список чатів"
+                  onClick={() => setRoomsDrawerOpen(false)}
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             <div className={styles.threadList}>
@@ -203,7 +293,7 @@ export default function SupervisorChatPage() {
                   </span>
                   {room.unreadCount > 0 && (
                     <span className={styles.unreadBadge}>
-                      {room.unreadCount}
+                      {formatUnreadCount(room.unreadCount)}
                     </span>
                   )}
                 </button>
@@ -213,16 +303,29 @@ export default function SupervisorChatPage() {
 
           <div className={styles.messagesColumn}>
             {!activeRoom ? (
-              <div className={shellStyles.emptyState}>
-                <MessageCircle size={34} className={styles.emptyIcon} />
-                <p className={shellStyles.emptyTitle}>
-                  Ще немає активного чату
-                </p>
-                <p className={shellStyles.emptyText}>
-                  Коли з&apos;являться групи або повідомлення, вони
-                  відображатимуться тут.
-                </p>
-              </div>
+              <>
+                <header className={styles.chatHeader}>
+                  <div />
+                  <button
+                    type="button"
+                    className={styles.roomsToggle}
+                    aria-label="Показати список чатів"
+                    onClick={() => setRoomsDrawerOpen(true)}
+                  >
+                    <Menu size={20} />
+                  </button>
+                </header>
+                <div className={shellStyles.emptyState}>
+                  <MessageCircle size={34} className={styles.emptyIcon} />
+                  <p className={shellStyles.emptyTitle}>
+                    Ще немає активного чату
+                  </p>
+                  <p className={shellStyles.emptyText}>
+                    Коли з&apos;являться групи або повідомлення, вони
+                    відображатимуться тут.
+                  </p>
+                </div>
+              </>
             ) : (
               <>
                 <header className={styles.chatHeader}>
@@ -233,6 +336,14 @@ export default function SupervisorChatPage() {
                       {activeRoom.course}
                     </p>
                   </div>
+                  <button
+                    type="button"
+                    className={styles.roomsToggle}
+                    aria-label="Показати список чатів"
+                    onClick={() => setRoomsDrawerOpen(true)}
+                  >
+                    <Menu size={20} />
+                  </button>
                 </header>
 
                 <div className={styles.messagesViewport} ref={viewportRef}>
@@ -294,8 +405,12 @@ export default function SupervisorChatPage() {
                     value={inputValue}
                     onChange={(event) => setInputValue(event.target.value)}
                     onKeyDown={handleComposerKeyDown}
-                    placeholder="Напишіть повідомлення групі. Enter — надіслати, Shift+Enter — новий рядок."
-                    rows={3}
+                    placeholder={
+                      isMobile
+                        ? "Повідомлення"
+                        : "Напишіть повідомлення групі. Enter — надіслати, Shift+Enter — новий рядок."
+                    }
+                    rows={isMobile ? 1 : 3}
                   />
                   <div className={styles.composerFooter}>
                     <span className={styles.composerHint}>
@@ -303,10 +418,11 @@ export default function SupervisorChatPage() {
                     </span>
                     <button
                       type="button"
-                      className="btn btn-primary"
+                      className={`btn btn-primary ${styles.sendButton}`}
                       onClick={handleSendMessage}
+                      aria-label="Надіслати"
                     >
-                      Надіслати
+                      <span className={styles.sendLabel}>Надіслати</span>
                       <SendHorizontal size={14} />
                     </button>
                   </div>

@@ -71,13 +71,8 @@ export const createGroup = async ({
  * Get groups for the authenticated user based on their role.
  */
 export const getMyGroups = async (userId, role) => {
-  if (role === 'admin') {
-    return Group.find({ status: 'active' })
-      .populate('supervisorId', 'fullName email')
-      .sort({ createdAt: -1 });
-  }
-  if (role === 'supervisor') {
-    return Group.find({ supervisorId: userId })
+  if (role === 'supervisor' || role === 'admin') {
+    return Group.find({ supervisorId: userId, status: 'active' })
       .populate('supervisorId', 'fullName email')
       .sort({ createdAt: -1 });
   }
