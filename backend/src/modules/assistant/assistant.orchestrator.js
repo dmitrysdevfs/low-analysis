@@ -11,6 +11,7 @@ import { retrieveRelevantArticles } from './assistant.retriever.js';
 import Element from '../../models/Element.js';
 import Law from '../../models/Law.js';
 
+const ACTIVE_ARTICLE_TRUNCATE = 10000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function sendSSE(res, data) {
@@ -29,11 +30,14 @@ async function streamStub(res, content, sources) {
   sendSSE(res, { type: SSE_EVENTS.DONE, sources });
 }
 
-/**
- * Stream a real LLM response.
- * Requires queryChatLLM to be available in llmService.
- */
-async function streamLLM(res, systemPrompt, history, userMessage, sources) {
+async function streamLLM(
+  res,
+  systemPrompt,
+  history,
+  userMessage,
+  sources,
+  maxOutputTokens,
+) {
   let accumulatedText = '';
   try {
     const { queryChatAssistant } = await import('./assistant.llm.js');
@@ -43,7 +47,7 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
       userMessage,
       {
         temperature: CHAT_LLM_CONFIG.temperature,
-        maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
+        maxOutputTokens: maxOutputTokens || CHAT_LLM_CONFIG.maxOutputTokens,
       },
     );
 
@@ -106,6 +110,7 @@ function deriveTitle(message) {
 export async function handleStreamChat({
   res,
   userId,
+  userRole,
   guestIp,
   sessionId,
   message,
@@ -212,11 +217,17 @@ export async function handleStreamChat({
               fullText += `${activeElement.title}\n`;
             }
             if (activeElement.text) {
-              fullText += `${activeElement.text}\n`;
+              const riskMarker = activeElement.risk_level && activeElement.risk_level !== 'green'
+                ? ` [Рівень ризику: ${activeElement.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
+                : '';
+              fullText += `${activeElement.text}${riskMarker}\n`;
             }
             for (const child of children) {
               if (child.text) {
-                fullText += `${child.text}\n`;
+                const riskMarker = child.risk_level && child.risk_level !== 'green'
+                  ? ` [Рівень ризику: ${child.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
+                  : '';
+                fullText += `${child.text}${riskMarker}\n`;
               }
             }
 
@@ -226,13 +237,16 @@ export async function handleStreamChat({
               lawTitle: law?.title || contextLawId,
               articleNum: contextArticleNum,
               articleTitle: activeElement.title || '',
-              text: fullText.trim().slice(0, 1200),
+              text: fullText.trim().slice(0, ACTIVE_ARTICLE_TRUNCATE),
               title: `Стаття ${contextArticleNum}${activeElement.title ? ` "${activeElement.title}"` : ''} — ${law?.title || contextLawId}`,
               href: law?.source || null,
               type: 'article',
             };
           }
         } catch (err) {
+          Sentry.captureException(err, {
+            tags: { module: 'assistant.orchestrator', fn: 'handleStreamChat.fetchActiveArticle' },
+          });
           console.error(
             '[assistant.orchestrator] Error fetching active article:',
             err.message,
@@ -273,12 +287,18 @@ export async function handleStreamChat({
         .slice(-MAX_HISTORY_MESSAGES)
         .map((m) => ({ role: m.role, content: m.content }));
 
+      // Set dynamic output token limit: 4096 for lawmakers and admins, 2048 default
+      const maxOutputTokens = (userRole === 'lawmaker' || userRole === 'admin')
+        ? 4096
+        : CHAT_LLM_CONFIG.maxOutputTokens;
+
       const result = await streamLLM(
         res,
         systemPrompt,
         history,
         message,
         retrievedSources,
+        maxOutputTokens,
       );
       assistantContent = result.content;
       assistantSources = result.sources;

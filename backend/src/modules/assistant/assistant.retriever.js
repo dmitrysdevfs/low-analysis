@@ -67,7 +67,7 @@ export async function retrieveRelevantArticles(query, contextLawId = null) {
     return top.map((el, idx) => {
       const lawKey = el.lawId ? el.lawId.toString() : '';
       const law = lawMap[lawKey] || {};
-      const lawTitle = law.title || lawKey;
+      const lawTitle = law.title || 'Невідомий закон';
       const articleNum = el.number || '';
       const articleTitle = el.title || '';
       return {
