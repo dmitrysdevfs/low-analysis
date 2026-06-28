@@ -578,7 +578,10 @@ export const resendVerification = async (req, res) => {
       status: 'sent',
       brevoMessageId: emailResult?.messageId || emailResult?.data?.messageId,
     }).catch((logErr) => {
-      console.error('Failed to log successful verification email send:', logErr.message);
+      console.error(
+        'Failed to log successful verification email send:',
+        logErr.message,
+      );
     });
   } catch (err) {
     console.error('Failed to resend verification email:', err.message);
@@ -593,7 +596,10 @@ export const resendVerification = async (req, res) => {
       status: 'failed',
       error: err.message,
     }).catch((logErr) => {
-      console.error('Failed to log failed verification email send:', logErr.message);
+      console.error(
+        'Failed to log failed verification email send:',
+        logErr.message,
+      );
     });
   }
 
