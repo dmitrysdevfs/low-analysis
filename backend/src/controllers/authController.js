@@ -176,7 +176,9 @@ export const registerUser = async (req, res) => {
         recipientEmail: user.email,
         status: 'sent',
         brevoMessageId: emailResult?.messageId || emailResult?.data?.messageId,
-      }).catch(() => {});
+      }).catch((logErr) => {
+        console.error('Failed to log successful email send:', logErr.message);
+      });
     } catch (err) {
       console.error('Failed to send verification email:', err.message);
       appendAuditEntry({
@@ -189,7 +191,9 @@ export const registerUser = async (req, res) => {
         recipientEmail: user.email,
         status: 'failed',
         error: err.message,
-      }).catch(() => {});
+      }).catch((logErr) => {
+        console.error('Failed to log failed email send:', logErr.message);
+      });
     }
 
     res.status(201).json({
@@ -573,7 +577,9 @@ export const resendVerification = async (req, res) => {
       recipientEmail: user.email,
       status: 'sent',
       brevoMessageId: emailResult?.messageId || emailResult?.data?.messageId,
-    }).catch(() => {});
+    }).catch((logErr) => {
+      console.error('Failed to log successful verification email send:', logErr.message);
+    });
   } catch (err) {
     console.error('Failed to resend verification email:', err.message);
     appendAuditEntry({
@@ -586,7 +592,9 @@ export const resendVerification = async (req, res) => {
       recipientEmail: user.email,
       status: 'failed',
       error: err.message,
-    }).catch(() => {});
+    }).catch((logErr) => {
+      console.error('Failed to log failed verification email send:', logErr.message);
+    });
   }
 
   res.json({ ...GENERIC, emailSent });
