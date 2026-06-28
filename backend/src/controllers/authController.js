@@ -232,7 +232,11 @@ export const loginUser = async (req, res) => {
       process.env.NODE_ENV === 'development' ||
       process.env.NODE_ENV === 'test';
 
-    if (user.isVerified === false && !isTestAccount && process.env.AUTH_REQUIRE_EMAIL_VERIFICATION !== 'false') {
+    if (
+      user.isVerified === false &&
+      !isTestAccount &&
+      process.env.AUTH_REQUIRE_EMAIL_VERIFICATION !== 'false'
+    ) {
       return res.status(403).json({
         message: 'Підтвердіть email перед входом',
         code: 'EMAIL_NOT_VERIFIED',

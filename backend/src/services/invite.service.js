@@ -15,7 +15,8 @@ async function resolveInvite(token) {
     'name course status supervisorId members maxMembers',
   );
   if (!invite) throw makeError('Invite not found', 404);
-  if (invite.status === 'revoked') throw makeError('Invite has been revoked', 410);
+  if (invite.status === 'revoked')
+    throw makeError('Invite has been revoked', 410);
   if (invite.expiresAt < new Date()) throw makeError('Invite has expired', 410);
   return invite;
 }
@@ -29,7 +30,9 @@ async function addMemberToGroup(groupId, userId) {
   );
   if (isAlreadyMember) return { alreadyMember: true };
 
-  const activeMembers = group.members.filter((m) => m.status === 'active').length;
+  const activeMembers = group.members.filter(
+    (m) => m.status === 'active',
+  ).length;
   if (activeMembers >= group.maxMembers) throw makeError('Group is full', 400);
 
   await Group.findByIdAndUpdate(groupId, {

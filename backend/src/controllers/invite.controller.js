@@ -20,9 +20,14 @@ function setCookieToken(res, token) {
 
 export const createInvite = async (req, res, next) => {
   try {
-    const invite = await inviteService.createInvite(req.params.id, req.user._id);
+    const invite = await inviteService.createInvite(
+      req.params.id,
+      req.user._id,
+    );
     const inviteUrl = `${getFrontendUrl()}/invite/group/${invite.token}`;
-    res.status(201).json({ inviteUrl, token: invite.token, expiresAt: invite.expiresAt });
+    res
+      .status(201)
+      .json({ inviteUrl, token: invite.token, expiresAt: invite.expiresAt });
   } catch (error) {
     next(error);
   }
@@ -39,7 +44,10 @@ export const getInviteInfo = async (req, res, next) => {
 
 export const joinByInvite = async (req, res, next) => {
   try {
-    const result = await inviteService.joinByInvite(req.params.token, req.user._id);
+    const result = await inviteService.joinByInvite(
+      req.params.token,
+      req.user._id,
+    );
     res.json(result);
   } catch (error) {
     next(error);
@@ -50,7 +58,9 @@ export const registerAndJoin = async (req, res, next) => {
   try {
     const { email, password, fullName } = req.body;
     if (!email || !password || !fullName) {
-      return res.status(400).json({ message: "Email, пароль та ім'я обов'язкові" });
+      return res
+        .status(400)
+        .json({ message: "Email, пароль та ім'я обов'язкові" });
     }
 
     const { user, groupId, groupName } = await inviteService.registerAndJoin(
