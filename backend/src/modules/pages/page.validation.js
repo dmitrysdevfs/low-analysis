@@ -1,4 +1,4 @@
-import {
+﻿import {
   ALLOWED_PAGE_SLUGS,
   PAGE_BLOCK_TYPES,
   PAGE_SLUGS,
@@ -203,7 +203,7 @@ const SLUG_TITLES = {
   [PAGE_SLUGS.rolesGuest]: 'Гість',
   [PAGE_SLUGS.rolesUser]: 'Користувач',
   [PAGE_SLUGS.rolesLawmaker]: 'Законотворець',
-  [PAGE_SLUGS.rolesSupervisor]: 'Супервайзер',
+  [PAGE_SLUGS.rolesSupervisor]: 'Супервізер',
   [PAGE_SLUGS.rolesAdmin]: 'Адміністратор',
   [PAGE_SLUGS.support]: 'Підтримати проєкт',
   [PAGE_SLUGS.docs]: 'Документація',

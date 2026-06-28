@@ -4,7 +4,7 @@ export type VoteValue = "positive" | "neutral" | "negative";
 
 export interface Amendment {
   _id: string;
-  law_id: string | { _id: string; title: string };
+  law_id: string | { _id: string; title: string } | null;
   element_id: string;
   proposal_id: string | null;
   created_by: string | { _id: string; fullName: string };
@@ -30,7 +30,7 @@ export interface Amendment {
 
 export interface Proposal {
   _id: string;
-  law_id: string | { _id: string; title: string };
+  law_id: string | { _id: string; title: string } | null;
   created_by: string | { _id: string; fullName: string };
   title: string;
   description: string;

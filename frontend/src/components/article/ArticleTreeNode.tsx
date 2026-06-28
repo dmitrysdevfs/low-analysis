@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  getNodeBadge,
-  getRoleColor,
-  sanitizeAnchor,
-  formatCitation,
-} from "@/lib/tree";
+import { getNodeBadge, getRoleColor, sanitizeAnchor } from "@/lib/tree";
 import type { TreeBranch, RiskLevel } from "@/lib/tree";
 
 const RISK_DOT_COLOR: Record<RiskLevel, string> = {
@@ -255,27 +250,12 @@ function NestedNode({
     ).values(),
   );
 
+  const [copied, setCopied] = useState(false);
+
   const handleCopy = async () => {
-    const subjectLinks = nodeSubjects.map(({ subject }) => ({
-      name: subject.canonical_name,
-      id: subject._id,
-    }));
-    const copyText = node.text ?? node.title ?? "";
-
-    const text = formatCitation({
-      badge: getNodeBadge(node),
-      text: copyText,
-      charCount: copyText.length,
-      subjectLinks,
-      lawId: lawId ?? "",
-      articleNum: articleNum ?? "",
-      lawTitle: lawTitle ?? "",
-      code: node.code ?? "",
-    });
-
+    const text = node.text ?? node.title ?? "";
     try {
       await navigator.clipboard.writeText(text);
-      notify.success("Скопійовано");
     } catch {
       const el = document.createElement("textarea");
       el.value = text;
@@ -283,8 +263,9 @@ function NestedNode({
       el.select();
       document.execCommand("copy");
       document.body.removeChild(el);
-      notify.success("Скопійовано");
     }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -326,14 +307,14 @@ function NestedNode({
             }
           />
         )}
-        {/* FE-T63: Copy button */}
+        {/* FE-T170: Copy button */}
         <button
           type="button"
-          className={styles.copyBtn}
-          aria-label="Копіювати елемент"
+          className={`${styles.copyBtn} ${copied ? styles.copyBtnCopied : ""}`}
+          aria-label="Копіювати текст елементу"
           onClick={handleCopy}
         >
-          ⧉
+          {copied ? "✔" : "⧉"}
         </button>
         {isLegislator && (
           <button

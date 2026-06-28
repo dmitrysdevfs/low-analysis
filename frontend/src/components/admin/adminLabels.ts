@@ -1,4 +1,4 @@
-const ACCOUNT_TYPE_LABELS = {
+﻿const ACCOUNT_TYPE_LABELS = {
   client: "Клієнт",
   admin: "Адмін",
 } as const;
@@ -35,13 +35,13 @@ const ACCESS_ROLE_LABELS = {
   Guest: "Гість",
   Client: "Клієнт",
   Legislator: "Законотворець",
-  Supervisor: "Супервайзер",
+  Supervisor: "Супервізер",
   Admin: "Адмін",
   guest: "Гість",
   user: "Клієнт",
   client: "Клієнт",
   legislator: "Законотворець",
-  supervisor: "Супервайзер",
+  supervisor: "Супервізер",
   admin: "Адмін",
   Законотворець: "Законотворець",
 } as const;

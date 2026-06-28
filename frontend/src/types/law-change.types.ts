@@ -70,7 +70,7 @@ export interface LegislatorAccessRequest {
   requestedRole: RequestedRole;
   organization: string;
   reason: string;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected" | "revoked";
   adminNote: string;
   reviewedBy: string | null;
   reviewedAt: string | null;

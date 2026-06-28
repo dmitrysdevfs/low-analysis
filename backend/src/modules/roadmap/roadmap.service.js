@@ -8,6 +8,8 @@ function toPayload(doc) {
     roadmapItems: doc.roadmapItems,
     deferredItems: doc.deferredItems,
     decisions: doc.decisions,
+    visionStatement: doc.visionStatement ?? '',
+    whatWeBuilding: doc.whatWeBuilding ?? [],
     updatedAt: doc.updatedAt,
   };
 }
@@ -39,6 +41,10 @@ export async function updateRoadmap(content, userId = null) {
   if (content.deferredItems !== undefined)
     doc.deferredItems = content.deferredItems;
   if (content.decisions !== undefined) doc.decisions = content.decisions;
+  if (content.visionStatement !== undefined)
+    doc.visionStatement = content.visionStatement;
+  if (content.whatWeBuilding !== undefined)
+    doc.whatWeBuilding = content.whatWeBuilding;
   doc.updatedBy = userId;
 
   await doc.save();

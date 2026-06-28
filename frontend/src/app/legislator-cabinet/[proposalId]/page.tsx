@@ -14,7 +14,8 @@ import {
 } from "@/features/law-change/components/LegislatorVolumeBar";
 import styles from "./page.module.scss";
 
-function extractId(v: string | { _id: string }): string {
+function extractId(v: string | { _id: string } | null | undefined): string {
+  if (!v) return "";
   return typeof v === "string" ? v : v._id;
 }
 

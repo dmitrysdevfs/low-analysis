@@ -1,4 +1,4 @@
-import { PAGE_SLUGS } from './page.constants.js';
+﻿import { PAGE_SLUGS } from './page.constants.js';
 
 const PROJECT_INFO_BLOCKS = [
   {
@@ -431,7 +431,7 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
             {
               badge: 'Submit',
               title: 'Подання на розгляд',
-              body: 'Після завершення форк передається супервайзеру або на публічне голосування.',
+              body: 'Після завершення форк передається супервізеру або на публічне голосування.',
               linkLabel: '',
               linkHref: '',
             },
@@ -446,8 +446,8 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         variant: 'banner',
         data: {
           title: 'Хочете навчати або керувати групою?',
-          body: 'Роль Супервайзера дозволяє моніторити роботу групи студентів і порівнювати їх форки.',
-          buttonLabel: 'Про роль Супервайзера',
+          body: 'Роль Супервізера дозволяє моніторити роботу групи студентів і порівнювати їх форки.',
+          buttonLabel: 'Про роль Супервізера',
           buttonHref: '/roles/supervisor',
           secondaryButtonLabel: '',
           secondaryButtonHref: '',
@@ -457,7 +457,7 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
     ],
   },
   [PAGE_SLUGS.rolesSupervisor]: {
-    title: 'Супервайзер',
+    title: 'Супервізер',
     description:
       'Викладач або керівник робочої групи — ви моніторите роботу студентів.',
     blocks: [
@@ -467,11 +467,11 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         enabled: true,
         variant: 'default',
         data: {
-          eyebrow: 'Роль: Супервайзер',
+          eyebrow: 'Роль: Супервізер',
           title: 'Контролюйте роботу вашої групи',
           subtitle:
-            'Супервайзер — це викладач або керівник робочої групи, який бачить активність своїх студентів-законотворців та може моніторити роботу над конкретними законами.',
-          primaryButtonLabel: 'Дашборд супервайзера',
+            'Супервізер — це викладач або керівник робочої групи, який бачить активність своїх студентів-законотворців та може моніторити роботу над конкретними законами.',
+          primaryButtonLabel: 'Дашборд супервізера',
           primaryButtonHref: '/supervisor/dashboard',
           secondaryButtonLabel: "Зв'язатися з адміном",
           secondaryButtonHref: '/help',
@@ -490,7 +490,7 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
         enabled: true,
         variant: 'three-up',
         data: {
-          title: 'Можливості супервайзера',
+          title: 'Можливості супервізера',
           items: [
             {
               badge: 'Groups',
@@ -526,7 +526,7 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
           title: 'Питання та відповіді',
           items: [
             {
-              question: 'Як стати супервайзером?',
+              question: 'Як стати супервізером?',
               answer:
                 'Зверніться до адміністратора платформи — він призначить вам роль Supervisor і ви отримаєте доступ до дашборду.',
             },
@@ -538,7 +538,7 @@ const ROLE_PAGE_DEFAULT_BLOCKS = {
             {
               question: 'Чи бачать студенти мій моніторинг?',
               answer:
-                'Студенти бачать свою роботу, але не знають про моніторинг супервайзера.',
+                'Студенти бачать свою роботу, але не знають про моніторинг супервізера.',
             },
           ],
         },

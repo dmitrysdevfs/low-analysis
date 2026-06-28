@@ -30,7 +30,7 @@ export function SubjectCard({
     [subject.taxonomies, taxonomyMap],
   );
 
-  const backH = resolvedTaxonomies.length > 0 ? 280 : 240;
+  const backH = resolvedTaxonomies.length > 0 ? 300 : 260;
 
   const toggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -125,12 +125,22 @@ export function SubjectCard({
           {subject.description ? (
             <p className={styles.backDescription}>{subject.description}</p>
           ) : null}
-          <Link
-            href={ROUTES.subject(subject._id)}
-            className={styles.detailLink}
-          >
-            Переглянути деталі →
-          </Link>
+          <div className={styles.backLinks}>
+            <Link
+              href={ROUTES.subject(subject._id)}
+              className={styles.detailLink}
+            >
+              Переглянути деталі →
+            </Link>
+            <Link
+              href={`${ROUTES.laws}?subjectId=${subject._id}`}
+              className={styles.lawsLink}
+            >
+              {subject.laws_count != null
+                ? `${subject.laws_count} законів →`
+                : "Пов'язані закони →"}
+            </Link>
+          </div>
         </div>
       </motion.div>
     </motion.div>

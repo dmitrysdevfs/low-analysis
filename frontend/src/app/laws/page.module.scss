@@ -283,3 +283,49 @@
   min-width: 4rem;
   text-align: center;
 }
+
+.subjectFilterBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(200, 168, 67, 0.06);
+  border: 1px solid rgba(200, 168, 67, 0.2);
+  margin-bottom: 8px;
+}
+
+.subjectFilterLabel {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: var(--color-gold, #c8a843);
+  letter-spacing: 0.04em;
+  flex: 1;
+}
+
+.subjectFilterLink {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: var(--color-azure, #4a80d4);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--color-gold, #c8a843);
+  }
+}
+
+.subjectFilterClear {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: var(--color-smoke, #6a88a8);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+
+  &:hover {
+    color: #e74a4a;
+  }
+}

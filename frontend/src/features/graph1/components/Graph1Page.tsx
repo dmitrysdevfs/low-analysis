@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -305,7 +305,7 @@ export function Graph1Page({
             title={
               canUseForks
                 ? "Зберегти поточний стан як форк"
-                : "Тільки для законотворця / супервайзера"
+                : "Тільки для законотворця / супервізера"
             }
           >
             <Save size={13} />

@@ -30,7 +30,7 @@ export function LegislatorCabinetSection({
 
   return (
     <section>
-      <LegislatorAccessRequestForm />
+      <LegislatorAccessRequestForm defaultRole="legislator" lockRole />
     </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { LawCard } from "@/components/law/LawCard";
@@ -18,6 +19,9 @@ import styles from "./page.module.scss";
 const STATUS_OPTIONS = ["Чинний", "Втратив чинність"];
 
 export default function LawsPage() {
+  const searchParams = useSearchParams();
+  const subjectId = searchParams.get("subjectId") ?? undefined;
+
   const [query, setQuery] = useState("");
   const [, setRefreshKey] = useState(0);
   const [activeStatus, setActiveStatus] = useState<string | null>(null);
@@ -35,6 +39,7 @@ export default function LawsPage() {
     status: activeStatus ?? undefined,
     page,
     limit: 20,
+    subjectId,
   });
 
   const handleQueryChange = (value: string) => {
@@ -149,6 +154,23 @@ export default function LawsPage() {
               ))}
             </motion.div>
           </div>
+
+          {subjectId ? (
+            <div className={styles.subjectFilterBanner}>
+              <span className={styles.subjectFilterLabel}>
+                Фільтр: суб&apos;єкт регулювання
+              </span>
+              <Link
+                href={ROUTES.subject(subjectId)}
+                className={styles.subjectFilterLink}
+              >
+                Переглянути суб&apos;єкт →
+              </Link>
+              <Link href={ROUTES.laws} className={styles.subjectFilterClear}>
+                ✕ Скинути
+              </Link>
+            </div>
+          ) : null}
 
           <LawParseForm onSuccess={() => setRefreshKey((prev) => prev + 1)} />
 

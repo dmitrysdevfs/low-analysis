@@ -117,6 +117,28 @@ export async function registerUser(
       return { ok: false, error: data.message || "Помилка реєстрації" };
     }
 
+    // Backend returns { message: '...' } — no session yet, user must verify email first
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Помилка з'єднання з сервером" };
+  }
+}
+
+export async function verifyEmailToken(
+  token: string,
+): Promise<AuthActionResult> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/verify-email?token=${encodeURIComponent(token)}`,
+      { credentials: "include" },
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { ok: false, error: data.message || "Помилка підтвердження" };
+    }
+
     const session: AuthSession = {
       id: data._id,
       displayName: data.fullName,
@@ -130,7 +152,7 @@ export async function registerUser(
     return {
       ok: true,
       redirectTo:
-        session.accountType === "admin" ? ROUTES.admin : ROUTES.rolesDashboard,
+        session.accountType === "admin" ? ROUTES.admin : ROUTES.account,
       session,
     };
   } catch {

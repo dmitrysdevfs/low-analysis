@@ -626,6 +626,19 @@
   }
 }
 
+.copyBtnCopied {
+  color: #4a9e6b;
+  border-color: #4a9e6b;
+  opacity: 1;
+}
+
+.articleBodyMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
 .amendBtn {
   background: none;
   border: 1px solid #1c3260;

@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import Amendment from '../models/Amendment.js';
+import ApprovedChange from '../models/ApprovedChange.js';
 import Element from '../models/Element.js';
+import Law from '../models/Law.js';
 import Proposal from '../models/Proposal.js';
 import { compareIds } from '../utils/id.js';
 
@@ -140,8 +142,18 @@ export const updateAmendment = async (id, userId, data) => {
 /**
  * Get amendments by multiple user IDs (for supervisor group view).
  */
-export const getAmendmentsByUserIds = async (userIds) => {
-  return Amendment.find({ created_by: { $in: userIds } })
+export const getAmendmentsByUserIds = async (userIds, { search } = {}) => {
+  const query = { created_by: { $in: userIds } };
+
+  if (search?.trim()) {
+    const matchedLaws = await Law.find(
+      { title: { $regex: search.trim(), $options: 'i' } },
+      '_id',
+    ).lean();
+    query.law_id = { $in: matchedLaws.map((l) => l._id) };
+  }
+
+  return Amendment.find(query)
     .populate('law_id', 'title code')
     .populate('created_by', 'fullName')
     .sort({ createdAt: -1 })
@@ -152,8 +164,33 @@ export const reviewAmendment = async (id, action) => {
   const amendment = await Amendment.findById(id);
   if (!amendment)
     throw Object.assign(new Error('Amendment not found'), { statusCode: 404 });
+  if (amendment.status !== 'pending')
+    throw Object.assign(new Error('Amendment already reviewed'), {
+      statusCode: 409,
+    });
+
   amendment.status = action === 'approve' ? 'approved' : 'rejected';
-  return amendment.save();
+  await amendment.save();
+
+  if (action === 'approve' && amendment.element_id) {
+    await ApprovedChange.updateMany(
+      { element_id: amendment.element_id, is_current: true },
+      { is_current: false },
+    );
+    await ApprovedChange.create({
+      law_id: amendment.law_id,
+      element_id: amendment.element_id,
+      winning_proposal_id: amendment._id,
+      change_type: amendment.change_type,
+      new_text: amendment.proposed_text,
+      is_current: true,
+      status: 'active',
+      sort_order: 0,
+      approved_at: new Date(),
+    });
+  }
+
+  return amendment;
 };
 
 /**

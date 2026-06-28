@@ -275,7 +275,7 @@ export const getLawStructure = async (lawId) => {
       .select('title documentType code adoptedDate signatory status')
       .lean(),
     Element.find({ lawId, type: 'article' })
-      .select('number title order')
+      .select('_id number title order')
       .sort({ order: 1 })
       .lean(),
   ]);
@@ -290,6 +290,7 @@ export const getLawStructure = async (lawId) => {
     signatory: law.signatory ?? null,
     status: law.status ?? null,
     articles: articles.map((a) => ({
+      _id: a._id.toString(),
       number: a.number ?? null,
       title: a.title ?? null,
     })),

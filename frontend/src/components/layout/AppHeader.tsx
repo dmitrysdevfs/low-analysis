@@ -15,6 +15,7 @@ import { AppSidebar } from "./AppSidebar";
 import { PatreonButton } from "@/components/support/PatreonButton";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { useActiveProposalsCount } from "@/hooks/useLawChangeProposals";
+import ScrollContainer from "react-indiana-drag-scroll";
 import styles from "./AppHeader.module.scss";
 
 export function AppHeader() {
@@ -32,12 +33,14 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
   const router = useRouter();
   const headerRef = useRef<HTMLElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [headerScrolledAway, setHeaderScrolledAway] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [dropdownLeft, setDropdownLeft] = useState(0);
   const { isAuthenticated, isAdmin, isLegislator, isSupervisor, user, logout } =
     useAuth();
   const activeProposalsCount = useActiveProposalsCount();
@@ -135,7 +138,9 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
     function handleClickOutside(e: MouseEvent) {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
+        !dropdownRef.current.contains(e.target as Node) &&
+        navRef.current &&
+        !navRef.current.contains(e.target as Node)
       ) {
         setOpenDropdown(null);
       }
@@ -230,95 +235,121 @@ function PublicAppHeader({ pathname }: { pathname: string }) {
           </div>
         </div>
 
-        <nav className={`nav-desktop ${styles.desktopNav}`}>
-          {visibleNavItems.map((item) => {
-            const isActive = item.href
-              ? pathname === item.href ||
-                (item.href !== "/" && pathname.startsWith(item.href))
-              : item.subItems?.some(
-                  (sub) => sub.href && pathname.startsWith(sub.href),
-                );
+        <nav ref={navRef} className={`nav-desktop ${styles.desktopNav}`}>
+          <ScrollContainer className={styles.desktopNavScroll}>
+            {visibleNavItems.map((item) => {
+              const isActive = item.href
+                ? pathname === item.href ||
+                  (item.href !== "/" && pathname.startsWith(item.href))
+                : item.subItems?.some(
+                    (sub) => sub.href && pathname.startsWith(sub.href),
+                  );
 
-            if (item.subItems && item.subItems.length > 0) {
-              const isOpen = openDropdown === item.label;
+              if (item.subItems && item.subItems.length > 0) {
+                const isOpen = openDropdown === item.label;
+                return (
+                  <div
+                    key={item.label}
+                    className={`${styles.navDropdownWrap} ${isOpen ? styles.navDropdownWrapOpen : ""}`}
+                    onMouseEnter={(e) => {
+                      const navEl = navRef.current;
+                      const wrapEl = e.currentTarget as HTMLElement;
+                      if (navEl) {
+                        const navRect = navEl.getBoundingClientRect();
+                        const wrapRect = wrapEl.getBoundingClientRect();
+                        setDropdownLeft(wrapRect.left - navRect.left);
+                      }
+                      setOpenDropdown(item.label);
+                    }}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
+                    <button
+                      type="button"
+                      className={`nav-link ${styles.navDropdownTrigger} ${isActive ? "active" : ""}`}
+                    >
+                      {item.label}
+                      <svg
+                        className={styles.navDropdownChevron}
+                        width="10"
+                        height="6"
+                        viewBox="0 0 10 6"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 1L5 5L9 1"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href || "#"}
+                  className={`nav-link${isActive ? " active" : ""}`}
+                >
+                  {item.label}
+                  {item.href === ROUTES.proposals &&
+                    activeProposalsCount > 0 && (
+                      <span
+                        style={{
+                          marginLeft: 4,
+                          background: "var(--color-danger, #e53e3e)",
+                          color: "#fff",
+                          borderRadius: "10px",
+                          padding: "0 5px",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          lineHeight: "16px",
+                          display: "inline-block",
+                        }}
+                      >
+                        {activeProposalsCount}
+                      </span>
+                    )}
+                </Link>
+              );
+            })}
+            <div className={styles.navThemeSwitcher}>
+              <ThemeSwitcher />
+            </div>
+          </ScrollContainer>
+
+          {/* Dropdown panel rendered outside ScrollContainer so overflow:hidden doesn't clip it */}
+          {openDropdown &&
+            (() => {
+              const activeItem = visibleNavItems.find(
+                (i) => i.label === openDropdown,
+              );
+              if (!activeItem?.subItems) return null;
               return (
                 <div
-                  key={item.label}
                   ref={dropdownRef}
-                  className={styles.navDropdownWrap}
-                  onMouseEnter={() => setOpenDropdown(item.label)}
+                  className={styles.navDropdown}
+                  style={{ left: dropdownLeft }}
+                  onMouseEnter={() => setOpenDropdown(openDropdown)}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <button
-                    type="button"
-                    className={`nav-link ${styles.navDropdownTrigger} ${isActive ? "active" : ""}`}
-                  >
-                    {item.label}
-                    <svg
-                      className={styles.navDropdownChevron}
-                      width="10"
-                      height="6"
-                      viewBox="0 0 10 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                  {activeItem.subItems.map((subItem) => (
+                    <Link
+                      key={subItem.label}
+                      href={subItem.href || "#"}
+                      className={styles.navDropdownItem}
+                      onClick={() => setOpenDropdown(null)}
                     >
-                      <path
-                        d="M1 1L5 5L9 1"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                  {isOpen && (
-                    <div className={styles.navDropdown}>
-                      {item.subItems.map((subItem) => (
-                        <Link
-                          key={subItem.label}
-                          href={subItem.href || "#"}
-                          className={styles.navDropdownItem}
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {subItem.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                      {subItem.label}
+                    </Link>
+                  ))}
                 </div>
               );
-            }
-
-            return (
-              <Link
-                key={item.label}
-                href={item.href || "#"}
-                className={`nav-link${isActive ? " active" : ""}`}
-              >
-                {item.label}
-                {item.href === ROUTES.proposals && activeProposalsCount > 0 && (
-                  <span
-                    style={{
-                      marginLeft: 4,
-                      background: "var(--color-danger, #e53e3e)",
-                      color: "#fff",
-                      borderRadius: "10px",
-                      padding: "0 5px",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      lineHeight: "16px",
-                      display: "inline-block",
-                    }}
-                  >
-                    {activeProposalsCount}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-          <div className={styles.navThemeSwitcher}>
-            <ThemeSwitcher />
-          </div>
+            })()}
         </nav>
 
         <AnimatePresence>

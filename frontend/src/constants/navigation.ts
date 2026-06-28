@@ -1,4 +1,4 @@
-import { ROUTES } from "./routes";
+﻿import { ROUTES } from "./routes";
 
 export type NavItem = {
   label: string;
@@ -23,7 +23,7 @@ const BASE_NAV_ITEMS: NavItem[] = [
       { label: "Гість", href: ROUTES.rolesGuest },
       { label: "Користувач", href: ROUTES.rolesUser },
       { label: "Законотворець", href: ROUTES.rolesLawmaker },
-      { label: "Супервайзер", href: ROUTES.rolesSupervisor },
+      { label: "Супервізер", href: ROUTES.rolesSupervisor },
       { label: "Адміністратор", href: ROUTES.rolesAdmin },
     ],
   },
@@ -90,7 +90,9 @@ export function buildSessionMenuItems(opts: {
         : "Подайте запит на роль законотворця",
     },
     {
-      href: ROUTES.supervisorDashboard,
+      href: opts.isSupervisor
+        ? ROUTES.supervisorDashboard
+        : ROUTES.rolesSupervisorRequest,
       label: "Супервізор",
       caption: opts.isSupervisor
         ? "Панель нагляду та моніторингу платформи"
@@ -109,7 +111,7 @@ export function buildSessionMenuItems(opts: {
     {
       href: ROUTES.accountBilling,
       label: "План та оплата",
-      caption: "Поточний рівень доступу, квоти та demo-checkout",
+      caption: "Поточний рівень доступу, квоти та тестова оплата",
     },
   ];
 

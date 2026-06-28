@@ -38,6 +38,14 @@ function ProposalCard({ proposal }: { proposal: LawChangeProposal }) {
           {STATUS_LABELS[proposal.status] ?? proposal.status}
         </span>
       </div>
+      {proposal.element_type && (
+        <span
+          className={styles.changeType}
+          style={{ marginBottom: 4, opacity: 0.7 }}
+        >
+          {proposal.element_type}
+        </span>
+      )}
       <p className={styles.reason}>{proposal.reason || "Без опису"}</p>
       <div className={styles.cardMeta}>
         <span>

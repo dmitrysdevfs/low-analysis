@@ -1,4 +1,4 @@
-import type { ManagedPagePublicResponse } from "@/types";
+﻿import type { ManagedPagePublicResponse } from "@/types";
 
 function makeFallback(
   slug: string,
@@ -263,7 +263,7 @@ export const ROLES_LAWMAKER_FALLBACK = makeFallback(
           {
             badge: "Submit",
             title: "Подання на розгляд",
-            body: "Після завершення форк передається супервайзеру або на публічне голосування.",
+            body: "Після завершення форк передається супервізеру або на публічне голосування.",
             linkLabel: "",
             linkHref: "",
           },
@@ -287,8 +287,8 @@ export const ROLES_LAWMAKER_FALLBACK = makeFallback(
       variant: "banner",
       data: {
         title: "Хочете навчати або керувати групою?",
-        body: "Роль Супервайзера дозволяє моніторити роботу групи студентів і порівнювати їх форки.",
-        buttonLabel: "Про роль Супервайзера",
+        body: "Роль Супервізера дозволяє моніторити роботу групи студентів і порівнювати їх форки.",
+        buttonLabel: "Про роль Супервізера",
         buttonHref: "/roles/supervisor",
         secondaryButtonLabel: "",
         secondaryButtonHref: "",
@@ -309,7 +309,7 @@ export const ROLES_LAWMAKER_FALLBACK = makeFallback(
 
 export const ROLES_SUPERVISOR_FALLBACK = makeFallback(
   "roles-supervisor",
-  "Супервайзер",
+  "Супервізер",
   "Викладач або керівник робочої групи — ви моніторите роботу студентів.",
   [
     {
@@ -318,14 +318,14 @@ export const ROLES_SUPERVISOR_FALLBACK = makeFallback(
       enabled: true,
       variant: "default",
       data: {
-        eyebrow: "Роль: Супервайзер",
+        eyebrow: "Роль: Супервізер",
         title: "Контролюйте роботу вашої групи",
         subtitle:
-          "Супервайзер — це викладач або керівник робочої групи, який бачить активність своїх студентів-законотворців та може моніторити роботу над конкретними законами.",
-        primaryButtonLabel: "Дашборд супервайзера",
-        primaryButtonHref: "/supervisor/dashboard",
-        secondaryButtonLabel: "Зв'язатися з адміном",
-        secondaryButtonHref: "/help",
+          "Супервізер — це викладач або керівник робочої групи, який бачить активність своїх студентів-законотворців та може моніторити роботу над конкретними законами.",
+        primaryButtonLabel: "Подати заявку",
+        primaryButtonHref: "/roles/supervisor/request",
+        secondaryButtonLabel: "Про роль Супервізора",
+        secondaryButtonHref: "/roles/supervisor",
       },
       style: {
         theme: "navy-gold",
@@ -344,7 +344,7 @@ export const ROLES_SUPERVISOR_FALLBACK = makeFallback(
       enabled: true,
       variant: "three-up",
       data: {
-        title: "Можливості супервайзера",
+        title: "Можливості супервізера",
         items: [
           {
             badge: "Groups",
@@ -389,7 +389,7 @@ export const ROLES_SUPERVISOR_FALLBACK = makeFallback(
         title: "Питання та відповіді",
         items: [
           {
-            question: "Як стати супервайзером?",
+            question: "Як стати супервізером?",
             answer:
               "Зверніться до адміністратора платформи — він призначить вам роль Supervisor і ви отримаєте доступ до дашборду.",
           },
@@ -401,7 +401,7 @@ export const ROLES_SUPERVISOR_FALLBACK = makeFallback(
           {
             question: "Чи бачать студенти мій моніторинг?",
             answer:
-              "Студенти бачать свою роботу, але не знають про моніторинг супервайзера.",
+              "Студенти бачать свою роботу, але не знають про моніторинг супервізера.",
           },
         ],
       },

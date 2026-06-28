@@ -550,13 +550,24 @@
 }
 
 .desktopNav {
-  display: flex;
-  gap: 2px;
+  display: block;
+  position: relative;
   padding: 0 24px;
   background: rgba(13, 28, 58, 0.92);
   border-bottom: 1px solid #1c3260;
   backdrop-filter: blur(10px);
   overflow: visible;
+}
+
+.desktopNavScroll {
+  display: flex;
+  gap: 2px;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .navThemeSwitcher {
@@ -568,12 +579,10 @@
 
 .navDropdownWrap {
   position: relative;
+}
 
-  &:hover .navDropdown {
-    opacity: 1;
-    pointer-events: all;
-    transform: translateY(0);
-  }
+.navDropdownWrapOpen .navDropdownChevron {
+  transform: rotate(180deg);
 }
 
 .navDropdownTrigger {
@@ -584,18 +593,12 @@
 
 .navDropdownChevron {
   flex-shrink: 0;
-
   transition: transform 0.18s ease;
-
-  .navDropdownWrap:hover & {
-    transform: rotate(180deg);
-  }
 }
 
 .navDropdown {
   position: absolute;
   top: 100%;
-  left: 0;
   min-width: 200px;
   padding: 6px;
   border-radius: 12px;
@@ -604,12 +607,18 @@
   backdrop-filter: blur(16px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.36);
   z-index: 50;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-6px);
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
+  animation: dropdownFadeIn 0.18s ease forwards;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .navDropdownItem {

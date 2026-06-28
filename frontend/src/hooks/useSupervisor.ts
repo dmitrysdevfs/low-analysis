@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getSupervisorDashboard,
@@ -53,6 +54,7 @@ export function useCreateSupervisorGroup() {
       qc.invalidateQueries({ queryKey: KEYS.groups });
       qc.invalidateQueries({ queryKey: KEYS.dashboard });
       qc.invalidateQueries({ queryKey: ["supervisor", "group"] });
+      qc.invalidateQueries({ queryKey: ["groups"] });
     },
   });
 }
@@ -83,10 +85,20 @@ export function useSupervisorGroupProposals() {
   });
 }
 
-export function useSupervisorGroupAmendments() {
+export function useSupervisorGroupAmendments(search = "") {
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setDebouncedSearch(search),
+      search.trim() ? 250 : 0,
+    );
+    return () => clearTimeout(timer);
+  }, [search]);
+
   return useQuery({
-    queryKey: ["supervisor", "group-amendments"] as const,
-    queryFn: getGroupAmendments,
+    queryKey: ["supervisor", "group-amendments", debouncedSearch] as const,
+    queryFn: () => getGroupAmendments(debouncedSearch),
     retry: false,
   });
 }
@@ -132,6 +144,7 @@ export function useReviewProposal() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["changes"] });
       qc.invalidateQueries({ queryKey: ["proposals"] });
+      qc.invalidateQueries({ queryKey: ["supervisor", "group-proposals"] });
     },
   });
 }
@@ -148,6 +161,7 @@ export function useReviewAmendment() {
     }) => reviewAmendment(id, action),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["supervisor", "group-amendments"] });
+      qc.invalidateQueries({ queryKey: ["amendments"] });
     },
   });
 }

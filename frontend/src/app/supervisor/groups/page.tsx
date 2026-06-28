@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -162,11 +162,14 @@ function AccessGate() {
           робочих груп.
         </p>
         <div className={styles.gateActions}>
-          <Link href={ROUTES.rolesSupervisor} className="btn btn-primary">
-            Про роль Supervisor
+          <Link
+            href={ROUTES.rolesSupervisorRequest}
+            className="btn btn-primary"
+          >
+            Подати заявку
           </Link>
-          <Link href={ROUTES.help} className="btn btn-outline">
-            Як отримати доступ
+          <Link href={ROUTES.rolesSupervisor} className="btn btn-outline">
+            Про роль Supervisor
           </Link>
         </div>
       </div>
@@ -213,7 +216,8 @@ function GroupsView() {
       0,
     ) ?? 0;
   const activeGroupIds = activeGroups.map((g) => g._id);
-  const pendingCount = useSupervisorPendingCount(activeGroupIds);
+  const { total: pendingCount, perGroup: pendingPerGroup } =
+    useSupervisorPendingCount(activeGroupIds);
 
   const canCreate = activeGroups.length < 3;
 
@@ -443,6 +447,18 @@ function GroupsView() {
                           <Trash2 size={14} />
                         </button>
                       )}
+                      {(pendingPerGroup[group._id] ?? 0) > 0 && (
+                        <Link
+                          href={ROUTES.supervisorGroup(group._id)}
+                          className={`${styles.statBadge} ${styles.statBadgeOrange}`}
+                          style={{
+                            textDecoration: "none",
+                            fontSize: "0.72rem",
+                          }}
+                        >
+                          {pendingPerGroup[group._id]} заявок
+                        </Link>
+                      )}
                       <Link
                         href={ROUTES.supervisorGroup(group._id)}
                         className={styles.inlineLink}
@@ -607,7 +623,7 @@ export default function SupervisorGroupsPage() {
   if (!isSupervisor && !isAdmin) return <AccessGate />;
 
   const initials = (user?.displayName ?? "СВ").slice(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Адміністратор" : "Супервайзер";
+  const roleLabel = isAdmin ? "Адміністратор" : "Супервізер";
 
   return (
     <div className={styles.workspace}>

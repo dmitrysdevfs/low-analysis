@@ -350,7 +350,7 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
           modal?.reason === "cooldown"
             ? "Кулдаун для гостя активний"
             : modal?.reason === "preview_limit"
-              ? "Ліміт preview-доступу вичерпано"
+              ? "Ліміт пробного доступу вичерпано"
               : modal?.reason === "plan_limit"
                 ? "Ліміт поточного плану вичерпано"
                 : "Ліміт гостя вичерпано"
@@ -368,7 +368,7 @@ export function GuestLimitsProvider({ children }: { children: ReactNode }) {
                   </div>
                   <div className={styles.summaryMeta}>
                     {subscription.previewMode
-                      ? "Preview-доступ залишає акаунт активним, але показує вужчу квоту запитів."
+                      ? "Пробний доступ залишає акаунт активним, але показує вужчу квоту запитів."
                       : subscription.endsAt
                         ? `План активний до ${new Date(
                             subscription.endsAt,

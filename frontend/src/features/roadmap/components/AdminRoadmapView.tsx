@@ -18,6 +18,10 @@ const STATUS_LABEL: Record<string, string> = {
   done: "Завершено",
   in_progress: "В роботі",
   pending: "Заплановано",
+  current_focus: "Поточний фокус",
+  planned: "Заплановано",
+  research: "Дослідження",
+  vision: "Візія",
 };
 
 export function AdminRoadmapView() {
@@ -283,7 +287,11 @@ export function AdminRoadmapView() {
                     >
                       <option value="done">Завершено</option>
                       <option value="in_progress">В роботі</option>
-                      <option value="pending">Заплановано</option>
+                      <option value="current_focus">Поточний фокус</option>
+                      <option value="planned">Заплановано</option>
+                      <option value="research">Дослідження</option>
+                      <option value="vision">Візія</option>
+                      <option value="pending">Заплановано (legacy)</option>
                     </select>
                   </>
                 ) : (

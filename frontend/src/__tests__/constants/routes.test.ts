@@ -1,4 +1,4 @@
-import { DATA_SOURCE_OPTIONS } from "@/constants/filters";
+﻿import { DATA_SOURCE_OPTIONS } from "@/constants/filters";
 import { NAV_ITEMS } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 
@@ -58,7 +58,7 @@ describe("frontend route and config constants", () => {
           { label: "Гість", href: ROUTES.rolesGuest },
           { label: "Користувач", href: ROUTES.rolesUser },
           { label: "Законотворець", href: ROUTES.rolesLawmaker },
-          { label: "Супервайзер", href: ROUTES.rolesSupervisor },
+          { label: "Супервізер", href: ROUTES.rolesSupervisor },
           { label: "Адміністратор", href: ROUTES.rolesAdmin },
         ],
       },

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -231,12 +231,16 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
             <dt>Тип</dt>
             <dd>{formatAccountTypeLabel(account.accountType)}</dd>
 
-            {isLegislator && (
-              <>
-                <dt>Роль</dt>
-                <dd className={styles.rowPopoverAccent}>Законотворець</dd>
-              </>
-            )}
+            <dt>Роль</dt>
+            <dd className={styles.rowPopoverAccent}>
+              {isLegislator
+                ? "Законотворець"
+                : isSupervisor
+                  ? "Супервізер"
+                  : account.accountType === "admin"
+                    ? "Адміністратор"
+                    : "Клієнт"}
+            </dd>
 
             <dt>Джерело</dt>
             <dd>{formatAccountSourceLabel(account.source)}</dd>
@@ -331,7 +335,7 @@ export function AdminUserRow({ account, onAction }: AdminUserRowProps) {
               disabled={isDev}
               onClick={() => handleAction("setSupervisor")}
             >
-              {isSupervisor ? "Зняти супервайзера" : "Призначити супервайзером"}
+              {isSupervisor ? "Зняти супервізера" : "Призначити супервізером"}
             </button>
           )}
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -150,7 +150,7 @@ function LegislatorSidebar({
 
 function getLawTitle(law_id: Proposal["law_id"]): string {
   if (typeof law_id === "object" && law_id !== null) return law_id.title;
-  return law_id;
+  return law_id ?? "";
 }
 
 const STATUS_LABELS: Record<ProposalStatus, string> = {
@@ -197,6 +197,7 @@ function CreateProposalModal({
     code: string;
   } | null>(null);
   const [showLawDropdown, setShowLawDropdown] = useState(false);
+  const [lawError, setLawError] = useState(false);
   const [treeItems, setTreeItems] = useState<
     Array<{ _id: string; number: string; title: string; type: string }>
   >([]);
@@ -251,9 +252,11 @@ function CreateProposalModal({
     e.preventDefault();
     if (!title.trim()) return;
     if (!selectedLaw) {
+      setLawError(true);
       notify.error("Оберіть закон зі списку");
       return;
     }
+    setLawError(false);
     try {
       await createProposal.mutateAsync({
         title: title.trim(),
@@ -292,12 +295,24 @@ function CreateProposalModal({
             />
           </label>
           <div className={styles.field}>
-            <span>Закон</span>
+            <span>
+              Закон{" "}
+              {lawError && (
+                <span style={{ color: "#e9774b", fontSize: 12 }}>
+                  — оберіть зі списку ↓
+                </span>
+              )}
+            </span>
             <div style={{ position: "relative" }}>
               <input
                 className="form-control"
                 type="text"
                 placeholder="Пошук закону за назвою..."
+                style={
+                  lawError
+                    ? { borderColor: "#e9774b", outline: "none" }
+                    : undefined
+                }
                 value={
                   selectedLaw
                     ? `${selectedLaw.code} — ${selectedLaw.title}`
@@ -309,6 +324,7 @@ function CreateProposalModal({
                   setTreeItems([]);
                   setLawSearch(e.target.value);
                   setShowLawDropdown(true);
+                  setLawError(false);
                   searchLaws(e.target.value);
                 }}
                 onFocus={() => {
@@ -343,6 +359,7 @@ function CreateProposalModal({
                         setLawSearch("");
                         setShowLawDropdown(false);
                         setLawOptions([]);
+                        setLawError(false);
                         loadLawTree(law._id);
                       }}
                     >
@@ -414,7 +431,9 @@ function ProposalsContent({ userId }: { userId: string | undefined }) {
   const [tab, setTab] = useState<TabFilter>("all");
   const [showModal, setShowModal] = useState(false);
 
-  const list = proposals ?? [];
+  const list = [...(proposals ?? [])].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
 
   const draftCount = list.filter((p) => p.status === "draft").length;
   const reviewCount = list.filter((p) => p.status === "review").length;
@@ -571,7 +590,7 @@ export default function LegislatorProposalsPage() {
   const roleLabel = isAdmin
     ? "Адміністратор"
     : isSupervisor
-      ? "Супервайзер"
+      ? "Супервізер"
       : "Законотворець";
 
   return (

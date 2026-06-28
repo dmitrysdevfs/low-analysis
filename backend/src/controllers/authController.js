@@ -128,14 +128,41 @@ export const registerUser = async (req, res) => {
         ipAddress: getClientIp(req),
       }).catch(() => {});
     }
-    const token = generateToken(user._id, user.tokenVersion ?? 0);
-    setCookieToken(res, token);
-    res.status(201).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+    user.verificationToken = hashedToken;
+    user.verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await user.save({ validateBeforeSave: false });
+
+    const verifyUrl = `${getFrontendUrl()}/auth/verify-email?token=${rawToken}`;
+    const htmlContent = renderEmailTemplate({
+      templateSlug: 'verify-email',
+      subject: 'Підтвердіть email — Low Analysis',
+      props: { fullName: user.fullName, verifyUrl },
     });
+    try {
+      await sendTransactionalEmail({
+        to: [{ email: user.email, name: user.fullName }],
+        subject: 'Підтвердіть email — Low Analysis',
+        htmlContent,
+      });
+    } catch (err) {
+      console.error('Failed to send verification email:', err.message);
+      appendAuditEntry({
+        action: 'Email верифікації не надіслано',
+        detail: `Помилка відправки для ${user.email}: ${err.message}`,
+        actor: user.email,
+        severity: 'error',
+      }).catch(() => {});
+    }
+
+    res
+      .status(201)
+      .json({ message: 'Перевірте email для підтвердження акаунта' });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
   }
@@ -161,6 +188,13 @@ export const loginUser = async (req, res) => {
   }).select('+password');
 
   if (user && (await user.comparePassword(password))) {
+    if (user.isVerified === false) {
+      return res.status(403).json({
+        message: 'Підтвердіть email перед входом',
+        code: 'EMAIL_NOT_VERIFIED',
+      });
+    }
+
     const token = generateToken(user._id, user.tokenVersion ?? 0);
     setCookieToken(res, token);
     User.findByIdAndUpdate(user._id, {
@@ -171,6 +205,7 @@ export const loginUser = async (req, res) => {
     res.json({
       _id: user._id,
       fullName: user.fullName,
+      displayName: user.fullName,
       email: user.email,
       role: user.role,
     });
@@ -191,6 +226,7 @@ export const getUserProfile = async (req, res) => {
     res.json({
       _id: user._id,
       fullName: user.fullName,
+      displayName: user.fullName,
       email: user.email,
       role: user.role,
     });
@@ -387,6 +423,109 @@ export const resetPassword = async (req, res) => {
   res.json({ message: 'Password reset successfully' });
 };
 
+/**
+ * @desc    Verify email with token
+ * @route   GET /api/auth/verify-email?token=
+ * @access  Public
+ */
+export const verifyEmail = async (req, res) => {
+  const { token } = req.query;
+  if (!token) {
+    return res.status(400).json({ message: 'Token required' });
+  }
+
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  const user = await User.findOne({
+    verificationToken: hashedToken,
+    verificationExpiry: { $gt: new Date() },
+  }).select('+verificationToken +verificationExpiry');
+
+  if (!user) {
+    return res
+      .status(400)
+      .json({ message: 'Недійсне або протерміноване посилання' });
+  }
+
+  user.isVerified = true;
+  user.verificationToken = undefined;
+  user.verificationExpiry = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  const jwtToken = generateToken(user._id, user.tokenVersion ?? 0);
+  setCookieToken(res, jwtToken);
+
+  res.json({
+    _id: user._id,
+    fullName: user.fullName,
+    displayName: user.fullName,
+    email: user.email,
+    role: user.role,
+    message: 'Email підтверджено',
+  });
+};
+
+/**
+ * @desc    Resend verification email
+ * @route   POST /api/auth/resend-verification
+ * @access  Public
+ */
+export const resendVerification = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: 'Email required' });
+  }
+
+  const GENERIC = {
+    message: 'Якщо акаунт існує і не підтверджений, листа надіслано',
+  };
+
+  const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
+    '+verificationToken +verificationExpiry',
+  );
+
+  if (!user || user.isVerified) {
+    return res.json(GENERIC);
+  }
+
+  const COOLDOWN_MS = 60 * 1000;
+  const tokenAge = user.verificationExpiry
+    ? 24 * 60 * 60 * 1000 - (user.verificationExpiry.getTime() - Date.now())
+    : Infinity;
+  if (tokenAge < COOLDOWN_MS) {
+    return res
+      .status(429)
+      .json({ message: 'Зачекайте перед повторною відправкою' });
+  }
+
+  const rawToken = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(rawToken)
+    .digest('hex');
+  user.verificationToken = hashedToken;
+  user.verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  await user.save({ validateBeforeSave: false });
+
+  const verifyUrl = `${getFrontendUrl()}/auth/verify-email?token=${rawToken}`;
+  const htmlContent = renderEmailTemplate({
+    templateSlug: 'verify-email',
+    subject: 'Підтвердіть email — Low Analysis',
+    props: { fullName: user.fullName, verifyUrl },
+  });
+
+  try {
+    await sendTransactionalEmail({
+      to: [{ email: user.email, name: user.fullName }],
+      subject: 'Підтвердіть email — Low Analysis',
+      htmlContent,
+    });
+  } catch (err) {
+    console.error('Failed to resend verification email:', err.message);
+  }
+
+  res.json(GENERIC);
+};
+
 export const googleAuth = async (req, res) => {
   const { accessToken } = req.body;
   if (!accessToken)
@@ -426,6 +565,7 @@ export const googleAuth = async (req, res) => {
         email,
         fullName: name || email.split('@')[0],
         role: 'user',
+        isVerified: true,
         registrationSource: { source: 'google' },
       });
       isNewUser = true;
