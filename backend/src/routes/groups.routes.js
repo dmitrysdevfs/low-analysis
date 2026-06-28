@@ -1,5 +1,6 @@
 import express from 'express';
 import * as groupsController from '../controllers/groups.controller.js';
+import { createInvite } from '../controllers/invite.controller.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -288,5 +289,12 @@ router.delete('/:id/members/:userId', protect, groupsController.removeMember);
  *         description: Group activity feed
  */
 router.get('/:id/activity', protect, groupsController.getGroupActivity);
+
+router.post(
+  '/:id/invite',
+  protect,
+  authorize('supervisor', 'admin'),
+  createInvite,
+);
 
 export default router;

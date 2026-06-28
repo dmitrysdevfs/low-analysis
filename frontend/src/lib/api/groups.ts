@@ -76,3 +76,10 @@ export const cancelRequest = (groupId: string, reqId: string) =>
   requestJson<void>(`/groups/${groupId}/requests/${reqId}`, "DELETE");
 export const getMyRequests = () =>
   getJson<GroupRequest[]>("/groups/my-requests");
+
+export const createInvite = (groupId: string) =>
+  requestJson<{ inviteUrl: string; token: string; expiresAt: string }>(
+    `/groups/${groupId}/invite`,
+    "POST",
+    {},
+  );

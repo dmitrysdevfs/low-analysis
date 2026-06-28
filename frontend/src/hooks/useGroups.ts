@@ -19,6 +19,7 @@ import {
   submitRequest,
   cancelRequest,
   getMyRequests,
+  createInvite,
 } from "@/lib/api/groups";
 
 const KEYS = {
@@ -171,5 +172,11 @@ export function useCancelRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["groups"] });
     },
+  });
+}
+
+export function useCreateInvite() {
+  return useMutation({
+    mutationFn: (groupId: string) => createInvite(groupId),
   });
 }

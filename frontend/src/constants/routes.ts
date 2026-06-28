@@ -85,6 +85,7 @@ export const ROUTES = {
   supervisorComments: "/supervisor/comments",
   supervisorAnalytics: "/supervisor/analytics",
   supervisorGroup: (id: string) => `/supervisor/groups/${id}`,
+  inviteGroup: (token: string) => `/invite/group/${token}`,
   proposals: "/proposals",
   graphProposals: "/graph-proposals",
   radiantProposals: "/radiant-proposals",

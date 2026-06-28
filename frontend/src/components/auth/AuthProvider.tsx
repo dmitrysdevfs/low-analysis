@@ -27,6 +27,8 @@ type AuthActionResult = {
   error?: string;
   redirectTo?: string;
   session?: AuthSession;
+  emailSent?: boolean;
+  requiresEmailVerification?: boolean;
 };
 
 type AuthContextValue = {

@@ -13,6 +13,7 @@ import {
   Clock3,
   FileText,
   FolderKanban,
+  Pen,
   GraduationCap,
   Save,
   Search,
@@ -27,7 +28,7 @@ import {
   useSupervisorGroupDetail,
   useUpdateSupervisorGroup,
 } from "@/hooks/useSupervisor";
-import { useGroupRequests, useReviewRequest } from "@/hooks/useGroups";
+import { useGroupRequests, useReviewRequest, useCreateInvite } from "@/hooks/useGroups";
 import { getLaws } from "@/lib/api/laws";
 import type { SupervisorLawRef } from "@/lib/api/supervisor";
 import { notify } from "@/lib/toast";
@@ -212,8 +213,32 @@ function SupervisorGroupView() {
   const updateGroup = useUpdateSupervisorGroup();
   const { data: groupRequests = [] } = useGroupRequests(groupId ?? "");
   const reviewRequest = useReviewRequest(groupId ?? "");
+  const createInviteMutation = useCreateInvite();
+
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
 
   const pendingRequests = groupRequests.filter((r) => r.status === "pending");
+
+  const handleCreateInvite = async () => {
+    if (!groupId) return;
+    try {
+      const result = await createInviteMutation.mutateAsync(groupId);
+      setInviteUrl(result.inviteUrl);
+      setShowInviteModal(true);
+    } catch (err) {
+      notify.error(
+        err instanceof Error ? err.message : "Не вдалося створити запрошення",
+      );
+    }
+  };
+
+  const handleCopyInvite = () => {
+    if (!inviteUrl) return;
+    navigator.clipboard.writeText(inviteUrl).then(() => {
+      notify.success("Посилання скопійовано");
+    });
+  };
 
   const handleReview = async (reqId: string, action: "approve" | "reject") => {
     try {
@@ -668,9 +693,20 @@ function SupervisorGroupView() {
                   Хто рухає групу, а хто ще не включився
                 </h2>
               </div>
-              <span className={styles.sectionMeta}>
-                {rosterRows.length} людей у групі
-              </span>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span className={styles.sectionMeta}>
+                  {rosterRows.length} людей у групі
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ fontSize: "0.8rem", padding: "6px 14px" }}
+                  disabled={createInviteMutation.isPending}
+                  onClick={handleCreateInvite}
+                >
+                  {createInviteMutation.isPending ? "..." : "+ Запросити"}
+                </button>
+              </div>
             </div>
 
             {!rosterRows.length ? (
@@ -747,20 +783,24 @@ function SupervisorGroupView() {
               </div>
             ) : (
               <div className={styles.activityFeed}>
-                {data.recentActivity.slice(0, 12).map((item) => (
+                {data.recentActivity.map((item) => (
                   <article
-                    key={`${item.type}-${item.lawId}-${item.updatedAt}-${item.authorEmail}`}
+                    key={item.id}
                     className={styles.feedItem}
                   >
                     <span
                       className={`${styles.feedIcon} ${
                         item.type === "fork"
                           ? styles.feedIconFork
-                          : styles.feedIconProposal
+                          : item.type === "amendment"
+                            ? styles.feedIconAmendment
+                            : styles.feedIconProposal
                       }`}
                     >
                       {item.type === "fork" ? (
                         <FolderKanban size={14} />
+                      ) : item.type === "amendment" ? (
+                        <Pen size={14} />
                       ) : (
                         <FileText size={14} />
                       )}
@@ -1039,6 +1079,79 @@ function SupervisorGroupView() {
           </section>
         </aside>
       </div>
+
+      {/* ── Invite Modal ─────────────────────────────────────────────── */}
+      {showInviteModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.65)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+          onClick={() => setShowInviteModal(false)}
+        >
+          <div
+            style={{
+              background: "var(--bg-panel, #0d0d1a)",
+              border: "1px solid var(--color-border)",
+              borderRadius: 16,
+              padding: "32px 28px",
+              maxWidth: 480,
+              width: "90%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 16,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ margin: 0, fontSize: "1.2rem", color: "var(--color-text)" }}>
+              Запрошення до групи
+            </h2>
+            <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--color-smoke)" }}>
+              Скопіюйте посилання та надішліть законотворцям. Діє 7 днів.
+            </p>
+
+            <div
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid var(--color-border)",
+                borderRadius: 8,
+                padding: "10px 14px",
+                fontSize: "0.8rem",
+                color: "var(--color-text)",
+                wordBreak: "break-all",
+                fontFamily: "monospace",
+              }}
+            >
+              {inviteUrl}
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ flex: 1 }}
+                onClick={handleCopyInvite}
+              >
+                Скопіювати
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ flex: 1 }}
+                onClick={() => setShowInviteModal(false)}
+              >
+                Закрити
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
