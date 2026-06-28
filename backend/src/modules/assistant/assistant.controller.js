@@ -65,6 +65,7 @@ export async function streamChat(req, res) {
   await handleStreamChat({
     res,
     userId,
+    userRole,
     guestIp: userId ? null : ip,
     sessionId: validation.sessionId || null,
     message: validation.message,

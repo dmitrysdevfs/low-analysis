@@ -8,7 +8,10 @@ import {
 } from './assistant.constants.js';
 import AssistantSession from './assistant.session.model.js';
 import { retrieveRelevantArticles } from './assistant.retriever.js';
+import Element from '../../models/Element.js';
+import Law from '../../models/Law.js';
 
+const ACTIVE_ARTICLE_TRUNCATE = 10000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function sendSSE(res, data) {
@@ -27,11 +30,14 @@ async function streamStub(res, content, sources) {
   sendSSE(res, { type: SSE_EVENTS.DONE, sources });
 }
 
-/**
- * Stream a real LLM response.
- * Requires queryChatLLM to be available in llmService.
- */
-async function streamLLM(res, systemPrompt, history, userMessage, sources) {
+async function streamLLM(
+  res,
+  systemPrompt,
+  history,
+  userMessage,
+  sources,
+  maxOutputTokens,
+) {
   let accumulatedText = '';
   try {
     const { queryChatAssistant } = await import('./assistant.llm.js');
@@ -41,7 +47,7 @@ async function streamLLM(res, systemPrompt, history, userMessage, sources) {
       userMessage,
       {
         temperature: CHAT_LLM_CONFIG.temperature,
-        maxOutputTokens: CHAT_LLM_CONFIG.maxOutputTokens,
+        maxOutputTokens: maxOutputTokens || CHAT_LLM_CONFIG.maxOutputTokens,
       },
     );
 
@@ -104,6 +110,7 @@ function deriveTitle(message) {
 export async function handleStreamChat({
   res,
   userId,
+  userRole,
   guestIp,
   sessionId,
   message,
@@ -141,6 +148,21 @@ export async function handleStreamChat({
         title: deriveTitle(message),
         messages: [],
       });
+    } else {
+      // Dynamic Session Context Persistence:
+      // Update session's context fields on continuation of conversation
+      if (contextLawId) {
+        session.contextLawId = contextLawId;
+      }
+      if (contextArticleNum) {
+        session.contextArticleNum = contextArticleNum;
+      }
+      if (mode) {
+        session.mode = mode;
+      }
+      if (role) {
+        session.role = role;
+      }
     }
 
     // Add user message
@@ -163,10 +185,101 @@ export async function handleStreamChat({
       assistantSources = sources;
       await streamStub(res, content, sources);
     } else {
-      const retrievedSources = await retrieveRelevantArticles(
+      // Fetch and compile active article content if mode is 'article'
+      let activeArticle = null;
+      if (mode === 'article' && contextLawId && contextArticleNum) {
+        try {
+          const activeElement = await Element.findOne({
+            lawId: contextLawId,
+            number: contextArticleNum,
+            type: 'article',
+          }).lean();
+
+          if (activeElement) {
+            const law = await Law.findById(contextLawId)
+              .select('title source')
+              .lean();
+            const escapeRegex = (string) =>
+              string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const codePrefix = new RegExp(
+              `^${escapeRegex(activeElement.code)}\\.`,
+            );
+
+            const children = await Element.find({
+              lawId: contextLawId,
+              $or: [{ parentId: activeElement._id }, { code: codePrefix }],
+            })
+              .sort({ order: 1 })
+              .lean();
+
+            let fullText = '';
+            if (activeElement.title) {
+              fullText += `${activeElement.title}\n`;
+            }
+            if (activeElement.text) {
+              const riskMarker =
+                activeElement.risk_level && activeElement.risk_level !== 'green'
+                  ? ` [Рівень ризику: ${activeElement.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
+                  : '';
+              fullText += `${activeElement.text}${riskMarker}\n`;
+            }
+            for (const child of children) {
+              if (child.text) {
+                const riskMarker =
+                  child.risk_level && child.risk_level !== 'green'
+                    ? ` [Рівень ризику: ${child.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
+                    : '';
+                fullText += `${child.text}${riskMarker}\n`;
+              }
+            }
+
+            activeArticle = {
+              index: 0,
+              lawId: contextLawId,
+              lawTitle: law?.title || contextLawId,
+              articleNum: contextArticleNum,
+              articleTitle: activeElement.title || '',
+              text: fullText.trim().slice(0, ACTIVE_ARTICLE_TRUNCATE),
+              title: `Стаття ${contextArticleNum}${activeElement.title ? ` "${activeElement.title}"` : ''} — ${law?.title || contextLawId}`,
+              href: law?.source || null,
+              type: 'article',
+            };
+          }
+        } catch (err) {
+          Sentry.captureException(err, {
+            tags: {
+              module: 'assistant.orchestrator',
+              fn: 'handleStreamChat.fetchActiveArticle',
+            },
+          });
+          console.error(
+            '[assistant.orchestrator] Error fetching active article:',
+            err.message,
+          );
+        }
+      }
+
+      let retrievedSources = await retrieveRelevantArticles(
         message,
         contextLawId,
       );
+
+      // Prepend active article and remove duplicates
+      if (activeArticle) {
+        retrievedSources = retrievedSources.filter(
+          (s) =>
+            !(
+              s.lawId.toString() === activeArticle.lawId.toString() &&
+              s.articleNum === activeArticle.articleNum
+            ),
+        );
+        retrievedSources = [activeArticle, ...retrievedSources];
+        retrievedSources = retrievedSources.map((s, idx) => ({
+          ...s,
+          index: idx,
+        }));
+      }
+
       const systemPrompt = buildSystemPrompt(
         mode,
         context,
@@ -179,12 +292,19 @@ export async function handleStreamChat({
         .slice(-MAX_HISTORY_MESSAGES)
         .map((m) => ({ role: m.role, content: m.content }));
 
+      // Set dynamic output token limit: 4096 for lawmakers and admins, 2048 default
+      const maxOutputTokens =
+        userRole === 'lawmaker' || userRole === 'admin'
+          ? 4096
+          : CHAT_LLM_CONFIG.maxOutputTokens;
+
       const result = await streamLLM(
         res,
         systemPrompt,
         history,
         message,
         retrievedSources,
+        maxOutputTokens,
       );
       assistantContent = result.content;
       assistantSources = result.sources;
@@ -258,7 +378,7 @@ function buildSystemPrompt(
   }
   if (mode === 'article' && context.lawId && context.articleNum) {
     const label = lawTitle || context.lawId;
-    base += ` Поточний контекст: стаття ${context.articleNum} закону "${label}".`;
+    base += ` Поточний контекст: стаття ${context.articleNum} закону "${label}" (вона наведена першою під індексом [0] у релевантних статтях нижче).`;
   }
 
   if (articles.length) {
