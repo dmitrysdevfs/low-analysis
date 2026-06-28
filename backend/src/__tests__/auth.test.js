@@ -11,6 +11,9 @@ vi.mock('../services/admin/superCode.service.js', () => ({
 vi.mock('../modules/email/email.service.js', () => ({
   sendTransactionalEmail: vi.fn().mockResolvedValue({ messageId: 'mock-id' }),
 }));
+vi.mock('../models/EmailLog.js', () => ({
+  default: { create: vi.fn().mockResolvedValue({}) },
+}));
 
 describe('Auth API', () => {
   beforeEach(() => {

@@ -206,7 +206,15 @@ export function AuthFormScreen({ mode }: { mode: AuthMode }) {
         return;
       }
 
-      notify.success("Перевірте email для підтвердження акаунта.");
+      if (result.requiresEmailVerification === false) {
+        notify.success("Акаунт створено. Можна увійти одразу.");
+      } else if (result.emailSent === false) {
+        notify.warning(
+          "Акаунт створено, але лист не вдалося надіслати. Спробуйте «Надіслати повторно» після входу.",
+        );
+      } else {
+        notify.success("Перевірте email для підтвердження акаунта.");
+      }
       router.push(ROUTES.authLogin);
       setForm((current) => ({
         ...current,

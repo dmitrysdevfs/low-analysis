@@ -1,5 +1,6 @@
 import LawFork from '../models/LawFork.js';
 import Proposal from '../models/Proposal.js';
+import Amendment from '../models/Amendment.js';
 import Group from '../models/Group.js';
 
 function toId(value) {
@@ -50,6 +51,12 @@ function workflowBucket(type, status) {
     return 'draft';
   }
 
+  if (type === 'amendment') {
+    if (status === 'approved') return 'approved';
+    if (status === 'rejected') return 'rejected';
+    return 'review';
+  }
+
   if (status === 'approved') return 'approved';
   if (['rejected', 'withdrawn', 'archived', 'superseded'].includes(status)) {
     return 'rejected';
@@ -95,7 +102,11 @@ function createNormalizedItem({
     type,
     title:
       title ||
-      (type === 'fork' ? 'Форк без назви' : 'Пропозиція без заголовка'),
+      (type === 'fork'
+        ? 'Форк без назви'
+        : type === 'amendment'
+          ? 'Поправка без назви'
+          : 'Пропозиція без заголовка'),
     status: status || 'draft',
     updatedAt,
     updatedAtDate: toDateValue(updatedAt),
@@ -144,11 +155,6 @@ async function loadActivityItems(groups) {
       groups.flatMap((group) => group.memberIds.map((member) => toId(member))),
     ),
   ];
-  const lawIds = [
-    ...new Set(
-      groups.flatMap((group) => group.trackedLawIds.map((law) => toId(law))),
-    ),
-  ];
 
   if (!memberIds.length) {
     return [];
@@ -156,13 +162,9 @@ async function loadActivityItems(groups) {
 
   const forkQuery = { authorId: { $in: memberIds } };
   const proposalQuery = { created_by: { $in: memberIds } };
+  const amendmentQuery = { created_by: { $in: memberIds } };
 
-  if (lawIds.length > 0) {
-    forkQuery.lawId = { $in: lawIds };
-    proposalQuery.law_id = { $in: lawIds };
-  }
-
-  const [forks, proposals] = await Promise.all([
+  const [forks, proposals, amendments] = await Promise.all([
     LawFork.find(forkQuery)
       .select('lawId authorId title status updatedAt')
       .populate('lawId', 'title code')
@@ -170,6 +172,11 @@ async function loadActivityItems(groups) {
       .lean(),
     Proposal.find(proposalQuery)
       .select('law_id created_by title status updatedAt')
+      .populate('law_id', 'title code')
+      .populate('created_by', 'fullName email')
+      .lean(),
+    Amendment.find(amendmentQuery)
+      .select('law_id created_by status updatedAt reason context change_type')
       .populate('law_id', 'title code')
       .populate('created_by', 'fullName email')
       .lean(),
@@ -201,6 +208,23 @@ async function loadActivityItems(groups) {
         lawId: proposal.law_id,
         author: proposal.created_by,
         authorId: proposal.created_by,
+      }),
+    ),
+    ...amendments.map((amendment) =>
+      createNormalizedItem({
+        id: amendment._id,
+        type: 'amendment',
+        title:
+          amendment.reason ||
+          (amendment.context?.section_title
+            ? `Поправка: ${amendment.context.section_title}`
+            : null),
+        status: amendment.status,
+        updatedAt: amendment.updatedAt,
+        law: amendment.law_id,
+        lawId: amendment.law_id,
+        author: amendment.created_by,
+        authorId: amendment.created_by,
       }),
     ),
   ].sort((left, right) => {
@@ -390,12 +414,9 @@ function buildDashboardSummary(groups, items) {
       );
     });
 
-  const recentActivity = items.slice(0, 16).map((item) => {
-    const matchingGroups = groups.filter(
-      (group) =>
-        group.memberIds.some((member) => toId(member) === item.authorId) &&
-        (group.trackedLawIds.length === 0 ||
-          group.trackedLawIds.some((law) => toId(law) === item.lawId)),
+  const recentActivity = items.slice(0, 200).map((item) => {
+    const matchingGroups = groups.filter((group) =>
+      group.memberIds.some((member) => toId(member) === item.authorId),
     );
     const groupNames = matchingGroups.map((group) => group.name);
 

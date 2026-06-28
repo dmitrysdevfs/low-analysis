@@ -12,6 +12,8 @@ type AuthActionResult = {
   error?: string;
   redirectTo?: string;
   session?: AuthSession;
+  emailSent?: boolean;
+  requiresEmailVerification?: boolean;
 };
 
 const API_BASE = "/api/auth";
@@ -117,8 +119,11 @@ export async function registerUser(
       return { ok: false, error: data.message || "Помилка реєстрації" };
     }
 
-    // Backend returns { message: '...' } — no session yet, user must verify email first
-    return { ok: true };
+    return {
+      ok: true,
+      emailSent: data.emailSent ?? true,
+      requiresEmailVerification: data.requiresEmailVerification ?? true,
+    };
   } catch {
     return { ok: false, error: "Помилка з'єднання з сервером" };
   }

@@ -49,6 +49,7 @@ export function useCreateFork() {
     mutationFn: createFork,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["forks"] });
+      qc.invalidateQueries({ queryKey: ["supervisor"] });
     },
   });
 }

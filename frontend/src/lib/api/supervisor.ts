@@ -90,7 +90,7 @@ export interface SupervisorStudentActivity {
 
 export interface SupervisorRecentActivityItem {
   id: string;
-  type: "fork" | "proposal";
+  type: "fork" | "proposal" | "amendment";
   title: string;
   author: string;
   authorEmail: string;

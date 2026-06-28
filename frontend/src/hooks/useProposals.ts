@@ -25,6 +25,7 @@ export function useCreateProposal() {
     mutationFn: legislatorApi.createProposal,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["proposals"] });
+      queryClient.invalidateQueries({ queryKey: ["supervisor"] });
     },
   });
 }

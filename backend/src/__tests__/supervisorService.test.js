@@ -3,10 +3,12 @@ import * as supervisorService from '../services/supervisor.service.js';
 import Group from '../models/Group.js';
 import Proposal from '../models/Proposal.js';
 import LawFork from '../models/LawFork.js';
+import Amendment from '../models/Amendment.js';
 
 vi.mock('../models/Group.js');
 vi.mock('../models/Proposal.js');
 vi.mock('../models/LawFork.js');
+vi.mock('../models/Amendment.js');
 
 describe('supervisorService', () => {
   beforeEach(() => {
@@ -146,6 +148,13 @@ describe('supervisorService', () => {
       };
       Proposal.find.mockReturnValue(mockProposalChain);
 
+      const mockAmendmentChain = {
+        select: vi.fn().mockReturnThis(),
+        populate: vi.fn().mockReturnThis(),
+        lean: vi.fn().mockResolvedValue([]),
+      };
+      Amendment.find.mockReturnValue(mockAmendmentChain);
+
       const summary = await supervisorService.getDashboardSummary('s1');
 
       expect(Group.find).toHaveBeenCalledWith({
@@ -154,6 +163,7 @@ describe('supervisorService', () => {
       });
       expect(LawFork.find).toHaveBeenCalled();
       expect(Proposal.find).toHaveBeenCalled();
+      expect(Amendment.find).toHaveBeenCalled();
 
       expect(summary.totalMembers).toBe(1);
       expect(summary.totalTrackedLaws).toBe(1);
@@ -224,6 +234,13 @@ describe('supervisorService', () => {
       };
       Proposal.find.mockReturnValue(mockProposalChain);
 
+      const mockAmendmentChain = {
+        select: vi.fn().mockReturnThis(),
+        populate: vi.fn().mockReturnThis(),
+        lean: vi.fn().mockResolvedValue([]),
+      };
+      Amendment.find.mockReturnValue(mockAmendmentChain);
+
       const summary = await supervisorService.getDashboardSummary('s1');
 
       expect(Group.find).toHaveBeenCalledWith({
@@ -237,6 +254,7 @@ describe('supervisorService', () => {
       expect(Proposal.find).toHaveBeenCalledWith({
         created_by: { $in: ['u2'] },
       });
+      expect(Amendment.find).toHaveBeenCalled();
 
       expect(summary.totalMembers).toBe(1);
       expect(summary.totalTrackedLaws).toBe(1); // dynamically found Law 2

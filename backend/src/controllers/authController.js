@@ -7,6 +7,7 @@ import { getActiveCode } from '../services/admin/superCode.service.js';
 import { appendAuditEntry } from '../services/admin/audit.service.js';
 import { sendTransactionalEmail } from '../modules/email/email.service.js';
 import { renderEmailTemplate } from '../modules/email/email.renderer.js';
+import EmailLog from '../models/EmailLog.js';
 
 function getFrontendUrl() {
   const url = process.env.FRONTEND_URL;
@@ -110,12 +111,16 @@ export const registerUser = async (req, res) => {
     req.body.registrationReferrer || req.headers.referer || null;
   const registrationSource = detectRegistrationSource(rawReferrer);
 
+  const skipVerification =
+    process.env.AUTH_REQUIRE_EMAIL_VERIFICATION === 'false';
+
   const user = await User.create({
     email,
     password,
     fullName: finalFullName,
     role,
     registrationSource,
+    ...(skipVerification ? { isVerified: true } : {}),
   });
 
   if (user) {
@@ -127,6 +132,21 @@ export const registerUser = async (req, res) => {
         severity: 'security',
         ipAddress: getClientIp(req),
       }).catch(() => {});
+    }
+
+    if (skipVerification) {
+      appendAuditEntry({
+        action: 'Demo: реєстрація без підтвердження email',
+        detail: `Акаунт зареєстровано без email-верифікації (AUTH_REQUIRE_EMAIL_VERIFICATION=false). Email: ${email}.`,
+        actor: email,
+        severity: 'info',
+        ipAddress: getClientIp(req),
+      }).catch(() => {});
+      return res.status(201).json({
+        message: 'Акаунт створено. Можна увійти одразу.',
+        requiresEmailVerification: false,
+        emailSent: false,
+      });
     }
 
     const rawToken = crypto.randomBytes(32).toString('hex');
@@ -144,11 +164,20 @@ export const registerUser = async (req, res) => {
       subject: 'Підтвердіть email — Low Analysis',
       props: { fullName: user.fullName, verifyUrl },
     });
+    let emailSent = false;
     try {
-      await sendTransactionalEmail({
+      const emailResult = await sendTransactionalEmail({
         to: [{ email: user.email, name: user.fullName }],
         subject: 'Підтвердіть email — Low Analysis',
         htmlContent,
+      });
+      emailSent = true;
+      await EmailLog.create({
+        recipientEmail: user.email,
+        status: 'sent',
+        brevoMessageId: emailResult?.messageId || emailResult?.data?.messageId,
+      }).catch((logErr) => {
+        console.error('Failed to log successful email send:', logErr.message);
       });
     } catch (err) {
       console.error('Failed to send verification email:', err.message);
@@ -158,11 +187,22 @@ export const registerUser = async (req, res) => {
         actor: user.email,
         severity: 'error',
       }).catch(() => {});
+      await EmailLog.create({
+        recipientEmail: user.email,
+        status: 'failed',
+        error: err.message,
+      }).catch((logErr) => {
+        console.error('Failed to log failed email send:', logErr.message);
+      });
     }
 
-    res
-      .status(201)
-      .json({ message: 'Перевірте email для підтвердження акаунта' });
+    res.status(201).json({
+      message: emailSent
+        ? 'Перевірте email для підтвердження акаунта'
+        : 'Акаунт створено, але лист не вдалося надіслати. Спробуйте "Надіслати повторно" після входу.',
+      requiresEmailVerification: true,
+      emailSent,
+    });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
   }
@@ -189,13 +229,18 @@ export const loginUser = async (req, res) => {
 
   if (user && (await user.comparePassword(password))) {
     const isTestAccount =
+      user.role === 'admin' ||
       user.email.endsWith('@lowanalysis.com') ||
       user.email.endsWith('@low-analysis.dev') ||
       (user.email.startsWith('test') && user.email.endsWith('@gmail.com')) ||
       process.env.NODE_ENV === 'development' ||
       process.env.NODE_ENV === 'test';
 
-    if (user.isVerified === false && !isTestAccount) {
+    if (
+      user.isVerified === false &&
+      !isTestAccount &&
+      process.env.AUTH_REQUIRE_EMAIL_VERIFICATION !== 'false'
+    ) {
       return res.status(403).json({
         message: 'Підтвердіть email перед входом',
         code: 'EMAIL_NOT_VERIFIED',
@@ -520,17 +565,45 @@ export const resendVerification = async (req, res) => {
     props: { fullName: user.fullName, verifyUrl },
   });
 
+  let emailSent = false;
   try {
-    await sendTransactionalEmail({
+    const emailResult = await sendTransactionalEmail({
       to: [{ email: user.email, name: user.fullName }],
       subject: 'Підтвердіть email — Low Analysis',
       htmlContent,
     });
+    emailSent = true;
+    await EmailLog.create({
+      recipientEmail: user.email,
+      status: 'sent',
+      brevoMessageId: emailResult?.messageId || emailResult?.data?.messageId,
+    }).catch((logErr) => {
+      console.error(
+        'Failed to log successful verification email send:',
+        logErr.message,
+      );
+    });
   } catch (err) {
     console.error('Failed to resend verification email:', err.message);
+    appendAuditEntry({
+      action: 'Повторний email верифікації не надіслано',
+      detail: `Помилка відправки для ${user.email}: ${err.message}`,
+      actor: user.email,
+      severity: 'error',
+    }).catch(() => {});
+    await EmailLog.create({
+      recipientEmail: user.email,
+      status: 'failed',
+      error: err.message,
+    }).catch((logErr) => {
+      console.error(
+        'Failed to log failed verification email send:',
+        logErr.message,
+      );
+    });
   }
 
-  res.json(GENERIC);
+  res.json({ ...GENERIC, emailSent });
 };
 
 export const googleAuth = async (req, res) => {
