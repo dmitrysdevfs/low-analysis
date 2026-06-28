@@ -1,5 +1,4 @@
 import React from "react";
-// @ts-expect-error: React 19 testing library typings mismatch for screen export in local workspace
 import { render, screen } from "@testing-library/react";
 import RootLayout, { metadata } from "@/app/layout";
 import Header from "@/layout/Header/Header";

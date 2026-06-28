@@ -1,4 +1,4 @@
-﻿import { PAGE_SLUGS } from './page.constants.js';
+import { PAGE_SLUGS } from './page.constants.js';
 
 const PROJECT_INFO_BLOCKS = [
   {

@@ -1,4 +1,4 @@
-﻿import {
+import {
   ALLOWED_PAGE_SLUGS,
   PAGE_BLOCK_TYPES,
   PAGE_SLUGS,

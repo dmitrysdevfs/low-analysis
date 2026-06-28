@@ -11,12 +11,14 @@ const users = [
     email: 'admin@lowanalysis.com',
     password: 'password123',
     role: 'admin',
+    isVerified: true,
   },
   {
     fullName: 'Standard User',
     email: 'user@lowanalysis.com',
     password: 'password123',
     role: 'user',
+    isVerified: true,
   },
   {
     fullName: 'Paid User',
@@ -24,6 +26,7 @@ const users = [
     password: 'password123',
     role: 'paid_user',
     username: 'paid',
+    isVerified: true,
   },
   {
     fullName: 'Dev Client',
@@ -31,6 +34,7 @@ const users = [
     password: '777',
     role: 'user',
     username: 'user',
+    isVerified: true,
   },
   {
     fullName: 'Dev Admin',
@@ -38,6 +42,7 @@ const users = [
     password: '888',
     role: 'admin',
     username: 'admin',
+    isVerified: true,
   },
 ];
 
