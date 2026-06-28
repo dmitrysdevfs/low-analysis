@@ -217,16 +217,18 @@ export async function handleStreamChat({
               fullText += `${activeElement.title}\n`;
             }
             if (activeElement.text) {
-              const riskMarker = activeElement.risk_level && activeElement.risk_level !== 'green'
-                ? ` [Рівень ризику: ${activeElement.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
-                : '';
+              const riskMarker =
+                activeElement.risk_level && activeElement.risk_level !== 'green'
+                  ? ` [Рівень ризику: ${activeElement.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
+                  : '';
               fullText += `${activeElement.text}${riskMarker}\n`;
             }
             for (const child of children) {
               if (child.text) {
-                const riskMarker = child.risk_level && child.risk_level !== 'green'
-                  ? ` [Рівень ризику: ${child.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
-                  : '';
+                const riskMarker =
+                  child.risk_level && child.risk_level !== 'green'
+                    ? ` [Рівень ризику: ${child.risk_level === 'red' ? 'червоний (аномальний обсяг/заплутаність)' : 'жовтий (підвищена складність)'}]`
+                    : '';
                 fullText += `${child.text}${riskMarker}\n`;
               }
             }
@@ -245,7 +247,10 @@ export async function handleStreamChat({
           }
         } catch (err) {
           Sentry.captureException(err, {
-            tags: { module: 'assistant.orchestrator', fn: 'handleStreamChat.fetchActiveArticle' },
+            tags: {
+              module: 'assistant.orchestrator',
+              fn: 'handleStreamChat.fetchActiveArticle',
+            },
           });
           console.error(
             '[assistant.orchestrator] Error fetching active article:',
@@ -288,9 +293,10 @@ export async function handleStreamChat({
         .map((m) => ({ role: m.role, content: m.content }));
 
       // Set dynamic output token limit: 4096 for lawmakers and admins, 2048 default
-      const maxOutputTokens = (userRole === 'lawmaker' || userRole === 'admin')
-        ? 4096
-        : CHAT_LLM_CONFIG.maxOutputTokens;
+      const maxOutputTokens =
+        userRole === 'lawmaker' || userRole === 'admin'
+          ? 4096
+          : CHAT_LLM_CONFIG.maxOutputTokens;
 
       const result = await streamLLM(
         res,
