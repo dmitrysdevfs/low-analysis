@@ -481,6 +481,16 @@
   }
 }
 
+@media (max-width: 980px) {
+  .workspace {
+    min-height: 0;
+  }
+
+  .mainScroll {
+    height: calc(100dvh - 124px);
+  }
+}
+
 @media (max-width: 780px) {
   .sidebar {
     display: none;
