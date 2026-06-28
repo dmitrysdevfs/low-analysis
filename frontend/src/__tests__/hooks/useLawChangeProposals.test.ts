@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import * as lawChangeApi from "@/lib/api/lawChange";
@@ -40,7 +41,7 @@ function makeWrapper() {
   return Wrapper;
 }
 
-const MOCK_PROPOSALS = [
+const MOCK_PROPOSALS: any[] = [
   {
     _id: "p-1",
     law_id: "law-1",
@@ -113,7 +114,6 @@ describe("useCastVote", () => {
       votes_against_weighted: 1,
       votes_for_count: 2,
       votes_against_count: 1,
-      total_weight: 5,
       my_vote: "for",
     });
 
@@ -134,7 +134,6 @@ describe("useCastVote", () => {
       votes_against_weighted: 3,
       votes_for_count: 0,
       votes_against_count: 1,
-      total_weight: 3,
       my_vote: "against",
     });
 
@@ -175,7 +174,6 @@ describe("useRemoveVote", () => {
       votes_against_weighted: 0,
       votes_for_count: 0,
       votes_against_count: 0,
-      total_weight: 0,
       my_vote: null,
     });
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement } from "react";
@@ -53,7 +54,7 @@ function makeProposal(overrides = {}) {
     votes_against_count: 1,
     voting_deadline: null,
     ...overrides,
-  };
+  } as any;
 }
 
 function makeWrapper() {
@@ -77,9 +78,8 @@ beforeEach(() => {
     votes_against_weighted: 1,
     votes_for_count: 1,
     votes_against_count: 1,
-    total_weight: 4,
     my_vote: null,
-  });
+  } as any);
 });
 
 describe("ProposalsPage — unauthenticated", () => {
@@ -88,7 +88,7 @@ describe("ProposalsPage — unauthenticated", () => {
       isAuthenticated: false,
       isHydrated: true,
       user: null,
-    } as ReturnType<typeof useAuth>);
+    } as any);
     vi.mocked(lawChangeApi.getAllProposals).mockResolvedValue([makeProposal()]);
   });
 
@@ -106,7 +106,7 @@ describe("ProposalsPage — authenticated", () => {
       isAuthenticated: true,
       isHydrated: true,
       user: { id: OTHER_USER_ID, role: "legislator" },
-    } as ReturnType<typeof useAuth>);
+    } as any);
   });
 
   it("shows loading state initially", () => {
@@ -151,7 +151,7 @@ describe("ProposalsPage — authenticated", () => {
       isAuthenticated: true,
       isHydrated: true,
       user: { id: AUTHOR_ID, role: "legislator" },
-    } as ReturnType<typeof useAuth>);
+    } as any);
     vi.mocked(lawChangeApi.getAllProposals).mockResolvedValue([makeProposal()]);
     renderPage();
 
@@ -182,9 +182,8 @@ describe("ProposalsPage — authenticated", () => {
       votes_against_weighted: 1,
       votes_for_count: 2,
       votes_against_count: 1,
-      total_weight: 5,
       my_vote: "for",
-    });
+    } as any);
     renderPage();
 
     await waitFor(() => {
@@ -207,18 +206,16 @@ describe("ProposalsPage — authenticated", () => {
       votes_against_weighted: 0,
       votes_for_count: 1,
       votes_against_count: 0,
-      total_weight: 4,
       my_vote: "for",
-    });
+    } as any);
     vi.mocked(lawChangeApi.getAllProposals).mockResolvedValue([makeProposal()]);
     vi.mocked(lawChangeApi.removeVote).mockResolvedValue({
       votes_for_weighted: 0,
       votes_against_weighted: 0,
       votes_for_count: 0,
       votes_against_count: 0,
-      total_weight: 0,
       my_vote: null,
-    });
+    } as any);
     renderPage();
 
     // Wait until voteStats resolves and myVote==="for" is reflected (voteBtnActive class)
@@ -240,7 +237,7 @@ describe("ProposalsPage — authenticated", () => {
       isAuthenticated: false,
       isHydrated: true,
       user: null,
-    } as ReturnType<typeof useAuth>);
+    } as any);
     // Not redirected: mock so redirect doesn't fire in this test
     vi.mocked(lawChangeApi.getAllProposals).mockResolvedValue([makeProposal()]);
 
