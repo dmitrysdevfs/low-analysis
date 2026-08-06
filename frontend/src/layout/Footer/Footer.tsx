@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ROUTES } from "@/constants/routes";
 import { PatreonCard } from "@/components/support/PatreonCard";
@@ -105,6 +106,10 @@ function PublicFooter() {
             <br />
             законодавства України
           </p>
+          <Link href={ROUTES.team} className={`mono ${styles.teamLink}`}>
+            Команда проєкту
+            <ArrowRight size={12} />
+          </Link>
           <div className={`mono ${styles.version}`}>v1.0.0 · 2026 · MIT</div>
         </motion.div>
 
