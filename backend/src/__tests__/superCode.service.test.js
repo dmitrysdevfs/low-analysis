@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import AdminConfig from '../models/AdminConfig.js';
 import { appendAuditEntry } from '../services/admin/audit.service.js';
-import { rotateCode } from '../services/admin/superCode.service.js';
+import {
+  getActiveCode,
+  rotateCode,
+} from '../services/admin/superCode.service.js';
 
 vi.mock('../models/AdminConfig.js', () => ({
   default: {
@@ -26,6 +29,18 @@ describe('superCode.service', () => {
     vi.clearAllMocks();
     AdminConfig.findOneAndUpdate.mockResolvedValue({});
     mockHistory(null);
+  });
+
+  it('returns null instead of a fallback when no code is configured', async () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    mockHistory(null);
+
+    await expect(getActiveCode()).resolves.toBeNull();
+    expect(consoleError).toHaveBeenCalled();
+
+    consoleError.mockRestore();
   });
 
   it('generates a code in the expected format', async () => {
@@ -76,6 +91,8 @@ describe('superCode.service', () => {
     const historyWrite = AdminConfig.findOneAndUpdate.mock.calls.find(
       ([filter]) => filter.key === 'adminSuperCodeHistory',
     );
-    expect(JSON.stringify(historyWrite[1].value)).not.toContain('LOW-LEGACY-VALUE');
+    expect(JSON.stringify(historyWrite[1].value)).not.toContain(
+      'LOW-LEGACY-VALUE',
+    );
   });
 });

@@ -93,7 +93,7 @@ const API_FIXTURE: AdminDashboardApiSnapshot = {
   recentLaws: [],
   auditLog: [],
   auditCount: 0,
-  activeSuperCode: "SUPER-001",
+  activeSuperCode: "LOW-TEST-CODE",
   superCodeHistory: [],
   accessMatrix: [],
 };
@@ -150,7 +150,7 @@ describe("useAdminWorkspace", () => {
     await waitFor(() => expect(result.current.snapshot).not.toBeNull());
 
     expect(adminApi.getDashboard).toHaveBeenCalled();
-    expect(result.current.snapshot?.activeSuperCode).toBe("SUPER-001");
+    expect(result.current.snapshot?.activeSuperCode).toBe("LOW-TEST-CODE");
     expect(result.current.billingCounts).toEqual({
       preview: 1,
       trial: 0,
@@ -171,7 +171,7 @@ describe("useAdminWorkspace", () => {
       await result.current.handleCopyCode();
     });
 
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith("SUPER-001");
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith("LOW-TEST-CODE");
     expect(notify.success).toHaveBeenCalled();
     expect(adminApi.appendAuditEntry).toHaveBeenCalled();
   });

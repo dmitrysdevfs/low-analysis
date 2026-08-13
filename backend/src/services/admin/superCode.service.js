@@ -4,7 +4,6 @@ import { appendAuditEntry } from './audit.service.js';
 
 const CODE_KEY = 'adminSuperCode';
 const HISTORY_KEY = 'adminSuperCodeHistory';
-const DEFAULT_CODE = 'SUPER-001';
 
 // Без I, L, O, U — щоб код не читався неоднозначно, коли його диктують.
 // Довжина рівно 32, тож `byte % 32` не дає зсуву: 256 ділиться на 32 без остачі.
@@ -28,7 +27,16 @@ function generateCode() {
 
 export const getActiveCode = async () => {
   const doc = await AdminConfig.findOne({ key: CODE_KEY }).lean();
-  return doc?.value ?? DEFAULT_CODE;
+  if (!doc?.value) {
+    // Свідомо не повертаємо запасне значення: невідомий код має зупиняти
+    // реєстрацію адміністратора, а не пускати за передбачуваним рядком.
+    console.error(
+      '[super-code] Активний супер-код відсутній у adminconfigs. ' +
+        'Реєстрація адміністраторів заблокована до ротації коду в адмінці.',
+    );
+    return null;
+  }
+  return doc.value;
 };
 
 export const getCodeHistory = async () => {

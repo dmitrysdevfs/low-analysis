@@ -9,7 +9,7 @@ vi.mock('../modules/email/email.service.js', () => ({
   sendBulkEmails: vi.fn().mockResolvedValue([]),
 }));
 vi.mock('../services/admin/superCode.service.js', () => ({
-  getActiveCode: vi.fn().mockResolvedValue('SUPER-001'),
+  getActiveCode: vi.fn().mockResolvedValue('LOW-TEST-CODE'),
 }));
 
 import { sendTransactionalEmail } from '../modules/email/email.service.js';

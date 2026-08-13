@@ -134,7 +134,8 @@ export type AdminUserOverview = {
 
 export type AdminSuperCodeEntry = {
   id: string;
-  code: string;
+  /** Бекенд більше не віддає значення коду в історії — лише метадані ротації. */
+  code?: string;
   rotatedAt: string;
   rotatedBy: string;
   status: "active" | "retired" | "default";
