@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 vi.mock('../models/User.js');
 vi.mock('../services/admin/superCode.service.js', () => ({
-  getActiveCode: vi.fn().mockResolvedValue('SUPER-001'),
+  getActiveCode: vi.fn().mockResolvedValue('LOW-TEST-CODE'),
 }));
 vi.mock('../modules/email/email.service.js', () => ({
   sendTransactionalEmail: vi.fn().mockResolvedValue({ messageId: 'mock-id' }),
@@ -178,10 +178,8 @@ describe('Auth API', () => {
         password: 'password123',
         displayName: 'Test Admin',
         accountType: 'admin',
-        superCode: 'SUPER-001',
+        superCode: 'LOW-TEST-CODE',
       };
-
-      process.env.ADMIN_SUPER_CODE = 'SUPER-001';
 
       User.findOne.mockResolvedValue(null);
       User.create.mockResolvedValue({
@@ -213,8 +211,6 @@ describe('Auth API', () => {
         accountType: 'admin',
         superCode: 'WRONG-CODE',
       };
-
-      process.env.ADMIN_SUPER_CODE = 'SUPER-001';
 
       const res = await request(app).post('/api/auth/register').send(userData);
 

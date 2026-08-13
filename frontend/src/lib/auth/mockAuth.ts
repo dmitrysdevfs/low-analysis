@@ -90,7 +90,8 @@ export type AdminDashboardSnapshot = {
 
 export type AdminSuperCodeHistoryEntry = {
   id: string;
-  code: string;
+  /** Відсутнє для записів із бекенду: там історія зберігає лише метадані. */
+  code?: string;
   rotatedAt: string;
   rotatedBy: string;
   status: "active" | "retired" | "default";
@@ -121,7 +122,9 @@ type DevAuthAccount = StoredAuthAccount & {
   login: string;
 };
 
-const DEFAULT_ADMIN_SUPER_CODE = "SUPER-001";
+// Заглушка для локальної розробки. Навмисно не збігається з жодним значенням,
+// яке колись діяло у продакшні: цей модуль обслуговує лише мок-автентифікацію.
+const DEV_ADMIN_SUPER_CODE = "DEV-ADMIN-CODE";
 
 const DEV_ACCOUNTS: DevAuthAccount[] = [
   {
@@ -142,7 +145,7 @@ const DEV_ACCOUNTS: DevAuthAccount[] = [
     password: "888",
     accountType: "admin",
     roles: ["admin", "client"],
-    superCode: DEFAULT_ADMIN_SUPER_CODE,
+    superCode: DEV_ADMIN_SUPER_CODE,
     createdAt: "2026-01-01T00:00:00.000Z",
   },
 ];
@@ -406,7 +409,7 @@ export function clearStoredSession() {
 export function readActiveAdminSuperCode() {
   return readStorageItem<string>(
     AUTH_ADMIN_SUPER_CODE_STORAGE_KEY,
-    DEFAULT_ADMIN_SUPER_CODE,
+    DEV_ADMIN_SUPER_CODE,
   );
 }
 

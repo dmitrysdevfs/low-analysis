@@ -38,7 +38,7 @@ describe("mock auth role flows", () => {
       email: "admin@low.test",
       password: "AdminPass1!",
       accountType: "admin",
-      superCode: "SUPER-001",
+      superCode: "DEV-ADMIN-CODE",
     });
 
     const result = loginMockAccount({
