@@ -228,17 +228,14 @@ export const loginUser = async (req, res) => {
   }).select('+password');
 
   if (user && (await user.comparePassword(password))) {
-    const isTestAccount =
-      user.role === 'admin' ||
-      user.email.endsWith('@lowanalysis.com') ||
-      user.email.endsWith('@low-analysis.dev') ||
-      (user.email.startsWith('test') && user.email.endsWith('@gmail.com')) ||
-      process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test';
+    // Верифікацію пропускає лише середовище, а не властивості акаунта:
+    // роль чи домен пошти не повинні знімати перевірку в проді.
+    const isNonProductionEnv =
+      process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
 
     if (
       user.isVerified === false &&
-      !isTestAccount &&
+      !isNonProductionEnv &&
       process.env.AUTH_REQUIRE_EMAIL_VERIFICATION !== 'false'
     ) {
       return res.status(403).json({

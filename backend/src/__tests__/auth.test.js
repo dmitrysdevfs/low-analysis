@@ -102,6 +102,35 @@ describe('Auth API', () => {
 
       expect(res.status).toBe(401);
     });
+
+    it('should return 403 for an unverified admin in production', async () => {
+      const mockUser = {
+        _id: 'mock-admin-id',
+        email: 'admin@lowanalysis.com',
+        fullName: 'Admin User',
+        role: 'admin',
+        tokenVersion: 0,
+        isVerified: false,
+        comparePassword: vi.fn().mockResolvedValue(true),
+      };
+
+      User.findOne.mockReturnValue({
+        select: vi.fn().mockResolvedValue(mockUser),
+      });
+
+      vi.stubEnv('NODE_ENV', 'production');
+
+      try {
+        const res = await request(app)
+          .post('/api/auth/login')
+          .send({ email: mockUser.email, password: 'password123' });
+
+        expect(res.status).toBe(403);
+        expect(res.body.code).toBe('EMAIL_NOT_VERIFIED');
+      } finally {
+        vi.unstubAllEnvs();
+      }
+    });
   });
 
   describe('GET /api/auth/me', () => {
