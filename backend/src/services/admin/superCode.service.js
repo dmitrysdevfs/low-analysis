@@ -41,10 +41,19 @@ export const rotateCode = async (actor, ipAddress = null) => {
   const rotatedAt = new Date().toISOString();
 
   const history = await getCodeHistory();
-  const retired = history.map((e) => ({ ...e, status: 'retired' }));
+  // Поля перелічені явно, а не через `...e`: так у історію не потрапить нове
+  // чутливе поле, якщо його колись додадуть до запису.
+  const retired = history.map((e) => ({
+    id: e.id,
+    rotatedAt: e.rotatedAt,
+    rotatedBy: e.rotatedBy,
+    status: 'retired',
+  }));
+  // Значення коду в історію не потрапляє: чинний код і так лежить у CODE_KEY,
+  // а історія потрібна лише для дат і авторства. Інакше доступ до бази давав би
+  // не один секрет, а всі попередні.
   const nextEntry = {
     id: `sc-${Date.now()}`,
-    code: nextCode,
     rotatedAt,
     rotatedBy: actor,
     status: 'active',
@@ -64,7 +73,7 @@ export const rotateCode = async (actor, ipAddress = null) => {
 
   await appendAuditEntry({
     action: 'Супер-код оновлено',
-    detail: `Створено новий код для підключення адміністратора: ${nextCode}.`,
+    detail: 'Створено новий код для підключення адміністратора.',
     actor,
     severity: 'security',
     ipAddress,
