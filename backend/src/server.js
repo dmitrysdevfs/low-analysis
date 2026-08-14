@@ -1,5 +1,9 @@
-import './instrument.js';
+// loadEnv раніше за instrument: інакше Sentry.init читає SENTRY_DSN до того,
+// як dotenv підвантажить backend/.env, і мовчки стартує без DSN. На хостингу
+// це не помітно, бо там змінні лежать в оточенні процесу.
+// loadEnv тягне лише dotenv і node:path, тож патчинг модулів Sentry не зачіпає.
 import './bootstrap/loadEnv.js';
+import './instrument.js';
 
 const { default: app } = await import('./app.js');
 const { default: connectDB } = await import('./config/db.js');
