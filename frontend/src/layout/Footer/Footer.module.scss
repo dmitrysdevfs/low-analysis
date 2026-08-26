@@ -293,6 +293,41 @@
   margin-bottom: 14px;
 }
 
+.teamLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(200, 168, 67, 0.06);
+  border: 1px solid rgba(200, 168, 67, 0.28);
+  color: #c8a843;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+
+  svg {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: rgba(200, 168, 67, 0.12);
+    border-color: rgba(200, 168, 67, 0.5);
+    box-shadow: 0 0 16px rgba(200, 168, 67, 0.16);
+    transform: translateY(-1px);
+
+    svg {
+      transform: translateX(3px);
+    }
+  }
+}
+
 .version {
   font-size: 0.56rem;
   color: #1c3260;

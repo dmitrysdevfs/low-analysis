@@ -3,6 +3,7 @@ export const ROUTES = {
   laws: "/laws",
   analysis: "/analysis",
   projectInfo: "/project-info",
+  team: "/team",
   subjects: "/subjects",
   search: "/search",
   admin: "/admin",
